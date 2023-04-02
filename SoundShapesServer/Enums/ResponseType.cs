@@ -2,9 +2,10 @@ using Realms;
 
 namespace SoundShapesServer.Enums;
 
-public enum ItemType
+public enum ResponseType
 {
     identity,
     level,
-    upload
+    upload,
+    like
 }

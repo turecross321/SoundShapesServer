@@ -6,7 +6,7 @@ namespace SoundShapesServer.Responses.Levels;
 public class LevelPublishResponse
 {
     public string id { get; set; } //   format:  /~level:<actual-id>/upload:<creationTime>     WHAT THE FUCK
-    public string type = ItemType.upload.ToString();
+    public string type = ResponseType.upload.ToString();
     public LevelAuthor author { get; set; }
     public string title { get; set; }
     public IList<string> dependencies { get; set; }

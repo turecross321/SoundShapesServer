@@ -7,8 +7,7 @@ namespace SoundShapesServer.Endpoints;
 
 public class EulaEndpoint : EndpointGroup
 {
-    [Endpoint("/otg/{platform}/{publisher}/{language}/~eula.get", ContentType.Json)] 
-    [Authentication(true)]
+    [Endpoint("/otg/{platform}/{publisher}/{language}/~eula.get", ContentType.Json)]
     public string Eula(RequestContext context, GameServerConfig config, string platform, string publisher, string language)
     {
         return config.EulaText;

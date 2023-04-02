@@ -73,7 +73,6 @@ public class AuthenticationEndpoints : EndpointGroup
 
     
     [Endpoint("/otg/~identity:*.hello", ContentType.Json)]
-    [Authentication(true)]
     public GameUser Hello(RequestContext context, RealmDatabaseContext database, GameUser user)
     {
         return user;

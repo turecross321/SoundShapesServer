@@ -12,8 +12,9 @@ public class GameLevel : RealmObject
     public GameUser author { get; set; }
     public string title { get; set; }
     public string description { get; set; }
-    public Metadata metadata { get; set; }
+    public LevelMetadata metadata { get; set; } = new LevelMetadata();
     public string visibility { get; set; }
     public int scp_np_language { get; set; }
     public long creationTime { get; set; }
+    public LevelResources resources { get; set; }
 }

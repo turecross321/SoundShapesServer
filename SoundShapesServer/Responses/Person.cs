@@ -1,5 +1,3 @@
-using MongoDB.Bson;
-
 namespace SoundShapesServer.Types;
 
 public class Person

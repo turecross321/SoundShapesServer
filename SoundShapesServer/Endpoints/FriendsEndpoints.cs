@@ -12,7 +12,6 @@ namespace SoundShapesServer.Endpoints;
 public class FriendsEndpoints : EndpointGroup
 {
     [Endpoint("/otg/~identity:{id}/~friends.all", ContentType.Json)]
-    [Authentication(true)]
     public string GetFriends(RequestContext context, string id, RealmDatabaseContext database)                                       
     {
         GameUser user = database.GetUserWithId(id);
@@ -21,7 +20,6 @@ public class FriendsEndpoints : EndpointGroup
     }
 
     [Endpoint("/identity/person/{id}/data/psn/friends-list", ContentType.Json, Method.Post)]
-    [Authentication(true)]
     public Response UploadFriends(RequestContext context, RealmDatabaseContext database, string body, string id, GameUser user)
     {
         database.UploadFriends(body, user);
@@ -29,7 +27,6 @@ public class FriendsEndpoints : EndpointGroup
     }
 
     [Endpoint("/identity/person/", ContentType.Json, Method.Post)]
-    [Authentication(true)]
     public Response GetPerson(RequestContext context)
     {
         return new Response(HttpStatusCode.OK);

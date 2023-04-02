@@ -1,14 +1,18 @@
+using Newtonsoft.Json;
+using Realms;
+
 namespace SoundShapesServer.Types;
 
-public class ProfileMetadata // this is the most unhinged shit i have ever fucking seen
+[JsonObject(MemberSerialization.OptIn)]
+public class ProfileMetadata : EmbeddedObject // this is the most unhinged shit i have ever fucking seen
 {
-    public string displayName { get; set; }
-    public int follows_of_ever_count { get; set; } // My fans
-    public int levels_by_ever_count { get; set; } // Amount of published levels
-    public int follows_by_ever_count { get; set; } // Following
-    public int likes_by_ever_count { get; set; } // Favorites and Queued
+    [JsonProperty] public string displayName { get; set; }
+    [JsonProperty] public int follows_of_ever_count { get; set; } // My fans
+    [JsonProperty] public int levels_by_ever_count { get; set; } // Amount of published levels
+    [JsonProperty] public int follows_by_ever_count { get; set; } // Following
+    [JsonProperty] public int likes_by_ever_count { get; set; } // Favorites and Queued
     
-    // The server used to provide these, but the game doesn't actually do anything with it. 
+    // The server used to provide these, but the game doesn't actually do anything with them. 
     
     /*public float unique_plays_ever_total_completes { get; set; }
     public double plays_by_ever_total_time { get; set; }

@@ -7,7 +7,10 @@ using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
 using SoundShapesServer.Types;
 
-BunkumHttpServer server = new();
+BunkumHttpServer server = new()
+{
+    AssumeAuthenticationRequired = true,
+};
 
 server.DiscoverEndpointsFromAssembly(Assembly.GetExecutingAssembly());
 

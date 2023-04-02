@@ -13,7 +13,7 @@ public partial class RealmDatabaseContext
     {
         GameUser user = new()
         {
-            display_name = display_name
+            display_name = display_name,
         };
 
         this._realm.Write(() =>
@@ -47,6 +47,6 @@ public partial class RealmDatabaseContext
     
     public string FormatUserId(string id)
     {
-        return $"/~{ItemType.identity.ToString()}:{id}";
+        return $"/~{ResponseType.identity.ToString()}:{id}";
     }
 }

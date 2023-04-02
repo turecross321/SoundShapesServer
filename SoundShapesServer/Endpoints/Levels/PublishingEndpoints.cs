@@ -16,7 +16,6 @@ namespace SoundShapesServer.Endpoints.Levels;
 public class PublishingEndpoints : EndpointGroup
 {
     [Endpoint("/otg/~level:*.create", Method.Post, ContentType.Json)]
-    [Authentication(true)]
     public Response Publish(RequestContext context, Stream body, RealmDatabaseContext database, GameUser user)
     {
         var parser = MultipartFormDataParser.Parse(body);
