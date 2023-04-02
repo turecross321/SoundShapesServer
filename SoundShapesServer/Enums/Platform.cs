@@ -2,8 +2,8 @@ namespace SoundShapesServer.Enums;
 
 public enum Platform
 {
-    PS3,
-    PS4,
-    PSV,
-    Unknown
+    ps3,
+    ps4,
+    psv,
+    unknown
 }

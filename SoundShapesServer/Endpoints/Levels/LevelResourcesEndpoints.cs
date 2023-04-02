@@ -22,13 +22,13 @@ public class LevelResourcesEndpoints : EndpointGroup
         
         switch (fileType)
         {
-            case FileType.Image:
+            case FileType.image:
                 fileExtension = ".png";
                 break;
-            case FileType.Level:
+            case FileType.level:
                 fileExtension = ".vnd.soundshapes.level";
                 break;
-            case FileType.Sound:
+            case FileType.sound:
                 fileExtension = ".vnd.soundshapes.sound";
                 break;
         }

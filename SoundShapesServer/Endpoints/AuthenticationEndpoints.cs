@@ -34,7 +34,7 @@ public class AuthenticationEndpoints : EndpointGroup
         }
 
         string platform = PlatformHelper.GetPlatform(ticket.TitleId).ToString();
-        if (platform == Platform.Unknown.ToString()) return null; 
+        if (platform == Platform.unknown.ToString()) return null; 
         
         GameUser? user = database.GetUserWithDisplayName(ticket.Username);
         user ??= database.CreateUser(ticket.Username);
