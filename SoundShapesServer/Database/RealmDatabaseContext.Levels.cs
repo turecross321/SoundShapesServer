@@ -22,7 +22,7 @@ public partial class RealmDatabaseContext
             visibility = Visibility.EVERYONE.ToString(),
             scp_np_language = request.sce_np_language,
             creationTime = DateTimeOffset.Now.ToUnixTimeSeconds(),
-            metadata = GenerateMetadata(request)
+            metadata = GenerateMetadata(request),
         };
 
         this._realm.Write(() =>

@@ -19,7 +19,6 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
             SchemaVersion = 1,
             Schema = new []
             {
-                typeof(LevelResources),
                 typeof(ProfileMetadata),
                 typeof(LevelMetadata),
                 typeof(FollowRelation),

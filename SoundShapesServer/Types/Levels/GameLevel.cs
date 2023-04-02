@@ -16,5 +16,4 @@ public class GameLevel : RealmObject
     public string visibility { get; set; }
     public int scp_np_language { get; set; }
     public long creationTime { get; set; }
-    public LevelResources resources { get; set; }
 }
