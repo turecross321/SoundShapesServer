@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace SoundShapesServer.Responses;
+namespace SoundShapesServer.Responses.Following;
 
 public class FollowingUserResponsesWrapper
 {

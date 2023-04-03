@@ -1,6 +1,6 @@
 using SoundShapesServer.Enums;
 
-namespace SoundShapesServer.Responses;
+namespace SoundShapesServer.Responses.Following;
 
 public class FollowResponse
 {
