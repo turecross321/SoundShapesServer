@@ -7,5 +7,6 @@ public enum ResponseType
     identity,
     level,
     upload,
-    like
+    like,
+    follow
 }

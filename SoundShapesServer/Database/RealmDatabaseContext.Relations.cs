@@ -7,7 +7,7 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public List<GameUser> GetFollowers(GameUser userBeingFollowed)
+    public IEnumerable<GameUser> GetFollowers(GameUser userBeingFollowed)
     {
         var relations = this._realm.All<FollowRelation>().Where(r => r.userBeingFollowed == userBeingFollowed)
             .ToArray();
@@ -19,10 +19,10 @@ public partial class RealmDatabaseContext
             followers.Add(relations[i].follower);
         }
 
-        return followers;
+        return followers.AsEnumerable();
     }
 
-    public List<GameUser> GetFollowings(GameUser follower)
+    public IEnumerable<GameUser> GetFollowedUsers(GameUser follower)
     {
         var relations = this._realm.All<FollowRelation>().Where(r => r.follower == follower)
             .ToArray();
@@ -34,7 +34,7 @@ public partial class RealmDatabaseContext
             following.Add(relations[i].userBeingFollowed);
         }
 
-        return following;
+        return following.AsEnumerable();
     }
 
     public IEnumerable<GameLevel> GetUsersLikedLevels(GameUser user)
@@ -68,6 +68,8 @@ public partial class RealmDatabaseContext
 
     public bool FollowUser(GameUser follower, GameUser userBeingFollowed)
     {
+        if (IsUserFollowingOtherUser(follower, userBeingFollowed)) return false;
+
         FollowRelation relation = new()
         {
             follower = follower,
@@ -80,11 +82,26 @@ public partial class RealmDatabaseContext
 
         return true;
     }
+    
+    public bool UnFollowUser(GameUser follower, GameUser userBeingUnFollowed)
+    {
+        if (!IsUserFollowingOtherUser(follower, userBeingUnFollowed)) return false;
+        
+        FollowRelation? relation = this._realm.All<FollowRelation>().FirstOrDefault(f => f.follower == follower && f.userBeingFollowed == userBeingUnFollowed);
+
+        if (relation == null) return false;
+        
+        this._realm.Write(() =>
+        {
+            this._realm.Remove(relation);
+        });
+        
+        return true;
+    }
 
     public bool LikeLevel(GameUser liker, GameLevel level)
     {
-        if (liker == null || level == null) return false;
-        if (HasUserLikedLevel(liker, level)) return false; 
+        if (IsUserLikingLevel(liker, level)) return false; 
         
         LevelLikeRelation relation = new()
         {
@@ -101,9 +118,9 @@ public partial class RealmDatabaseContext
     
     public bool UnLikeLevel(GameUser liker, GameLevel level)
     {
-        if (liker == null || level == null) return false;
+        if (!IsUserLikingLevel(liker, level)) return false;
 
-        LevelLikeRelation? relation = this._realm.All<LevelLikeRelation>().Where(l => l.liker == liker && l.level == level).FirstOrDefault();
+        LevelLikeRelation? relation = this._realm.All<LevelLikeRelation>().FirstOrDefault(l => l.liker == liker && l.level == level);
 
         if (relation == null) return false;
         
@@ -115,9 +132,16 @@ public partial class RealmDatabaseContext
         return true;
     }
 
-    public bool HasUserLikedLevel(GameUser liker, GameLevel level)
+    public bool IsUserLikingLevel(GameUser liker, GameLevel level)
     {
         int count = this._realm.All<LevelLikeRelation>().Count(l => l.liker == liker && l.level == level);
+        if (count > 0) return true;
+        else return false;
+    }
+    
+    public bool IsUserFollowingOtherUser(GameUser follower, GameUser userBeingFollowed)
+    {
+        int count = this._realm.All<FollowRelation>().Count(f => f.follower == follower && f.userBeingFollowed == userBeingFollowed);
         if (count > 0) return true;
         else return false;
     }

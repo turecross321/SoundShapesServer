@@ -44,9 +44,4 @@ public partial class RealmDatabaseContext
         });
         return true;
     }
-    
-    public string FormatUserId(string id)
-    {
-        return $"/~{ResponseType.identity.ToString()}:{id}";
-    }
 }

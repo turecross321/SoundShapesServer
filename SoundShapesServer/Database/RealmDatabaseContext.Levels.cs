@@ -1,6 +1,7 @@
 using Realms;
 using Realms.Sync;
 using SoundShapesServer.Enums;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests;
 using SoundShapesServer.Responses.Levels;
 using SoundShapesServer.Types;
@@ -33,11 +34,11 @@ public partial class RealmDatabaseContext
 
         LevelPublishResponse publishResponse = new()
         {
-            id = FormatLevelPublishId(gameLevel.id, gameLevel.creationTime),
+            id = IdFormatter.FormatLevelPublishId(gameLevel.id, gameLevel.creationTime),
             type = ResponseType.upload.ToString(),
             author = new()
             {
-                id = FormatUserId(gameLevel.author.id),
+                id = IdFormatter.FormatUserId(gameLevel.author.id),
                 type = ResponseType.identity.ToString(),
                 display_name = gameLevel.author.display_name
             },
@@ -48,7 +49,7 @@ public partial class RealmDatabaseContext
             extraData = new ExtraData() { sce_np_language = gameLevel.scp_np_language },
             parent = new()
             {
-                id = FormatLevelId(gameLevel.id),
+                id = IdFormatter.FormatLevelId(gameLevel.id),
                 type = ResponseType.level.ToString()
             },
             creationTime = gameLevel.creationTime
@@ -71,14 +72,6 @@ public partial class RealmDatabaseContext
 
         if (GetLevelWithId(levelId) == null) return levelId; // Return if LevelId has not been used before
         return GenerateLevelId(); // Generate new LevelId if it already exists
-    }
-    public string FormatLevelId(string id)
-    {
-        return $"/~level:{id}";
-    }
-    private static string FormatLevelPublishId(string id, long creationTime)
-    {
-        return $"/~level:{id}/~upload:{creationTime}";
     }
     public static LevelMetadata GenerateMetadata(LevelPublishRequest level)
     {

@@ -19,8 +19,12 @@ public class LevelsEndpoints : EndpointGroup
     {
         int? nextToken;
         
-        if (levels.Count() < count + from) nextToken = null;
+        if (levels.Count() <= count + from) nextToken = null;
         else nextToken = count + from;
+
+        int? previousToken;
+        if (from > 0) previousToken = from - 1;
+        else previousToken = null;
         
         List<GameLevel> levelList = levels.Skip(from).Take(count).ToList();
 
@@ -28,8 +32,8 @@ public class LevelsEndpoints : EndpointGroup
 
         for (int i = 0; i < levelList.Count; i++)
         {
-            string formattedLevelId = database.FormatLevelId(levelList[i].id);
-            string formattedAuthorId = database.FormatUserId(levelList[i].author.id);
+            string formattedLevelId = IdFormatter.FormatLevelId(levelList[i].id);
+            string formattedAuthorId = IdFormatter.FormatUserId(levelList[i].author.id);
 
             LevelAuthor author = new()
             {
@@ -57,7 +61,8 @@ public class LevelsEndpoints : EndpointGroup
         {
             items = levelResponses,
             count = levelResponses.Length,
-            nextToken = nextToken
+            nextToken = nextToken,
+            previousToken = previousToken
         };
 
         return response;
