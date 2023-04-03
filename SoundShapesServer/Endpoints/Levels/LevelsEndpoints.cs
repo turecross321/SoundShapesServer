@@ -78,7 +78,6 @@ public class LevelsEndpoints : EndpointGroup
     
     [Endpoint("/otg/~identity:{userId}/~queued:*.page", ContentType.Json)]
     [Endpoint("/otg/~identity:{userId}/~like:*.page", ContentType.Json)]
-    [Authentication(false)]
     public LevelResponsesWrapper? QueuedAndLiked(RequestContext context, RealmDatabaseContext database, string userId)
     {
         // Queued levels and Liked levels should be two different categories, but there aren't any buttons seperating the two, so i'm just not going to implement it for now
