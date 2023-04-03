@@ -1,3 +1,4 @@
+using Realms;
 using Realms.Sync;
 using SoundShapesServer.Enums;
 using SoundShapesServer.Requests;
@@ -102,5 +103,24 @@ public partial class RealmDatabaseContext
     public List<GameLevel> GetLevelsPublishedByUser(GameUser user, int count)
     {
         return this._realm.All<GameLevel>().Where(l => l.author == user).AsEnumerable().Take(count).ToList();
+    }
+
+    public List<GameLevel> SearchForLevels(int count, string query)
+    {
+        string[] keywords = query.Split(' ');
+        if (keywords.Length == 0) return new List<GameLevel>();
+        
+        IQueryable<GameLevel> levels = this._realm.All<GameLevel>();
+        
+        foreach (string keyword in keywords)
+        {
+            if(string.IsNullOrWhiteSpace(keyword)) continue;
+
+            levels = levels.Where(l =>
+                l.title.Like(keyword, false)
+            );
+        }
+
+        return levels.AsEnumerable().Take(count).ToList();
     }
 }

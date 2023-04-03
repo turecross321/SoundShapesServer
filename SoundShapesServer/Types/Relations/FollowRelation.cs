@@ -1,6 +1,6 @@
 using Realms;
 
-namespace SoundShapesServer.Types;
+namespace SoundShapesServer.Types.Relations;
 
 public class FollowRelation : RealmObject
 {

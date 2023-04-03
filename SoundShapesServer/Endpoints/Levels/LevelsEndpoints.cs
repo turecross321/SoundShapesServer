@@ -72,6 +72,8 @@ public class LevelsEndpoints : EndpointGroup
         
         if (query != null && query.Contains("author.id:")) // Levels by player
             levels = LevelsByUser(query, count, database);
+        else if (query != null && query.Contains("metadata.displayName:")) // Search
+            levels = SearchForLevels(query, count, database);
 
         return GetLevels(levels, count, database);
     }
@@ -102,5 +104,12 @@ public class LevelsEndpoints : EndpointGroup
         var levels = database.GetLevelsPublishedByUser(user, count);
 
         return levels;
+    }
+
+    private List<GameLevel> SearchForLevels(string query, int count, RealmDatabaseContext database)
+    {
+        string levelName = query.Split(":")[1];
+
+        return database.SearchForLevels(count, levelName);
     }
 }

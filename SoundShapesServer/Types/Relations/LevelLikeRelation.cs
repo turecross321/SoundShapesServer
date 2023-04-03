@@ -1,7 +1,8 @@
 using Realms;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 
-namespace SoundShapesServer.Types;
+namespace SoundShapesServer.Type.Relations;
 
 public class LevelLikeRelation : RealmObject
 {
