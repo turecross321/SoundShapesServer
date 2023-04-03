@@ -40,14 +40,14 @@ public partial class RealmDatabaseContext
         var relations = this._realm.All<LevelLikeRelation>().Where(l => l.liker == user)
             .ToArray();
 
-        List<GameLevel> favoritedLevels = new List<GameLevel>();
+        List<GameLevel> likedLevels = new List<GameLevel>();
 
         for (int i = 0; i < relations.Length; i++)
         {
-            favoritedLevels.Add(relations[i].level);
+            likedLevels.Add(relations[i].level);
         }
 
-        return favoritedLevels;
+        return likedLevels;
     }
     
     public List<GameLevel> GetUsersWhoHaveLikedLevel(GameLevel gameLevel)

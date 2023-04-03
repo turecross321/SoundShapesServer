@@ -10,7 +10,7 @@ public class ProfileMetadata : EmbeddedObject // this is the most unhinged shit 
     [JsonProperty] public int follows_of_ever_count { get; set; } // My fans
     [JsonProperty] public int levels_by_ever_count { get; set; } // Amount of published levels
     [JsonProperty] public int follows_by_ever_count { get; set; } // Following
-    [JsonProperty] public int likes_by_ever_count { get; set; } // Favorites and Queued
+    [JsonProperty] public int likes_by_ever_count { get; set; } // Liked and Queued Levels
     
     // The server used to provide these, but the game doesn't actually do anything with them. 
     

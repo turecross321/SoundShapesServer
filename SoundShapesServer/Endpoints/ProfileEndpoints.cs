@@ -24,7 +24,7 @@ public class ProfileEndpoints : EndpointGroup
             follows_of_ever_count = user.followers.Count(), // Followers
             levels_by_ever_count = user.publishedLevels.Count(), // Level Count
             follows_by_ever_count = user.following.Count(), // Following
-            likes_by_ever_count = user.favoriteLevels.Count(), // Favorites And Queued
+            likes_by_ever_count = user.likedLevels.Count(), // Liked And Queued Levels
         };
 
         return metadata;

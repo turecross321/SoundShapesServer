@@ -17,7 +17,7 @@ public class GameUser : RealmObject, IUser
     [JsonIgnore] public ProfileMetadata metadata = new ProfileMetadata();
     
     [Backlink(nameof(LevelLikeRelation.liker))]
-    [JsonIgnore] public IQueryable<LevelLikeRelation> favoriteLevels { get; }
+    [JsonIgnore] public IQueryable<LevelLikeRelation> likedLevels { get; }
     
     [Backlink(nameof(FollowRelation.userBeingFollowed))]
     [JsonIgnore] public IQueryable<FollowRelation> followers { get; }
