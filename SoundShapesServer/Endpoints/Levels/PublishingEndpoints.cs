@@ -14,13 +14,13 @@ namespace SoundShapesServer.Endpoints.Levels;
 public class PublishingEndpoints : EndpointGroup
 {
     [Endpoint("/otg/~level:*.create", Method.Post, ContentType.Json)]
-    public Response Publish(RequestContext context, Stream body, RealmDatabaseContext database, GameUser user)
+    public static Response Publish(RequestContext context, Stream body, RealmDatabaseContext database, GameUser user)
     {
         var parser = MultipartFormDataParser.Parse(body);
 
-        FilePart image = null;
-        FilePart level = null;
-        FilePart sound = null;
+        FilePart? image = null;
+        FilePart? level = null;
+        FilePart? sound = null;
         
         foreach (var file in parser.Files)
         {

@@ -8,6 +8,10 @@ public class IdFormatter
     {
         return $"/~level:{id}";
     }
+    public static string FormatLevelIdAndVersion(string id, long version)
+    {
+        return $"/~level:{id}/~version:{version}";
+    }
     public static string FormatLevelPublishId(string id, long creationTime)
     {
         return $"/~level:{id}/~upload:{creationTime}";

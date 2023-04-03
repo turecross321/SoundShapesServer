@@ -103,6 +103,7 @@ public class LevelsEndpoints : EndpointGroup
         
         return GetLevels(levels, count, from, database);
     }
+    
     private IEnumerable<GameLevel>? LevelsByUser(string query, RealmDatabaseContext database)
     {
         string id = query.Split(":")[2];
