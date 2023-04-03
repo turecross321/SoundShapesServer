@@ -14,8 +14,10 @@ namespace SoundShapesServer.Endpoints.Levels;
 
 public class LevelsEndpoints : EndpointGroup
 {
-    private LevelResponsesWrapper GetLevels(List<GameLevel> levels, int count, RealmDatabaseContext database)
+    private LevelResponsesWrapper GetLevels(List<GameLevel>? levels, int count, RealmDatabaseContext database)
     {
+        if (levels == null) levels = new List<GameLevel>();
+        
         LevelResponse[] levelResponses = new LevelResponse[Math.Min(count, levels.Count())];
 
         for (int i = 0; i < levels.Count; i++)
@@ -48,7 +50,7 @@ public class LevelsEndpoints : EndpointGroup
         LevelResponsesWrapper response = new()
         {
             items = levelResponses,
-            count = levelResponses.Count()
+            count = levelResponses.Length
         };
 
         return response;
@@ -63,34 +65,40 @@ public class LevelsEndpoints : EndpointGroup
         var type = context.QueryString["type"];
         var from = context.QueryString["from"];
         var query = context.QueryString["query"];
-        int count = int.Parse(context.QueryString["count"]);
+        int count = int.Parse(context.QueryString["count"] ?? "9");
         var decorated = context.QueryString["decorated"];
 
-        List<GameLevel> levels = new List<GameLevel>();
+        List<GameLevel>? levels = new List<GameLevel>();
         
         if (query != null && query.Contains("author.id:")) // Levels by player
             levels = LevelsByUser(query, count, database);
 
         return GetLevels(levels, count, database);
     }
-
+    
     [Endpoint("/otg/~identity:{userId}/~queued:*.page", ContentType.Json)]
-    public LevelResponsesWrapper QueuedAndLiked(RequestContext context, RealmDatabaseContext database, string userId)
+    [Endpoint("/otg/~identity:{userId}/~like:*.page", ContentType.Json)]
+    [Authentication(false)]
+    public LevelResponsesWrapper? QueuedAndLiked(RequestContext context, RealmDatabaseContext database, string userId)
     {
-        int count = int.Parse(context.QueryString["count"]);
-        var decorate = context.QueryString["decorate"];
+        // Queued levels and Liked levels should be two different categories, but there aren't any buttons seperating the two, so i'm just not going to implement it for now
+        int count = int.Parse(context.QueryString["count"] ?? "9");
 
-        GameUser user = database.GetUserWithId(userId);
+        GameUser? user = database.GetUserWithId(userId);
+
+        if (user == null) return null;
 
         List<GameLevel> levels = database.GetUsersLikedLevels(user);
         
         return GetLevels(levels, count, database);
     }
-    private List<GameLevel> LevelsByUser(string query, int count, RealmDatabaseContext database)
+    private List<GameLevel>? LevelsByUser(string query, int count, RealmDatabaseContext database)
     {
         string id = query.Split(":")[2];
 
-        GameUser user = database.GetUserWithId(id);
+        GameUser? user = database.GetUserWithId(id);
+        
+        if (user == null) return null;
 
         var levels = database.GetLevelsPublishedByUser(user, count);
 
