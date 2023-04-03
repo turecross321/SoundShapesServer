@@ -37,10 +37,9 @@ public partial class RealmDatabaseContext
         return following;
     }
 
-    public List<GameLevel> GetUsersLikedLevels(GameUser user)
+    public IEnumerable<GameLevel> GetUsersLikedLevels(GameUser user)
     {
-        var relations = this._realm.All<LevelLikeRelation>().Where(l => l.liker == user)
-            .ToArray();
+        var relations = this._realm.All<LevelLikeRelation>().Where(l => l.liker == user).ToArray();
 
         List<GameLevel> likedLevels = new List<GameLevel>();
 
@@ -49,10 +48,10 @@ public partial class RealmDatabaseContext
             likedLevels.Add(relations[i].level);
         }
 
-        return likedLevels;
+        return likedLevels.AsEnumerable();
     }
     
-    public List<GameLevel> GetUsersWhoHaveLikedLevel(GameLevel gameLevel)
+    public IEnumerable<GameLevel> GetUsersWhoHaveLikedLevel(GameLevel gameLevel)
     {
         var relations = this._realm.All<LevelLikeRelation>().Where(r => r.level == gameLevel)
             .ToArray();
@@ -64,7 +63,7 @@ public partial class RealmDatabaseContext
             levels.Add(relations[i].level);
         }
 
-        return levels;
+        return levels.AsEnumerable();
     }
 
     public bool FollowUser(GameUser follower, GameUser userBeingFollowed)

@@ -96,16 +96,16 @@ public partial class RealmDatabaseContext
     }
 
     public GameLevel? GetLevelWithId(string id) => this._realm.All<GameLevel>().FirstOrDefault(l => l.id == id);
-    public List<GameLevel> GetAllLevels()
+    public IEnumerable<GameLevel> GetAllLevels()
     {
-        return this._realm.All<GameLevel>().ToList();
+        return this._realm.All<GameLevel>().AsEnumerable();
     }
-    public List<GameLevel> GetLevelsPublishedByUser(GameUser user, int count)
+    public IEnumerable<GameLevel> GetLevelsPublishedByUser(GameUser user)
     {
-        return this._realm.All<GameLevel>().Where(l => l.author == user).AsEnumerable().Take(count).ToList();
+        return this._realm.All<GameLevel>().Where(l => l.author == user).AsEnumerable();
     }
 
-    public List<GameLevel> SearchForLevels(int count, string query)
+    public IEnumerable<GameLevel> SearchForLevels(string query)
     {
         string[] keywords = query.Split(' ');
         if (keywords.Length == 0) return new List<GameLevel>();
@@ -121,6 +121,6 @@ public partial class RealmDatabaseContext
             );
         }
 
-        return levels.AsEnumerable().Take(count).ToList();
+        return levels.AsEnumerable();
     }
 }
