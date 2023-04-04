@@ -36,7 +36,7 @@ public class LevelsEndpoints : EndpointGroup
             {
                 id = formattedAuthorId,
                 type = ResponseType.identity.ToString(),
-                display_name = levelList[i].author.display_name
+                displayName = levelList[i].author.display_name
             };
 
             LevelResponse levelResponse = new LevelResponse()

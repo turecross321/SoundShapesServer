@@ -40,7 +40,7 @@ public partial class RealmDatabaseContext
             {
                 id = IdFormatter.FormatUserId(gameLevel.author.id),
                 type = ResponseType.identity.ToString(),
-                display_name = gameLevel.author.display_name
+                displayName = gameLevel.author.display_name
             },
             title = gameLevel.title,
             dependencies = new List<string>(),
