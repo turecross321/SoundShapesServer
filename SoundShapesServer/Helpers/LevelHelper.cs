@@ -1,11 +1,10 @@
 using SoundShapesServer.Enums;
 using SoundShapesServer.Responses.Levels;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Helpers;
 
-public class LevelHelper
+public static class LevelHelper
 {
     private static LevelMetadataResponse GenerateMetadataResponse(LevelMetadata metadata)
     {
@@ -58,7 +57,7 @@ public class LevelHelper
             title = level.title,
             description = level.description,
             type = ResponseType.level.ToString(),
-            metadata = LevelHelper.GenerateMetadataResponse(level.metadata)
+            metadata = GenerateMetadataResponse(level.metadata)
         };
 
         return levelResponse;
