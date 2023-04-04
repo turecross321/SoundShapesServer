@@ -54,8 +54,7 @@ public class LevelHelper
         {
             id = formattedLevelId,
             author = author,
-            latestVersion =
-                $"/~level:{level.id}/~version:{level.creationTime}", // TODO: IMPLEMENT THIS PROPERLY
+            latestVersion = IdFormatter.FormatLevelIdAndVersion(level.id, level.creationTime),
             title = level.title,
             description = level.description,
             type = ResponseType.level.ToString(),
