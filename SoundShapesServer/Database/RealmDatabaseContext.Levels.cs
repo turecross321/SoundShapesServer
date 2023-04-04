@@ -15,7 +15,7 @@ public partial class RealmDatabaseContext
     {
         string levelId = request.levelId;
             
-        GameLevel gameLevel = new GameLevel
+        GameLevel level = new GameLevel
         {
             id = levelId,
             author = user,
@@ -29,33 +29,31 @@ public partial class RealmDatabaseContext
 
         this._realm.Write(() =>
         {
-            this._realm.Add(gameLevel);
+            this._realm.Add(level);
         });
 
-        LevelPublishResponse publishResponse = new()
-        {
-            id = IdFormatter.FormatLevelPublishId(gameLevel.id, gameLevel.creationTime),
-            type = ResponseType.upload.ToString(),
-            author = new()
-            {
-                id = IdFormatter.FormatUserId(gameLevel.author.id),
-                type = ResponseType.identity.ToString(),
-                displayName = gameLevel.author.display_name
-            },
-            title = gameLevel.title,
-            dependencies = new List<string>(),
-            visibility = gameLevel.visibility,
-            description = gameLevel.description,
-            extraData = new ExtraData() { sce_np_language = gameLevel.scp_np_language },
-            parent = new()
-            {
-                id = IdFormatter.FormatLevelId(gameLevel.id),
-                type = ResponseType.level.ToString()
-            },
-            creationTime = gameLevel.creationTime
-        };
+        return GeneratePublishResponse(level);
+    }
+
+    public LevelPublishResponse UpdateLevel(LevelPublishRequest updatedLevel, GameLevel level, GameUser user)
+    {
+        if (!user.Equals(level.author)) return null;
         
-        return publishResponse;
+        this._realm.Write(() =>
+        {
+            level.title = updatedLevel.title;
+            level.description = updatedLevel.description;
+            level.scp_np_language = updatedLevel.sce_np_language;
+            level.creationTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            
+            level.metadata.displayName = updatedLevel.title;
+            level.metadata.image = "";
+            level.metadata.modified = DateTimeOffset.UtcNow;
+            level.metadata.timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            level.metadata.sce_np_language = updatedLevel.sce_np_language;
+        });
+
+        return GeneratePublishResponse(level);
     }
 
     private const string levelIdCharacters = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -73,19 +71,44 @@ public partial class RealmDatabaseContext
         if (GetLevelWithId(levelId) == null) return levelId; // Return if LevelId has not been used before
         return GenerateLevelId(); // Generate new LevelId if it already exists
     }
+    
     public static LevelMetadata GenerateMetadata(LevelPublishRequest level)
     {
-        LevelMetadata metadata = new()
-        {
-            displayName = level.title,
-            image = "",
-            created = DateTimeOffset.Now,
-            modified = DateTimeOffset.UtcNow,
-            timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-            sce_np_language = level.sce_np_language
-        };
+        LevelMetadata metadata = new LevelMetadata();
+
+        metadata.displayName = level.title;
+        metadata.image = "";
+        metadata.created = DateTimeOffset.UtcNow;
+        metadata.modified = DateTimeOffset.UtcNow;
+        metadata.timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        metadata.sce_np_language = level.sce_np_language;
 
         return metadata;
+    }
+
+    private LevelPublishResponse GeneratePublishResponse(GameLevel level)
+    {
+        return new () {
+            id = IdFormatter.FormatLevelPublishId(level.id, level.creationTime),
+            type = ResponseType.upload.ToString(),
+            author = new()
+            {
+                id = IdFormatter.FormatUserId(level.author.id),
+                type = ResponseType.identity.ToString(),
+                displayName = level.author.display_name
+            },
+            title = level.title,
+            dependencies = new List<string>(),
+            visibility = level.visibility,
+            description = level.description,
+            extraData = new ExtraData() { sce_np_language = level.scp_np_language },
+            parent = new()
+            {
+                id = IdFormatter.FormatLevelId(level.id),
+                type = ResponseType.level.ToString()
+            },
+            creationTime = level.creationTime
+        };   
     }
 
     public bool UnPublishLevel(GameLevel level)

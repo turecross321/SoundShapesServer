@@ -29,29 +29,7 @@ public class LevelsEndpoints : EndpointGroup
 
         for (int i = 0; i < levelList.Count; i++)
         {
-            string formattedLevelId = IdFormatter.FormatLevelId(levelList[i].id);
-            string formattedAuthorId = IdFormatter.FormatUserId(levelList[i].author.id);
-
-            LevelAuthor author = new()
-            {
-                id = formattedAuthorId,
-                type = ResponseType.identity.ToString(),
-                displayName = levelList[i].author.display_name
-            };
-
-            LevelResponse levelResponse = new LevelResponse()
-            {
-                id = formattedLevelId,
-                author = author,
-                latestVersion =
-                    $"/~level:{levelList[i].id}/~version:{levelList[i].creationTime}", // TODO: IMPLEMENT THIS PROPERLY
-                title = levelList[i].title,
-                description = levelList[i].description,
-                type = ResponseType.level.ToString(),
-                metadata = LevelHelper.GenerateMetadataResponse(levelList[i].metadata)
-            };
-
-            levelResponses[i] = levelResponse;
+            levelResponses[i] = LevelHelper.ConvertGameLevelToLevelResponse(levelList[i]);;
         }
 
         LevelResponsesWrapper response = new()

@@ -7,7 +7,7 @@ namespace SoundShapesServer.Helpers;
 
 public class LevelHelper
 {
-    public static LevelMetadataResponse GenerateMetadataResponse(LevelMetadata metadata)
+    private static LevelMetadataResponse GenerateMetadataResponse(LevelMetadata metadata)
     {
         LevelMetadataResponse response = new LevelMetadataResponse()
         {
@@ -36,5 +36,32 @@ public class LevelHelper
         };
 
         return response;
+    }
+
+    public static LevelResponse ConvertGameLevelToLevelResponse(GameLevel level)
+    {
+        string formattedLevelId = IdFormatter.FormatLevelId(level.id);
+        string formattedAuthorId = IdFormatter.FormatUserId(level.author.id);
+
+        LevelAuthor author = new()
+        {
+            id = formattedAuthorId,
+            type = ResponseType.identity.ToString(),
+            displayName = level.author.display_name
+        };
+
+        LevelResponse levelResponse = new LevelResponse()
+        {
+            id = formattedLevelId,
+            author = author,
+            latestVersion =
+                $"/~level:{level.id}/~version:{level.creationTime}", // TODO: IMPLEMENT THIS PROPERLY
+            title = level.title,
+            description = level.description,
+            type = ResponseType.level.ToString(),
+            metadata = LevelHelper.GenerateMetadataResponse(level.metadata)
+        };
+
+        return levelResponse;
     }
 }
