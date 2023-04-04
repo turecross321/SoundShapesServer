@@ -8,6 +8,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Requests;
 using SoundShapesServer.Responses.Levels;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Levels;
 

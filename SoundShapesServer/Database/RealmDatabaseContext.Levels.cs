@@ -88,6 +88,16 @@ public partial class RealmDatabaseContext
         return metadata;
     }
 
+    public bool UnPublishLevel(GameLevel level)
+    {
+        this._realm.Write(() =>
+        {
+            this._realm.Remove(level);
+        });
+
+        return true;
+    }
+    
     public GameLevel? GetLevelWithId(string id) => this._realm.All<GameLevel>().FirstOrDefault(l => l.id == id);
     public IEnumerable<GameLevel> GetAllLevels()
     {
