@@ -35,7 +35,9 @@ public class LevelPublishingEndpoints : EndpointGroup
         
         LevelPublishRequest levelRequest = LevelResourcesEndpoints.UploadResources(context, parser, levelId);
         
-        LevelPublishResponse publishedLevel = database.UpdateLevel(levelRequest, level, user);
+        LevelPublishResponse? publishedLevel = database.UpdateLevel(levelRequest, level, user);
+
+        if (publishedLevel == null) return new Response(HttpStatusCode.InternalServerError);
 
         return new Response(publishedLevel, ContentType.Json, HttpStatusCode.Created);
     }

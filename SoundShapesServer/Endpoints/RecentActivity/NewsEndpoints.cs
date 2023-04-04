@@ -18,7 +18,6 @@ namespace SoundShapesServer.Endpoints.RecentActivity;
 public class NewsEndpoints : EndpointGroup
 {
     [Endpoint("/otg/global/news/~metadata:*.get", ContentType.Plaintext)]
-    [Authentication(false)]
     public JArray GlobalNews(RequestContext context, RealmDatabaseContext database)
     {
         NewsEntry? news = database.GetGlobalNews();
@@ -34,7 +33,6 @@ public class NewsEndpoints : EndpointGroup
     }
 
     [Endpoint("/otg/global/news/{language}/~metadata:*.get", ContentType.Plaintext)]
-    [Authentication(false)]
     public JArray TranslatedNews(RequestContext context, GameSession session, RealmDatabaseContext database, string language)
     {
         NewsEntry? news = database.GetTranslatedNews(language);

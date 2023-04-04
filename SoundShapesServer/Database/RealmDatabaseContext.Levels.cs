@@ -35,7 +35,7 @@ public partial class RealmDatabaseContext
         return GeneratePublishResponse(level);
     }
 
-    public LevelPublishResponse UpdateLevel(LevelPublishRequest updatedLevel, GameLevel level, GameUser user)
+    public LevelPublishResponse? UpdateLevel(LevelPublishRequest updatedLevel, GameLevel level, GameUser user)
     {
         if (!user.Equals(level.author)) return null;
         
@@ -56,23 +56,23 @@ public partial class RealmDatabaseContext
         return GeneratePublishResponse(level);
     }
 
-    private const string levelIdCharacters = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private const int levelIdLength = 8;
+    private const string LevelIdCharacters = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private const int LevelIdLength = 8;
     
     public string GenerateLevelId()
     {
         Random r = new Random();
         string levelId = "";
-        for (int i = 0; i < levelIdLength; i++)
+        for (int i = 0; i < LevelIdLength; i++)
         {
-            levelId += levelIdCharacters[r.Next(levelIdCharacters.Length - 1)];
+            levelId += LevelIdCharacters[r.Next(LevelIdCharacters.Length - 1)];
         }
 
         if (GetLevelWithId(levelId) == null) return levelId; // Return if LevelId has not been used before
         return GenerateLevelId(); // Generate new LevelId if it already exists
     }
-    
-    public static LevelMetadata GenerateMetadata(LevelPublishRequest level)
+
+    private static LevelMetadata GenerateMetadata(LevelPublishRequest level)
     {
         LevelMetadata metadata = new LevelMetadata();
 
