@@ -10,7 +10,7 @@ using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
 
 namespace SoundShapesServer.Endpoints.Levels;
 
-public class LevelsEndpoints : EndpointGroup
+public class LevelEndpoints : EndpointGroup
 {
     private LevelResponsesWrapper GetLevels(IEnumerable<GameLevel>? levels, int count, int from, RealmDatabaseContext database)
     {

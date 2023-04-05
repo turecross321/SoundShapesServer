@@ -43,9 +43,13 @@ public class LevelPublishingEndpoints : EndpointGroup
     }
     
     // Gets called by Endpoints.cs
-    public static Response UnPublishLevel(RealmDatabaseContext database, GameUser user, GameLevel level)
+    public static Response UnPublishLevel(RequestContext context, RealmDatabaseContext database, GameUser user, GameLevel level)
     {
         if (level.author.Equals(user) == false) return new Response(HttpStatusCode.Forbidden);  // Check if user is the level publisher
+
+        context.DataStore.RemoveFromStore(level.id + ".png");
+        context.DataStore.RemoveFromStore(level.id + ".vnd.soundshapes.level");
+        context.DataStore.RemoveFromStore(level.id + ".vnd.soundshapes.sound");
 
         return database.UnPublishLevel(level) ? new Response(HttpStatusCode.OK) : HttpStatusCode.InternalServerError;
     }
