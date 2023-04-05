@@ -83,7 +83,7 @@ public class RelationEndpoints : EndpointGroup
             {
                 id = userBeingFollowed.id,
                 type = ResponseType.follow.ToString(),
-                target = new RelationTarget()
+                target = new UserResponse()
                 {
                     id = IdFormatter.FormatUserId(userBeingFollowed.id),
                     type = ResponseType.identity.ToString(),

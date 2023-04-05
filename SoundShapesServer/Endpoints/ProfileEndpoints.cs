@@ -52,7 +52,7 @@ public class ProfileEndpoints : EndpointGroup
             FollowingUserResponse response = new()
             {
                 id = IdFormatter.FormatFollowId(follower.id, userList[i].id),
-                target = new RelationTarget()
+                target = new UserResponse()
                 {
                     id = IdFormatter.FormatUserId(userList[i].id),
                     type = ResponseType.identity.ToString(),

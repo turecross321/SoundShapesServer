@@ -12,11 +12,11 @@ namespace SoundShapesServer.Endpoints;
 public class FriendsEndpoints : EndpointGroup
 {
     [Endpoint("/otg/~identity:{id}/~friends.all", ContentType.Json)]
-    public string GetFriends(RequestContext context, string id, RealmDatabaseContext database)                                       
+    public string? GetFriends(RequestContext context, string id, RealmDatabaseContext database)                                       
     {
-        GameUser user = database.GetUserWithId(id);
-        
-        return user.friends;
+        GameUser? user = database.GetUserWithId(id);
+
+        return user?.friends;
     }
 
     [Endpoint("/identity/person/{id}/data/psn/friends-list", ContentType.Json, Method.Post)]

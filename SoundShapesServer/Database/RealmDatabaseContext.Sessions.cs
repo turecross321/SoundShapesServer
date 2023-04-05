@@ -16,7 +16,7 @@ public partial class RealmDatabaseContext
     {
         GameSession gameSession = new()
         {
-            expires = DateTimeOffset.Now.AddSeconds(tokenExpirySeconds ?? DefaultTokenExpirySeconds).ToUnixTimeSeconds(),
+            expires = DateTimeOffset.UtcNow.AddSeconds(tokenExpirySeconds ?? DefaultTokenExpirySeconds),
             id = GenerateGuid(),
             user = user,
             platform = platform
@@ -46,7 +46,7 @@ public partial class RealmDatabaseContext
             return null;
         }
 
-        if (session.expires < DateTimeOffset.Now.ToUnixTimeSeconds())
+        if (session.expires < DateTimeOffset.UtcNow)
         {
             this._realm.Write(() => this._realm.Remove(session));
             return null;

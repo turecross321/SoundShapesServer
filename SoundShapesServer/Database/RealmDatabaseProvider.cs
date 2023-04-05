@@ -32,7 +32,8 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
                 typeof(LevelParent),
                 typeof(Metadata),
                 typeof(GameLevel),
-                typeof(NewsEntry)
+                typeof(NewsEntry),
+                typeof(LeaderboardEntry)
             },
             MigrationCallback = (migration, oldVersion) =>
             {

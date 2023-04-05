@@ -1,4 +1,5 @@
 using SoundShapesServer.Enums;
+using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Levels;
 using SoundShapesServer.Types.Levels;
 
@@ -42,7 +43,7 @@ public static class LevelHelper
         string formattedLevelId = IdFormatter.FormatLevelId(level.id);
         string formattedAuthorId = IdFormatter.FormatUserId(level.author.id);
 
-        LevelAuthor author = new()
+        UserResponse author = new()
         {
             id = formattedAuthorId,
             type = ResponseType.identity.ToString(),
@@ -53,7 +54,7 @@ public static class LevelHelper
         {
             id = formattedLevelId,
             author = author,
-            latestVersion = IdFormatter.FormatLevelIdAndVersion(level.id, level.creationTime),
+            latestVersion = IdFormatter.FormatLevelIdAndVersion(level.id, level.creationTime.ToUnixTimeSeconds()),
             title = level.title,
             description = level.description,
             type = ResponseType.level.ToString(),

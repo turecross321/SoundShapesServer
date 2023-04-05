@@ -14,4 +14,8 @@
       <PackageReference Include="Realm" Version="10.21.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Responses\Leaderboards\" />
+    </ItemGroup>
+
 </Project>

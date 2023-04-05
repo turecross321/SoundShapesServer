@@ -44,9 +44,9 @@ public class AuthenticationEndpoints : EndpointGroup
         
         GameSessionResponse sessionResponse = new GameSessionResponse
         {
-            expires = session.expires,
+            expires = session.expires.ToUnixTimeSeconds(),
             id = session.id,
-            person = new Person
+            person = new SessionUserResponse
             {
                 display_name = user.display_name,
                 id = user.id

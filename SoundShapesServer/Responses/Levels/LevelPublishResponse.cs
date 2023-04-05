@@ -7,7 +7,7 @@ public class LevelPublishResponse
 {
     public string id { get; set; } //   format:  /~level:<actual-id>/upload:<creationTime>     WHAT THE FUCK
     public string type = ResponseType.upload.ToString();
-    public LevelAuthor author { get; set; }
+    public UserResponse author { get; set; }
     public string title { get; set; }
     public IList<string> dependencies { get; set; }
     public string visibility { get; set; }

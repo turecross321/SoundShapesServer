@@ -15,5 +15,5 @@ public class GameLevel : RealmObject
     public LevelMetadata metadata { get; set; } = new LevelMetadata();
     public string visibility { get; set; }
     public int scp_np_language { get; set; }
-    public long creationTime { get; set; }
+    public DateTimeOffset creationTime { get; set; }
 }

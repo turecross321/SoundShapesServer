@@ -23,7 +23,7 @@ public partial class RealmDatabaseContext
             description = request.description,
             visibility = Visibility.EVERYONE.ToString(),
             scp_np_language = request.sce_np_language,
-            creationTime = DateTimeOffset.Now.ToUnixTimeSeconds(),
+            creationTime = DateTimeOffset.UtcNow,
             metadata = GenerateMetadata(request),
         };
 
@@ -44,7 +44,7 @@ public partial class RealmDatabaseContext
             level.title = updatedLevel.title;
             level.description = updatedLevel.description;
             level.scp_np_language = updatedLevel.sce_np_language;
-            level.creationTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            level.creationTime = DateTimeOffset.UtcNow;
             
             level.metadata.displayName = updatedLevel.title;
             level.metadata.image = "";
@@ -89,7 +89,7 @@ public partial class RealmDatabaseContext
     private LevelPublishResponse GeneratePublishResponse(GameLevel level)
     {
         return new () {
-            id = IdFormatter.FormatLevelPublishId(level.id, level.creationTime),
+            id = IdFormatter.FormatLevelPublishId(level.id, level.creationTime.ToUnixTimeSeconds()),
             type = ResponseType.upload.ToString(),
             author = new()
             {
@@ -107,7 +107,7 @@ public partial class RealmDatabaseContext
                 id = IdFormatter.FormatLevelId(level.id),
                 type = ResponseType.level.ToString()
             },
-            creationTime = level.creationTime
+            creationTime = level.creationTime.ToUnixTimeSeconds()
         };   
     }
 

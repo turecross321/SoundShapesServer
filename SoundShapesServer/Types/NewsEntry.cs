@@ -7,7 +7,6 @@ namespace SoundShapesServer.Types;
 
 public class NewsEntry : RealmObject
 {
-    [PrimaryKey]
     public string language { get; set; } = "global";
     public string title { get; set; }
     public string text { get; set; }
