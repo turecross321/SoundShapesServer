@@ -1,4 +1,4 @@
-namespace SoundShapesServer.Types;
+namespace SoundShapesServer.Responses.Sessions;
 
 public class GameSessionResponseWrapper
 {

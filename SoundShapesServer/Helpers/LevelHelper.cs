@@ -41,19 +41,11 @@ public static class LevelHelper
     public static LevelResponse ConvertGameLevelToLevelResponse(GameLevel level)
     {
         string formattedLevelId = IdFormatter.FormatLevelId(level.id);
-        string formattedAuthorId = IdFormatter.FormatUserId(level.author.id);
-
-        UserResponse author = new()
-        {
-            id = formattedAuthorId,
-            type = ResponseType.identity.ToString(),
-            displayName = level.author.display_name
-        };
 
         LevelResponse levelResponse = new LevelResponse()
         {
             id = formattedLevelId,
-            author = author,
+            author = UserHelper.GetUserResponseFromGameUser(level.author),
             latestVersion = IdFormatter.FormatLevelIdAndVersion(level.id, level.creationTime.ToUnixTimeSeconds()),
             title = level.title,
             description = level.description,

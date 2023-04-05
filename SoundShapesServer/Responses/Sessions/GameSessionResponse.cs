@@ -1,4 +1,6 @@
-namespace SoundShapesServer.Types;
+using SoundShapesServer.Types;
+
+namespace SoundShapesServer.Responses.Sessions;
 
 public class GameSessionResponse
 {

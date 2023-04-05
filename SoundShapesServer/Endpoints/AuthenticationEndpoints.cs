@@ -8,6 +8,7 @@ using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Enums;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Sessions;
 using SoundShapesServer.Types;
 using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
 

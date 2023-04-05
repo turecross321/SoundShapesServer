@@ -1,11 +1,10 @@
 using Newtonsoft.Json;
 
-namespace SoundShapesServer.Responses.Levels;
-public class LevelResponsesWrapper
+namespace SoundShapesServer.Responses.Leaderboards;
+
+public class LeaderboardEntriesResponse
 {
-    public LevelResponse[] items { get; set; }
-    public int count { get; set; }
-    
+    public LeaderboardEntryResponse[] items { get; set; }
     [JsonProperty(NullValueHandling=NullValueHandling.Ignore)] public int? nextToken { get; set; }
     [JsonProperty(NullValueHandling=NullValueHandling.Ignore)] public int? previousToken { get; set; }
 }
