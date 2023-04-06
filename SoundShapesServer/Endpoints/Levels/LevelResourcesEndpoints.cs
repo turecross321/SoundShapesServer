@@ -9,6 +9,8 @@ using Newtonsoft.Json.Serialization;
 using SoundShapesServer.Database;
 using SoundShapesServer.Enums;
 using SoundShapesServer.Requests;
+using SoundShapesServer.Types;
+using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Levels;
 
@@ -70,14 +72,10 @@ public class LevelResourcesEndpoints : EndpointGroup
         
         return levelRequest;
     }
-    private Response GetResource(RequestContext context, string levelId, string fileTypeString)
+    private Response GetResource(RequestContext context, string levelId, FileType fileType)
     {
         string fileName = levelId;
 
-
-        if (!Enum.TryParse(fileTypeString, true, out FileType fileType))
-            return HttpStatusCode.BadRequest;
-        
         string fileExtension = "";
         
         switch (fileType)
@@ -91,6 +89,8 @@ public class LevelResourcesEndpoints : EndpointGroup
             case FileType.sound:
                 fileExtension = ".vnd.soundshapes.sound";
                 break;
+            default:
+                return HttpStatusCode.NotFound;
         }
 
         fileName += fileExtension;
@@ -106,9 +106,15 @@ public class LevelResourcesEndpoints : EndpointGroup
     }
 
     [Endpoint("/otg/~level:{levelId}/~version:{versionId}/~content:{fileTypeString}/data.get")]
-    [Authentication(false)]
-    public Response GetLevelResource(RequestContext context, string levelId, string versionId, string fileTypeString)
+    public Response GetLevelResource(RequestContext context, RealmDatabaseContext database, GameUser user, string levelId, string versionId, string fileTypeString)
     {
-        return GetResource(context, levelId, fileTypeString);
+        GameLevel? level = database.GetLevelWithId(levelId);
+        if (level == null) return HttpStatusCode.NotFound;
+        
+        Enum.TryParse(fileTypeString, true, out FileType fileType);
+        
+        if (fileType == FileType.level) database.AddUniquePlayToLevel(user, level);
+        
+        return GetResource(context, levelId, fileType);
     }
 }

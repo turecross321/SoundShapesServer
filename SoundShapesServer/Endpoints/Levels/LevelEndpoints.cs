@@ -12,6 +12,17 @@ namespace SoundShapesServer.Endpoints.Levels;
 
 public class LevelEndpoints : EndpointGroup
 {
+    // Called from LeaderboardEndpoints
+    public bool AddPlay(RealmDatabaseContext database, GameLevel level)
+    {
+        return database.AddPlayToLevel(level);
+    }
+
+    // Called from LevelResourcesEndpoint
+    public bool AddUniquePlay(RealmDatabaseContext database, GameUser user, GameLevel level)
+    {
+        return database.AddUniquePlayToLevel(user, level);
+    }
     private LevelResponsesWrapper GetLevels(IEnumerable<GameLevel>? levels, int count, int from, RealmDatabaseContext database)
     {
         int? nextToken;
@@ -45,6 +56,7 @@ public class LevelEndpoints : EndpointGroup
     
     [Endpoint("/otg/~index:*.page", ContentType.Json)]
     [Endpoint("/otg/~index:level.page", ContentType.Json)]
+    [Authentication(false)]
     public LevelResponsesWrapper LevelsEndpoint(RequestContext context, RealmDatabaseContext database)
     {
         var category = context.QueryString["search"];

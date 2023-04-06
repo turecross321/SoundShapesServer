@@ -5,6 +5,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
+using SoundShapesServer.Enums;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests;
 using SoundShapesServer.Responses.Leaderboards;
@@ -19,12 +20,24 @@ public class LeaderboardEndpoints : EndpointGroup
     [Endpoint("/otg/~identity:{userId}/~record:%2F~level%3A{arguments}", Method.Post)]
     public Response SubmitScore(RequestContext context, RealmDatabaseContext database, GameUser user, string userId, string? arguments, string body, string? levelId)
     {
-        if (levelId == null) levelId = arguments.Split('.')[0];
+        if (arguments != null)
+        {
+            string[] args = arguments.Split('.');
+            levelId = args[0];
+            string requestType = args[1];
+
+            if (requestType != "post") return HttpStatusCode.NotFound;
+        }
+
+        if (levelId == null) return HttpStatusCode.NotFound;
+
+        GameLevel? level = database.GetLevelWithId(levelId);
+        if (level != null) database.AddPlayToLevel(level);
         
         LeaderboardSubmissionRequest deSerializedRequest = LeaderboardHelper.DeSerializeSubmission(body);
 
         if (!database.SubmitScore(deSerializedRequest, user, levelId)) return new Response(HttpStatusCode.InternalServerError);
-        
+
         return new Response(HttpStatusCode.OK);
     }
 

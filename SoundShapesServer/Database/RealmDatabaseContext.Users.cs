@@ -35,13 +35,4 @@ public partial class RealmDatabaseContext
         if (id == null) return null;
         return this._realm.All<GameUser>().FirstOrDefault(u => u.id == id);
     }
-
-    public bool UploadFriends(string friends, GameUser user)
-    {
-        this._realm.Write(() =>
-        {
-            user.friends = friends;
-        });
-        return true;
-    }
 }

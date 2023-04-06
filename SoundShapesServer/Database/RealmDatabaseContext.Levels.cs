@@ -23,8 +23,8 @@ public partial class RealmDatabaseContext
             description = request.description,
             visibility = Visibility.EVERYONE.ToString(),
             scp_np_language = request.sce_np_language,
-            creationTime = DateTimeOffset.UtcNow,
-            metadata = GenerateMetadata(request),
+            created = DateTimeOffset.UtcNow,
+            modified = DateTimeOffset.UtcNow
         };
 
         this._realm.Write(() =>
@@ -44,13 +44,7 @@ public partial class RealmDatabaseContext
             level.title = updatedLevel.title;
             level.description = updatedLevel.description;
             level.scp_np_language = updatedLevel.sce_np_language;
-            level.creationTime = DateTimeOffset.UtcNow;
-            
-            level.metadata.displayName = updatedLevel.title;
-            level.metadata.image = "";
-            level.metadata.modified = DateTimeOffset.UtcNow;
-            level.metadata.timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            level.metadata.sce_np_language = updatedLevel.sce_np_language;
+            level.modified = DateTimeOffset.UtcNow;
         });
 
         return GeneratePublishResponse(level);
@@ -72,24 +66,10 @@ public partial class RealmDatabaseContext
         return GenerateLevelId(); // Generate new LevelId if it already exists
     }
 
-    private static LevelMetadata GenerateMetadata(LevelPublishRequest level)
-    {
-        LevelMetadata metadata = new LevelMetadata();
-
-        metadata.displayName = level.title;
-        metadata.image = "";
-        metadata.created = DateTimeOffset.UtcNow;
-        metadata.modified = DateTimeOffset.UtcNow;
-        metadata.timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        metadata.sce_np_language = level.sce_np_language;
-
-        return metadata;
-    }
-
     private LevelPublishResponse GeneratePublishResponse(GameLevel level)
     {
         return new () {
-            id = IdFormatter.FormatLevelPublishId(level.id, level.creationTime.ToUnixTimeSeconds()),
+            id = IdFormatter.FormatLevelPublishId(level.id, level.created.ToUnixTimeMilliseconds()),
             type = ResponseType.upload.ToString(),
             author = new()
             {
@@ -107,7 +87,7 @@ public partial class RealmDatabaseContext
                 id = IdFormatter.FormatLevelId(level.id),
                 type = ResponseType.level.ToString()
             },
-            creationTime = level.creationTime.ToUnixTimeSeconds()
+            creationTime = level.created.ToUnixTimeMilliseconds()
         };   
     }
 
@@ -148,5 +128,25 @@ public partial class RealmDatabaseContext
         }
 
         return levels.AsEnumerable();
+    }
+
+    public bool AddPlayToLevel(GameLevel level)
+    {
+        this._realm.Write((() =>
+        {
+            level.plays++;
+        }));
+
+        return true;
+    }
+
+    public bool AddUniquePlayToLevel(GameUser user, GameLevel level)
+    {
+        this._realm.Write((() =>
+        {
+            level.uniquePlays.Add(user);
+        }));
+
+        return true;
     }
 }
