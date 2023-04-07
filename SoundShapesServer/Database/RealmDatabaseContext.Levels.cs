@@ -146,43 +146,35 @@ public partial class RealmDatabaseContext
         return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries, totalEntries, from, count);
     }
 
-    public bool AddCompletionToLevel(GameLevel level)
+    public void AddCompletionToLevel(GameLevel level)
     {
         this._realm.Write((() =>
         {
             level.completions++;
         }));
-
-        return true;
     }
-    public bool AddPlayToLevel(GameLevel level)
+    public void AddPlayToLevel(GameLevel level)
     {
         this._realm.Write((() =>
         {
             level.plays++;
         }));
-
-        return true;
     }
-    public bool AddUniquePlayToLevel(GameLevel level, GameUser user)
+    public void AddUniquePlayToLevel(GameLevel level, GameUser user)
     {
-        if (level.uniquePlays.Contains(user)) return false;
+        if (level.uniquePlays.Contains(user)) return;
         
         this._realm.Write((() =>
         {
             level.uniquePlays.Add(user);
         }));
-
-        return true;
     }
 
-    public bool AddDeathsToLevel(GameLevel level, int deaths)
+    public void AddDeathsToLevel(GameLevel level, int deaths)
     {
         this._realm.Write((() =>
         {
             level.deaths += deaths;
         }));
-
-        return true;
     }
 }
