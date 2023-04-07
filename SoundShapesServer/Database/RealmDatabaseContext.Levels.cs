@@ -173,7 +173,7 @@ public partial class RealmDatabaseContext
     {
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()
-            .OrderBy(l => l.uniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.created).TotalDays * 0.5);
+            .OrderByDescending(l => l.uniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.created).TotalDays * 0.5);
 
         int totalEntries = entries.Count();
 
