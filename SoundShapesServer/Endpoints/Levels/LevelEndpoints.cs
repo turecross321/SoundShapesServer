@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
@@ -23,10 +24,10 @@ public class LevelEndpoints : EndpointGroup
         return database.AddPlayToLevel(level);
     }
 
-    // Called from LevelResourcesEndpoint
+    // Called from LeaderboardEndpoints
     public bool AddUniquePlay(RealmDatabaseContext database, GameUser user, GameLevel level)
     {
-        return database.AddUniquePlayToLevel(user, level);
+        return database.AddUniquePlayToLevel(level, user);
     }
     private LevelResponsesWrapper GetLevels(GameLevel[] levels, int totalLevels, int from, int count)
     {
@@ -86,7 +87,7 @@ public class LevelEndpoints : EndpointGroup
 
         if (user == null) return null;
 
-        (GameLevel[] levels, int totalLevels) = database.GetUsersLikedLevels(user, count, from);
+        (GameLevel[] levels, int totalLevels) = database.GetUsersLikedLevels(user, from, count);
         
         return GetLevels(levels, totalLevels, from, count);
     }

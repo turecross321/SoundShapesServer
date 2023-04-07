@@ -10,12 +10,12 @@ public static class LevelHelper
 {
     private static LevelMetadataResponse GenerateMetadataResponse(GameLevel level)
     {
-        int difficulty;
+        float difficulty;
 
-        if (level.uniquePlays.Count != 0 && level.completions.Count != 0)
+        if (level.uniquePlays.Count > 0)
         {
-            int rate = level.completions.Count / level.uniquePlays.Count;
-            difficulty = 5 - rate * 5;
+            float rate = (float)level.completions.Count / level.uniquePlays.Count;
+            difficulty = Math.Clamp(5 - rate * 5, 1, 5);
         }
         else difficulty = 0;
         

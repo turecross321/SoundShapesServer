@@ -112,9 +112,7 @@ public class LevelResourcesEndpoints : EndpointGroup
         if (level == null) return HttpStatusCode.NotFound;
         
         Enum.TryParse(fileTypeString, true, out FileType fileType);
-        
-        if (fileType == FileType.level) database.AddUniquePlayToLevel(user, level);
-        
+
         return GetResource(context, levelId, fileType);
     }
 }

@@ -18,7 +18,7 @@ public partial class RealmDatabaseContext
             score = request.score,
             playTime = request.playTime,
             deaths = request.deaths,
-            golded = Convert.ToBoolean(request.golded),
+            golded = request.golded,
             tokenCount = request.tokenCount,
             completed = Convert.ToBoolean(request.completed),
             date = DateTimeOffset.UtcNow

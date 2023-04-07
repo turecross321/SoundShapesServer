@@ -156,7 +156,7 @@ public partial class RealmDatabaseContext
         return true;
     }
 
-    public bool AddUniquePlayToLevel(GameUser user, GameLevel level)
+    public bool AddUniquePlayToLevel(GameLevel level, GameUser user)
     {
         if (level.uniquePlays.Contains(user)) return false;
         

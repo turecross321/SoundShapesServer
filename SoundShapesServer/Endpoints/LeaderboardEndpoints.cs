@@ -31,14 +31,15 @@ public class LeaderboardEndpoints : EndpointGroup
 
         if (levelId == null) return HttpStatusCode.NotFound;
 
+        LeaderboardSubmissionRequest deSerializedRequest = LeaderboardHelper.DeSerializeSubmission(body);
+        
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level != null) // Doing this since story levels can be null
         {
+            if (deSerializedRequest.completed == 1) database.AddUserToLevelCompletions(level, user);
             database.AddPlayToLevel(level);
-            database.AddUserToLevelCompletions(level, user);
+            database.AddUniquePlayToLevel(level, user);
         }
-        
-        LeaderboardSubmissionRequest deSerializedRequest = LeaderboardHelper.DeSerializeSubmission(body);
 
         if (!database.SubmitScore(deSerializedRequest, user, levelId)) return new Response(HttpStatusCode.InternalServerError);
 
