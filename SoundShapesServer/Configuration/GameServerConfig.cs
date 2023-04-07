@@ -12,5 +12,5 @@ public class GameServerConfig : Config
         // throw new NotImplementedException();
     }
     
-    public string EulaText { get; set; } = "YO MAN";
+    public string EulaText { get; set; } = "Welcome back to Sound Shapes!";
 }
