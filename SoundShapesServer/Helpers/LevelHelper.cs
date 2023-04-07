@@ -16,7 +16,7 @@ public static class LevelHelper
         if (level.deaths > 0)
         {
             float rate = level.deaths / level.plays;
-            difficulty = Math.Clamp(rate, 0, 5);
+            difficulty = Math.Clamp(rate, 1, 5);
         }
         else difficulty = 0;
         
