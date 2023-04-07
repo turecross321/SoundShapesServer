@@ -47,12 +47,9 @@ public class PlatformHelper
     
     public static Platform GetPlatform(string titleId)
     {
-        string formattedTitleId = titleId.Split("-")[1].Split("_")[0];
-        // Removes the EP9000- and _00 from title id
-        
-        if (PS3Ids.Contains(formattedTitleId)) return Platform.ps3;
-        if (PSVIds.Contains(formattedTitleId)) return Platform.psv;
-        if (PS4Ids.Contains(formattedTitleId)) return Platform.ps4;
+        if (PS3Ids.Contains(titleId)) return Platform.ps3;
+        if (PSVIds.Contains(titleId)) return Platform.psv;
+        if (PS4Ids.Contains(titleId)) return Platform.ps4;
 
         return Platform.unknown;
     }

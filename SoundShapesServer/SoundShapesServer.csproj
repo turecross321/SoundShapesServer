@@ -10,7 +10,7 @@
     <ItemGroup>
       <PackageReference Include="Bunkum" Version="2.2.11" />
       <PackageReference Include="HttpMultipartParser" Version="8.1.0" />
-      <PackageReference Include="NPTicket" Version="1.0.0" />
+      <PackageReference Include="NPTicket" Version="2.0.0" />
       <PackageReference Include="Realm" Version="10.21.0" />
     </ItemGroup>
 

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using SoundShapesServer.Enums;
 using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Levels;
@@ -9,12 +10,21 @@ public static class LevelHelper
 {
     private static LevelMetadataResponse GenerateMetadataResponse(GameLevel level)
     {
+        int difficulty;
+
+        if (level.uniquePlays.Count != 0 && level.completions.Count != 0)
+        {
+            int rate = level.completions.Count / level.uniquePlays.Count;
+            difficulty = 5 - rate * 5;
+        }
+        else difficulty = 0;
+        
         LevelMetadataResponse response = new LevelMetadataResponse()
         {
             displayName = level.title,
             
-            unique_plays_ever_count = level.uniquePlays.ToString(),
-            difficulty = 5.ToString(),
+            unique_plays_ever_count = level.uniquePlays.Count.ToString(),
+            difficulty = difficulty.ToString(),
             timestamp = level.modified.ToUnixTimeMilliseconds().ToString(),
             plays_of_ever_count = level.plays.ToString(),
             sce_np_language = level.scp_np_language.ToString(),

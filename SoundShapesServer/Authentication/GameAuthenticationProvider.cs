@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using System.Diagnostics;
 using Bunkum.CustomHttpListener.Request;
 using Bunkum.HttpServer.Authentication;
@@ -17,7 +18,7 @@ public class GameAuthenticationProvider : IAuthenticationProvider<GameUser>
         string? sessionId = null;
 
         // get the request headers
-        var keys = request.RequestHeaders.Keys;
+        NameObjectCollectionBase.KeysCollection keys = request.RequestHeaders.Keys;
 
         // check if there is a session header
         for (int i = 0; i < keys.Count; i++)

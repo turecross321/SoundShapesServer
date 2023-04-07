@@ -23,7 +23,7 @@ public class LevelResourcesEndpoints : EndpointGroup
         FilePart? level = null;
         FilePart? sound = null;
         
-        foreach (var file in parser.Files)
+        foreach (FilePart? file in parser.Files)
         {
             switch (file.ContentType)
             {
@@ -48,7 +48,7 @@ public class LevelResourcesEndpoints : EndpointGroup
             return null;
         }
 
-        foreach (var file in parser.Files)
+        foreach (FilePart? file in parser.Files)
         {
             MemoryStream memoryStream = new MemoryStream();
             file.Data.CopyTo(memoryStream);
@@ -59,7 +59,7 @@ public class LevelResourcesEndpoints : EndpointGroup
             context.DataStore.WriteToStore($"{levelId}.{fileExtension}", byteArray);
         }
 
-        var levelRequest = new LevelPublishRequest()
+        LevelPublishRequest levelRequest = new LevelPublishRequest()
         {
             title = parser.GetParameterValue("title"),
             description = parser.GetParameterValue("description"),

@@ -32,7 +32,11 @@ public class LeaderboardEndpoints : EndpointGroup
         if (levelId == null) return HttpStatusCode.NotFound;
 
         GameLevel? level = database.GetLevelWithId(levelId);
-        if (level != null) database.AddPlayToLevel(level);
+        if (level != null) // Doing this since story levels can be null
+        {
+            database.AddPlayToLevel(level);
+            database.AddUserToLevelCompletions(level, user);
+        }
         
         LeaderboardSubmissionRequest deSerializedRequest = LeaderboardHelper.DeSerializeSubmission(body);
 
@@ -48,28 +52,19 @@ public class LeaderboardEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? throw new InvalidOperationException());
         int from = int.Parse(context.QueryString["from"] ?? "0");
 
-        IEnumerable<LeaderboardEntry> entries = database.GetLeaderboardEntries(levelId);
-        
-        int? nextToken;
-        
-        if (entries.Count() <= count + from) nextToken = null;
-        else nextToken = count + from;
+        (LeaderboardEntry[] entries, int totalEntries) = database.GetLeaderboardEntries(levelId, from, count);
 
-        int? previousToken;
-        if (from > 0) previousToken = from - 1;
-        else previousToken = null;
+        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
 
-        LeaderboardEntry[] entryArray = entries.OrderBy(e=>e.score).Skip(from).Take(count).ToArray();
+        LeaderboardEntryResponse[] responseEntries = new LeaderboardEntryResponse[Math.Min(count, entries.Length)];
 
-        LeaderboardEntryResponse[] responseEntries = new LeaderboardEntryResponse[Math.Min(count, entryArray.Length)];
-
-        for (int i = 0; i < entryArray.Length; i++)
+        for (int i = 0; i < entries.Length; i++)
         {
             responseEntries[i] = new LeaderboardEntryResponse()
             {
                 position = from + (i + 1),
-                entrant = UserHelper.GetUserResponseFromGameUser(entryArray[i].user),
-                score = entryArray[i].score
+                entrant = UserHelper.GetUserResponseFromGameUser(entries[i].user),
+                score = entries[i].score
             };
         }
 
@@ -83,7 +78,7 @@ public class LeaderboardEndpoints : EndpointGroup
 
     [Endpoint("/otg/global/~campaign:{levelId}/~leaderboard.near", ContentType.Json)]
     [Endpoint("/otg/~level:{levelId}/~leaderboard.near", ContentType.Json)]
-    public LeaderboardEntryResponse[]? GetLeaderboardNearPlayer(RequestContext context, RealmDatabaseContext database, GameUser user, string levelId)
+    public LeaderboardEntryResponse[] GetLeaderboardNearPlayer(RequestContext context, RealmDatabaseContext database, GameUser user, string levelId)
     {
         LeaderboardEntry? entry = database.GetLeaderboardEntryFromPlayer(user, levelId);
         if (entry == null) return Array.Empty<LeaderboardEntryResponse>();

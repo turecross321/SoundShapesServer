@@ -1,4 +1,5 @@
 using MongoDB.Bson.Serialization.Conventions;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests;
 using SoundShapesServer.Responses.Leaderboards;
 using SoundShapesServer.Types;
@@ -47,16 +48,26 @@ public partial class RealmDatabaseContext
         return true;
     }
 
-    public IEnumerable<LeaderboardEntry> GetLeaderboardEntries(string levelId)
+    public (LeaderboardEntry[], int) GetLeaderboardEntries(string levelId, int from, int count)
     {
-        IQueryable<LeaderboardEntry> entries = this._realm.All<LeaderboardEntry>().Where(e => e.levelId == levelId);
+        IEnumerable<LeaderboardEntry> entries = this._realm.All<LeaderboardEntry>()
+            .AsEnumerable()
+            .Where(e=>e.completed)
+            .Where(e => e.levelId == levelId);
 
-        return entries.AsEnumerable();
+        int totalEntries = entries.Count();
+
+        IEnumerable<LeaderboardEntry> selectedEntries = entries
+            .OrderBy(e => e.score)
+            .Skip(from)
+            .Take(count);
+
+        return (selectedEntries.ToArray(), totalEntries);
     }
 
     public LeaderboardEntry? GetLeaderboardEntryFromPlayer(GameUser user, string levelId)
     {
-        return this._realm.All<LeaderboardEntry>().FirstOrDefault(e => e.user == user && e.levelId == levelId);
+        return this._realm.All<LeaderboardEntry>().Where(e=>e.completed).FirstOrDefault(e => e.user == user && e.levelId == levelId);
     }
 
     public int GetPositionOfLeaderboardEntry(LeaderboardEntry entry)

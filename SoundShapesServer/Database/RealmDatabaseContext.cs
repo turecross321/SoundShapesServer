@@ -16,7 +16,7 @@ public partial class RealmDatabaseContext : IDatabaseContext
     
     private static string GenerateGuid()
     {
-        var guid = Guid.NewGuid();
+        Guid guid = Guid.NewGuid();
         return guid.ToString();
     }
 

@@ -32,17 +32,10 @@ public class ProfileEndpoints : EndpointGroup
     }
 
     private FollowingUserResponsesWrapper? GetFollowUsers(RequestContext context, RealmDatabaseContext database,
-        GameUser follower, IEnumerable<GameUser> followedUsers, int from, int count)
+        GameUser follower, IEnumerable<GameUser> followedUsers, int totalRelations, int from, int count)
     {
-        int? nextToken;
+        (int? nextToken, int? previousToken) = PaginationHelper.GetPageTokens(totalRelations, from, count);
         
-        if (followedUsers.Count() <= count + from) nextToken = null;
-        else nextToken = count + from;
-
-        int? previousToken;
-        if (from > 0) previousToken = from - 1;
-        else previousToken = null;
-
         List<GameUser> userList = followedUsers.Skip(from).Take(count).ToList();
 
         FollowingUserResponse[] responses = new FollowingUserResponse[userList.Count()];
@@ -82,9 +75,9 @@ public class ProfileEndpoints : EndpointGroup
         GameUser? follower = database.GetUserWithId(id);
         if (follower == null) return null;
         
-        IEnumerable<GameUser> followedUsers = database.GetFollowedUsers(follower);
+        (GameUser[] followedUsers, int totalRelations) = database.GetFollowedUsers(follower, from, count);
 
-        return GetFollowUsers(context, database, follower, followedUsers, from, count);
+        return GetFollowUsers(context, database, follower, followedUsers, totalRelations, from, count);
     }
 
     [Endpoint("/otg/~identity:{id}/~followers.page", ContentType.Json)]
@@ -96,8 +89,8 @@ public class ProfileEndpoints : EndpointGroup
         GameUser? follower = database.GetUserWithId(id);
         if (follower == null) return null;
         
-        IEnumerable<GameUser> followedUsers = database.GetFollowers(follower);
+        (GameUser[] followedUsers, int totalRelations) = database.GetFollowers(follower, from, count);
 
-        return GetFollowUsers(context, database, follower, followedUsers, from, count);
+        return GetFollowUsers(context, database, follower, followedUsers, totalRelations, from, count);
     }
 }

@@ -40,7 +40,7 @@ public class Endpoints : EndpointGroup
         string levelId = arguments[0];
         string action = arguments[1];
         
-        var parser = MultipartFormDataParser.Parse(body);
+        MultipartFormDataParser? parser = MultipartFormDataParser.Parse(body);
 
         if (action == "create") return LevelPublishingEndpoints.PublishLevel(context, parser, database, user);
         

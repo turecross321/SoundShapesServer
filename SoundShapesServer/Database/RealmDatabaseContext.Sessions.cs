@@ -37,7 +37,7 @@ public partial class RealmDatabaseContext
     {
         this._realm.Refresh();
         
-        var sessions = this._realm.All<GameSession>();
+        IQueryable<GameSession>? sessions = this._realm.All<GameSession>();
         GameSession? session = this._realm.All<GameSession>()
             .FirstOrDefault(s => s.id == sessionId);
 

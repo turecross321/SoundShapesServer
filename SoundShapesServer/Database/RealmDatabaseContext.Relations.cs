@@ -1,3 +1,4 @@
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Type.Relations;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
@@ -7,63 +8,71 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public IEnumerable<GameUser> GetFollowers(GameUser userBeingFollowed)
+    public (GameUser[], int) GetFollowers(GameUser userBeingFollowed, int from, int count)
     {
-        var relations = this._realm.All<FollowRelation>().Where(r => r.userBeingFollowed == userBeingFollowed)
+        IQueryable<FollowRelation> relations = this._realm.All<FollowRelation>().Where(r => r.userBeingFollowed == userBeingFollowed);
+
+        int totalEntries = relations.Count();
+        
+        FollowRelation[] selectedRelations = relations 
+            .AsEnumerable()
+            .Skip(from)
+            .Take(count)
             .ToArray();
 
         List<GameUser> followers = new List<GameUser>();
 
-        for (int i = 0; i < relations.Length; i++)
+        for (int i = 0; i < selectedRelations.Length; i++)
         {
-            followers.Add(relations[i].follower);
+            followers.Add(selectedRelations[i].follower);
         }
 
-        return followers.AsEnumerable();
+        return (followers.ToArray(), totalEntries);
     }
 
-    public IEnumerable<GameUser> GetFollowedUsers(GameUser follower)
+    public (GameUser[], int) GetFollowedUsers(GameUser follower, int from, int count)
     {
-        var relations = this._realm.All<FollowRelation>().Where(r => r.follower == follower)
+        IQueryable<FollowRelation> relations = this._realm.All<FollowRelation>().Where(r => r.follower == follower);
+
+        int totalEntries = relations.Count();
+        
+        FollowRelation[] selectedRelations = relations      
+            .AsEnumerable()
+            .Skip(from)
+            .Take(count)
             .ToArray();
 
         List<GameUser> following = new List<GameUser>();
 
-        for (int i = 0; i < relations.Length; i++)
+        for (int i = 0; i < selectedRelations.Length; i++)
         {
-            following.Add(relations[i].userBeingFollowed);
+            following.Add(selectedRelations[i].userBeingFollowed);
         }
 
-        return following.AsEnumerable();
+        return (following.ToArray(), totalEntries);
     }
 
-    public IEnumerable<GameLevel> GetUsersLikedLevels(GameUser user)
+    public (GameLevel[], int) GetUsersLikedLevels(GameUser user, int from, int count)
     {
-        var relations = this._realm.All<LevelLikeRelation>().Where(l => l.liker == user).ToArray();
+        IQueryable<LevelLikeRelation> relations = this._realm.All<LevelLikeRelation>()
+            .Where(l => l.liker == user);
 
-        List<GameLevel> likedLevels = new List<GameLevel>();
-
-        for (int i = 0; i < relations.Length; i++)
-        {
-            likedLevels.Add(relations[i].level);
-        }
-
-        return likedLevels.AsEnumerable();
-    }
-    
-    public IEnumerable<GameLevel> GetUsersWhoHaveLikedLevel(GameLevel gameLevel)
-    {
-        var relations = this._realm.All<LevelLikeRelation>().Where(r => r.level == gameLevel)
+        int totalEntries = relations.Count();
+        
+        LevelLikeRelation[] selectedRelations = relations
+            .AsEnumerable()
+            .Skip(from)
+            .Take(count)
             .ToArray();
 
-        List<GameLevel> levels = new List<GameLevel>();
+        List<GameLevel> entries = new ();
 
-        for (int i = 0; i < relations.Length; i++)
+        for (int i = 0; i < selectedRelations.Length; i++)
         {
-            levels.Add(relations[i].level);
+            entries.Add(selectedRelations[i].level);
         }
 
-        return levels.AsEnumerable();
+        return (entries.ToArray(), totalEntries);
     }
 
     public bool FollowUser(GameUser follower, GameUser userBeingFollowed)

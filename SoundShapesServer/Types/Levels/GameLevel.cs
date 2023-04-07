@@ -19,7 +19,8 @@ public class GameLevel : RealmObject
     public DateTimeOffset modified { get; set; }
     public int plays { get; set; }
     public IList<GameUser> uniquePlays { get; }
-    
+    public IList<GameUser> completions { get; }
+
     [Backlink(nameof(LevelLikeRelation.level))]
     [JsonIgnore] public IQueryable<LevelLikeRelation> likes { get; }
 }

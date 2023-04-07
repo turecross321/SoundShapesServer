@@ -102,32 +102,48 @@ public partial class RealmDatabaseContext
     }
     
     public GameLevel? GetLevelWithId(string id) => this._realm.All<GameLevel>().FirstOrDefault(l => l.id == id);
-    public IEnumerable<GameLevel> GetAllLevels()
+    public (GameLevel[], int) GetLevelsPublishedByUser(GameUser user, int from, int count)
     {
-        return this._realm.All<GameLevel>().AsEnumerable();
-    }
-    public IEnumerable<GameLevel> GetLevelsPublishedByUser(GameUser user)
-    {
-        return this._realm.All<GameLevel>().Where(l => l.author == user).AsEnumerable();
+        IQueryable<GameLevel> entries = this._realm.All<GameLevel>()
+            .Where(l => l.author == user);
+
+        int totalEntries = entries.Count();
+        
+        
+        GameLevel[] selectedEntries = entries
+            .AsEnumerable()
+            .Skip(from)
+            .Take(count)
+            .ToArray();
+
+        return (selectedEntries, totalEntries);
     }
 
-    public IEnumerable<GameLevel> SearchForLevels(string query)
+    public (GameLevel[], int) SearchForLevels(string query, int from, int count)
     {
         string[] keywords = query.Split(' ');
-        if (keywords.Length == 0) return new List<GameLevel>();
+        if (keywords.Length == 0) return (Array.Empty<GameLevel>(), 0);
         
-        IQueryable<GameLevel> levels = this._realm.All<GameLevel>();
+        IQueryable<GameLevel> entries = this._realm.All<GameLevel>();
         
         foreach (string keyword in keywords)
         {
-            if(string.IsNullOrWhiteSpace(keyword)) continue;
+            if (string.IsNullOrWhiteSpace(keyword)) continue;
 
-            levels = levels.Where(l =>
+            entries = entries.Where(l =>
                 l.title.Like(keyword, false)
             );
         }
 
-        return levels.AsEnumerable();
+        int totalEntries = entries.Count();
+        
+        GameLevel[] selectedEntries = entries
+            .AsEnumerable()
+            .Skip(from)
+            .Take(count)
+            .ToArray();
+
+        return (selectedEntries, totalEntries);
     }
 
     public bool AddPlayToLevel(GameLevel level)
@@ -142,9 +158,23 @@ public partial class RealmDatabaseContext
 
     public bool AddUniquePlayToLevel(GameUser user, GameLevel level)
     {
+        if (level.uniquePlays.Contains(user)) return false;
+        
         this._realm.Write((() =>
         {
             level.uniquePlays.Add(user);
+        }));
+
+        return true;
+    }
+
+    public bool AddUserToLevelCompletions(GameLevel level, GameUser user)
+    {
+        if (level.completions.Contains(user)) return false;
+        
+        this._realm.Write((() =>
+        {
+            level.completions.Add(user);
         }));
 
         return true;

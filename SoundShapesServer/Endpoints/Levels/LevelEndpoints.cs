@@ -13,6 +13,11 @@ namespace SoundShapesServer.Endpoints.Levels;
 public class LevelEndpoints : EndpointGroup
 {
     // Called from LeaderboardEndpoints
+    public bool AddCompletion(RealmDatabaseContext database, GameLevel level, GameUser user)
+    {
+        return database.AddUserToLevelCompletions(level, user);
+    }
+    // Called from LeaderboardEndpoints
     public bool AddPlay(RealmDatabaseContext database, GameLevel level)
     {
         return database.AddPlayToLevel(level);
@@ -23,24 +28,15 @@ public class LevelEndpoints : EndpointGroup
     {
         return database.AddUniquePlayToLevel(user, level);
     }
-    private LevelResponsesWrapper GetLevels(IEnumerable<GameLevel>? levels, int count, int from, RealmDatabaseContext database)
+    private LevelResponsesWrapper GetLevels(GameLevel[] levels, int totalLevels, int from, int count)
     {
-        int? nextToken;
+        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalLevels, from, count);
         
-        if (levels.Count() <= count + from) nextToken = null;
-        else nextToken = count + from;
+        LevelResponse[] levelResponses = new LevelResponse[levels.Length];
 
-        int? previousToken;
-        if (from > 0) previousToken = from - 1;
-        else previousToken = null;
-        
-        List<GameLevel> levelList = levels.Skip(from).Take(count).ToList();
-
-        LevelResponse[] levelResponses = new LevelResponse[Math.Min(count, levelList.Count())];
-
-        for (int i = 0; i < levelList.Count; i++)
+        for (int i = 0; i < levels.Length; i++)
         {
-            levelResponses[i] = LevelHelper.ConvertGameLevelToLevelResponse(levelList[i]);;
+            levelResponses[i] = LevelHelper.ConvertGameLevelToLevelResponse(levels[i]);
         }
 
         LevelResponsesWrapper response = new()
@@ -59,22 +55,23 @@ public class LevelEndpoints : EndpointGroup
     [Authentication(false)]
     public LevelResponsesWrapper LevelsEndpoint(RequestContext context, RealmDatabaseContext database)
     {
-        var category = context.QueryString["search"];
-        var order = context.QueryString["order"];
-        var type = context.QueryString["type"];
-        var query = context.QueryString["query"];
+        string? category = context.QueryString["search"];
+        string? order = context.QueryString["order"];
+        string? type = context.QueryString["type"];
+        string? query = context.QueryString["query"];
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
-        var decorated = context.QueryString["decorated"];
+        string? decorated = context.QueryString["decorated"];
 
-        IEnumerable<GameLevel>? levels = new List<GameLevel>();
+        GameLevel[] levels = Array.Empty<GameLevel>();
+        int totalLevels = 0;
         
         if (query != null && query.Contains("author.id:")) // Levels by player
-            levels = LevelsByUser(query, database);
+            (levels, totalLevels) = LevelsByUser(query, database, from, count);
         else if (query != null && query.Contains("metadata.displayName:")) // Search
-            levels = SearchForLevels(query, database);
+            (levels, totalLevels) = SearchForLevels(query, database, from, count);
 
-        return GetLevels(levels, count, from, database);
+        return GetLevels(levels, totalLevels, from, count);
     }
     
     [Endpoint("/otg/~identity:{userId}/~queued:*.page", ContentType.Json)]
@@ -89,28 +86,26 @@ public class LevelEndpoints : EndpointGroup
 
         if (user == null) return null;
 
-        IEnumerable<GameLevel> levels = database.GetUsersLikedLevels(user);
+        (GameLevel[] levels, int totalLevels) = database.GetUsersLikedLevels(user, count, from);
         
-        return GetLevels(levels, count, from, database);
+        return GetLevels(levels, totalLevels, from, count);
     }
     
-    private IEnumerable<GameLevel>? LevelsByUser(string query, RealmDatabaseContext database)
+    private (GameLevel[], int) LevelsByUser(string query, RealmDatabaseContext database, int from, int count)
     {
         string id = query.Split(":")[2];
 
         GameUser? user = database.GetUserWithId(id);
-        
-        if (user == null) return null;
 
-        IEnumerable<GameLevel> levels = database.GetLevelsPublishedByUser(user);
+        if (user == null) return (Array.Empty<GameLevel>(), 0);
 
-        return levels;
+        return database.GetLevelsPublishedByUser(user, from, count);
     }
 
-    private IEnumerable<GameLevel> SearchForLevels(string query, RealmDatabaseContext database)
+    private (GameLevel[], int) SearchForLevels(string query, RealmDatabaseContext database, int from, int count)
     {
         string levelName = query.Split(":")[1];
 
-        return database.SearchForLevels(levelName);
+        return database.SearchForLevels(levelName, from, count);
     }
 }
