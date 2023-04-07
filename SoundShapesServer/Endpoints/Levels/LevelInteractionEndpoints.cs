@@ -38,8 +38,6 @@ public class LevelInteractionEndpoints : EndpointGroup
     [Endpoint("/otg/~identity:{userId}/~like:%2F~level%3A{arguments}", ContentType.Json)]
     public static Response LevelLikeRequests(RequestContext context, RealmDatabaseContext database, GameUser user, string userId, string arguments)
     {
-        Console.WriteLine("dase");
-        
         string[] argumentArray = arguments.Split("."); // This is to seperate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
         string levelId = argumentArray[0];
         string requestType = argumentArray[1];
