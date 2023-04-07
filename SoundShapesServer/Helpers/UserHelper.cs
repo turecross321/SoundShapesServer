@@ -10,22 +10,22 @@ namespace SoundShapesServer.Helpers;
 public static class UserHelper
 {
     public static FollowingUserResponsesWrapper? ConvertUserArrayToFollowingUsersResponsesWrapper
-    (GameUser follower, GameUser[] followedUsers, int totalRelations, int from, int count)
+    (GameUser user, GameUser[] users, int totalRelations, int from, int count)
     {
         (int? nextToken, int? previousToken) = PaginationHelper.GetPageTokens(totalRelations, from, count);
 
-        FollowingUserResponse[] responses = new FollowingUserResponse[followedUsers.Length];
+        FollowingUserResponse[] responses = new FollowingUserResponse[users.Length];
         
-        for (int i = 0; i < followedUsers.Length; i++)
+        for (int i = 0; i < users.Length; i++)
         {
             FollowingUserResponse response = new()
             {
-                id = IdFormatter.FormatFollowId(follower.id, followedUsers[i].id),
+                id = IdFormatter.FormatFollowId(user.id, users[i].id),
                 target = new UserResponse()
                 {
-                    id = IdFormatter.FormatUserId(followedUsers[i].id),
+                    id = IdFormatter.FormatUserId(users[i].id),
                     type = ResponseType.identity.ToString(),
-                    displayName = followedUsers[i].display_name
+                    displayName = users[i].display_name
                 }
             };
             

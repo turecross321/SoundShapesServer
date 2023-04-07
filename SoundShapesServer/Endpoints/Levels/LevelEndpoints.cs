@@ -29,9 +29,11 @@ public class LevelEndpoints : EndpointGroup
 
         if (query != null && query.Contains("author.id:")) // Levels by player
             return LevelsByUser(query, database, from, count);
-        else if (query != null && query.Contains("metadata.displayName:")) // Search
+        if (query != null && query.Contains("metadata.displayName:")) // Search
             return SearchForLevels(query, database, from, count);
-
+        if (category != null && category == "tagged3") // Daily Level
+            return DailyLevels(database, from, count);
+                
         return null;
     }
     
@@ -66,5 +68,10 @@ public class LevelEndpoints : EndpointGroup
         string levelName = query.Split(":")[1];
 
         return database.SearchForLevels(levelName, from, count);
+    }
+
+    private LevelResponsesWrapper? DailyLevels(RealmDatabaseContext database, int from, int count)
+    {
+        return database.DailyLevels(from, count);
     }
 }

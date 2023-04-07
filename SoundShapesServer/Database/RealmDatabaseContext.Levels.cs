@@ -146,6 +146,30 @@ public partial class RealmDatabaseContext
         return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries, totalEntries, from, count);
     }
 
+    public LevelResponsesWrapper? DailyLevels(int from, int count)
+    {
+        List<DailyLevel> entries = this._realm.All<DailyLevel>()
+            .OrderByDescending(l=>l.date)
+            .ToList();
+
+        int totalEntries = entries.Count;
+
+        DailyLevel[] dailyLevelEntries = entries
+            .AsEnumerable()
+            .Skip(from)
+            .Take(count)
+            .ToArray();
+
+        GameLevel[] levels = new GameLevel[dailyLevelEntries.Length];
+
+        for (int i = 0; i < dailyLevelEntries.Length; i++)
+        {
+            levels[i] = dailyLevelEntries[i].level;
+        }
+
+        return ConvertGameLevelArrayToLevelResponseWrapper(levels, totalEntries, from, count);
+    }
+
     public void AddCompletionToLevel(GameLevel level)
     {
         this._realm.Write((() =>

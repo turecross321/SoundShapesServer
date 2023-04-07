@@ -23,14 +23,14 @@ public partial class RealmDatabaseContext
             .Take(count)
             .ToArray();
 
-        List<GameUser> followers = new ();
+        GameUser[] followers = new GameUser[selectedRelations.Length];
 
-        foreach (FollowRelation relation in selectedRelations)
+        for (int i = 0; i < selectedRelations.Length; i++)
         {
-            followers.Add(relation.follower);
+            followers[i] = selectedRelations[i].follower;
         }
 
-        return ConvertUserArrayToFollowingUsersResponsesWrapper(userBeingFollowed, followers.ToArray(), totalEntries, from, count);
+        return ConvertUserArrayToFollowingUsersResponsesWrapper(userBeingFollowed, followers, totalEntries, from, count);
     }
 
     public FollowingUserResponsesWrapper? GetFollowedUsers(GameUser follower, int from, int count)
@@ -45,14 +45,14 @@ public partial class RealmDatabaseContext
             .Take(count)
             .ToArray();
 
-        List<GameUser> following = new ();
+        GameUser[] following = new GameUser[selectedRelations.Length];
 
-        foreach (FollowRelation relation in selectedRelations)
+        for (int i = 0; i < selectedRelations.Count(); i++)
         {
-            following.Add(relation.userBeingFollowed);
+            following[i] = selectedRelations[i].userBeingFollowed;
         }
 
-        return ConvertUserArrayToFollowingUsersResponsesWrapper(follower, following.ToArray(), totalEntries, from, count);
+        return ConvertUserArrayToFollowingUsersResponsesWrapper(follower, following, totalEntries, from, count);
     }
 
     public LevelResponsesWrapper? GetUsersLikedLevels(GameUser user, int from, int count)
@@ -68,14 +68,14 @@ public partial class RealmDatabaseContext
             .Take(count)
             .ToArray();
 
-        List<GameLevel> selectedEntries = new ();
+        GameLevel[] levels = new GameLevel[selectedRelations.Length];
 
-        foreach (LevelLikeRelation relation in selectedRelations)
+        for (int i = 0; i < selectedRelations.Length; i++)
         {
-            selectedEntries.Add(relation.level);
+            levels[i] = selectedRelations[i].level;
         }
 
-        return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries.ToArray(), totalEntries, from, count);
+        return ConvertGameLevelArrayToLevelResponseWrapper(levels.ToArray(), totalEntries, from, count);
     }
 
     public bool FollowUser(GameUser follower, GameUser userBeingFollowed)
