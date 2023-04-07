@@ -20,7 +20,7 @@ public class GameLevel : RealmObject
     public int plays { get; set; }
     public int deaths { get; set; }
     public IList<GameUser> uniquePlays { get; }
-    public int completitions { get; set; }
+    public int completions { get; set; }
     [Backlink(nameof(LevelLikeRelation.level))]
     [JsonIgnore] public IQueryable<LevelLikeRelation> likes { get; }
 }

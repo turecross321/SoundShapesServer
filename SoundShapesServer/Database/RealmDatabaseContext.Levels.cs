@@ -150,7 +150,7 @@ public partial class RealmDatabaseContext
     {
         this._realm.Write((() =>
         {
-            level.completitions++;
+            level.completions++;
         }));
 
         return true;
