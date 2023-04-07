@@ -17,8 +17,7 @@ public class LevelEndpoints : EndpointGroup
 {
     [Endpoint("/otg/~index:*.page", ContentType.Json)]
     [Endpoint("/otg/~index:level.page", ContentType.Json)]
-    [Authentication(false)]
-    public LevelResponsesWrapper?LevelsEndpoint(RequestContext context, RealmDatabaseContext database)
+    public LevelResponsesWrapper? LevelsEndpoint(RequestContext context, RealmDatabaseContext database)
     {
         string? category = context.QueryString["search"];
         string? order = context.QueryString["order"];
