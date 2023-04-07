@@ -13,7 +13,7 @@ using SoundShapesServer.Responses.Leaderboards;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 
-namespace SoundShapesServer.Endpoints;
+namespace SoundShapesServer.Endpoints.Levels;
 
 public class LeaderboardEndpoints : EndpointGroup
 {
