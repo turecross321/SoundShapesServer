@@ -6,6 +6,7 @@ using SoundShapesServer.Requests;
 using SoundShapesServer.Responses.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using static SoundShapesServer.Helpers.LevelHelper;
 
 namespace SoundShapesServer.Database;
 
@@ -102,27 +103,26 @@ public partial class RealmDatabaseContext
     }
     
     public GameLevel? GetLevelWithId(string id) => this._realm.All<GameLevel>().FirstOrDefault(l => l.id == id);
-    public (GameLevel[], int) GetLevelsPublishedByUser(GameUser user, int from, int count)
+    public LevelResponsesWrapper GetLevelsPublishedByUser(GameUser user, int from, int count)
     {
         IQueryable<GameLevel> entries = this._realm.All<GameLevel>()
             .Where(l => l.author == user);
 
         int totalEntries = entries.Count();
-        
-        
+
         GameLevel[] selectedEntries = entries
             .AsEnumerable()
             .Skip(from)
             .Take(count)
             .ToArray();
 
-        return (selectedEntries, totalEntries);
+        return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries, totalEntries, from, count);
     }
 
-    public (GameLevel[], int) SearchForLevels(string query, int from, int count)
+    public LevelResponsesWrapper? SearchForLevels(string query, int from, int count)
     {
         string[] keywords = query.Split(' ');
-        if (keywords.Length == 0) return (Array.Empty<GameLevel>(), 0);
+        if (keywords.Length == 0) return null;
         
         IQueryable<GameLevel> entries = this._realm.All<GameLevel>();
         
@@ -143,7 +143,7 @@ public partial class RealmDatabaseContext
             .Take(count)
             .ToArray();
 
-        return (selectedEntries, totalEntries);
+        return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries, totalEntries, from, count);
     }
 
     public bool AddCompletionToLevel(GameLevel level)

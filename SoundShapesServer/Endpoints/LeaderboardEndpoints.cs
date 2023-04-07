@@ -5,6 +5,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
+using SoundShapesServer.Endpoints.Levels;
 using SoundShapesServer.Enums;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests;
@@ -36,10 +37,11 @@ public class LeaderboardEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level != null) // Doing this since story levels can be null
         {
-            if (deSerializedRequest.completed == 1) database.AddCompletionToLevel(level);
-            database.AddPlayToLevel(level);
-            database.AddUniquePlayToLevel(level, user);
-            database.AddDeathsToLevel(level, deSerializedRequest.deaths);
+            if (deSerializedRequest.completed == 1) LevelInteractionEndpoints.AddCompletion(database, level, user);
+            LevelInteractionEndpoints.AddPlay(database, level);
+            LevelInteractionEndpoints.AddUniquePlay(database, level, user);
+
+            LevelInteractionEndpoints.AddDeathsToLevel(database, level, deSerializedRequest.deaths);
         }
 
         if (!database.SubmitScore(deSerializedRequest, user, levelId)) return new Response(HttpStatusCode.InternalServerError);
@@ -65,7 +67,7 @@ public class LeaderboardEndpoints : EndpointGroup
             responseEntries[i] = new LeaderboardEntryResponse()
             {
                 position = from + (i + 1),
-                entrant = UserHelper.GetUserResponseFromGameUser(entries[i].user),
+                entrant = UserHelper.ConvertGameUserToUserResponse(entries[i].user),
                 score = entries[i].score
             };
         }
@@ -89,7 +91,7 @@ public class LeaderboardEndpoints : EndpointGroup
         response[0] = new LeaderboardEntryResponse()
         {
             position = database.GetPositionOfLeaderboardEntry(entry),
-            entrant = UserHelper.GetUserResponseFromGameUser(entry.user),
+            entrant = UserHelper.ConvertGameUserToUserResponse(entry.user),
             score = entry.score
         };
 

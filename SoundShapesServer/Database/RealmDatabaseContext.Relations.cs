@@ -1,14 +1,17 @@
-using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Following;
+using SoundShapesServer.Responses.Levels;
 using SoundShapesServer.Type.Relations;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Relations;
+using static SoundShapesServer.Helpers.LevelHelper;
+using static SoundShapesServer.Helpers.UserHelper;
 
 namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public (GameUser[], int) GetFollowers(GameUser userBeingFollowed, int from, int count)
+    public FollowingUserResponsesWrapper? GetFollowers(GameUser userBeingFollowed, int from, int count)
     {
         IQueryable<FollowRelation> relations = this._realm.All<FollowRelation>().Where(r => r.userBeingFollowed == userBeingFollowed);
 
@@ -20,17 +23,17 @@ public partial class RealmDatabaseContext
             .Take(count)
             .ToArray();
 
-        List<GameUser> followers = new List<GameUser>();
+        List<GameUser> followers = new ();
 
-        for (int i = 0; i < selectedRelations.Length; i++)
+        foreach (FollowRelation relation in selectedRelations)
         {
-            followers.Add(selectedRelations[i].follower);
+            followers.Add(relation.follower);
         }
 
-        return (followers.ToArray(), totalEntries);
+        return ConvertUserArrayToFollowingUsersResponsesWrapper(userBeingFollowed, followers.ToArray(), totalEntries, from, count);
     }
 
-    public (GameUser[], int) GetFollowedUsers(GameUser follower, int from, int count)
+    public FollowingUserResponsesWrapper? GetFollowedUsers(GameUser follower, int from, int count)
     {
         IQueryable<FollowRelation> relations = this._realm.All<FollowRelation>().Where(r => r.follower == follower);
 
@@ -42,17 +45,17 @@ public partial class RealmDatabaseContext
             .Take(count)
             .ToArray();
 
-        List<GameUser> following = new List<GameUser>();
+        List<GameUser> following = new ();
 
-        for (int i = 0; i < selectedRelations.Length; i++)
+        foreach (FollowRelation relation in selectedRelations)
         {
-            following.Add(selectedRelations[i].userBeingFollowed);
+            following.Add(relation.userBeingFollowed);
         }
 
-        return (following.ToArray(), totalEntries);
+        return ConvertUserArrayToFollowingUsersResponsesWrapper(follower, following.ToArray(), totalEntries, from, count);
     }
 
-    public (GameLevel[], int) GetUsersLikedLevels(GameUser user, int from, int count)
+    public LevelResponsesWrapper? GetUsersLikedLevels(GameUser user, int from, int count)
     {
         IQueryable<LevelLikeRelation> relations = this._realm.All<LevelLikeRelation>()
             .Where(l => l.liker == user);
@@ -65,14 +68,14 @@ public partial class RealmDatabaseContext
             .Take(count)
             .ToArray();
 
-        List<GameLevel> entries = new ();
+        List<GameLevel> selectedEntries = new ();
 
-        for (int i = 0; i < selectedRelations.Length; i++)
+        foreach (LevelLikeRelation relation in selectedRelations)
         {
-            entries.Add(selectedRelations[i].level);
+            selectedEntries.Add(relation.level);
         }
 
-        return (entries.ToArray(), totalEntries);
+        return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries.ToArray(), totalEntries, from, count);
     }
 
     public bool FollowUser(GameUser follower, GameUser userBeingFollowed)
