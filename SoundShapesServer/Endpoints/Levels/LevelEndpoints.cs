@@ -31,7 +31,7 @@ public class LevelEndpoints : EndpointGroup
             return LevelsByUser(query, database, from, count);
         if (query != null && query.Contains("metadata.displayName:")) // Search
             return SearchForLevels(query, database, from, count);
-        if (category != null && category == "tagged3") // Daily Level
+        if (category == "tagged3") // Daily Levels
             return DailyLevels(database, from, count);
                 
         return null;
