@@ -11,5 +11,7 @@ public class LevelResponse
     public string title { get; set; }
     public string description { get; set; }
     public string type { get; set; }
+    public bool completed { get; set; }
+
     public LevelMetadataResponse metadata { get; set; }
 }

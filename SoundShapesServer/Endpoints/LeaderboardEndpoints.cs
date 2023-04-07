@@ -40,13 +40,12 @@ public class LeaderboardEndpoints : EndpointGroup
             if (deSerializedRequest.completed == 1) LevelInteractionEndpoints.AddCompletion(database, level, user);
             LevelInteractionEndpoints.AddPlay(database, level);
             LevelInteractionEndpoints.AddUniquePlay(database, level, user);
-
             LevelInteractionEndpoints.AddDeathsToLevel(database, level, deSerializedRequest.deaths);
         }
 
-        if (!database.SubmitScore(deSerializedRequest, user, levelId)) return new Response(HttpStatusCode.InternalServerError);
+        if (!database.SubmitScore(deSerializedRequest, user, levelId)) return HttpStatusCode.InternalServerError;
 
-        return new Response(HttpStatusCode.OK);
+        return HttpStatusCode.OK;
     }
 
     [Endpoint("/otg/global/~campaign:{levelId}/~leaderboard.page", ContentType.Json)]

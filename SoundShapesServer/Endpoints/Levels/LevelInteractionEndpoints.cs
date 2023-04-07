@@ -10,11 +10,12 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Levels;
 
-public static class LevelInteractionEndpoints
+public class LevelInteractionEndpoints : EndpointGroup
 {
     // Called from LeaderboardEndpoints
     public static void AddCompletion(RealmDatabaseContext database, GameLevel level, GameUser user)
     {
+        database.AddCompletionistToLevel(level, user);
         database.AddCompletionToLevel(level);
     }
     // Called from LeaderboardEndpoints
@@ -37,6 +38,8 @@ public static class LevelInteractionEndpoints
     [Endpoint("/otg/~identity:{userId}/~like:%2F~level%3A{arguments}", ContentType.Json)]
     public static Response LevelLikeRequests(RequestContext context, RealmDatabaseContext database, GameUser user, string userId, string arguments)
     {
+        Console.WriteLine("dase");
+        
         string[] argumentArray = arguments.Split("."); // This is to seperate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
         string levelId = argumentArray[0];
         string requestType = argumentArray[1];

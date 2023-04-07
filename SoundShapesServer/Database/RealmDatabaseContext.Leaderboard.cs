@@ -25,7 +25,7 @@ public partial class RealmDatabaseContext
         };
 
         LeaderboardEntry? previousEntry =
-            this._realm.All<LeaderboardEntry>().FirstOrDefault(e => e.levelId == levelId && e.user == user);
+            this._realm.All<LeaderboardEntry>().FirstOrDefault(e => e.levelId == levelId && e.user == user && e.completed);
 
         this._realm.Write(() =>
         {
@@ -72,6 +72,6 @@ public partial class RealmDatabaseContext
 
     public int GetPositionOfLeaderboardEntry(LeaderboardEntry entry)
     {
-        return this._realm.All<LeaderboardEntry>().Count(e => e.levelId == entry.levelId && e.score < entry.score) + 1;
+        return this._realm.All<LeaderboardEntry>().Count(e => e.levelId == entry.levelId && e.score < entry.score && e.completed) + 1;
     }
 }

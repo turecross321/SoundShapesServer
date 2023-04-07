@@ -17,7 +17,7 @@ public class LevelEndpoints : EndpointGroup
 {
     [Endpoint("/otg/~index:*.page", ContentType.Json)]
     [Endpoint("/otg/~index:level.page", ContentType.Json)]
-    public LevelResponsesWrapper? LevelsEndpoint(RequestContext context, RealmDatabaseContext database)
+    public LevelResponsesWrapper? LevelsEndpoint(RequestContext context, RealmDatabaseContext database, GameUser user)
     {
         string? category = context.QueryString["search"];
         string? order = context.QueryString["order"];
@@ -28,50 +28,50 @@ public class LevelEndpoints : EndpointGroup
         string? decorated = context.QueryString["decorated"];
 
         if (query != null && query.Contains("author.id:")) // Levels by player
-            return LevelsByUser(query, database, from, count);
+            return LevelsByUser(user, query, database, from, count);
         if (query != null && query.Contains("metadata.displayName:")) // Search
-            return SearchForLevels(query, database, from, count);
+            return SearchForLevels(user, query, database, from, count);
         if (category == "tagged3") // Daily Levels
-            return DailyLevels(database, from, count);
+            return DailyLevels(user, database, from, count);
                 
         return null;
     }
     
     [Endpoint("/otg/~identity:{userId}/~queued:*.page", ContentType.Json)]
     [Endpoint("/otg/~identity:{userId}/~like:*.page", ContentType.Json)]
-    public LevelResponsesWrapper? QueuedAndLiked(RequestContext context, RealmDatabaseContext database, string userId)
+    public LevelResponsesWrapper? QueuedAndLiked(RequestContext context, RealmDatabaseContext database, GameUser user, string userId)
     {
         // Queued levels and Liked levels should be two different categories, but there aren't any buttons seperating them, so i'm just not going to implement them as one for now
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
 
-        GameUser? user = database.GetUserWithId(userId);
+        GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
 
-        if (user == null) return null;
+        if (userToGetLevelsFrom == null) return null;
 
-        return database.GetUsersLikedLevels(user, from, count);
+        return database.GetUsersLikedLevels(user, userToGetLevelsFrom, from, count);
     }
     
-    private LevelResponsesWrapper? LevelsByUser(string query, RealmDatabaseContext database, int from, int count)
+    private LevelResponsesWrapper? LevelsByUser(GameUser user, string query, RealmDatabaseContext database, int from, int count)
     {
         string id = query.Split(":")[2];
 
-        GameUser? user = database.GetUserWithId(id);
+        GameUser? usersToGetLevelsFrom = database.GetUserWithId(id);
 
-        if (user == null) return null;
+        if (usersToGetLevelsFrom == null) return null;
 
-        return database.GetLevelsPublishedByUser(user, from, count);
+        return database.GetLevelsPublishedByUser(user, usersToGetLevelsFrom, from, count);
     }
 
-    private LevelResponsesWrapper? SearchForLevels(string query, RealmDatabaseContext database, int from, int count)
+    private LevelResponsesWrapper? SearchForLevels(GameUser user, string query, RealmDatabaseContext database, int from, int count)
     {
         string levelName = query.Split(":")[1];
 
-        return database.SearchForLevels(levelName, from, count);
+        return database.SearchForLevels(user, levelName, from, count);
     }
 
-    private LevelResponsesWrapper? DailyLevels(RealmDatabaseContext database, int from, int count)
+    private LevelResponsesWrapper? DailyLevels(GameUser user, RealmDatabaseContext database, int from, int count)
     {
-        return database.DailyLevels(from, count);
+        return database.DailyLevels(user, from, count);
     }
 }

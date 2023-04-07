@@ -27,7 +27,7 @@ public class Endpoints : EndpointGroup
         if (level == null) return new Response(HttpStatusCode.NotFound);
         
         if (action == "delete") return LevelPublishingEndpoints.UnPublishLevel(context, database, user, level);
-        if (action == "latest") return new Response(LevelHelper.ConvertGameLevelToLevelResponse(level), ContentType.Json);
+        if (action == "latest") return new Response(LevelHelper.ConvertGameLevelToLevelResponse(level, user), ContentType.Json);
 
         else return new Response(HttpStatusCode.NotFound);
     }

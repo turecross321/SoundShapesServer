@@ -1,7 +1,7 @@
 using Realms;
 using SoundShapesServer.Types.Levels;
 
-namespace SoundShapesServer.Types;
+namespace SoundShapesServer.Types.Levels;
 
 public class DailyLevel : RealmObject
 {

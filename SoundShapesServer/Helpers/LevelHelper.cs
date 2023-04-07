@@ -2,6 +2,7 @@ using System.Diagnostics;
 using SoundShapesServer.Enums;
 using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Levels;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Helpers;
@@ -34,7 +35,7 @@ public static class LevelHelper
         return response;
     }
 
-    public static LevelResponsesWrapper ConvertGameLevelArrayToLevelResponseWrapper(GameLevel[] levels, int totalEntries, int from, int count)
+    public static LevelResponsesWrapper ConvertGameLevelArrayToLevelResponseWrapper(GameLevel[] levels, GameUser user, int totalEntries, int from, int count)
     {
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
         
@@ -42,7 +43,7 @@ public static class LevelHelper
 
         for (int i = 0; i < levels.Length; i++)
         {
-            levelResponses[i] = ConvertGameLevelToLevelResponse(levels[i]);
+            levelResponses[i] = ConvertGameLevelToLevelResponse(levels[i], user);
         }
 
         LevelResponsesWrapper response = new()
@@ -56,7 +57,7 @@ public static class LevelHelper
         return response;
     }
     
-    public static LevelResponse ConvertGameLevelToLevelResponse(GameLevel level)
+    public static LevelResponse ConvertGameLevelToLevelResponse(GameLevel level, GameUser user)
     {
         string formattedLevelId = IdFormatter.FormatLevelId(level.id);
 
@@ -68,6 +69,7 @@ public static class LevelHelper
             title = level.title,
             description = level.description,
             type = ResponseType.level.ToString(),
+            completed = level.completionists.Contains(user),
             metadata = GenerateMetadataResponse(level)
         };
 
