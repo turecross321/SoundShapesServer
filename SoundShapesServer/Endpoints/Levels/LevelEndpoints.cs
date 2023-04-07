@@ -33,6 +33,8 @@ public class LevelEndpoints : EndpointGroup
             return SearchForLevels(user, query, database, from, count);
         if (category == "tagged3") // Daily Levels
             return DailyLevels(user, database, from, count);
+        if (category == "greatesthits") // Greatest Hits
+            return GreatestHits(user, database, from, count);
                 
         return null;
     }
@@ -73,5 +75,10 @@ public class LevelEndpoints : EndpointGroup
     private LevelResponsesWrapper? DailyLevels(GameUser user, RealmDatabaseContext database, int from, int count)
     {
         return database.DailyLevels(user, from, count);
+    }
+    
+    private LevelResponsesWrapper GreatestHits(GameUser user, RealmDatabaseContext database, int from, int count)
+    {
+        return database.GreatestHits(user, from, count);
     }
 }

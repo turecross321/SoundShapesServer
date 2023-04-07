@@ -169,6 +169,22 @@ public partial class RealmDatabaseContext
 
         return ConvertGameLevelArrayToLevelResponseWrapper(levels, user, totalEntries, from, count);
     }
+    public LevelResponsesWrapper GreatestHits(GameUser user, int from, int count)
+    {
+        IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
+            .AsEnumerable()
+            .OrderBy(l => l.uniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.created).TotalDays * 0.5);
+
+        int totalEntries = entries.Count();
+
+        GameLevel[] selectedEntries = entries
+            .Skip(from)
+            .Take(count)
+            .ToArray();
+
+        return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries, user, totalEntries, from, count);
+    }
+
 
     public void AddCompletionistToLevel(GameLevel level, GameUser user)
     {
