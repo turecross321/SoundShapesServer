@@ -15,7 +15,7 @@ public class AlbumEndpoints : EndpointGroup
 {
     // ?count=9&decorate=metadata&order=target.id:desc
     [Endpoint("/otg/~albums/~link:*.page", ContentType.Json)]
-    public static AlbumResponseWrapper GetAlbums(RequestContext context, RealmDatabaseContext database)
+    public AlbumResponseWrapper GetAlbums(RequestContext context, RealmDatabaseContext database)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
@@ -24,7 +24,7 @@ public class AlbumEndpoints : EndpointGroup
     }
 
     [Endpoint("/otg/~album:{albumId}/~link:*.page", ContentType.Json)]
-    public static Response GetAlbumLevels
+    public Response GetAlbumLevels
         (RequestContext context, RealmDatabaseContext database, GameUser user, string albumId)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");

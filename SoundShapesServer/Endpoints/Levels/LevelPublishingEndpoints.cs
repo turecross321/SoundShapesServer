@@ -14,6 +14,7 @@ namespace SoundShapesServer.Endpoints.Levels;
 
 public class LevelPublishingEndpoints : EndpointGroup
 {
+    // Gets called by Endpoints.cs
     public static Response PublishLevel(RequestContext context, MultipartFormDataParser parser, RealmDatabaseContext database, GameUser user)
     {
         string levelId = database.GenerateLevelId();

@@ -36,7 +36,7 @@ public class LevelInteractionEndpoints : EndpointGroup
     }
     
     [Endpoint("/otg/~identity:{userId}/~like:%2F~level%3A{arguments}", ContentType.Json)]
-    public static Response LevelLikeRequests(RequestContext context, RealmDatabaseContext database, GameUser user, string userId, string arguments)
+    public Response LevelLikeRequests(RequestContext context, RealmDatabaseContext database, GameUser user, string userId, string arguments)
     {
         string[] argumentArray = arguments.Split("."); // This is to seperate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
         string levelId = argumentArray[0];
@@ -52,7 +52,7 @@ public class LevelInteractionEndpoints : EndpointGroup
         return new Response(HttpStatusCode.NotFound);
     }
 
-    private static Response CheckIfUserHasLikedLevel(GameUser user, GameLevel level, RealmDatabaseContext database)
+    private Response CheckIfUserHasLikedLevel(GameUser user, GameLevel level, RealmDatabaseContext database)
     {
         if (database.IsUserLikingLevel(user, level))
         {
@@ -64,13 +64,13 @@ public class LevelInteractionEndpoints : EndpointGroup
 
         return new Response(HttpStatusCode.NotFound);
     }
-    private static Response LikeLevel(GameUser user, GameLevel level, RealmDatabaseContext database)
+    private Response LikeLevel(GameUser user, GameLevel level, RealmDatabaseContext database)
     {
         if (database.LikeLevel(user, level)) return new Response(HttpStatusCode.OK);
         else return new Response(HttpStatusCode.BadRequest);  
     }
 
-    private static Response UnLikeLevel(GameUser user, GameLevel level, RealmDatabaseContext database)
+    private Response UnLikeLevel(GameUser user, GameLevel level, RealmDatabaseContext database)
     {
         if (database.UnLikeLevel(user, level)) return new Response(HttpStatusCode.OK);
         else return new Response(HttpStatusCode.BadRequest);  

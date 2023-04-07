@@ -15,7 +15,7 @@ namespace SoundShapesServer.Endpoints.Levels;
 public class Endpoints : EndpointGroup
 {
     [Endpoint("/otg/~level:{args}")]
-    public static Response GetEndpoints(RequestContext context, RealmDatabaseContext database, GameUser user, string args)
+    public Response GetEndpoints(RequestContext context, RealmDatabaseContext database, GameUser user, string args)
     {
         string[] arguments = args.Split('.');
 
@@ -33,7 +33,7 @@ public class Endpoints : EndpointGroup
     }
 
     [Endpoint("/otg/~level:{args}", Method.Post)]
-    public static Response PostEndpoints(RequestContext context, Stream body, RealmDatabaseContext database, GameUser user, string args)
+    public Response PostEndpoints(RequestContext context, Stream body, RealmDatabaseContext database, GameUser user, string args)
     {
         string[] arguments = args.Split('.');
 

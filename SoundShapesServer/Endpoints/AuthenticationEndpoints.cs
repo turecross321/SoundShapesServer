@@ -20,7 +20,7 @@ public class AuthenticationEndpoints : EndpointGroup
     [Endpoint("/identity/login/token/psn", ContentType.Json, Method.Post)]
     [NullStatusCode(HttpStatusCode.Forbidden)]
     [Authentication(false)]
-    public static Response? Login(RequestContext context, RealmDatabaseContext database, Stream body)
+    public Response? Login(RequestContext context, RealmDatabaseContext database, Stream body)
     {
         Ticket ticket;
         try
@@ -73,7 +73,7 @@ public class AuthenticationEndpoints : EndpointGroup
 
     
     [Endpoint("/otg/~identity:*.hello", ContentType.Json)]
-    public static UserResponse Hello(RequestContext context, RealmDatabaseContext database, GameUser user)
+    public UserResponse Hello(RequestContext context, RealmDatabaseContext database, GameUser user)
     {
         return UserHelper.ConvertGameUserToUserResponse(user);
     }
