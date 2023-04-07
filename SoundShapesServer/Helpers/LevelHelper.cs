@@ -9,7 +9,7 @@ namespace SoundShapesServer.Helpers;
 
 public static class LevelHelper
 {
-    private static LevelMetadataResponse GenerateMetadataResponse(GameLevel level)
+    public static LevelMetadataResponse GenerateMetadataResponse(GameLevel level)
     {
         float difficulty;
 
@@ -20,7 +20,7 @@ public static class LevelHelper
         }
         else difficulty = 0;
         
-        LevelMetadataResponse response = new LevelMetadataResponse()
+        LevelMetadataResponse response = new ()
         {
             displayName = level.title,
             
@@ -35,7 +35,7 @@ public static class LevelHelper
         return response;
     }
 
-    public static LevelResponsesWrapper ConvertGameLevelArrayToLevelResponseWrapper(GameLevel[] levels, GameUser user, int totalEntries, int from, int count)
+    public static LevelResponseWrapper ConvertGameLevelArrayToLevelResponseWrapper(GameLevel[] levels, GameUser user, int totalEntries, int from, int count)
     {
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
         
@@ -46,7 +46,7 @@ public static class LevelHelper
             levelResponses[i] = ConvertGameLevelToLevelResponse(levels[i], user);
         }
 
-        LevelResponsesWrapper response = new()
+        LevelResponseWrapper response = new()
         {
             items = levelResponses,
             count = levelResponses.Length,

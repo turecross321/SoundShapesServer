@@ -3,7 +3,7 @@ using MongoDB.Bson;
 using Newtonsoft.Json;
 using Realms;
 using SoundShapesServer.Database;
-using SoundShapesServer.Type.Relations;
+using SoundShapesServer.Types.Relations;
 
 namespace SoundShapesServer.Types.Levels;
 

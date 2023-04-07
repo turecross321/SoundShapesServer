@@ -52,4 +52,16 @@ public static class UserHelper
             displayName = user.display_name
         };
     }
+
+    public static UserMetadataResponse GenerateUserMetadata(GameUser user)
+    {
+        return new UserMetadataResponse()
+        {
+            displayName = user.display_name,
+            follows_of_ever_count = user.followers.Count(), // Followers
+            levels_by_ever_count = user.publishedLevels.Count(), // Level Count
+            follows_by_ever_count = user.following.Count(), // Following
+            likes_by_ever_count = user.likedLevels.Count(), // Liked And Queued Levels
+        };
+    }
 }

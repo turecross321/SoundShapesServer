@@ -1,10 +1,10 @@
 using Newtonsoft.Json;
 
-namespace SoundShapesServer.Responses.Following;
+namespace SoundShapesServer.Responses.Albums;
 
-public class FollowingUserResponsesWrapper
+public class AlbumLevelResponseWrapper
 {
-    public FollowingUserResponse[] items { get; set; }
+    public AlbumLevelResponse[] items { get; set; }
     [JsonProperty(NullValueHandling=NullValueHandling.Ignore)] public int? previousToken { get; set; }
     [JsonProperty(NullValueHandling=NullValueHandling.Ignore)] public int? nextToken { get; set; }
 }

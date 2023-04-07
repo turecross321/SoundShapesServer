@@ -12,7 +12,7 @@ public class LevelPublishResponse
     public IList<string> dependencies { get; set; }
     public string visibility { get; set; }
     public string description { get; set; }
-    public ExtraData extraData { get; set; }
+    public ExtraDataResponse extraData { get; set; }
     public LevelParent parent { get; set; }
     public long creationTime { get; set; }
 }

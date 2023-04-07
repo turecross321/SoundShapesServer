@@ -15,7 +15,7 @@ public class NewsHelper
         if (title != null) jObject.Add("00_title", title);
         if (fullText != null) jObject.Add("00_fullText", fullText);
         if (text != null) jObject.Add("00_url", url);
-        
+
         json.Add(jObject);
 
         return json;

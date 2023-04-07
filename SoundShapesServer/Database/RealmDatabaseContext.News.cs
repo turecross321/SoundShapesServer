@@ -12,8 +12,8 @@ public partial class RealmDatabaseContext
         else return CreateNewsEntry(new NewsEntry()
         {
             language = "global",
-            text = "",
-            title = "Welcome back to Sound Shapes!",
+            text = "Welcome back to Sound Shapes!",
+            title = "News",
             fullText = "",
             url = "https://example.com/"
         });

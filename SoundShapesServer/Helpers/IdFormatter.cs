@@ -26,4 +26,19 @@ public class IdFormatter
     {
         return $"/~identity:{followerId}/~follow:/~identity:{followedId}";
     }
+
+    public static string FormatAlbumId(string albumId)
+    {
+        return $"/~album:{albumId}";
+    }
+    public static string FormatAlbumLevelId(string albumId, string levelId)
+    {
+        // $"/~album:{albumId}/~link:/~level:{levelId}";
+        return $"/~album:{albumId}/~link:%2F%7Elevel%3A{levelId}";
+    }
+
+    public static string FormatVersionId(string id)
+    {
+        return $"~version:{id}";
+    }
 }

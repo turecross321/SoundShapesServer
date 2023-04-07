@@ -8,5 +8,8 @@ public enum ResponseType
     level,
     upload,
     like,
-    follow
+    follow,
+    album,
+    link,
+    version
 }

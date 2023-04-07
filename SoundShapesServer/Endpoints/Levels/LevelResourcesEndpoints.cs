@@ -53,13 +53,18 @@ public class LevelResourcesEndpoints : EndpointGroup
             MemoryStream memoryStream = new MemoryStream();
             file.Data.CopyTo(memoryStream);
             byte[] byteArray = memoryStream.ToArray();
-            
+
+            string fileName = levelId;
             string fileExtension = file.ContentType.Split("/")[1];
             
-            context.DataStore.WriteToStore($"{levelId}.{fileExtension}", byteArray);
+            fileName += fileExtension;
+
+            string key = $"{fileName}";
+            
+            context.DataStore.WriteToStore(key, byteArray);
         }
 
-        LevelPublishRequest levelRequest = new LevelPublishRequest()
+        LevelPublishRequest levelRequest = new ()
         {
             title = parser.GetParameterValue("title"),
             description = parser.GetParameterValue("description"),
@@ -95,10 +100,12 @@ public class LevelResourcesEndpoints : EndpointGroup
 
         fileName += fileExtension;
         
-        if (!context.DataStore.ExistsInStore(fileName))
+        string key = $"{fileName}";
+        
+        if (!context.DataStore.ExistsInStore(key))
             return HttpStatusCode.NotFound;
 
-        if (!context.DataStore.TryGetDataFromStore(fileName, out byte[]? data))
+        if (!context.DataStore.TryGetDataFromStore(key, out byte[]? data))
             return HttpStatusCode.InternalServerError;
 
         Debug.Assert(data != null);

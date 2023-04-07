@@ -1,10 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
 using Bunkum.HttpServer.Database;
 using Realms;
 using SoundShapesServer.Authentication;
-using SoundShapesServer.Requests;
-using SoundShapesServer.Type.Relations;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Relations;
 
@@ -21,19 +19,18 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
             SchemaVersion = 1,
             Schema = new []
             {
-                typeof(ProfileMetadata),
                 typeof(FollowRelation),
                 typeof(LevelLikeRelation),
                 typeof(GameUser),
                 typeof(GameSession),
                 typeof(Service),
-                typeof(ExtraData),
                 typeof(LevelParent),
-                typeof(Metadata),
                 typeof(GameLevel),
                 typeof(NewsEntry),
                 typeof(LeaderboardEntry),
-                typeof(DailyLevel)
+                typeof(DailyLevel),
+                typeof(LinerNote),
+                typeof(GameAlbum)
             },
             MigrationCallback = (migration, oldVersion) =>
             {

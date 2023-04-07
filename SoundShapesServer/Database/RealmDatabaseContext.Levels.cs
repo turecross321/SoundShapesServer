@@ -82,7 +82,7 @@ public partial class RealmDatabaseContext
             dependencies = new List<string>(),
             visibility = level.visibility,
             description = level.description,
-            extraData = new ExtraData() { sce_np_language = level.scp_np_language },
+            extraData = new ExtraDataResponse() { sce_np_language = level.scp_np_language },
             parent = new()
             {
                 id = IdFormatter.FormatLevelId(level.id),
@@ -103,7 +103,7 @@ public partial class RealmDatabaseContext
     }
     
     public GameLevel? GetLevelWithId(string id) => this._realm.All<GameLevel>().FirstOrDefault(l => l.id == id);
-    public LevelResponsesWrapper GetLevelsPublishedByUser(GameUser user, GameUser userToGetLevelsFrom, int from, int count)
+    public LevelResponseWrapper GetLevelsPublishedByUser(GameUser user, GameUser userToGetLevelsFrom, int from, int count)
     {
         IQueryable<GameLevel> entries = this._realm.All<GameLevel>()
             .Where(l => l.author == userToGetLevelsFrom);
@@ -119,7 +119,7 @@ public partial class RealmDatabaseContext
         return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries, user, totalEntries, from, count);
     }
 
-    public LevelResponsesWrapper? SearchForLevels(GameUser user, string query, int from, int count)
+    public LevelResponseWrapper? SearchForLevels(GameUser user, string query, int from, int count)
     {
         string[] keywords = query.Split(' ');
         if (keywords.Length == 0) return null;
@@ -146,7 +146,7 @@ public partial class RealmDatabaseContext
         return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries, user, totalEntries, from, count);
     }
 
-    public LevelResponsesWrapper? DailyLevels(GameUser user, int from, int count)
+    public LevelResponseWrapper DailyLevels(GameUser user, int from, int count)
     {
         List<DailyLevel> entries = this._realm.All<DailyLevel>()
             .OrderByDescending(l=>l.date)
@@ -169,22 +169,22 @@ public partial class RealmDatabaseContext
 
         return ConvertGameLevelArrayToLevelResponseWrapper(levels, user, totalEntries, from, count);
     }
-    public LevelResponsesWrapper GreatestHits(GameUser user, int from, int count)
+    public LevelResponseWrapper GreatestHits(GameUser user, int from, int count)
     {
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()
             .OrderByDescending(l => l.uniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.created).TotalDays * 0.5);
 
-        int totalEntries = entries.Count();
+        IEnumerable<GameLevel> gameLevels = entries.ToList();
+        int totalEntries = gameLevels.Count();
 
-        GameLevel[] selectedEntries = entries
+        GameLevel[] selectedEntries = gameLevels
             .Skip(from)
             .Take(count)
             .ToArray();
 
         return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries, user, totalEntries, from, count);
     }
-
 
     public void AddCompletionistToLevel(GameLevel level, GameUser user)
     {

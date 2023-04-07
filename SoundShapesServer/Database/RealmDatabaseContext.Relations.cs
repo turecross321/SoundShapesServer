@@ -1,9 +1,8 @@
 using SoundShapesServer.Responses.Following;
 using SoundShapesServer.Responses.Levels;
-using SoundShapesServer.Type.Relations;
+using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Relations;
 using static SoundShapesServer.Helpers.LevelHelper;
 using static SoundShapesServer.Helpers.UserHelper;
 
@@ -55,7 +54,7 @@ public partial class RealmDatabaseContext
         return ConvertUserArrayToFollowingUsersResponsesWrapper(follower, following, totalEntries, from, count);
     }
 
-    public LevelResponsesWrapper? GetUsersLikedLevels(GameUser user, GameUser userToGetLevelsFrom, int from, int count)
+    public LevelResponseWrapper? GetUsersLikedLevels(GameUser user, GameUser userToGetLevelsFrom, int from, int count)
     {
         IQueryable<LevelLikeRelation> relations = this._realm.All<LevelLikeRelation>()
             .Where(l => l.liker == userToGetLevelsFrom);

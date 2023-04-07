@@ -8,6 +8,7 @@ using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Enums;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Sessions;
 using SoundShapesServer.Types;
 using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
@@ -19,7 +20,7 @@ public class AuthenticationEndpoints : EndpointGroup
     [Endpoint("/identity/login/token/psn", ContentType.Json, Method.Post)]
     [NullStatusCode(HttpStatusCode.Forbidden)]
     [Authentication(false)]
-    public Response? Login(RequestContext context, RealmDatabaseContext database, Stream body)
+    public static Response? Login(RequestContext context, RealmDatabaseContext database, Stream body)
     {
         Ticket ticket;
         try
@@ -55,7 +56,7 @@ public class AuthenticationEndpoints : EndpointGroup
             service = service
         };
 
-        GameSessionResponseWrapper responseWrapper = new GameSessionResponseWrapper()
+        GameSessionResponseWrapper responseWrapper = new ()
         {
             session = sessionResponse
         };
@@ -72,9 +73,9 @@ public class AuthenticationEndpoints : EndpointGroup
 
     
     [Endpoint("/otg/~identity:*.hello", ContentType.Json)]
-    public GameUser Hello(RequestContext context, RealmDatabaseContext database, GameUser user)
+    public static UserResponse Hello(RequestContext context, RealmDatabaseContext database, GameUser user)
     {
-        return user;
+        return UserHelper.ConvertGameUserToUserResponse(user);
     }
     
 }
