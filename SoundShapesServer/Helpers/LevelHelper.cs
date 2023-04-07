@@ -12,10 +12,10 @@ public static class LevelHelper
     {
         float difficulty;
 
-        if (level.uniquePlays.Count > 0)
+        if (level.deaths > 0)
         {
-            float rate = (float)level.completions.Count / level.uniquePlays.Count;
-            difficulty = Math.Clamp(5 - rate * 5, 1, 5);
+            float rate = level.deaths / level.plays;
+            difficulty = Math.Clamp(rate, 0, 5);
         }
         else difficulty = 0;
         
