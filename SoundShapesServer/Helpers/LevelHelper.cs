@@ -66,7 +66,7 @@ public static class LevelHelper
         {
             id = formattedLevelId,
             author = UserHelper.UserToUserResponse(level.author),
-            latestVersion = IdFormatter.FormatLevelIdAndVersion(level.id, level.created.ToUnixTimeMilliseconds()),
+            latestVersion = IdFormatter.FormatLevelIdAndVersion(level.id, level.modified.ToUnixTimeMilliseconds()),
             title = level.title,
             description = level.description,
             type = ResponseType.level.ToString(),

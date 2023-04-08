@@ -49,6 +49,14 @@ public partial class RealmDatabaseContext
         return GeneratePublishResponse(level);
     }
 
+    public void SetFeaturedLevel(GameUser user, GameLevel level)
+    {
+        this._realm.Write((() =>
+        {
+            user.featuredLevel = level;
+        }));
+    }
+
     private const string LevelIdCharacters = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private const int LevelIdLength = 8;
     
