@@ -1,2 +1,2 @@
 # SoundShapesServer
-An early-in-development custom server for Sound Shapes
+A custom server for Sound Shapes
