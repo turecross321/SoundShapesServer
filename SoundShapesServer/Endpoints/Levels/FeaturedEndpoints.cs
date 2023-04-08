@@ -10,7 +10,8 @@ namespace SoundShapesServer.Endpoints.Levels;
 
 public class FeaturedEndpoints : EndpointGroup
 {
-    // TODO: MAKE THIS MODULAR
+    // TODO: MAKE THIS MODULAR AND ADD SUPPORT FOR DIFFERENT LANGUAGES
+    [Endpoint("/otg/global/featured/~metadata:*.get")]
     [Endpoint("/otg/global/featured/{language}/~metadata:*.get", ContentType.Json)]
     public FeaturedResponse Featured(RequestContext context, string language)
     {
