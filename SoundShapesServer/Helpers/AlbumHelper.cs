@@ -1,6 +1,4 @@
-using Bunkum.HttpServer.Responses;
 using Newtonsoft.Json;
-using SoundShapesServer.Enums;
 using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Albums;
 using SoundShapesServer.Responses.Levels;
@@ -42,18 +40,18 @@ public static class AlbumHelper
             id = album.id,
             type = ResponseType.link.ToString(),
             timestamp = album.date.ToUnixTimeMilliseconds().ToString(),
-            target = new AlbumTarget()
+            target = new AlbumTarget
             {
                 id = IdFormatter.FormatAlbumId(album.id),
                 type = ResponseType.album.ToString(),
-                metadata = new AlbumMetadata()
+                metadata = new AlbumMetadata
                 {
                     albumArtist = album.artist,
                     linerNotes = linerNotesString,
-                    sidePanelURL = album.sidePanelURL,
-                    date = "Sept 17 2015", // TODO: REMOVE THIS SHIT
+                    sidePanelURL = GenerateAlbumResourceUrl(album.id, AlbumResourceType.sidePanel),
+                    date = album.date.ToString(),
                     displayName = album.name,
-                    thumbnailURL = album.thumbnailURL
+                    thumbnailURL = GenerateAlbumResourceUrl(album.id, AlbumResourceType.thumbnail)
                 }
             }
         };
@@ -164,5 +162,10 @@ public static class AlbumHelper
         }
 
         return responses.ToArray();
+    }
+
+    private static string GenerateAlbumResourceUrl(string albumId, AlbumResourceType type)
+    {
+        return $"otg/~album:{albumId}/~content:{type.ToString()}.png/data.get";
     }
 }

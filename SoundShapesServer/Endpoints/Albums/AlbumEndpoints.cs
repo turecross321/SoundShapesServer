@@ -4,10 +4,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
-using SoundShapesServer.Enums;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Albums;
-using SoundShapesServer.Responses.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 

@@ -1,6 +1,3 @@
-using System.Diagnostics;
-using SoundShapesServer.Enums;
-using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;

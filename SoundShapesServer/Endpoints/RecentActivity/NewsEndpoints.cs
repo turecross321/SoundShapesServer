@@ -1,15 +1,9 @@
-using System.Net;
-using System.Net.Http.Json;
-using System.Text.Json.Nodes;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Responses;
 using Newtonsoft.Json.Linq;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
-using SoundShapesServer.Enums;
-using SoundShapesServer.Responses;
 using SoundShapesServer.Types;
 using static SoundShapesServer.Helpers.NewsHelper;
 

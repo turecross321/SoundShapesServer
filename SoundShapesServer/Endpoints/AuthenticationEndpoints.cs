@@ -6,7 +6,6 @@ using Bunkum.HttpServer.Responses;
 using NPTicket;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
-using SoundShapesServer.Enums;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Sessions;
@@ -34,7 +33,7 @@ public class AuthenticationEndpoints : EndpointGroup
         }
 
         string platform = PlatformHelper.GetPlatform(ticket.TitleId).ToString();
-        if (platform == Platform.unknown.ToString()) return null; 
+        if (platform == PlatformType.unknown.ToString()) return null; 
         
         GameUser? user = database.GetUserWithDisplayName(ticket.Username);
         user ??= database.CreateUser(ticket.Username);

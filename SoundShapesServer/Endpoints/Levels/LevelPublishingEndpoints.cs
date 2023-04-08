@@ -19,7 +19,7 @@ public class LevelPublishingEndpoints : EndpointGroup
     {
         string levelId = database.GenerateLevelId();
         
-        LevelPublishRequest levelRequest = LevelResourcesEndpoints.UploadResources(context, parser, levelId);
+        LevelPublishRequest levelRequest = ResourceEndpoints.UploadResources(context, parser, levelId);
 
         LevelPublishResponse publishedLevel = database.PublishLevel(levelRequest, user);
 
@@ -34,7 +34,7 @@ public class LevelPublishingEndpoints : EndpointGroup
         if (level == null) return new Response(HttpStatusCode.NotFound);
         if (!level.author.Equals(user)) return new Response(HttpStatusCode.Forbidden);
         
-        LevelPublishRequest levelRequest = LevelResourcesEndpoints.UploadResources(context, parser, levelId);
+        LevelPublishRequest levelRequest = ResourceEndpoints.UploadResources(context, parser, levelId);
         
         LevelPublishResponse? publishedLevel = database.UpdateLevel(levelRequest, level, user);
 

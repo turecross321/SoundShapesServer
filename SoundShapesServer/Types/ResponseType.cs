@@ -1,6 +1,4 @@
-using Realms;
-
-namespace SoundShapesServer.Enums;
+namespace SoundShapesServer.Types;
 
 public enum ResponseType
 {

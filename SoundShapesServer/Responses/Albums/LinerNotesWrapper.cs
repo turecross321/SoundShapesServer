@@ -1,6 +1,3 @@
-using SoundShapesServer.Types;
-using SoundShapesServer.Types.Albums;
-
 namespace SoundShapesServer.Responses.Albums;
 
 public class LinerNotesWrapper

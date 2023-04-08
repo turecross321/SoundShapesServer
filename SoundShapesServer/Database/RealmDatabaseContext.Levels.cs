@@ -1,6 +1,4 @@
 using Realms;
-using Realms.Sync;
-using SoundShapesServer.Enums;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests;
 using SoundShapesServer.Responses.Levels;
@@ -22,7 +20,7 @@ public partial class RealmDatabaseContext
             author = user,
             title = request.title,
             description = request.description,
-            visibility = Visibility.EVERYONE.ToString(),
+            visibility = VisibilityType.EVERYONE.ToString(),
             scp_np_language = request.sce_np_language,
             created = DateTimeOffset.UtcNow,
             modified = DateTimeOffset.UtcNow

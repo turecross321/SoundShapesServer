@@ -1,4 +1,4 @@
-namespace SoundShapesServer.Enums;
+namespace SoundShapesServer.Types;
 
 public enum FontType
 {

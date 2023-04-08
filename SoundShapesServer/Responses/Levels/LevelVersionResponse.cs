@@ -1,4 +1,4 @@
-using SoundShapesServer.Enums;
+using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Responses.Levels;
 

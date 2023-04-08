@@ -1,6 +1,5 @@
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Albums;
-using SoundShapesServer.Responses.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;

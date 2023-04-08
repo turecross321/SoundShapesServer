@@ -1,5 +1,5 @@
-using SoundShapesServer.Enums;
 using SoundShapesServer.Responses.Levels;
+using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Responses.Albums;
 

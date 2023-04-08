@@ -5,19 +5,17 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using HttpMultipartParser;
-using Newtonsoft.Json.Serialization;
 using SoundShapesServer.Database;
-using SoundShapesServer.Enums;
 using SoundShapesServer.Requests;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Levels;
 
-public class LevelResourcesEndpoints : EndpointGroup
+public class ResourceEndpoints : EndpointGroup
 {
     // Called from Publishing Endpoints
-    public static LevelPublishRequest UploadResources(RequestContext context, MultipartFormDataParser parser, string levelId)
+    public static LevelPublishRequest? UploadResources(RequestContext context, MultipartFormDataParser parser, string levelId)
     {
         FilePart? image = null;
         FilePart? level = null;
@@ -27,13 +25,13 @@ public class LevelResourcesEndpoints : EndpointGroup
         {
             switch (file.ContentType)
             {
-                case "image/png":
+                case IFileType.image:
                     image = file;
                     break;
-                case "application/vnd.soundshapes.level":
+                case IFileType.level:
                     level = file;
                     break;
-                case "application/vnd.soundshapes.sound":
+                case IFileType.sound:
                     sound = file;
                     break;
                 default:
@@ -55,11 +53,10 @@ public class LevelResourcesEndpoints : EndpointGroup
             byte[] byteArray = memoryStream.ToArray();
 
             string fileName = levelId;
-            string fileExtension = file.ContentType.Split("/")[1];
-            
-            fileName += fileExtension;
+            // gets the .level from application/vnd.soundshapes.level e.g.
+            string fileExtension = file.ContentType.Split("/").Last().Split(".").Last();
 
-            string key = $"{fileName}";
+            string key = $"{fileName}.{fileExtension}";
             
             context.DataStore.WriteToStore(key, byteArray);
         }
@@ -77,29 +74,9 @@ public class LevelResourcesEndpoints : EndpointGroup
         
         return levelRequest;
     }
-    private Response GetResource(RequestContext context, string levelId, FileType fileType)
+    private static Response GetResource(RequestContext context, string fileName)
     {
-        string fileName = levelId;
 
-        string fileExtension = "";
-        
-        switch (fileType)
-        {
-            case FileType.image:
-                fileExtension = ".png";
-                break;
-            case FileType.level:
-                fileExtension = ".vnd.soundshapes.level";
-                break;
-            case FileType.sound:
-                fileExtension = ".vnd.soundshapes.sound";
-                break;
-            default:
-                return HttpStatusCode.NotFound;
-        }
-
-        fileName += fileExtension;
-        
         string key = $"{fileName}";
         
         if (!context.DataStore.ExistsInStore(key))
@@ -112,14 +89,26 @@ public class LevelResourcesEndpoints : EndpointGroup
         return new Response(data, ContentType.BinaryData);
     }
 
-    [Endpoint("/otg/~level:{levelId}/~version:{versionId}/~content:{fileTypeString}/data.get")]
-    public Response GetLevelResource(RequestContext context, RealmDatabaseContext database, GameUser user, string levelId, string versionId, string fileTypeString)
+    [Endpoint("/otg/~level:{levelId}/~version:{versionId}/~content:{file}/data.get")]
+    public Response GetLevelResource
+        (RequestContext context, RealmDatabaseContext database, GameUser user, string levelId, string versionId, string file)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;
         
-        Enum.TryParse(fileTypeString, true, out FileType fileType);
+        string fileName = levelId;
 
-        return GetResource(context, levelId, fileType);
+        string key = fileName + "." + file;
+
+        return GetResource(context, key);
+    }
+
+    [Endpoint("/otg/~album:{albumId}/~content:{file}/data.get")]
+    public Response GetAlbumResource
+        (RequestContext context, RealmDatabaseContext database, string albumId, string file)
+    {
+        string key = albumId + "_" + file;
+        
+        return GetResource(context, key);
     }
 }

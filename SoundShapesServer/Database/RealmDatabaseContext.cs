@@ -1,7 +1,5 @@
 using Realms;
 using Bunkum.HttpServer.Database;
-using SoundShapesServer.Types;
-using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Database;
 

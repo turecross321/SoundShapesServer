@@ -1,6 +1,3 @@
-using Bunkum.HttpServer;
-using SoundShapesServer.Database;
-using SoundShapesServer.Enums;
 using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Following;
 using SoundShapesServer.Types;

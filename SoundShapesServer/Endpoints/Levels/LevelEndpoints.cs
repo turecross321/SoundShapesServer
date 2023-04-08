@@ -1,14 +1,8 @@
-using System.Net;
-using System.Runtime.CompilerServices;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
-using SoundShapesServer.Enums;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Levels;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.Levels;
 using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
 
 namespace SoundShapesServer.Endpoints.Levels;

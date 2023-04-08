@@ -1,9 +1,5 @@
-using MongoDB.Bson.Serialization.Conventions;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests;
-using SoundShapesServer.Responses.Leaderboards;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Database;
 

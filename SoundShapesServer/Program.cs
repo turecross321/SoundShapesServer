@@ -1,11 +1,9 @@
 ﻿using System.Reflection;
 using Bunkum.HttpServer;
-using Bunkum.HttpServer.Database;
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
-using SoundShapesServer.Types;
 
 BunkumHttpServer server = new()
 {
