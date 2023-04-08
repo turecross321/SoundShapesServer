@@ -21,16 +21,20 @@ public class LevelEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
         string? decorated = context.QueryString["decorated"];
 
-        if (query != null && query.Contains("author.id:")) // Levels by player
+        if (query != null && query.Contains("author.id:"))
             return LevelsByUser(user, query, database, from, count);
-        if (query != null && query.Contains("metadata.displayName:")) // Search
+        
+        if (query != null && query.Contains("metadata.displayName:"))
             return SearchForLevels(user, query, database, from, count);
-        if (category == "tagged3") // Daily Levels
-            return DailyLevels(user, database, from, count);
-        if (category == "greatesthits") // Greatest Hits
-            return GreatestHits(user, database, from, count);
-        if (category == "newest") // Newest Levels
-            return DailyLevels(user, database, from, count);
+        
+        if (category == "tagged3")
+            return database.DailyLevels(user, from, count);
+        
+        if (category == "greatesthits")
+            return database.GreatestHits(user, from, count);
+        
+        if (category == "newest")
+            return database.NewestLevels(user, from, count);
                 
         return null;
     }
@@ -66,15 +70,5 @@ public class LevelEndpoints : EndpointGroup
         string levelName = query.Split(":")[1];
 
         return database.SearchForLevels(user, levelName, from, count);
-    }
-
-    private LevelsWrapper? DailyLevels(GameUser user, RealmDatabaseContext database, int from, int count)
-    {
-        return database.DailyLevels(user, from, count);
-    }
-    
-    private LevelsWrapper GreatestHits(GameUser user, RealmDatabaseContext database, int from, int count)
-    {
-        return database.GreatestHits(user, from, count);
     }
 }
