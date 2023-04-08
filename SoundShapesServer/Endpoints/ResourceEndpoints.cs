@@ -16,7 +16,7 @@ namespace SoundShapesServer.Endpoints.Levels;
 public class ResourceEndpoints : EndpointGroup
 {
     // Called from Publishing Endpoints
-    public static LevelPublishRequest? UploadResources(RequestContext context, MultipartFormDataParser parser, string levelId)
+    public static LevelPublishRequest? UploadLevelResources(RequestContext context, MultipartFormDataParser parser, string levelId)
     {
         FilePart? image = null;
         FilePart? level = null;
