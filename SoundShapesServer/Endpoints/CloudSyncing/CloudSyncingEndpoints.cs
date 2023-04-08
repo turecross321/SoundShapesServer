@@ -21,8 +21,12 @@ public class CloudSyncingEndpoints : EndpointGroup
         string saveString = parser.GetParameterValue("file");
         byte[] newSave = Encoding.UTF8.GetBytes(saveString);
 
+        // I shit you not, this is how the game tells the server it wants to delete the save:
+        if (CloudSyncHelper.IsSaveEmpty(newSave)) return DeleteSave(context, user); 
+
         byte[] combinedSave = newSave;
         
+        // If there's an old one, combine them
         if (context.DataStore.TryGetDataFromStore(user.id + "_save", out byte[]? oldSave))
         {
             combinedSave = CloudSyncHelper.CombineSaves(oldSave, newSave);
@@ -31,6 +35,12 @@ public class CloudSyncingEndpoints : EndpointGroup
         context.DataStore.WriteToStore(user.id + "_save", combinedSave);
 
         return HttpStatusCode.OK;
+    }
+
+    private Response DeleteSave(RequestContext context, GameUser user)
+    {
+        if (!context.DataStore.RemoveFromStore(user.id + "_save")) return HttpStatusCode.InternalServerError;
+        else return HttpStatusCode.OK;
     }
 
     [Endpoint("/otg/~identity:{userId}/~content:progress/data.get")]

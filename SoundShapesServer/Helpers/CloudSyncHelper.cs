@@ -50,4 +50,12 @@ public class CloudSyncHelper
 
         return combinedSaves;
     }
+
+    public static bool IsSaveEmpty(byte[] save)
+    {
+        string saveString = System.Text.Encoding.UTF8.GetString(save, 0, save.Length);
+        JObject json = JObject.Parse(saveString);
+
+        return json.Properties().Count() <= 1;
+    }
 }
