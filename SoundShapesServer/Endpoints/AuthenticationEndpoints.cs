@@ -75,7 +75,7 @@ public class AuthenticationEndpoints : EndpointGroup
     [Endpoint("/otg/~identity:*.hello", ContentType.Json)]
     public UserResponse Hello(RequestContext context, RealmDatabaseContext database, GameUser user)
     {
-        return UserHelper.ConvertGameUserToUserResponse(user);
+        return UserHelper.UserToUserResponse(user);
     }
     
 }

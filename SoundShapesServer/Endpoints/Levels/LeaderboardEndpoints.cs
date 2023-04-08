@@ -50,7 +50,7 @@ public class LeaderboardEndpoints : EndpointGroup
 
     [Endpoint("/otg/global/~campaign:{levelId}/~leaderboard.page", ContentType.Json)]
     [Endpoint("/otg/~level:{levelId}/~leaderboard.page", ContentType.Json)]
-    public LeaderboardEntriesResponse? GetLeaderboard(RequestContext context, RealmDatabaseContext database, string levelId)
+    public LeaderboardEntriesWrapper? GetLeaderboard(RequestContext context, RealmDatabaseContext database, string levelId)
     {
         int count = int.Parse(context.QueryString["count"] ?? throw new InvalidOperationException());
         int from = int.Parse(context.QueryString["from"] ?? "0");
@@ -66,12 +66,12 @@ public class LeaderboardEndpoints : EndpointGroup
             responseEntries[i] = new LeaderboardEntryResponse()
             {
                 position = from + (i + 1),
-                entrant = UserHelper.ConvertGameUserToUserResponse(entries[i].user),
+                entrant = UserHelper.UserToUserResponse(entries[i].user),
                 score = entries[i].score
             };
         }
 
-        return new LeaderboardEntriesResponse
+        return new LeaderboardEntriesWrapper
         {
             items = responseEntries,
             nextToken = nextToken,
@@ -90,7 +90,7 @@ public class LeaderboardEndpoints : EndpointGroup
         response[0] = new LeaderboardEntryResponse()
         {
             position = database.GetPositionOfLeaderboardEntry(entry),
-            entrant = UserHelper.ConvertGameUserToUserResponse(entry.user),
+            entrant = UserHelper.UserToUserResponse(entry.user),
             score = entry.score
         };
 

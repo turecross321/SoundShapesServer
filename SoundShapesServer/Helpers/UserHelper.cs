@@ -9,7 +9,7 @@ namespace SoundShapesServer.Helpers;
 
 public static class UserHelper
 {
-    public static FollowingUsersWrapper? ConvertUserArrayToFollowingUsersResponsesWrapper
+    public static FollowingUsersWrapper? UsersToFollowingUsersWrapper
     (GameUser user, GameUser[] users, int totalRelations, int from, int count)
     {
         (int? nextToken, int? previousToken) = PaginationHelper.GetPageTokens(totalRelations, from, count);
@@ -41,7 +41,7 @@ public static class UserHelper
 
         return responsesWrapper;
     }
-    public static UserResponse ConvertGameUserToUserResponse(GameUser user)
+    public static UserResponse UserToUserResponse(GameUser user)
     {
         string formattedAuthorId = IdFormatter.FormatUserId(user.id);
 

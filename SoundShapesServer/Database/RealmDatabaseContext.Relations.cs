@@ -29,7 +29,7 @@ public partial class RealmDatabaseContext
             followers[i] = selectedRelations[i].follower;
         }
 
-        return ConvertUserArrayToFollowingUsersResponsesWrapper(userBeingFollowed, followers, totalEntries, from, count);
+        return UsersToFollowingUsersWrapper(userBeingFollowed, followers, totalEntries, from, count);
     }
 
     public FollowingUsersWrapper? GetFollowedUsers(GameUser follower, int from, int count)
@@ -51,7 +51,7 @@ public partial class RealmDatabaseContext
             following[i] = selectedRelations[i].userBeingFollowed;
         }
 
-        return ConvertUserArrayToFollowingUsersResponsesWrapper(follower, following, totalEntries, from, count);
+        return UsersToFollowingUsersWrapper(follower, following, totalEntries, from, count);
     }
 
     public LevelsWrapper? GetUsersLikedLevels(GameUser user, GameUser userToGetLevelsFrom, int from, int count)
@@ -74,7 +74,7 @@ public partial class RealmDatabaseContext
             levels[i] = selectedRelations[i].level;
         }
 
-        return ConvertGameLevelArrayToLevelResponseWrapper(levels, user, totalEntries, from, count);
+        return LevelsToLevelsWrapper(levels, user, totalEntries, from, count);
     }
 
     public bool FollowUser(GameUser follower, GameUser userBeingFollowed)

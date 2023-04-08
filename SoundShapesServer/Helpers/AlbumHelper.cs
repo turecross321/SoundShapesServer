@@ -34,7 +34,7 @@ public static class AlbumHelper
     private static AlbumResponse AlbumToAlbumResponse(GameAlbum album)
     {
         LinerNoteResponse[] linerNoteResponses = LinerNotesToLinerNoteResponses(album.linerNotes);
-        LinerNoteResponseWrapper linerNoteWrapper = LinerNoteResponsesToLinerNoteResponseWrapper(linerNoteResponses);
+        LinerNotesWrapper linerNoteWrapper = LinerNoteResponsesToLinerNoteResponseWrapper(linerNoteResponses);
         string linerNotesString = JsonConvert.SerializeObject(linerNoteWrapper);
         
         return new AlbumResponse()
@@ -141,9 +141,9 @@ public static class AlbumHelper
         };
     }
 
-    private static LinerNoteResponseWrapper LinerNoteResponsesToLinerNoteResponseWrapper(LinerNoteResponse[] linerNotes)
+    private static LinerNotesWrapper LinerNoteResponsesToLinerNoteResponseWrapper(LinerNoteResponse[] linerNotes)
     {
-        return new LinerNoteResponseWrapper()
+        return new LinerNotesWrapper()
         {
             linerNotes = linerNotes,
             version = 1

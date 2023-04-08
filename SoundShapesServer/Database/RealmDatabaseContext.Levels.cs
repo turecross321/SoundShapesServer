@@ -116,7 +116,7 @@ public partial class RealmDatabaseContext
             .Take(count)
             .ToArray();
 
-        return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries, user, totalEntries, from, count);
+        return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
     }
 
     public LevelsWrapper? SearchForLevels(GameUser user, string query, int from, int count)
@@ -143,7 +143,7 @@ public partial class RealmDatabaseContext
             .Take(count)
             .ToArray();
 
-        return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries, user, totalEntries, from, count);
+        return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
     }
 
     public LevelsWrapper DailyLevels(GameUser user, int from, int count)
@@ -167,7 +167,7 @@ public partial class RealmDatabaseContext
             levels[i] = dailyLevelEntries[i].level;
         }
 
-        return ConvertGameLevelArrayToLevelResponseWrapper(levels, user, totalEntries, from, count);
+        return LevelsToLevelsWrapper(levels, user, totalEntries, from, count);
     }
     public LevelsWrapper GreatestHits(GameUser user, int from, int count)
     {
@@ -183,7 +183,7 @@ public partial class RealmDatabaseContext
             .Take(count)
             .ToArray();
 
-        return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries, user, totalEntries, from, count);
+        return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
     }
 
     public void AddCompletionistToLevel(GameLevel level, GameUser user)

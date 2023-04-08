@@ -35,7 +35,7 @@ public static class LevelHelper
         return response;
     }
 
-    public static LevelsWrapper ConvertGameLevelArrayToLevelResponseWrapper(GameLevel[] levels, GameUser user, int totalEntries, int from, int count)
+    public static LevelsWrapper LevelsToLevelsWrapper(GameLevel[] levels, GameUser user, int totalEntries, int from, int count)
     {
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
         
@@ -43,7 +43,7 @@ public static class LevelHelper
 
         for (int i = 0; i < levels.Length; i++)
         {
-            levelResponses[i] = ConvertGameLevelToLevelResponse(levels[i], user);
+            levelResponses[i] = LevelToLevelResponse(levels[i], user);
         }
 
         LevelsWrapper response = new()
@@ -57,14 +57,14 @@ public static class LevelHelper
         return response;
     }
     
-    public static LevelResponse ConvertGameLevelToLevelResponse(GameLevel level, GameUser user)
+    public static LevelResponse LevelToLevelResponse(GameLevel level, GameUser user)
     {
         string formattedLevelId = IdFormatter.FormatLevelId(level.id);
 
         LevelResponse levelResponse = new LevelResponse()
         {
             id = formattedLevelId,
-            author = UserHelper.ConvertGameUserToUserResponse(level.author),
+            author = UserHelper.UserToUserResponse(level.author),
             latestVersion = IdFormatter.FormatLevelIdAndVersion(level.id, level.created.ToUnixTimeMilliseconds()),
             title = level.title,
             description = level.description,
