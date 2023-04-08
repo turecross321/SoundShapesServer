@@ -3,6 +3,7 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
+using SoundShapesServer.Responses.Levels;
 using SoundShapesServer.Responses.RecentActivity;
 
 namespace SoundShapesServer.Endpoints.Levels;
