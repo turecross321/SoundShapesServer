@@ -46,9 +46,7 @@ public class Endpoints : EndpointGroup
         
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return new Response(HttpStatusCode.NotFound);
-        
-        // RequestContext context, Stream body, RealmDatabaseContext database, GameUser user, string levelId
-        
+
         if (action == "update") return LevelPublishingEndpoints.UpdateLevel(context, parser, database, user, level.id);
 
         else return new Response(HttpStatusCode.NotFound);

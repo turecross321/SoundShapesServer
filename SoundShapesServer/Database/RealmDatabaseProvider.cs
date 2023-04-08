@@ -30,7 +30,8 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
                 typeof(LeaderboardEntry),
                 typeof(DailyLevel),
                 typeof(LinerNote),
-                typeof(GameAlbum)
+                typeof(GameAlbum),
+                typeof(Report)
             },
             MigrationCallback = (migration, oldVersion) =>
             {

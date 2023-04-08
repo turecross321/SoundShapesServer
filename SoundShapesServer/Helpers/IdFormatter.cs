@@ -10,6 +10,11 @@ public class IdFormatter
     {
         return $"/~level:{id}/~version:{version}";
     }
+
+    public static string DeFormatLevelIdAndVersion(string formattedId)
+    {
+        return formattedId.Split(":")[1].Split("/")[0];
+    }
     public static string FormatLevelPublishId(string id, long creationTime)
     {
         return $"/~level:{id}/~upload:{creationTime}";
