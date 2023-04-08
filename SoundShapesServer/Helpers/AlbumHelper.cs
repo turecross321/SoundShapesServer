@@ -12,7 +12,7 @@ namespace SoundShapesServer.Helpers;
 
 public static class AlbumHelper
 {
-    public static AlbumResponseWrapper ConvertAlbumArrayToAlbumResponseWrapper(GameAlbum[] albums, int totalEntries, int from, int count)
+    public static AlbumsWrapper AlbumsToAlbumsWrapper(GameAlbum[] albums, int totalEntries, int from, int count)
     {
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
 
@@ -20,10 +20,10 @@ public static class AlbumHelper
 
         for (int i = 0; i < albums.Length; i++)
         {
-            albumResponses[i] = ConvertAlbumToAlbumResponse(albums[i]);
+            albumResponses[i] = AlbumToAlbumResponse(albums[i]);
         }
         
-        return new AlbumResponseWrapper()
+        return new AlbumsWrapper()
         {
             items = albumResponses,
             previousToken = previousToken,
@@ -31,7 +31,7 @@ public static class AlbumHelper
         };
     }
 
-    private static AlbumResponse ConvertAlbumToAlbumResponse(GameAlbum album)
+    private static AlbumResponse AlbumToAlbumResponse(GameAlbum album)
     {
         LinerNoteResponse[] linerNoteResponses = LinerNotesToLinerNoteResponses(album.linerNotes);
         LinerNoteResponseWrapper linerNoteWrapper = LinerNoteResponsesToLinerNoteResponseWrapper(linerNoteResponses);
@@ -59,7 +59,42 @@ public static class AlbumHelper
         };
     }
 
-    public static AlbumLevelResponseWrapper LevelsToAlbumLevelResponseWrapper
+    public static AlbumLevelInfosWrapper LevelsToAlbumLevelInfosWrapper
+        (GameUser user, GameAlbum album, GameLevel[] levels, int totalEntries, int from, int count)
+    {
+        AlbumLevelInfoResponse[] levelResponses = new AlbumLevelInfoResponse[levels.Length];
+        
+        for (int i = 0; i < levels.Length; i++)
+        {
+            levelResponses[i] = LevelToAlbumLevelInfoResponse(user, album, levels[i]);
+        }
+        
+        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
+
+        return new AlbumLevelInfosWrapper()
+        {
+            items = levelResponses,
+            previousToken = previousToken,
+            nextToken = nextToken
+        };
+    }
+
+    private static AlbumLevelInfoResponse LevelToAlbumLevelInfoResponse(GameUser user, GameAlbum album, GameLevel level)
+    {
+        return new AlbumLevelInfoResponse()
+        {
+            id = IdFormatter.FormatAlbumLinkId(album.id, level.id),
+            timestamp = level.modified.ToUnixTimeMilliseconds(),
+            target = new AlbumLevelInfoTarget()
+            {
+                id = IdFormatter.FormatLevelId(level.id),
+                type = ResponseType.level.ToString(),
+                completed = level.completionists.Contains(user)
+            }
+        };
+    }
+    
+    public static AlbumLevelsWrapper LevelsToAlbumLevelsWrapper
         (GameUser user, GameAlbum album, GameLevel[] levels, int totalEntries, int from, int count)
     {
         AlbumLevelResponse[] levelResponses = new AlbumLevelResponse[levels.Length];
@@ -71,7 +106,7 @@ public static class AlbumHelper
         
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
 
-        return new AlbumLevelResponseWrapper()
+        return new AlbumLevelsWrapper()
         {
             items = levelResponses,
             previousToken = previousToken,
@@ -83,7 +118,7 @@ public static class AlbumHelper
     {
         return new AlbumLevelResponse()
         {
-            id = IdFormatter.FormatAlbumLevelId(album.id, level.id),
+            id = IdFormatter.FormatAlbumLinkId(album.id, level.id),
             type = ResponseType.link.ToString(),
             timestamp = level.modified.ToUnixTimeMilliseconds(),
             target = new AlbumLevelTarget

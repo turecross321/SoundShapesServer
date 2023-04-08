@@ -9,7 +9,7 @@ namespace SoundShapesServer.Helpers;
 
 public static class UserHelper
 {
-    public static FollowingUserResponsesWrapper? ConvertUserArrayToFollowingUsersResponsesWrapper
+    public static FollowingUsersWrapper? ConvertUserArrayToFollowingUsersResponsesWrapper
     (GameUser user, GameUser[] users, int totalRelations, int from, int count)
     {
         (int? nextToken, int? previousToken) = PaginationHelper.GetPageTokens(totalRelations, from, count);
@@ -32,7 +32,7 @@ public static class UserHelper
             responses[i] = response;
         }
 
-        FollowingUserResponsesWrapper responsesWrapper = new()
+        FollowingUsersWrapper responsesWrapper = new()
         {
             items = responses,
             nextToken = nextToken,

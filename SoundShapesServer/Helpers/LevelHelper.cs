@@ -35,7 +35,7 @@ public static class LevelHelper
         return response;
     }
 
-    public static LevelResponseWrapper ConvertGameLevelArrayToLevelResponseWrapper(GameLevel[] levels, GameUser user, int totalEntries, int from, int count)
+    public static LevelsWrapper ConvertGameLevelArrayToLevelResponseWrapper(GameLevel[] levels, GameUser user, int totalEntries, int from, int count)
     {
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
         
@@ -46,7 +46,7 @@ public static class LevelHelper
             levelResponses[i] = ConvertGameLevelToLevelResponse(levels[i], user);
         }
 
-        LevelResponseWrapper response = new()
+        LevelsWrapper response = new()
         {
             items = levelResponses,
             count = levelResponses.Length,

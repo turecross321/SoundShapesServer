@@ -103,7 +103,7 @@ public partial class RealmDatabaseContext
     }
     
     public GameLevel? GetLevelWithId(string id) => this._realm.All<GameLevel>().FirstOrDefault(l => l.id == id);
-    public LevelResponseWrapper GetLevelsPublishedByUser(GameUser user, GameUser userToGetLevelsFrom, int from, int count)
+    public LevelsWrapper GetLevelsPublishedByUser(GameUser user, GameUser userToGetLevelsFrom, int from, int count)
     {
         IQueryable<GameLevel> entries = this._realm.All<GameLevel>()
             .Where(l => l.author == userToGetLevelsFrom);
@@ -119,7 +119,7 @@ public partial class RealmDatabaseContext
         return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries, user, totalEntries, from, count);
     }
 
-    public LevelResponseWrapper? SearchForLevels(GameUser user, string query, int from, int count)
+    public LevelsWrapper? SearchForLevels(GameUser user, string query, int from, int count)
     {
         string[] keywords = query.Split(' ');
         if (keywords.Length == 0) return null;
@@ -146,7 +146,7 @@ public partial class RealmDatabaseContext
         return ConvertGameLevelArrayToLevelResponseWrapper(selectedEntries, user, totalEntries, from, count);
     }
 
-    public LevelResponseWrapper DailyLevels(GameUser user, int from, int count)
+    public LevelsWrapper DailyLevels(GameUser user, int from, int count)
     {
         List<DailyLevel> entries = this._realm.All<DailyLevel>()
             .OrderByDescending(l=>l.date)
@@ -169,7 +169,7 @@ public partial class RealmDatabaseContext
 
         return ConvertGameLevelArrayToLevelResponseWrapper(levels, user, totalEntries, from, count);
     }
-    public LevelResponseWrapper GreatestHits(GameUser user, int from, int count)
+    public LevelsWrapper GreatestHits(GameUser user, int from, int count)
     {
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()

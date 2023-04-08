@@ -22,7 +22,7 @@ public class ProfileEndpoints : EndpointGroup
     }
 
     [Endpoint("/otg/~identity:{id}/~follow:*.page", ContentType.Json)]
-    public FollowingUserResponsesWrapper? ViewFollowingList(RequestContext context, string id, RealmDatabaseContext database)
+    public FollowingUsersWrapper? ViewFollowingList(RequestContext context, string id, RealmDatabaseContext database)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
@@ -34,7 +34,7 @@ public class ProfileEndpoints : EndpointGroup
     }
 
     [Endpoint("/otg/~identity:{id}/~followers.page", ContentType.Json)]
-    public FollowingUserResponsesWrapper? ViewFollowersList(RequestContext context, string id, RealmDatabaseContext database)
+    public FollowingUsersWrapper? ViewFollowersList(RequestContext context, string id, RealmDatabaseContext database)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");

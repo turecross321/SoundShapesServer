@@ -31,7 +31,7 @@ public class IdFormatter
     {
         return $"/~album:{albumId}";
     }
-    public static string FormatAlbumLevelId(string albumId, string levelId)
+    public static string FormatAlbumLinkId(string albumId, string levelId)
     {
         // $"/~album:{albumId}/~link:/~level:{levelId}";
         return $"/~album:{albumId}/~link:%2F%7Elevel%3A{levelId}";

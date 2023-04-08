@@ -56,7 +56,7 @@ public class AuthenticationEndpoints : EndpointGroup
             service = service
         };
 
-        GameSessionResponseWrapper responseWrapper = new ()
+        GameSessionWrapper responseWrapper = new ()
         {
             session = sessionResponse
         };

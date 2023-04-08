@@ -9,7 +9,7 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public AlbumResponseWrapper GetAlbums(int from, int count)
+    public AlbumsWrapper GetAlbums(int from, int count)
     {
         IEnumerable<GameAlbum> entries = this._realm.All<GameAlbum>()
             .AsEnumerable();
@@ -22,7 +22,7 @@ public partial class RealmDatabaseContext
             .Take(count)
             .ToArray();
 
-        return AlbumHelper.ConvertAlbumArrayToAlbumResponseWrapper(selectedEntries, totalEntries, from, count);
+        return AlbumHelper.AlbumsToAlbumsWrapper(selectedEntries, totalEntries, from, count);
     }
 
     public GameAlbum? GetAlbumWithId(string id)
@@ -30,7 +30,7 @@ public partial class RealmDatabaseContext
         return this._realm.All<GameAlbum>().Where(a => a.id == id).FirstOrDefault();
     }
 
-    public AlbumLevelResponseWrapper AlbumLevels(GameUser user, GameAlbum album, int from, int count)
+    public AlbumLevelsWrapper AlbumLevels(GameUser user, GameAlbum album, int from, int count)
     {
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable();
@@ -43,6 +43,22 @@ public partial class RealmDatabaseContext
             .Take(count)
             .ToArray();
 
-        return AlbumHelper.LevelsToAlbumLevelResponseWrapper(user, album, selectedEntries, totalEntries, from, count);
+        return AlbumHelper.LevelsToAlbumLevelsWrapper(user, album, selectedEntries, totalEntries, from, count);
+    }
+
+    public AlbumLevelInfosWrapper GetAlbumsLevelsInfo(GameUser user, GameAlbum album, int from, int count)
+    {
+        IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
+            .AsEnumerable();
+
+        IEnumerable<GameLevel> gameLevels = entries.ToList();
+        int totalEntries = gameLevels.Count();
+
+        GameLevel[] selectedEntries = gameLevels
+            .Skip(from)
+            .Take(count)
+            .ToArray();
+        
+        return AlbumHelper.LevelsToAlbumLevelInfosWrapper(user, album, selectedEntries, totalEntries, from, count);
     }
 }

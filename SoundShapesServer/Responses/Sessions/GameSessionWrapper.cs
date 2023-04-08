@@ -1,6 +1,6 @@
 namespace SoundShapesServer.Responses.Sessions;
 
-public class GameSessionResponseWrapper
+public class GameSessionWrapper
 {
     public GameSessionResponse session { get; set; }
 }

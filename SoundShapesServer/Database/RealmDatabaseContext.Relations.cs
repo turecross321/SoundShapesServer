@@ -10,7 +10,7 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public FollowingUserResponsesWrapper? GetFollowers(GameUser userBeingFollowed, int from, int count)
+    public FollowingUsersWrapper? GetFollowers(GameUser userBeingFollowed, int from, int count)
     {
         IQueryable<FollowRelation> relations = this._realm.All<FollowRelation>().Where(r => r.userBeingFollowed == userBeingFollowed);
 
@@ -32,7 +32,7 @@ public partial class RealmDatabaseContext
         return ConvertUserArrayToFollowingUsersResponsesWrapper(userBeingFollowed, followers, totalEntries, from, count);
     }
 
-    public FollowingUserResponsesWrapper? GetFollowedUsers(GameUser follower, int from, int count)
+    public FollowingUsersWrapper? GetFollowedUsers(GameUser follower, int from, int count)
     {
         IQueryable<FollowRelation> relations = this._realm.All<FollowRelation>().Where(r => r.follower == follower);
 
@@ -54,7 +54,7 @@ public partial class RealmDatabaseContext
         return ConvertUserArrayToFollowingUsersResponsesWrapper(follower, following, totalEntries, from, count);
     }
 
-    public LevelResponseWrapper? GetUsersLikedLevels(GameUser user, GameUser userToGetLevelsFrom, int from, int count)
+    public LevelsWrapper? GetUsersLikedLevels(GameUser user, GameUser userToGetLevelsFrom, int from, int count)
     {
         IQueryable<LevelLikeRelation> relations = this._realm.All<LevelLikeRelation>()
             .Where(l => l.liker == userToGetLevelsFrom);
