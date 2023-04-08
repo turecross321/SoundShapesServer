@@ -15,6 +15,8 @@ namespace SoundShapesServer.Endpoints.Levels;
 
 public class LevelResourceEndpoints : EndpointGroup
 {
+    private const string levelsPath = "levels";
+    
     // Called from Publishing Endpoints
     public static LevelPublishRequest? UploadLevelResources(RequestContext context, MultipartFormDataParser parser, string levelId)
     {
@@ -57,7 +59,7 @@ public class LevelResourceEndpoints : EndpointGroup
             // gets the .level from application/vnd.soundshapes.level e.g.
             string fileExtension = file.ContentType.Split("/").Last().Split(".").Last();
 
-            string key = $"{fileName}.{fileExtension}";
+            string key = $"{levelsPath}/{fileName}.{fileExtension}";
             
             context.DataStore.WriteToStore(key, byteArray);
         }
@@ -113,7 +115,7 @@ public class LevelResourceEndpoints : EndpointGroup
         
         string fileName = levelId;
 
-        string key = fileName + "." + fileExtension;
+        string key = $"{levelsPath}/{fileName}.{fileExtension}";
 
         return GetResource(context, key);
     }

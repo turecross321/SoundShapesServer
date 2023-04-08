@@ -15,6 +15,7 @@ namespace SoundShapesServer.Endpoints.Albums;
 
 public class AlbumResourceEndpoints : EndpointGroup
 {
+    private const string albumsPath = "albums";
     private static Response GetResource(RequestContext context, string fileName)
     {
         if (!context.DataStore.ExistsInStore(fileName))
@@ -33,7 +34,7 @@ public class AlbumResourceEndpoints : EndpointGroup
     {
         if (database.GetAlbumWithId(albumId) == null) return HttpStatusCode.NotFound;
         
-        string key = albumId + "_" + file;
+        string key = $"{albumsPath}/{albumId}_{file}";
         
         return GetResource(context, key);
     }
