@@ -14,23 +14,26 @@ public static class AlbumHelper
     {
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
 
-        AlbumResponse[] albumResponses = new AlbumResponse[albums.Length];
+        List<AlbumResponse> albumResponses = new ();
 
         for (int i = 0; i < albums.Length; i++)
         {
-            albumResponses[i] = AlbumToAlbumResponse(albums[i]);
+            AlbumResponse? albumResponse = AlbumToAlbumResponse(albums[i]);
+            if (albumResponse != null) albumResponses.Add(albumResponse);
         }
         
         return new AlbumsWrapper()
         {
-            items = albumResponses,
+            items = albumResponses.ToArray(),
             previousToken = previousToken,
             nextToken = nextToken
         };
     }
 
-    private static AlbumResponse AlbumToAlbumResponse(GameAlbum album)
+    private static AlbumResponse? AlbumToAlbumResponse(GameAlbum? album)
     {
+        if (album == null) return null;
+        
         LinerNoteResponse[] linerNoteResponses = LinerNotesToLinerNoteResponses(album.linerNotes);
         LinerNotesWrapper linerNoteWrapper = LinerNoteResponsesToLinerNoteResponseWrapper(linerNoteResponses);
         string linerNotesString = JsonConvert.SerializeObject(linerNoteWrapper);
@@ -60,25 +63,28 @@ public static class AlbumHelper
     public static AlbumLevelInfosWrapper LevelsToAlbumLevelInfosWrapper
         (GameUser user, GameAlbum album, GameLevel[] levels, int totalEntries, int from, int count)
     {
-        AlbumLevelInfoResponse[] levelResponses = new AlbumLevelInfoResponse[levels.Length];
+        List<AlbumLevelInfoResponse> levelResponses = new ();
         
         for (int i = 0; i < levels.Length; i++)
         {
-            levelResponses[i] = LevelToAlbumLevelInfoResponse(user, album, levels[i]);
+            AlbumLevelInfoResponse? levelResponse = LevelToAlbumLevelInfoResponse(user, album, levels[i]);
+            if (levelResponse != null) levelResponses.Add(levelResponse);
         }
         
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
 
         return new AlbumLevelInfosWrapper()
         {
-            items = levelResponses,
+            items = levelResponses.ToArray(),
             previousToken = previousToken,
             nextToken = nextToken
         };
     }
 
-    private static AlbumLevelInfoResponse LevelToAlbumLevelInfoResponse(GameUser user, GameAlbum album, GameLevel level)
+    private static AlbumLevelInfoResponse? LevelToAlbumLevelInfoResponse(GameUser user, GameAlbum? album, GameLevel? level)
     {
+        if (album == null || level == null) return null;
+
         return new AlbumLevelInfoResponse()
         {
             id = IdFormatter.FormatAlbumLinkId(album.id, level.id),
@@ -95,25 +101,28 @@ public static class AlbumHelper
     public static AlbumLevelsWrapper LevelsToAlbumLevelsWrapper
         (GameUser user, GameAlbum album, GameLevel[] levels, int totalEntries, int from, int count)
     {
-        AlbumLevelResponse[] levelResponses = new AlbumLevelResponse[levels.Length];
+        List<AlbumLevelResponse> levelResponses = new ();
         
         for (int i = 0; i < levels.Length; i++)
         {
-            levelResponses[i] = LevelToAlbumLevelResponse(user, album, levels[i]);
+            AlbumLevelResponse? levelResponse = LevelToAlbumLevelResponse(user, album, levels[i]);
+            if (levelResponse != null) levelResponses.Add(levelResponse);
         }
         
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
 
         return new AlbumLevelsWrapper()
         {
-            items = levelResponses,
+            items = levelResponses.ToArray(),
             previousToken = previousToken,
             nextToken = nextToken
         };
     }
     
-    private static AlbumLevelResponse LevelToAlbumLevelResponse(GameUser user, GameAlbum album, GameLevel level)
+    private static AlbumLevelResponse? LevelToAlbumLevelResponse(GameUser user, GameAlbum? album, GameLevel? level)
     {
+        if (album == null || level == null) return null;
+        
         return new AlbumLevelResponse()
         {
             id = IdFormatter.FormatAlbumLinkId(album.id, level.id),

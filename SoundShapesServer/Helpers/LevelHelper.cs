@@ -1,3 +1,4 @@
+using System.Data;
 using SoundShapesServer.Responses.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
@@ -35,18 +36,19 @@ public static class LevelHelper
     public static LevelsWrapper LevelsToLevelsWrapper(GameLevel[] levels, GameUser user, int totalEntries, int from, int count)
     {
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
-        
-        LevelResponse[] levelResponses = new LevelResponse[levels.Length];
+
+        List<LevelResponse> levelResponses = new ();
 
         for (int i = 0; i < levels.Length; i++)
         {
-            levelResponses[i] = LevelToLevelResponse(levels[i], user);
+            LevelResponse? levelResponse = LevelToLevelResponse(levels[i], user);
+            if (levelResponse != null) levelResponses.Add(levelResponse);
         }
 
         LevelsWrapper response = new()
         {
-            items = levelResponses,
-            count = levelResponses.Length,
+            items = levelResponses.ToArray(),
+            count = levelResponses.Count,
             nextToken = nextToken,
             previousToken = previousToken
         };
@@ -54,8 +56,10 @@ public static class LevelHelper
         return response;
     }
     
-    public static LevelResponse LevelToLevelResponse(GameLevel level, GameUser user)
+    public static LevelResponse? LevelToLevelResponse(GameLevel? level, GameUser user)
     {
+        if (level == null) return null;
+        
         string formattedLevelId = IdFormatter.FormatLevelId(level.id);
 
         LevelResponse levelResponse = new LevelResponse()

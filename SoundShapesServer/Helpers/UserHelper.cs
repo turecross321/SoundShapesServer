@@ -6,40 +6,43 @@ namespace SoundShapesServer.Helpers;
 
 public static class UserHelper
 {
-    public static FollowingUsersWrapper? UsersToFollowingUsersWrapper
+    public static FollowingUsersWrapper UsersToFollowingUsersWrapper
     (GameUser user, GameUser[] users, int totalRelations, int from, int count)
     {
         (int? nextToken, int? previousToken) = PaginationHelper.GetPageTokens(totalRelations, from, count);
 
-        FollowingUserResponse[] responses = new FollowingUserResponse[users.Length];
+        List<FollowingUserResponse> responses = new ();
         
         for (int i = 0; i < users.Length; i++)
         {
-            FollowingUserResponse response = new()
-            {
-                id = IdFormatter.FormatFollowId(user.id, users[i].id),
-                target = new UserResponse()
-                {
-                    id = IdFormatter.FormatUserId(users[i].id),
-                    type = ResponseType.identity.ToString(),
-                    displayName = users[i].display_name
-                }
-            };
-            
-            responses[i] = response;
+            FollowingUserResponse? response = UserToFollowingUserResponse(user, users[i]);
+            if (response != null) responses.Add(response);
         }
 
         FollowingUsersWrapper responsesWrapper = new()
         {
-            items = responses,
+            items = responses.ToArray(),
             nextToken = nextToken,
             previousToken = previousToken
         };
 
         return responsesWrapper;
     }
-    public static UserResponse UserToUserResponse(GameUser user)
+
+    private static FollowingUserResponse? UserToFollowingUserResponse(GameUser? follower, GameUser? followed)
     {
+        if (follower == null || followed == null) return null;
+
+        return new FollowingUserResponse
+        {
+            id = IdFormatter.FormatFollowId(follower.id, followed.id),
+            target = UserToUserResponse(followed)
+        };
+    }
+    public static UserResponse? UserToUserResponse(GameUser? user)
+    {
+        if (user == null) return null;
+        
         string formattedAuthorId = IdFormatter.FormatUserId(user.id);
 
         return new UserResponse
