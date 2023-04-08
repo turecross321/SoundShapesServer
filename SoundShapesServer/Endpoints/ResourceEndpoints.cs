@@ -88,7 +88,6 @@ public class ResourceEndpoints : EndpointGroup
     }
 
     [Endpoint("/otg/~level:{levelId}/~version:{versionId}/~content:{file}/data.get")]
-    [Authentication(false)]
     public Response GetLevelResource
         (RequestContext context, RealmDatabaseContext database, GameUser user, string levelId, string versionId, string file)
     {
