@@ -8,6 +8,7 @@ using HttpMultipartParser;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Levels;
@@ -76,13 +77,10 @@ public class ResourceEndpoints : EndpointGroup
     }
     private static Response GetResource(RequestContext context, string fileName)
     {
-
-        string key = $"{fileName}";
-        
-        if (!context.DataStore.ExistsInStore(key))
+        if (!context.DataStore.ExistsInStore(fileName))
             return HttpStatusCode.NotFound;
 
-        if (!context.DataStore.TryGetDataFromStore(key, out byte[]? data))
+        if (!context.DataStore.TryGetDataFromStore(fileName, out byte[]? data))
             return HttpStatusCode.InternalServerError;
 
         Debug.Assert(data != null);
@@ -90,15 +88,33 @@ public class ResourceEndpoints : EndpointGroup
     }
 
     [Endpoint("/otg/~level:{levelId}/~version:{versionId}/~content:{file}/data.get")]
+    [Authentication(false)]
     public Response GetLevelResource
         (RequestContext context, RealmDatabaseContext database, GameUser user, string levelId, string versionId, string file)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;
+
+        string fileExtension = "";
+
+        switch (file)
+        {
+            case "image":
+                fileExtension = "png";
+                break;
+            case "level":
+                fileExtension = "level";
+                break;
+            case "sound":
+                fileExtension = "sound";
+                break;
+            default:
+                return HttpStatusCode.NotFound;
+        }
         
         string fileName = levelId;
 
-        string key = fileName + "." + file;
+        string key = fileName + "." + fileExtension;
 
         return GetResource(context, key);
     }
@@ -107,6 +123,8 @@ public class ResourceEndpoints : EndpointGroup
     public Response GetAlbumResource
         (RequestContext context, RealmDatabaseContext database, string albumId, string file)
     {
+        if (database.GetAlbumWithId(albumId) == null) return HttpStatusCode.NotFound;
+        
         string key = albumId + "_" + file;
         
         return GetResource(context, key);
