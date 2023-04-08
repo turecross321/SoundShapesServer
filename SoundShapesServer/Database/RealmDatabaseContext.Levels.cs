@@ -184,6 +184,23 @@ public partial class RealmDatabaseContext
         return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
     }
 
+    public LevelsWrapper NewestLevels(GameUser user, int from, int count)
+    {
+        IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
+            .AsEnumerable()
+            .OrderByDescending(l=>l.created);
+
+        IEnumerable<GameLevel> gameLevels = entries.ToList();
+        int totalEntries = gameLevels.Count();
+
+        GameLevel[] selectedEntries = gameLevels
+            .Skip(from)
+            .Take(count)
+            .ToArray();
+
+        return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
+    }
+
     public void AddCompletionistToLevel(GameLevel level, GameUser user)
     {
         if (level.completionists.Contains(user)) return;

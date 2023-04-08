@@ -29,6 +29,8 @@ public class LevelEndpoints : EndpointGroup
             return DailyLevels(user, database, from, count);
         if (category == "greatesthits") // Greatest Hits
             return GreatestHits(user, database, from, count);
+        if (category == "newest") // Newest Levels
+            return DailyLevels(user, database, from, count);
                 
         return null;
     }

@@ -20,7 +20,7 @@ public class AlbumEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
 
         return database.GetAlbums(from, count);
-    }
+    } //
 
     [Endpoint("/otg/~album:{albumId}/~link:*.page", ContentType.Json)]
     public Response GetAlbumLevels

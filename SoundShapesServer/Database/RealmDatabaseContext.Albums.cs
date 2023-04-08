@@ -31,10 +31,7 @@ public partial class RealmDatabaseContext
 
     public AlbumLevelsWrapper AlbumLevels(GameUser user, GameAlbum album, int from, int count)
     {
-        IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
-            .AsEnumerable();
-
-        IEnumerable<GameLevel> gameLevels = entries.ToList();
+        IEnumerable<GameLevel> gameLevels = album.levels;
         int totalEntries = gameLevels.Count();
 
         GameLevel[] selectedEntries = gameLevels
@@ -47,10 +44,7 @@ public partial class RealmDatabaseContext
 
     public AlbumLevelInfosWrapper GetAlbumsLevelsInfo(GameUser user, GameAlbum album, int from, int count)
     {
-        IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
-            .AsEnumerable();
-
-        IEnumerable<GameLevel> gameLevels = entries.ToList();
+        IEnumerable<GameLevel> gameLevels = album.levels;
         int totalEntries = gameLevels.Count();
 
         GameLevel[] selectedEntries = gameLevels

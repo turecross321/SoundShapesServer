@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Realms;
+using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Relations;
 
 namespace SoundShapesServer.Types.Levels;
@@ -19,6 +20,5 @@ public class GameLevel : RealmObject
     public IList<GameUser> uniquePlays { get; }
     public int completions { get; set; }
     public IList<GameUser> completionists { get; }
-    [Backlink(nameof(LevelLikeRelation.level))]
-    [JsonIgnore] public IQueryable<LevelLikeRelation> likes { get; }
+    [Backlink(nameof(LevelLikeRelation.level))] public IQueryable<LevelLikeRelation> likes { get; }
 }

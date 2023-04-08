@@ -13,7 +13,7 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Levels;
 
-public class ResourceEndpoints : EndpointGroup
+public class LevelResourceEndpoints : EndpointGroup
 {
     // Called from Publishing Endpoints
     public static LevelPublishRequest? UploadLevelResources(RequestContext context, MultipartFormDataParser parser, string levelId)
@@ -115,17 +115,6 @@ public class ResourceEndpoints : EndpointGroup
 
         string key = fileName + "." + fileExtension;
 
-        return GetResource(context, key);
-    }
-
-    [Endpoint("/otg/~album:{albumId}/~content:{file}/data.get")]
-    public Response GetAlbumResource
-        (RequestContext context, RealmDatabaseContext database, string albumId, string file)
-    {
-        if (database.GetAlbumWithId(albumId) == null) return HttpStatusCode.NotFound;
-        
-        string key = albumId + "_" + file;
-        
         return GetResource(context, key);
     }
 }

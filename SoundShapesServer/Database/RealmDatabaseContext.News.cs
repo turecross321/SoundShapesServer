@@ -6,7 +6,7 @@ public partial class RealmDatabaseContext
 {
     public NewsEntry GetGlobalNews()
     {
-        NewsEntry? news = this._realm.All<NewsEntry>().Where(n=>n.language== "global").FirstOrDefault();
+        NewsEntry? news = this._realm.All<NewsEntry>().FirstOrDefault(n => n.language== "global");
         
         if (news != null) return news;
         else return CreateNewsEntry(new NewsEntry()
@@ -21,25 +21,11 @@ public partial class RealmDatabaseContext
 
     public NewsEntry GetTranslatedNews(string language)
     {
-        NewsEntry? globalNews = GetGlobalNews();
         NewsEntry? translatedNews = this._realm.All<NewsEntry>().FirstOrDefault(n => n.language == language);
 
-        NewsEntry newsToReturn = new NewsEntry();
+        if (translatedNews == null) return GetGlobalNews();
 
-        if (translatedNews != null)
-        {
-            newsToReturn.text = translatedNews.text;
-            newsToReturn.title = translatedNews.title;
-            newsToReturn.fullText = translatedNews.fullText;
-            newsToReturn.url = translatedNews.url;   
-        }
-
-        if (newsToReturn.text == null) newsToReturn.text = globalNews.text;
-        if (newsToReturn.title == null) newsToReturn.title = globalNews.title;
-        if (newsToReturn.fullText == null) newsToReturn.fullText = globalNews.fullText;
-        if (newsToReturn.url == null) newsToReturn.url = globalNews.url;
-
-        return newsToReturn;
+        return translatedNews;
     }
 
     public NewsEntry CreateNewsEntry(NewsEntry newsEntry)

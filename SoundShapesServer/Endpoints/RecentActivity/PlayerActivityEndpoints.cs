@@ -2,6 +2,7 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Responses;
+using SoundShapesServer.Responses.RecentActivity;
 
 namespace SoundShapesServer.Endpoints.RecentActivity;
 

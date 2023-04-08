@@ -1,4 +1,4 @@
-namespace SoundShapesServer.Responses;
+namespace SoundShapesServer.Responses.RecentActivity;
 
 public class PlayerNewsResponse
 {
