@@ -7,7 +7,6 @@ using NPTicket;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Sessions;
 using SoundShapesServer.Responses.Users;
 using SoundShapesServer.Types;

@@ -4,14 +4,8 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
-using HttpMultipartParser;
-using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Requests;
-using SoundShapesServer.Types;
-using SoundShapesServer.Types.Albums;
-using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Albums;
 

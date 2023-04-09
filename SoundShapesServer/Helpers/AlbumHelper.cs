@@ -1,6 +1,4 @@
 using Newtonsoft.Json;
-using SoundShapesServer.Authentication;
-using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Albums;
 using SoundShapesServer.Responses.Albums.LevelInfo;
 using SoundShapesServer.Responses.Albums.Levels;

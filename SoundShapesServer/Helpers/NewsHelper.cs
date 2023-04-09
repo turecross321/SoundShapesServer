@@ -1,5 +1,3 @@
-using Newtonsoft.Json.Linq;
-using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.RecentActivity;
 using SoundShapesServer.Types;
 

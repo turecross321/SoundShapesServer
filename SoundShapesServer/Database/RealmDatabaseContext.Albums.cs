@@ -1,4 +1,3 @@
-using SoundShapesServer.Authentication;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Albums;
 using SoundShapesServer.Responses.Albums.LevelInfo;

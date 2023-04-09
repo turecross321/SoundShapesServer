@@ -9,7 +9,6 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Levels;
