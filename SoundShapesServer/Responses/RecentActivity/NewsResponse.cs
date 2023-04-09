@@ -10,5 +10,5 @@ public class NewsResponse
     [JsonProperty("00_url")] public string url { get; set; }
 
     // [JsonProperty("00_image")] public string image { get; set; }   // Commented out because this, for some reason, only works on RPCS3
-    // returning a 00_image_full variable will make the game try to get an image from "<ip>/"
+    // [JsonProperty("00_image_full")] public string image { get; set; } // Will make the game try to get an image from "<ip>/"
 }

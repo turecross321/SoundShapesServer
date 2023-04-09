@@ -5,7 +5,7 @@ using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Helpers;
 
-public class NewsHelper
+public static class NewsHelper
 {
     public static NewsResponse NewsEntryToNewsResponse(NewsEntry entry)
     {
@@ -14,7 +14,7 @@ public class NewsHelper
             title = entry.title,
             text = entry.text,
             fullText = entry.fullText,
-            url = entry.url
+            url = entry.url,
         };
     }
 }
