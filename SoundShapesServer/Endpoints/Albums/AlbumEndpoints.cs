@@ -13,7 +13,6 @@ namespace SoundShapesServer.Endpoints.Albums;
 
 public class AlbumEndpoints : EndpointGroup
 {
-    // ?count=9&decorate=metadata&order=target.id:desc
     [Endpoint("/otg/~albums/~link:*.page", ContentType.Json)]
     public AlbumsWrapper GetAlbums(RequestContext context, RealmDatabaseContext database, GameSession token)
     {
@@ -21,7 +20,7 @@ public class AlbumEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
 
         return database.GetAlbums(token.id, from, count);
-    } //
+    }
 
     [Endpoint("/otg/~album:{albumId}/~link:*.page", ContentType.Json)]
     public Response GetAlbumLevels

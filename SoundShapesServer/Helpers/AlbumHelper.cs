@@ -142,7 +142,7 @@ public static class AlbumHelper
                 {
                     id = IdFormatter.FormatUserId(level.author.id),
                     type = ResponseType.identity.ToString(),
-                    metadata = UserHelper.GenerateUserMetadata(user)
+                    metadata = UserHelper.GenerateUserMetadata(level.author)
                 },
                 metadata = LevelHelper.GenerateMetadataResponse(level)
             }
