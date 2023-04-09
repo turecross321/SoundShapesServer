@@ -44,8 +44,9 @@ public class PlatformHelper
     };
     // Courtesy of https://www.serialstation.com/titles/?name=sound%20shapes&so=tn&systems=97ec53a2-f676-4c89-8172-e653dce5eed1
     
-    public static PlatformType GetPlatform(string titleId)
+    public static PlatformType GetPlatform(string titleId, bool genuinePSN)
     {
+        if (!genuinePSN) return PlatformType.rpcs3;
         if (PS3Ids.Contains(titleId)) return PlatformType.ps3;
         if (PSVIds.Contains(titleId)) return PlatformType.psv;
         if (PS4Ids.Contains(titleId)) return PlatformType.ps4;

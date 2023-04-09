@@ -31,8 +31,14 @@ public class AuthenticationEndpoints : EndpointGroup
             context.Logger.LogWarning(BunkumContext.Authentication, "Could not read ticket: " + e);
             return null;
         }
+        
+        bool genuinePSN = ticket.IssuerId switch
+        {
+            0x100 => true, // ps3, ps4, psvita
+            0x33333333 => false // rpcs3
+        };
 
-        string platform = PlatformHelper.GetPlatform(ticket.TitleId).ToString();
+        string platform = PlatformHelper.GetPlatform(ticket.TitleId, genuinePSN).ToString();
         if (platform == PlatformType.unknown.ToString()) return null; 
         
         GameUser? user = database.GetUserWithDisplayName(ticket.Username);
