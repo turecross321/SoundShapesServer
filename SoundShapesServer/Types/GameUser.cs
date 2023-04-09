@@ -9,7 +9,8 @@ public class GameUser : RealmObject, IUser
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public ResponseType Type = ResponseType.identity;
-    public string DisplayName { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
+    public string PasswordBcrypt { get; set; }
     public GameLevel? FeaturedLevel { get; set; }
 
     [Backlink(nameof(LevelLikeRelation.Liker))] public IQueryable<LevelLikeRelation> LikedLevels { get; }

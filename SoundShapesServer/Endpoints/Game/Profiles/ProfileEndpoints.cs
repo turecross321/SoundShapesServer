@@ -1,0 +1,47 @@
+using Bunkum.CustomHttpListener.Parsing;
+using Bunkum.HttpServer;
+using Bunkum.HttpServer.Endpoints;
+using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Game.Following;
+using SoundShapesServer.Responses.Game.Users;
+using SoundShapesServer.Types;
+
+namespace SoundShapesServer.Endpoints.Game.Profiles;
+
+public class ProfileEndpoints : EndpointGroup
+{
+    [GameEndpoint("~identity:{id}/~metadata:*.get", ContentType.Json)]
+    public UserMetadataResponse? ViewProfile(RequestContext context, string id, RealmDatabaseContext database)
+    {
+        GameUser? user = database.GetUserWithId(id);
+
+        if (user == null) return null;
+
+        return UserHelper.GenerateUserMetadata(user);
+    }
+
+    [GameEndpoint("~identity:{id}/~follow:*.page", ContentType.Json)]
+    public FollowingUsersWrapper? ViewFollowingList(RequestContext context, string id, RealmDatabaseContext database)
+    {
+        int from = int.Parse(context.QueryString["from"] ?? "0");
+        int count = int.Parse(context.QueryString["count"] ?? "9");
+
+        GameUser? follower = database.GetUserWithId(id);
+        if (follower == null) return null;
+
+        return database.GetFollowedUsers(follower, from, count);
+    }
+
+    [GameEndpoint("~identity:{id}/~followers.page", ContentType.Json)]
+    public FollowingUsersWrapper? ViewFollowersList(RequestContext context, string id, RealmDatabaseContext database)
+    {
+        int from = int.Parse(context.QueryString["from"] ?? "0");
+        int count = int.Parse(context.QueryString["count"] ?? "9");
+
+        GameUser? follower = database.GetUserWithId(id);
+        if (follower == null) return null;
+        
+        return database.GetFollowers(follower, from, count);
+    }
+}

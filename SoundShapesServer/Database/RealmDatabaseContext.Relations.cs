@@ -1,5 +1,5 @@
-using SoundShapesServer.Responses.Following;
-using SoundShapesServer.Responses.Levels;
+using SoundShapesServer.Responses.Game.Following;
+using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;

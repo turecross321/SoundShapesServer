@@ -1,4 +1,4 @@
-using SoundShapesServer.Responses.Levels;
+using SoundShapesServer.Responses.Game.Levels;
 
 namespace SoundShapesServer.Types.Levels;
 

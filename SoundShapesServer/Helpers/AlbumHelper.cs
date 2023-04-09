@@ -1,9 +1,9 @@
 using Newtonsoft.Json;
-using SoundShapesServer.Responses.Albums;
-using SoundShapesServer.Responses.Albums.LevelInfo;
-using SoundShapesServer.Responses.Albums.Levels;
-using SoundShapesServer.Responses.Levels;
-using SoundShapesServer.Responses.Users;
+using SoundShapesServer.Responses.Game.Albums;
+using SoundShapesServer.Responses.Game.Albums.LevelInfo;
+using SoundShapesServer.Responses.Game.Albums.Levels;
+using SoundShapesServer.Responses.Game.Levels;
+using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;

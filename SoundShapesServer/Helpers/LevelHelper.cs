@@ -1,5 +1,5 @@
 using SoundShapesServer.Database;
-using SoundShapesServer.Responses.Levels;
+using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 
@@ -32,7 +32,7 @@ public static class LevelHelper
             {
                 Id = IdFormatter.FormatUserId(level.Author.Id),
                 Type = ResponseType.identity.ToString(),
-                DisplayName = level.Author.DisplayName
+                DisplayName = level.Author.Username
             },
             Title = level.Name,
             Dependencies = new List<string>(),

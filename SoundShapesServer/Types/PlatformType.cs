@@ -1,9 +1,10 @@
 namespace SoundShapesServer.Types;
 public enum PlatformType
 {
-    ps3,
-    ps4,
-    psv,
-    rpcs3,
-    unknown
+    PS3,
+    PS4,
+    PSVita,
+    RPCS3,
+    API,
+    Unknown
 }

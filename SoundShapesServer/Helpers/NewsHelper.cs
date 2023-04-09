@@ -1,4 +1,4 @@
-using SoundShapesServer.Responses.RecentActivity;
+using SoundShapesServer.Responses.Game.RecentActivity;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Helpers;

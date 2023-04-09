@@ -1,6 +1,7 @@
 using Realms;
 using SoundShapesServer.Requests;
-using SoundShapesServer.Responses.Levels;
+using SoundShapesServer.Requests.Game;
+using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using static SoundShapesServer.Helpers.LevelHelper;

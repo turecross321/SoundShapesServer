@@ -1,7 +1,7 @@
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Responses.Albums;
-using SoundShapesServer.Responses.Albums.LevelInfo;
-using SoundShapesServer.Responses.Albums.Levels;
+using SoundShapesServer.Responses.Game.Albums;
+using SoundShapesServer.Responses.Game.Albums.LevelInfo;
+using SoundShapesServer.Responses.Game.Albums.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;

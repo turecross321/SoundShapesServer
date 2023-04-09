@@ -22,7 +22,7 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
                 typeof(FollowRelation),
                 typeof(LevelLikeRelation),
                 typeof(GameUser),
-                typeof(GameSession),
+                typeof(Session),
                 typeof(Service),
                 typeof(LevelParent),
                 typeof(GameLevel),

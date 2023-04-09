@@ -7,33 +7,35 @@ public partial class RealmDatabaseContext
 {
     private const int DefaultTokenExpirySeconds = 86400; // 1 day
 
-    public GameSession GenerateSessionForUser(GameUser user, string platform, int? tokenExpirySeconds = null)
+    public Session GenerateSessionForUser(GameUser user, PlatformType platform, int tokenExpirySeconds = DefaultTokenExpirySeconds)
     {
-        GameSession gameSession = new()
+        string platformString = platform.ToString();
+        
+        Session session = new()
         {
-            Expires = DateTimeOffset.UtcNow.AddSeconds(tokenExpirySeconds ?? DefaultTokenExpirySeconds),
+            ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(tokenExpirySeconds),
             Id = GenerateGuid(),
             User = user,
-            Platform = platform
+            Platform = platformString
         };
 
-        IQueryable<GameSession>? previousSessions = this._realm.All<GameSession>().Where(s => s.User == user);
+        IQueryable<Session>? previousSessions = this._realm.All<Session>().Where(s => s.User == user);
         
         this._realm.Write(() =>
         {
-            this._realm.RemoveRange(previousSessions.Where(s=>s.Platform == platform)); // removes all previous sessions with the same platform
-            this._realm.Add(gameSession);
+            this._realm.RemoveRange(previousSessions.Where(s=>s.Platform == platformString)); // removes all previous sessions with the same platform
+            this._realm.Add(session);
         });
 
-        return gameSession;
+        return session;
     }
 
-    public GameSession? GetSessionWithSessionId(string sessionId)
+    public Session? GetSessionWithSessionId(string sessionId)
     {
         this._realm.Refresh();
         
-        IQueryable<GameSession>? sessions = this._realm.All<GameSession>();
-        GameSession? session = this._realm.All<GameSession>()
+        IQueryable<Session>? sessions = this._realm.All<Session>();
+        Session? session = this._realm.All<Session>()
             .FirstOrDefault(s => s.Id == sessionId);
 
         if (session == null)
@@ -41,7 +43,7 @@ public partial class RealmDatabaseContext
             return null;
         }
 
-        if (session.Expires < DateTimeOffset.UtcNow)
+        if (session.ExpiresAt < DateTimeOffset.UtcNow)
         {
             this._realm.Write(() => this._realm.Remove(session));
             return null;
@@ -52,6 +54,6 @@ public partial class RealmDatabaseContext
 
     public bool IsSessionInvalid(string id)
     {
-        return (this._realm.All<GameSession>().FirstOrDefault(s => s.Id == id) == null);
+        return (this._realm.All<Session>().FirstOrDefault(s => s.Id == id) == null);
     }
 }

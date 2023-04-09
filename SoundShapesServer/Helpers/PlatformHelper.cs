@@ -46,11 +46,11 @@ public class PlatformHelper
     
     public static PlatformType GetPlatform(string titleId, bool genuinePsn)
     {
-        if (!genuinePsn) return PlatformType.rpcs3;
-        if (Ps3Ids.Contains(titleId)) return PlatformType.ps3;
-        if (PsvIds.Contains(titleId)) return PlatformType.psv;
-        if (Ps4Ids.Contains(titleId)) return PlatformType.ps4;
+        if (!genuinePsn) return PlatformType.RPCS3;
+        if (Ps3Ids.Contains(titleId)) return PlatformType.PS3;
+        if (PsvIds.Contains(titleId)) return PlatformType.PSVita;
+        if (Ps4Ids.Contains(titleId)) return PlatformType.PS4;
 
-        return PlatformType.unknown;
+        return PlatformType.Unknown;
     }
 }

@@ -1,4 +1,5 @@
 using SoundShapesServer.Requests;
+using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Database;

@@ -1,5 +1,5 @@
-using SoundShapesServer.Responses.Following;
-using SoundShapesServer.Responses.Users;
+using SoundShapesServer.Responses.Game.Following;
+using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Helpers;
@@ -49,7 +49,7 @@ public static class UserHelper
         {
             Id = formattedAuthorId,
             Type = ResponseType.identity.ToString(),
-            DisplayName = user.DisplayName
+            DisplayName = user.Username
         };
     }
 
@@ -57,7 +57,7 @@ public static class UserHelper
     {
         return new UserMetadataResponse()
         {
-            DisplayName = user.DisplayName,
+            DisplayName = user.Username,
             FanCount = user.Followers.Count(), // Followers
             LevelCount = user.Levels.Count(), // Level Count
             FollowingCount = user.Following.Count(), // Following
