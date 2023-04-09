@@ -1,6 +1,8 @@
-namespace SoundShapesServer.Types.Levels;
+using Newtonsoft.Json;
+
+namespace SoundShapesServer.Responses.Levels;
 
 public class ExtraDataResponse
 {
-    public int sce_np_language { get; set; }
+    [JsonProperty("sce_np_language")] public int Language { get; set; }
 }

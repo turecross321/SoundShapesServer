@@ -7,17 +7,17 @@ namespace SoundShapesServer.Types.Levels;
 
 public class GameLevel : RealmObject
 {
-    public string id { get; set; }
-    public GameUser author { get; set; }
-    public string title { get; set; }
-    public string description { get; set; }
-    public int scp_np_language { get; set; }
-    public DateTimeOffset created { get; set; }
-    public DateTimeOffset modified { get; set; }
-    public int plays { get; set; }
-    public int deaths { get; set; }
-    public IList<GameUser> uniquePlays { get; }
-    public int completions { get; set; }
-    public IList<GameUser> completionists { get; }
-    [Backlink(nameof(LevelLikeRelation.level))] public IQueryable<LevelLikeRelation> likes { get; }
+    public string Id { get; set; }
+    public GameUser Author { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public int Language { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
+    public DateTimeOffset ModificationDate { get; set; }
+    public int Plays { get; set; }
+    public int Deaths { get; set; }
+    public IList<GameUser> UniquePlays { get; }
+    public int CompletionCount { get; set; }
+    public IList<GameUser> UsersWhoHaveCompletedLevel { get; }
+    [Backlink(nameof(LevelLikeRelation.Level))] public IQueryable<LevelLikeRelation> Likes { get; }
 }

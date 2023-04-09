@@ -1,17 +1,19 @@
+using Newtonsoft.Json;
+using SoundShapesServer.Responses.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Responses.Levels;
 public class LevelPublishResponse
 {
-    public string id { get; set; } //   format:  /~level:<actual-id>/upload:<creationTime>     WHAT THE FUCK
-    public string type = ResponseType.upload.ToString();
-    public UserResponse author { get; set; }
-    public string title { get; set; }
-    public IList<string> dependencies { get; set; }
-    public string visibility { get; set; }
-    public string description { get; set; }
-    public ExtraDataResponse extraData { get; set; }
-    public LevelParent parent { get; set; }
-    public long creationTime { get; set; }
+    [JsonProperty("id")] public string Id { get; set; }
+    [JsonProperty("type")] public string Type = ResponseType.upload.ToString();
+    [JsonProperty("author")] public UserResponse Author { get; set; }
+    [JsonProperty("title")] public string Title { get; set; }
+    [JsonProperty("dependencies")] public IList<string> Dependencies { get; set; }
+    [JsonProperty("visibility")] public string Visibility { get; set; }
+    [JsonProperty("description")] public string Description { get; set; }
+    [JsonProperty("extraData")] public ExtraDataResponse ExtraData { get; set; }
+    [JsonProperty("parent")] public LevelParent Parent { get; set; }
+    [JsonProperty("creationTime")] public long CreationDate { get; set; }
 }

@@ -1,10 +1,11 @@
+using Newtonsoft.Json;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Responses.Albums;
 
 public class AlbumTarget
 {
-    public string id { get; set; }
-    public string type = ResponseType.album.ToString();
-    public AlbumMetadata metadata { get; set; }
+    [JsonProperty("id")] public string Id { get; set; }
+    [JsonProperty("type")] public string Type = ResponseType.album.ToString();
+    [JsonProperty("metadata")] public AlbumMetadata Metadata { get; set; }
 }

@@ -4,7 +4,7 @@ namespace SoundShapesServer.Helpers;
 
 public class PlatformHelper
 {
-    public static readonly string[] PS3Ids =
+    public static readonly string[] Ps3Ids =
     {
         "NPJA00081",
         "NPEA00289",
@@ -18,7 +18,7 @@ public class PlatformHelper
     // Courtesy of https://www.serialstation.com/titles/?name=sound%20shapes&so=tn&systems=e80a9d68-aef2-4e23-8768-27ac0e5d9f25
 
 
-    public static readonly string[] PSVIds =
+    public static readonly string[] PsvIds =
     {
         "PCSA00003",
         "PCSC00024",
@@ -33,7 +33,7 @@ public class PlatformHelper
     };
     // Courtesy of https://www.serialstation.com/titles/?name=sound%20shapes&so=tn&systems=d8f282b9-916f-491d-9ca3-61e76a74fef0
 
-    public static readonly string[] PS4Ids =
+    public static readonly string[] Ps4Ids =
     {
         "CUSA00040",
         "CUSA00073",
@@ -44,12 +44,12 @@ public class PlatformHelper
     };
     // Courtesy of https://www.serialstation.com/titles/?name=sound%20shapes&so=tn&systems=97ec53a2-f676-4c89-8172-e653dce5eed1
     
-    public static PlatformType GetPlatform(string titleId, bool genuinePSN)
+    public static PlatformType GetPlatform(string titleId, bool genuinePsn)
     {
-        if (!genuinePSN) return PlatformType.rpcs3;
-        if (PS3Ids.Contains(titleId)) return PlatformType.ps3;
-        if (PSVIds.Contains(titleId)) return PlatformType.psv;
-        if (PS4Ids.Contains(titleId)) return PlatformType.ps4;
+        if (!genuinePsn) return PlatformType.rpcs3;
+        if (Ps3Ids.Contains(titleId)) return PlatformType.ps3;
+        if (PsvIds.Contains(titleId)) return PlatformType.psv;
+        if (Ps4Ids.Contains(titleId)) return PlatformType.ps4;
 
         return PlatformType.unknown;
     }

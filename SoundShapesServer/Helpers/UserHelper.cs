@@ -1,5 +1,6 @@
 using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Following;
+using SoundShapesServer.Responses.Users;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Helpers;
@@ -21,9 +22,9 @@ public static class UserHelper
 
         FollowingUsersWrapper responsesWrapper = new()
         {
-            items = responses.ToArray(),
-            nextToken = nextToken,
-            previousToken = previousToken
+            Users = responses.ToArray(),
+            NextToken = nextToken,
+            PreviousToken = previousToken
         };
 
         return responsesWrapper;
@@ -35,21 +36,21 @@ public static class UserHelper
 
         return new FollowingUserResponse
         {
-            id = IdFormatter.FormatFollowId(follower.id, followed.id),
-            target = UserToUserResponse(followed)
+            Id = IdFormatter.FormatFollowId(follower.Id, followed.Id),
+            User = UserToUserResponse(followed)
         };
     }
     public static UserResponse? UserToUserResponse(GameUser? user)
     {
         if (user == null) return null;
         
-        string formattedAuthorId = IdFormatter.FormatUserId(user.id);
+        string formattedAuthorId = IdFormatter.FormatUserId(user.Id);
 
         return new UserResponse
         {
-            id = formattedAuthorId,
-            type = ResponseType.identity.ToString(),
-            displayName = user.display_name
+            Id = formattedAuthorId,
+            Type = ResponseType.identity.ToString(),
+            DisplayName = user.DisplayName
         };
     }
 
@@ -57,11 +58,11 @@ public static class UserHelper
     {
         return new UserMetadataResponse()
         {
-            displayName = user.display_name,
-            follows_of_ever_count = user.followers.Count(), // Followers
-            levels_by_ever_count = user.publishedLevels.Count(), // Level Count
-            follows_by_ever_count = user.following.Count(), // Following
-            likes_by_ever_count = user.likedLevels.Count(), // Liked And Queued Levels
+            DisplayName = user.DisplayName,
+            FanCount = user.Followers.Count(), // Followers
+            LevelCount = user.Levels.Count(), // Level Count
+            FollowingCount = user.Following.Count(), // Following
+            LikedLevelsCount = user.LikedLevels.Count(), // Liked And Queued Levels
         };
     }
 }

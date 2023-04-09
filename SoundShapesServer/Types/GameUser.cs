@@ -7,16 +7,16 @@ namespace SoundShapesServer.Types;
 
 public class GameUser : RealmObject, IUser
 {
-    public string id { get; set; } = Guid.NewGuid().ToString();
-    public ResponseType type = ResponseType.identity;
-    public string display_name { get; set; } = string.Empty;
-    public GameLevel? featuredLevel { get; set; }
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public ResponseType Type = ResponseType.identity;
+    public string DisplayName { get; set; } = string.Empty;
+    public GameLevel? FeaturedLevel { get; set; }
 
-    [Backlink(nameof(LevelLikeRelation.liker))] public IQueryable<LevelLikeRelation> likedLevels { get; }
+    [Backlink(nameof(LevelLikeRelation.Liker))] public IQueryable<LevelLikeRelation> LikedLevels { get; }
     
-    [Backlink(nameof(FollowRelation.userBeingFollowed))] public IQueryable<FollowRelation> followers { get; }
+    [Backlink(nameof(FollowRelation.Recipient))] public IQueryable<FollowRelation> Followers { get; }
     
-    [Backlink(nameof(FollowRelation.follower))] public IQueryable<FollowRelation> following { get; }
+    [Backlink(nameof(FollowRelation.Follower))] public IQueryable<FollowRelation> Following { get; }
     
-    [Backlink(nameof(GameLevel.author))] public IQueryable<GameLevel> publishedLevels { get; }
+    [Backlink(nameof(GameLevel.Author))] public IQueryable<GameLevel> Levels { get; }
 }

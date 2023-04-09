@@ -7,6 +7,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Following;
+using SoundShapesServer.Responses.Users;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Endpoints.Profiles;
@@ -37,13 +38,13 @@ public class ProfileInteractionEndpoints : EndpointGroup
         {
             FollowResponse response = new()
             {
-                id = userBeingFollowed.id,
-                type = ResponseType.follow.ToString(),
-                target = new UserResponse()
+                Id = userBeingFollowed.Id,
+                Type = ResponseType.follow.ToString(),
+                User = new UserResponse()
                 {
-                    id = IdFormatter.FormatUserId(userBeingFollowed.id),
-                    type = ResponseType.identity.ToString(),
-                    displayName = userBeingFollowed.display_name
+                    Id = IdFormatter.FormatUserId(userBeingFollowed.Id),
+                    Type = ResponseType.identity.ToString(),
+                    DisplayName = userBeingFollowed.DisplayName
                 }
             };
 

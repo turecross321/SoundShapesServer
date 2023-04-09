@@ -4,11 +4,11 @@ namespace SoundShapesServer.Requests;
 
 public class LevelPublishRequest
 {
-    public string title { get; set; }
-    public string description { get; set; }
-    public FilePart image { get; set; }
-    public FilePart level { get; set; }
-    public FilePart sound { get; set; }
-    public int sce_np_language { get; set; }
-    public string levelId { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public FilePart Icon { get; set; }
+    public FilePart Level { get; set; }
+    public FilePart Song { get; set; }
+    public int Language { get; set; }
+    public string Id { get; set; }
 }

@@ -9,9 +9,9 @@ public partial class RealmDatabaseContext
     {
         Report report = new ()
         {
-            reporter = reporter,
-            level = level,
-            reportReasonId = reportReasonId
+            Reporter = reporter,
+            Level = level,
+            ReportReasonId = reportReasonId
         };
         
         this._realm.Write((() =>

@@ -4,17 +4,17 @@ namespace SoundShapesServer.Helpers;
 
 public static class ResourceHelper
 {
-    private const string levelsPath = "levels";
+    private const string LevelsPath = "levels";
     public static string GetLevelResourceKey(string levelId, string fileType)
     {
-        if (fileType.Contains("image")) return $"{levelsPath}/{levelId}.png";
-        if (fileType.Contains("level")) return $"{levelsPath}/{levelId}.level";
-        if (fileType.Contains("sound")) return $"{levelsPath}/{levelId}.sound";
+        if (fileType.Contains("image")) return $"{LevelsPath}/{levelId}.png";
+        if (fileType.Contains("level")) return $"{LevelsPath}/{levelId}.level";
+        if (fileType.Contains("sound")) return $"{LevelsPath}/{levelId}.sound";
 
         return "";
     }
     
-    private const string albumsPath = "albums";
+    private const string AlbumsPath = "albums";
     public static string GetAlbumResourceKey(string albumId, string file)
     {
         if (Enum.TryParse(file, out AlbumResourceType type) == false) return "";
@@ -22,9 +22,9 @@ public static class ResourceHelper
         switch (type)
         {
             case AlbumResourceType.thumbnail:
-                return $"{albumsPath}/{albumId}_thumbnail.png";
+                return $"{AlbumsPath}/{albumId}_thumbnail.png";
             case AlbumResourceType.sidePanel:
-                return $"{albumsPath}/{albumId}_sidePanel.png";
+                return $"{AlbumsPath}/{albumId}_sidePanel.png";
         }
 
         return "";
@@ -35,10 +35,10 @@ public static class ResourceHelper
         return $"otg/~album:{albumId}/~content:{type.ToString()}/data.get/{sessionId}";
     }
     
-    private const string savesPath = "saves";
+    private const string SavesPath = "saves";
 
     public static string GetSaveResourceKey(string userId)
     {
-        return $"{savesPath}/{userId}";
+        return $"{SavesPath}/{userId}";
     }
 }

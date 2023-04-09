@@ -29,13 +29,13 @@ public class LevelResourceEndpoints : EndpointGroup
         {
             switch (file.ContentType)
             {
-                case IFileType.image:
+                case IFileType.Image:
                     image = file;
                     break;
-                case IFileType.level:
+                case IFileType.Level:
                     level = file;
                     break;
-                case IFileType.sound:
+                case IFileType.Sound:
                     sound = file;
                     break;
                 default:
@@ -63,13 +63,13 @@ public class LevelResourceEndpoints : EndpointGroup
 
         LevelPublishRequest levelRequest = new ()
         {
-            title = parser.GetParameterValue("title"),
-            description = parser.GetParameterValue("description"),
-            image = image,
-            level = level,
-            sound = sound,
-            sce_np_language = int.Parse(parser.GetParameterValue("sce_np_language")),
-            levelId = levelId
+            Title = parser.GetParameterValue("title"),
+            Description = parser.GetParameterValue("description"),
+            Icon = image,
+            Level = level,
+            Song = sound,
+            Language = int.Parse(parser.GetParameterValue("sce_np_language")),
+            Id = levelId
         };
         
         return levelRequest;
@@ -77,9 +77,9 @@ public class LevelResourceEndpoints : EndpointGroup
     // Called from Publishing Endpoints
     public static void RemoveLevelResources(RequestContext context, GameLevel level)
     {
-        context.DataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.id, IFileType.image));
-        context.DataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.id, IFileType.level));
-        context.DataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.id, IFileType.sound));
+        context.DataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.Id, IFileType.Image));
+        context.DataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.Id, IFileType.Level));
+        context.DataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.Id, IFileType.Sound));
     }
     private static Response GetResource(RequestContext context, string fileName)
     {
@@ -100,7 +100,7 @@ public class LevelResourceEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;
 
-        string key = ResourceHelper.GetLevelResourceKey(level.id, file);
+        string key = ResourceHelper.GetLevelResourceKey(level.Id, file);
 
         return GetResource(context, key);
     }

@@ -12,17 +12,17 @@ public partial class RealmDatabaseContext
 {
     public LevelPublishResponse PublishLevel(LevelPublishRequest request, GameUser user)
     {
-        string levelId = request.levelId;
+        string levelId = request.Id;
             
         GameLevel level = new GameLevel
         {
-            id = levelId,
-            author = user,
-            title = request.title,
-            description = request.description,
-            scp_np_language = request.sce_np_language,
-            created = DateTimeOffset.UtcNow,
-            modified = DateTimeOffset.UtcNow
+            Id = levelId,
+            Author = user,
+            Name = request.Title,
+            Description = request.Description,
+            Language = request.Language,
+            CreationDate = DateTimeOffset.UtcNow,
+            ModificationDate = DateTimeOffset.UtcNow
         };
 
         this._realm.Write(() =>
@@ -35,14 +35,14 @@ public partial class RealmDatabaseContext
 
     public LevelPublishResponse? UpdateLevel(LevelPublishRequest updatedLevel, GameLevel level, GameUser user)
     {
-        if (!user.Equals(level.author)) return null;
+        if (!user.Equals(level.Author)) return null;
         
         this._realm.Write(() =>
         {
-            level.title = updatedLevel.title;
-            level.description = updatedLevel.description;
-            level.scp_np_language = updatedLevel.sce_np_language;
-            level.modified = DateTimeOffset.UtcNow;
+            level.Name = updatedLevel.Title;
+            level.Description = updatedLevel.Description;
+            level.Language = updatedLevel.Language;
+            level.ModificationDate = DateTimeOffset.UtcNow;
         });
 
         return GeneratePublishResponse(level);
@@ -52,7 +52,7 @@ public partial class RealmDatabaseContext
     {
         this._realm.Write((() =>
         {
-            user.featuredLevel = level;
+            user.FeaturedLevel = level;
         }));
     }
 
@@ -66,11 +66,11 @@ public partial class RealmDatabaseContext
         return true;
     }
     
-    public GameLevel? GetLevelWithId(string id) => this._realm.All<GameLevel>().FirstOrDefault(l => l.id == id);
+    public GameLevel? GetLevelWithId(string id) => this._realm.All<GameLevel>().FirstOrDefault(l => l.Id == id);
     public LevelsWrapper GetLevelsPublishedByUser(GameUser user, GameUser userToGetLevelsFrom, int from, int count)
     {
         IQueryable<GameLevel> entries = this._realm.All<GameLevel>()
-            .Where(l => l.author == userToGetLevelsFrom);
+            .Where(l => l.Author == userToGetLevelsFrom);
 
         int totalEntries = entries.Count();
 
@@ -95,7 +95,7 @@ public partial class RealmDatabaseContext
             if (string.IsNullOrWhiteSpace(keyword)) continue;
 
             entries = entries.Where(l =>
-                l.title.Like(keyword, false)
+                l.Name.Like(keyword, false)
             );
         }
 
@@ -113,7 +113,7 @@ public partial class RealmDatabaseContext
     public LevelsWrapper DailyLevels(GameUser user, int from, int count)
     {
         List<DailyLevel> entries = this._realm.All<DailyLevel>()
-            .OrderByDescending(l=>l.date)
+            .OrderByDescending(l=>l.Date)
             .ToList();
 
         int totalEntries = entries.Count;
@@ -128,7 +128,7 @@ public partial class RealmDatabaseContext
 
         for (int i = 0; i < dailyLevelEntries.Length; i++)
         {
-            levels[i] = dailyLevelEntries[i].level;
+            levels[i] = dailyLevelEntries[i].Level;
         }
 
         return LevelsToLevelsWrapper(levels, user, totalEntries, from, count);
@@ -137,7 +137,7 @@ public partial class RealmDatabaseContext
     {
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()
-            .OrderByDescending(l => l.uniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.created).TotalDays * 0.5);
+            .OrderByDescending(l => l.UniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.CreationDate).TotalDays * 0.5);
 
         IEnumerable<GameLevel> gameLevels = entries.ToList();
         int totalEntries = gameLevels.Count();
@@ -154,7 +154,7 @@ public partial class RealmDatabaseContext
     {
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()
-            .OrderByDescending(l=>l.created);
+            .OrderByDescending(l=>l.CreationDate);
 
         IEnumerable<GameLevel> gameLevels = entries.ToList();
         int totalEntries = gameLevels.Count();
@@ -170,7 +170,7 @@ public partial class RealmDatabaseContext
     {
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()
-            .OrderByDescending(l=>l.uniquePlays.Count);
+            .OrderByDescending(l=>l.UniquePlays.Count);
 
         IEnumerable<GameLevel> gameLevels = entries.ToList();
         int totalEntries = gameLevels.Count();
@@ -185,34 +185,34 @@ public partial class RealmDatabaseContext
 
     public void AddCompletionistToLevel(GameLevel level, GameUser user)
     {
-        if (level.completionists.Contains(user)) return;
+        if (level.UsersWhoHaveCompletedLevel.Contains(user)) return;
         
         this._realm.Write((() =>
         {
-            level.completionists.Add(user);
+            level.UsersWhoHaveCompletedLevel.Add(user);
         }));
     }
     public void AddCompletionToLevel(GameLevel level)
     {
         this._realm.Write((() =>
         {
-            level.completions++;
+            level.CompletionCount++;
         }));
     }
     public void AddPlayToLevel(GameLevel level)
     {
         this._realm.Write((() =>
         {
-            level.plays++;
+            level.Plays++;
         }));
     }
     public void AddUniquePlayToLevel(GameLevel level, GameUser user)
     {
-        if (level.uniquePlays.Contains(user)) return;
+        if (level.UniquePlays.Contains(user)) return;
         
         this._realm.Write((() =>
         {
-            level.uniquePlays.Add(user);
+            level.UniquePlays.Add(user);
         }));
     }
 
@@ -220,7 +220,7 @@ public partial class RealmDatabaseContext
     {
         this._realm.Write((() =>
         {
-            level.deaths += deaths;
+            level.Deaths += deaths;
         }));
     }
 }

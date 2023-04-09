@@ -11,17 +11,17 @@ public partial class RealmDatabaseContext
     {
         GameSession gameSession = new()
         {
-            expires = DateTimeOffset.UtcNow.AddSeconds(tokenExpirySeconds ?? DefaultTokenExpirySeconds),
-            id = GenerateGuid(),
-            user = user,
-            platform = platform
+            Expires = DateTimeOffset.UtcNow.AddSeconds(tokenExpirySeconds ?? DefaultTokenExpirySeconds),
+            Id = GenerateGuid(),
+            User = user,
+            Platform = platform
         };
 
-        IQueryable<GameSession>? previousSessions = this._realm.All<GameSession>().Where(s => s.user == user);
+        IQueryable<GameSession>? previousSessions = this._realm.All<GameSession>().Where(s => s.User == user);
         
         this._realm.Write(() =>
         {
-            this._realm.RemoveRange(previousSessions.Where(s=>s.platform == platform)); // removes all previous sessions with the same platform
+            this._realm.RemoveRange(previousSessions.Where(s=>s.Platform == platform)); // removes all previous sessions with the same platform
             this._realm.Add(gameSession);
         });
 
@@ -34,14 +34,14 @@ public partial class RealmDatabaseContext
         
         IQueryable<GameSession>? sessions = this._realm.All<GameSession>();
         GameSession? session = this._realm.All<GameSession>()
-            .FirstOrDefault(s => s.id == sessionId);
+            .FirstOrDefault(s => s.Id == sessionId);
 
         if (session == null)
         {
             return null;
         }
 
-        if (session.expires < DateTimeOffset.UtcNow)
+        if (session.Expires < DateTimeOffset.UtcNow)
         {
             this._realm.Write(() => this._realm.Remove(session));
             return null;
@@ -52,6 +52,6 @@ public partial class RealmDatabaseContext
 
     public bool IsSessionInvalid(string id)
     {
-        return (this._realm.All<GameSession>().FirstOrDefault(s => s.id == id) == null);
+        return (this._realm.All<GameSession>().FirstOrDefault(s => s.Id == id) == null);
     }
 }

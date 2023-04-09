@@ -1,11 +1,15 @@
 using Newtonsoft.Json;
 
-namespace SoundShapesServer.Responses;
+namespace SoundShapesServer.Responses.Users;
 
 public class UserResponse
 {
-    public string id { get; set; }
-    public string type { get; set; }
-    [JsonProperty(NullValueHandling=NullValueHandling.Ignore)] public string? displayName { get; set; }
-    [JsonProperty(NullValueHandling=NullValueHandling.Ignore)] public UserMetadataResponse metadata { get; set; }
+    [JsonProperty("id")] public string Id { get; set; }
+    [JsonProperty("type")] public string Type { get; set; }
+    
+    [JsonProperty("displayName", NullValueHandling=NullValueHandling.Ignore)]
+    public string? DisplayName { get; set; }
+    
+    [JsonProperty("metadata", NullValueHandling=NullValueHandling.Ignore)] 
+    public UserMetadataResponse Metadata { get; set; }
 }

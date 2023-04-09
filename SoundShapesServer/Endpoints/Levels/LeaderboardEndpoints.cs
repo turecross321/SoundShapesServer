@@ -34,10 +34,10 @@ public class LeaderboardEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level != null) // Doing this since story levels can be null
         {
-            if (deSerializedRequest.completed == 1) LevelInteractionEndpoints.AddCompletion(database, level, user);
+            if (deSerializedRequest.Completed == 1) LevelInteractionEndpoints.AddCompletion(database, level, user);
             LevelInteractionEndpoints.AddPlay(database, level);
             LevelInteractionEndpoints.AddUniquePlay(database, level, user);
-            LevelInteractionEndpoints.AddDeathsToLevel(database, level, deSerializedRequest.deaths);
+            LevelInteractionEndpoints.AddDeathsToLevel(database, level, deSerializedRequest.Deaths);
         }
 
         if (!database.SubmitScore(deSerializedRequest, user, levelId)) return HttpStatusCode.InternalServerError;
@@ -62,17 +62,17 @@ public class LeaderboardEndpoints : EndpointGroup
         {
             responseEntries[i] = new LeaderboardEntryResponse()
             {
-                position = from + (i + 1),
-                entrant = UserHelper.UserToUserResponse(entries[i].user),
-                score = entries[i].score
+                Position = from + (i + 1),
+                Entrant = UserHelper.UserToUserResponse(entries[i].User),
+                Score = entries[i].Score
             };
         }
 
         return new LeaderboardEntriesWrapper
         {
-            items = responseEntries,
-            nextToken = nextToken,
-            previousToken = previousToken
+            Entries = responseEntries,
+            NextToken = nextToken,
+            PreviousToken = previousToken
         };
     }
 
@@ -86,9 +86,9 @@ public class LeaderboardEndpoints : EndpointGroup
         LeaderboardEntryResponse[] response = new LeaderboardEntryResponse[1];
         response[0] = new LeaderboardEntryResponse()
         {
-            position = database.GetPositionOfLeaderboardEntry(entry),
-            entrant = UserHelper.UserToUserResponse(entry.user),
-            score = entry.score
+            Position = database.GetPositionOfLeaderboardEntry(entry),
+            Entrant = UserHelper.UserToUserResponse(entry.User),
+            Score = entry.Score
         };
 
         return response;

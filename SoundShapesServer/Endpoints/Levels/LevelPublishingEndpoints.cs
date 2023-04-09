@@ -34,7 +34,7 @@ public class LevelPublishingEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
 
         if (level == null) return new Response(HttpStatusCode.NotFound);
-        if (!level.author.Equals(user)) return new Response(HttpStatusCode.Forbidden);
+        if (!level.Author.Equals(user)) return new Response(HttpStatusCode.Forbidden);
         
         LevelPublishRequest? levelRequest = LevelResourceEndpoints.UploadLevelResources(context, parser, levelId);
         if (levelRequest == null) return HttpStatusCode.InternalServerError;
@@ -50,7 +50,7 @@ public class LevelPublishingEndpoints : EndpointGroup
     // Gets called by Endpoints.cs
     public static Response UnPublishLevel(RequestContext context, RealmDatabaseContext database, GameUser user, GameLevel level)
     {
-        if (level.author.Equals(user) == false) return new Response(HttpStatusCode.Forbidden);  // Check if user is the level publisher
+        if (level.Author.Equals(user) == false) return new Response(HttpStatusCode.Forbidden);  // Check if user is the level publisher
         
         LevelResourceEndpoints.RemoveLevelResources(context, level);
         return database.UnPublishLevel(level) ? new Response(HttpStatusCode.OK) : HttpStatusCode.InternalServerError;

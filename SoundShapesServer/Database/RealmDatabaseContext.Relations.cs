@@ -12,7 +12,7 @@ public partial class RealmDatabaseContext
 {
     public FollowingUsersWrapper? GetFollowers(GameUser userBeingFollowed, int from, int count)
     {
-        IQueryable<FollowRelation> relations = this._realm.All<FollowRelation>().Where(r => r.userBeingFollowed == userBeingFollowed);
+        IQueryable<FollowRelation> relations = this._realm.All<FollowRelation>().Where(r => r.Recipient == userBeingFollowed);
 
         int totalEntries = relations.Count();
         
@@ -26,7 +26,7 @@ public partial class RealmDatabaseContext
 
         for (int i = 0; i < selectedRelations.Length; i++)
         {
-            followers[i] = selectedRelations[i].follower;
+            followers[i] = selectedRelations[i].Follower;
         }
 
         return UsersToFollowingUsersWrapper(userBeingFollowed, followers, totalEntries, from, count);
@@ -34,7 +34,7 @@ public partial class RealmDatabaseContext
 
     public FollowingUsersWrapper? GetFollowedUsers(GameUser follower, int from, int count)
     {
-        IQueryable<FollowRelation> relations = this._realm.All<FollowRelation>().Where(r => r.follower == follower);
+        IQueryable<FollowRelation> relations = this._realm.All<FollowRelation>().Where(r => r.Follower == follower);
 
         int totalEntries = relations.Count();
         
@@ -48,7 +48,7 @@ public partial class RealmDatabaseContext
 
         for (int i = 0; i < selectedRelations.Count(); i++)
         {
-            following[i] = selectedRelations[i].userBeingFollowed;
+            following[i] = selectedRelations[i].Recipient;
         }
 
         return UsersToFollowingUsersWrapper(follower, following, totalEntries, from, count);
@@ -57,7 +57,7 @@ public partial class RealmDatabaseContext
     public LevelsWrapper? GetUsersLikedLevels(GameUser user, GameUser userToGetLevelsFrom, int from, int count)
     {
         IQueryable<LevelLikeRelation> relations = this._realm.All<LevelLikeRelation>()
-            .Where(l => l.liker == userToGetLevelsFrom);
+            .Where(l => l.Liker == userToGetLevelsFrom);
 
         int totalEntries = relations.Count();
         
@@ -71,7 +71,7 @@ public partial class RealmDatabaseContext
 
         for (int i = 0; i < selectedRelations.Length; i++)
         {
-            levels[i] = selectedRelations[i].level;
+            levels[i] = selectedRelations[i].Level;
         }
 
         return LevelsToLevelsWrapper(levels, user, totalEntries, from, count);
@@ -83,8 +83,8 @@ public partial class RealmDatabaseContext
 
         FollowRelation relation = new()
         {
-            follower = follower,
-            userBeingFollowed = userBeingFollowed
+            Follower = follower,
+            Recipient = userBeingFollowed
         };
         this._realm.Write(() =>
         {
@@ -98,7 +98,7 @@ public partial class RealmDatabaseContext
     {
         if (!IsUserFollowingOtherUser(follower, userBeingUnFollowed)) return false;
         
-        FollowRelation? relation = this._realm.All<FollowRelation>().FirstOrDefault(f => f.follower == follower && f.userBeingFollowed == userBeingUnFollowed);
+        FollowRelation? relation = this._realm.All<FollowRelation>().FirstOrDefault(f => f.Follower == follower && f.Recipient == userBeingUnFollowed);
 
         if (relation == null) return false;
         
@@ -116,8 +116,8 @@ public partial class RealmDatabaseContext
         
         LevelLikeRelation relation = new()
         {
-            liker = liker,
-            level = level
+            Liker = liker,
+            Level = level
         };
         this._realm.Write(() =>
         {
@@ -131,7 +131,7 @@ public partial class RealmDatabaseContext
     {
         if (!IsUserLikingLevel(liker, level)) return false;
 
-        LevelLikeRelation? relation = this._realm.All<LevelLikeRelation>().FirstOrDefault(l => l.liker == liker && l.level == level);
+        LevelLikeRelation? relation = this._realm.All<LevelLikeRelation>().FirstOrDefault(l => l.Liker == liker && l.Level == level);
 
         if (relation == null) return false;
         
@@ -145,14 +145,14 @@ public partial class RealmDatabaseContext
 
     public bool IsUserLikingLevel(GameUser liker, GameLevel level)
     {
-        int count = this._realm.All<LevelLikeRelation>().Count(l => l.liker == liker && l.level == level);
+        int count = this._realm.All<LevelLikeRelation>().Count(l => l.Liker == liker && l.Level == level);
         if (count > 0) return true;
         else return false;
     }
     
     public bool IsUserFollowingOtherUser(GameUser follower, GameUser userBeingFollowed)
     {
-        int count = this._realm.All<FollowRelation>().Count(f => f.follower == follower && f.userBeingFollowed == userBeingFollowed);
+        int count = this._realm.All<FollowRelation>().Count(f => f.Follower == follower && f.Recipient == userBeingFollowed);
         if (count > 0) return true;
         else return false;
     }

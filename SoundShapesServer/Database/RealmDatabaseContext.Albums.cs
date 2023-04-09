@@ -1,6 +1,8 @@
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Albums;
+using SoundShapesServer.Responses.Albums.LevelInfo;
+using SoundShapesServer.Responses.Albums.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
@@ -27,12 +29,12 @@ public partial class RealmDatabaseContext
 
     public GameAlbum? GetAlbumWithId(string id)
     {
-        return this._realm.All<GameAlbum>().Where(a => a.id == id).FirstOrDefault();
+        return this._realm.All<GameAlbum>().Where(a => a.Id == id).FirstOrDefault();
     }
 
     public AlbumLevelsWrapper AlbumLevels(GameUser user, GameAlbum album, int from, int count)
     {
-        IEnumerable<GameLevel> gameLevels = album.levels;
+        IEnumerable<GameLevel> gameLevels = album.Levels;
         int totalEntries = gameLevels.Count();
 
         GameLevel[] selectedEntries = gameLevels
@@ -45,7 +47,7 @@ public partial class RealmDatabaseContext
 
     public AlbumLevelInfosWrapper GetAlbumsLevelsInfo(GameUser user, GameAlbum album, int from, int count)
     {
-        IEnumerable<GameLevel> gameLevels = album.levels;
+        IEnumerable<GameLevel> gameLevels = album.Levels;
         int totalEntries = gameLevels.Count();
 
         GameLevel[] selectedEntries = gameLevels

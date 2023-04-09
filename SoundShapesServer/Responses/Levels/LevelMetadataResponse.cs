@@ -1,12 +1,14 @@
+using Newtonsoft.Json;
+
 namespace SoundShapesServer.Responses.Levels;
 
 public class LevelMetadataResponse
 {
-    public string unique_plays_ever_count { get; set; }  
-    public string difficulty { get; set; }
-    public string timestamp { get; set; }  
-    public string plays_of_ever_count { get; set; }
-    public string displayName { get; set; }  
-    public string sce_np_language { get; set; }  
-    public string likes_of_ever_count { get; set; }
+    [JsonProperty("unique_plays_ever_count")] public string UniquePlaysCount { get; set; }  
+    [JsonProperty("difficulty")] public string Difficulty { get; set; }
+    [JsonProperty("timestamp")] public string Timestamp { get; set; }  
+    [JsonProperty("plays_of_ever_count")] public string TotalPlaysCount { get; set; }
+    [JsonProperty("displayName")] public string Name { get; set; }  
+    [JsonProperty("sce_np_language")] public string Language { get; set; }  
+    [JsonProperty("likes_of_ever_count")] public string LikesCount { get; set; }
 }

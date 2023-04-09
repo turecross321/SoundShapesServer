@@ -4,6 +4,6 @@ namespace SoundShapesServer.Types.Levels;
 
 public class DailyLevel : RealmObject
 {
-    public GameLevel level { get; set; }
-    public DateTimeOffset date { get; set; }
+    public GameLevel Level { get; set; }
+    public DateTimeOffset Date { get; set; }
 }

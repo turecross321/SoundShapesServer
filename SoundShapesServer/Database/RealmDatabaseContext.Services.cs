@@ -4,11 +4,11 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public Service CreateService(string display_name)
+    public Service CreateService(string displayName)
     {
         Service service = new()
         {
-            display_name = display_name
+            DisplayName = displayName
         };
         
         this._realm.Write(() =>
@@ -19,15 +19,15 @@ public partial class RealmDatabaseContext
         return service;
     }
     
-    public Service? GetServiceWithDisplayName(string? display_name)
+    public Service? GetServiceWithDisplayName(string? displayName)
     {
-        if (display_name == null) return null;
-        return this._realm.All<Service>().FirstOrDefault(u => u.display_name == display_name);
+        if (displayName == null) return null;
+        return this._realm.All<Service>().FirstOrDefault(u => u.DisplayName == displayName);
     }
     
     public Service? GetServiceWithId(string? id)
     {
         if (id == null) return null;
-        return this._realm.All<Service>().FirstOrDefault(u => u.id == id);
+        return this._realm.All<Service>().FirstOrDefault(u => u.Id == id);
     }
 }

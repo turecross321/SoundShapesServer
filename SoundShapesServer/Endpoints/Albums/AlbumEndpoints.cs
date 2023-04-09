@@ -19,7 +19,7 @@ public class AlbumEndpoints : EndpointGroup
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
 
-        return database.GetAlbums(token.id, from, count);
+        return database.GetAlbums(token.Id, from, count);
     }
 
     [Endpoint("/otg/~album:{albumId}/~link:*.page", ContentType.Json)]

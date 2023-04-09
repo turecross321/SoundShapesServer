@@ -27,48 +27,48 @@ public static class LevelHelper
     public static LevelPublishResponse GeneratePublishResponse(GameLevel level)
     {
         return new () {
-            id = IdFormatter.FormatLevelPublishId(level.id, level.created.ToUnixTimeMilliseconds()),
-            type = ResponseType.upload.ToString(),
-            author = new()
+            Id = IdFormatter.FormatLevelPublishId(level.Id, level.CreationDate.ToUnixTimeMilliseconds()),
+            Type = ResponseType.upload.ToString(),
+            Author = new()
             {
-                id = IdFormatter.FormatUserId(level.author.id),
-                type = ResponseType.identity.ToString(),
-                displayName = level.author.display_name
+                Id = IdFormatter.FormatUserId(level.Author.Id),
+                Type = ResponseType.identity.ToString(),
+                DisplayName = level.Author.DisplayName
             },
-            title = level.title,
-            dependencies = new List<string>(),
-            visibility = "EVERYONE",
-            description = level.description,
-            extraData = new ExtraDataResponse() { sce_np_language = level.scp_np_language },
-            parent = new()
+            Title = level.Name,
+            Dependencies = new List<string>(),
+            Visibility = "EVERYONE",
+            Description = level.Description,
+            ExtraData = new ExtraDataResponse() { Language = level.Language },
+            Parent = new()
             {
-                id = IdFormatter.FormatLevelId(level.id),
-                type = ResponseType.level.ToString()
+                Id = IdFormatter.FormatLevelId(level.Id),
+                Type = ResponseType.level.ToString()
             },
-            creationTime = level.created.ToUnixTimeMilliseconds()
+            CreationDate = level.CreationDate.ToUnixTimeMilliseconds()
         };   
     }
     public static LevelMetadataResponse GenerateMetadataResponse(GameLevel level)
     {
         float difficulty;
 
-        if (level.deaths > 0)
+        if (level.Deaths > 0)
         {
-            float rate = level.deaths / level.plays;
+            float rate = level.Deaths / level.Plays;
             difficulty = Math.Clamp(rate, 1, 5);
         }
         else difficulty = 0;
         
         LevelMetadataResponse response = new ()
         {
-            displayName = level.title,
+            Name = level.Name,
             
-            unique_plays_ever_count = level.uniquePlays.Count.ToString(),
-            difficulty = difficulty.ToString(),
-            timestamp = level.modified.ToUnixTimeMilliseconds().ToString(),
-            plays_of_ever_count = level.plays.ToString(),
-            sce_np_language = level.scp_np_language.ToString(),
-            likes_of_ever_count = level.likes.Count().ToString()
+            UniquePlaysCount = level.UniquePlays.Count.ToString(),
+            Difficulty = difficulty.ToString(),
+            Timestamp = level.ModificationDate.ToUnixTimeMilliseconds().ToString(),
+            TotalPlaysCount = level.Plays.ToString(),
+            Language = level.Language.ToString(),
+            LikesCount = level.Likes.Count().ToString()
         };
 
         return response;
@@ -88,10 +88,10 @@ public static class LevelHelper
 
         LevelsWrapper response = new()
         {
-            items = levelResponses.ToArray(),
-            count = levelResponses.Count,
-            nextToken = nextToken,
-            previousToken = previousToken
+            Levels = levelResponses.ToArray(),
+            LevelCount = levelResponses.Count,
+            NextToken = nextToken,
+            PreviousToken = previousToken
         };
 
         return response;
@@ -101,18 +101,18 @@ public static class LevelHelper
     {
         if (level == null) return null;
         
-        string formattedLevelId = IdFormatter.FormatLevelId(level.id);
+        string formattedLevelId = IdFormatter.FormatLevelId(level.Id);
 
         LevelResponse levelResponse = new LevelResponse()
         {
-            id = formattedLevelId,
-            author = UserHelper.UserToUserResponse(level.author),
-            latestVersion = IdFormatter.FormatLevelIdAndVersion(level.id, level.modified.ToUnixTimeMilliseconds()),
-            title = level.title,
-            description = level.description,
-            type = ResponseType.level.ToString(),
-            completed = level.completionists.Contains(user),
-            metadata = GenerateMetadataResponse(level)
+            Id = formattedLevelId,
+            Author = UserHelper.UserToUserResponse(level.Author),
+            LatestVersion = IdFormatter.FormatLevelIdAndVersion(level.Id, level.ModificationDate.ToUnixTimeMilliseconds()),
+            Title = level.Name,
+            Description = level.Description,
+            Type = ResponseType.level.ToString(),
+            Completed = level.UsersWhoHaveCompletedLevel.Contains(user),
+            Metadata = GenerateMetadataResponse(level)
         };
 
         return levelResponse;

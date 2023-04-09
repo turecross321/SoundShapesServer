@@ -4,11 +4,11 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public GameUser CreateUser(string display_name)
+    public GameUser CreateUser(string displayName)
     {
         GameUser user = new()
         {
-            display_name = display_name,
+            DisplayName = displayName,
         };
 
         this._realm.Write(() =>
@@ -19,15 +19,15 @@ public partial class RealmDatabaseContext
         return user;
     }
     
-    public GameUser? GetUserWithDisplayName(string? display_name)
+    public GameUser? GetUserWithDisplayName(string? displayName)
     {
-        if (display_name == null) return null;
-        return this._realm.All<GameUser>().FirstOrDefault(u => u.display_name == display_name);
+        if (displayName == null) return null;
+        return this._realm.All<GameUser>().FirstOrDefault(u => u.DisplayName == displayName);
     }
     
     public GameUser? GetUserWithId(string? id)
     {
         if (id == null) return null;
-        return this._realm.All<GameUser>().FirstOrDefault(u => u.id == id);
+        return this._realm.All<GameUser>().FirstOrDefault(u => u.Id == id);
     }
 }

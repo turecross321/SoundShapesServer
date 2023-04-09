@@ -5,14 +5,14 @@ namespace SoundShapesServer.Types;
 
 public class LeaderboardEntry : RealmObject
 {
-    public ObjectId id = ObjectId.GenerateNewId();
-    public GameUser user { get; set; }
-    public string levelId { get; set; }
-    public long score { get; set; }
-    public int playTime { get; set; }
-    public int deaths { get; set; }
-    public int golded { get; set; }
-    public int tokenCount { get; set; }
-    public bool completed { get; set; }
-    public DateTimeOffset date { get; set; }
+    public ObjectId Id = ObjectId.GenerateNewId();
+    public GameUser User { get; set; }
+    public string LevelId { get; set; }
+    public long Score { get; set; }
+    public int Playtime { get; set; }
+    public int Deaths { get; set; }
+    public int Golded { get; set; }
+    public int TokenCount { get; set; }
+    public bool Completed { get; set; }
+    public DateTimeOffset Date { get; set; }
 }

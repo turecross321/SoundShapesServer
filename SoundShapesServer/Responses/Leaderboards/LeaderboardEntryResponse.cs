@@ -1,8 +1,11 @@
+using Newtonsoft.Json;
+using SoundShapesServer.Responses.Users;
+
 namespace SoundShapesServer.Responses.Leaderboards;
 
 public class LeaderboardEntryResponse
 {
-    public int position { get; set; }
-    public UserResponse entrant { get; set; }
-    public long score { get; set; }
+    [JsonProperty("position")] public int Position { get; set; }
+    [JsonProperty("entrant")] public UserResponse Entrant { get; set; }
+    [JsonProperty("score")] public long Score { get; set; }
 }

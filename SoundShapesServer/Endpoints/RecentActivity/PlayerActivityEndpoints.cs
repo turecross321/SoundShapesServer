@@ -11,6 +11,6 @@ public class PlayerActivityEndpoints : EndpointGroup
     [Endpoint("/otg/~identity:{id}/~stream:news.page", ContentType.Json)]
     public PlayerNewsResponse PlayerNews(RequestContext context)
     {
-        return new PlayerNewsResponse() { items = new string[0] };
+        return new PlayerNewsResponse() { Items = new string[0] };
     }
 }

@@ -11,10 +11,10 @@ public static class NewsHelper
     {
         return new NewsResponse()
         {
-            title = entry.title,
-            text = entry.text,
-            fullText = entry.fullText,
-            url = entry.url,
+            Title = entry.Title,
+            Summary = entry.Summary,
+            FullText = entry.FullText,
+            Url = entry.Url,
         };
     }
 }

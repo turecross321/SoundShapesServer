@@ -4,7 +4,7 @@ namespace SoundShapesServer.Responses.Albums;
 
 public class AlbumsWrapper
 {
-    public AlbumResponse[] items { get; set; }
-    [JsonProperty(NullValueHandling=NullValueHandling.Ignore)] public int? previousToken { get; set; }
-    [JsonProperty(NullValueHandling=NullValueHandling.Ignore)] public int? nextToken { get; set; }
+    [JsonProperty("items")] public AlbumResponse[] Albums { get; set; }
+    [JsonProperty("previousToken", NullValueHandling=NullValueHandling.Ignore)] public int? PreviousToken { get; set; }
+    [JsonProperty("nextToken", NullValueHandling=NullValueHandling.Ignore)] public int? NextToken { get; set; }
 }

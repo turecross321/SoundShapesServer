@@ -25,7 +25,7 @@ public class CloudSyncingEndpoints : EndpointGroup
 
         byte[] combinedSave = newSave;
 
-        string key = ResourceHelper.GetSaveResourceKey(user.id);
+        string key = ResourceHelper.GetSaveResourceKey(user.Id);
         
         // If there's an old one, combine them
         if (context.DataStore.TryGetDataFromStore(key, out byte[]? oldSave))
@@ -41,7 +41,7 @@ public class CloudSyncingEndpoints : EndpointGroup
 
     private Response DeleteSave(RequestContext context, GameUser user)
     {
-        string key = ResourceHelper.GetSaveResourceKey(user.id);
+        string key = ResourceHelper.GetSaveResourceKey(user.Id);
 
         if (!context.DataStore.RemoveFromStore(key)) return HttpStatusCode.InternalServerError;
         else return HttpStatusCode.OK;
@@ -50,7 +50,7 @@ public class CloudSyncingEndpoints : EndpointGroup
     [Endpoint("/otg/~identity:{userId}/~content:progress/data.get")]
     public Response DownloadSave(RequestContext context, GameUser user, string userId)
     {
-        string key = ResourceHelper.GetSaveResourceKey(user.id);
+        string key = ResourceHelper.GetSaveResourceKey(user.Id);
 
         if (context.DataStore.TryGetDataFromStore(key, out byte[]? byteArray) == false)
             return HttpStatusCode.NotFound;

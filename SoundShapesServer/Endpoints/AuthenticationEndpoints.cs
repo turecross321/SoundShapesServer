@@ -9,6 +9,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Sessions;
+using SoundShapesServer.Responses.Users;
 using SoundShapesServer.Types;
 using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
 
@@ -32,13 +33,13 @@ public class AuthenticationEndpoints : EndpointGroup
             return null;
         }
         
-        bool genuinePSN = ticket.IssuerId switch
+        bool genuinePsn = ticket.IssuerId switch
         {
             0x100 => true, // ps3, ps4, psvita
             0x33333333 => false // rpcs3
         };
 
-        string platform = PlatformHelper.GetPlatform(ticket.TitleId, genuinePSN).ToString();
+        string platform = PlatformHelper.GetPlatform(ticket.TitleId, genuinePsn).ToString();
         if (platform == PlatformType.unknown.ToString()) return null; 
         
         GameUser? user = database.GetUserWithDisplayName(ticket.Username);
@@ -51,27 +52,27 @@ public class AuthenticationEndpoints : EndpointGroup
         
         GameSessionResponse sessionResponse = new GameSessionResponse
         {
-            expires = session.expires.ToUnixTimeMilliseconds(),
-            id = session.id,
-            person = new SessionUserResponse
+            ExpirationDate = session.Expires.ToUnixTimeMilliseconds(),
+            Id = session.Id,
+            User = new SessionUserResponse
             {
-                display_name = user.display_name,
-                id = user.id
+                DisplayName = user.DisplayName,
+                Id = user.Id
             },
-            service = service
+            Service = service
         };
 
         GameSessionWrapper responseWrapper = new ()
         {
-            session = sessionResponse
+            Session = sessionResponse
         };
         
-        Console.WriteLine($"{sessionResponse.person.display_name} has logged in.");
+        Console.WriteLine($"{sessionResponse.User.DisplayName} has logged in.");
 
-        context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={session.id};Version=1;Path=/");
-        context.ResponseHeaders.Add("x-otg-identity-displayname", user.display_name);
-        context.ResponseHeaders.Add("x-otg-identity-personid", user.id);
-        context.ResponseHeaders.Add("x-otg-identity-sessionid", session.id);
+        context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={session.Id};Version=1;Path=/");
+        context.ResponseHeaders.Add("x-otg-identity-displayname", user.DisplayName);
+        context.ResponseHeaders.Add("x-otg-identity-personid", user.Id);
+        context.ResponseHeaders.Add("x-otg-identity-sessionid", session.Id);
 
         return new Response(responseWrapper, ContentType.Json, HttpStatusCode.Created);
     }

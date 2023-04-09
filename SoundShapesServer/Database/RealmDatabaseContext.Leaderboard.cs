@@ -9,24 +9,24 @@ public partial class RealmDatabaseContext
     {
         LeaderboardEntry entry = new()
         {
-            user = user,
-            levelId = levelId,
-            score = request.score,
-            playTime = request.playTime,
-            deaths = request.deaths,
-            golded = request.golded,
-            tokenCount = request.tokenCount,
-            completed = Convert.ToBoolean(request.completed),
-            date = DateTimeOffset.UtcNow
+            User = user,
+            LevelId = levelId,
+            Score = request.Score,
+            Playtime = request.PlayTime,
+            Deaths = request.Deaths,
+            Golded = request.Golded,
+            TokenCount = request.TokenCount,
+            Completed = Convert.ToBoolean(request.Completed),
+            Date = DateTimeOffset.UtcNow
         };
 
         LeaderboardEntry? previousEntry =
-            this._realm.All<LeaderboardEntry>().FirstOrDefault(e => e.levelId == levelId && e.user == user && e.completed);
+            this._realm.All<LeaderboardEntry>().FirstOrDefault(e => e.LevelId == levelId && e.User == user && e.Completed);
 
         this._realm.Write(() =>
         {
             // If there is a previous entry, and it's more than the new one, remove it and replace it with the new one
-            if (previousEntry != null && previousEntry.score > entry.score)
+            if (previousEntry != null && previousEntry.Score > entry.Score)
             {
                 this._realm.Remove(previousEntry);
                 this._realm.Add(entry);
@@ -48,13 +48,13 @@ public partial class RealmDatabaseContext
     {
         IEnumerable<LeaderboardEntry> entries = this._realm.All<LeaderboardEntry>()
             .AsEnumerable()
-            .Where(e=>e.completed)
-            .Where(e => e.levelId == levelId);
+            .Where(e=>e.Completed)
+            .Where(e => e.LevelId == levelId);
 
         int totalEntries = entries.Count();
 
         IEnumerable<LeaderboardEntry> selectedEntries = entries
-            .OrderBy(e => e.score)
+            .OrderBy(e => e.Score)
             .Skip(from)
             .Take(count);
 
@@ -63,11 +63,11 @@ public partial class RealmDatabaseContext
 
     public LeaderboardEntry? GetLeaderboardEntryFromPlayer(GameUser user, string levelId)
     {
-        return this._realm.All<LeaderboardEntry>().Where(e=>e.completed).FirstOrDefault(e => e.user == user && e.levelId == levelId);
+        return this._realm.All<LeaderboardEntry>().Where(e=>e.Completed).FirstOrDefault(e => e.User == user && e.LevelId == levelId);
     }
 
     public int GetPositionOfLeaderboardEntry(LeaderboardEntry entry)
     {
-        return this._realm.All<LeaderboardEntry>().Count(e => e.levelId == entry.levelId && e.score < entry.score && e.completed) + 1;
+        return this._realm.All<LeaderboardEntry>().Count(e => e.LevelId == entry.LevelId && e.Score < entry.Score && e.Completed) + 1;
     }
 }

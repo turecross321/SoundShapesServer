@@ -17,21 +17,21 @@ public class FeaturedEndpoints : EndpointGroup
     {
         new CommunityTab
         {
-            queryType = "search",
-            buttonLabel = "Newest Levels",
-            query = "newest&type=level",
-            panelDescription = "Check here daily for the latest cool levels! Always new stuff to check out!",
-            imageUrl = "",
-            panelTitle = "New Levels"
+            QueryType = "search",
+            ButtonLabel = "Newest Levels",
+            Query = "newest&type=level",
+            PanelDescription = "Check here daily for the latest cool levels! Always new stuff to check out!",
+            ImageUrl = "",
+            PanelTitle = "New Levels"
         },
         new CommunityTab
         {
-            queryType = "search",
-            buttonLabel = "Top Levels",
-            query = "top&type=level",
-            panelDescription = "Check here for the most played levels!",
-            imageUrl = "",
-            panelTitle = "Top Levels"
+            QueryType = "search",
+            ButtonLabel = "Top Levels",
+            Query = "top&type=level",
+            PanelDescription = "Check here for the most played levels!",
+            ImageUrl = "",
+            PanelTitle = "Top Levels"
         }
     };
     
@@ -48,11 +48,11 @@ public class FeaturedEndpoints : EndpointGroup
         GameUser? user = database.GetUserWithId(userId);
         if (user == null) return null;
 
-        GameLevel? featuredLevel = user.featuredLevel;
+        GameLevel? featuredLevel = user.FeaturedLevel;
 
         if (featuredLevel == null) return null;
         
-        return IdFormatter.FormatLevelIdAndVersion(featuredLevel.id, featuredLevel.modified.ToUnixTimeMilliseconds());
+        return IdFormatter.FormatLevelIdAndVersion(featuredLevel.Id, featuredLevel.ModificationDate.ToUnixTimeMilliseconds());
     }
 
     [Endpoint("/otg/~identity:{userId}/~metadata:featuredLevel.put", Method.Post)]

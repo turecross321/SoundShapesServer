@@ -11,7 +11,7 @@ namespace SoundShapesServer.Authentication;
 public class GameAuthenticationProvider : IAuthenticationProvider<GameUser, GameSession>
 {
     public GameUser? AuthenticateUser(ListenerContext request, Lazy<IDatabaseContext> db) 
-        => this.AuthenticateToken(request, db)?.user;
+        => this.AuthenticateToken(request, db)?.User;
 
     public GameSession? AuthenticateToken(ListenerContext request, Lazy<IDatabaseContext> db)
     {

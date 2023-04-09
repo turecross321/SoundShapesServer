@@ -47,7 +47,7 @@ public class Endpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return new Response(HttpStatusCode.NotFound);
 
-        if (action == "update") return LevelPublishingEndpoints.UpdateLevel(context, parser, database, user, level.id);
+        if (action == "update") return LevelPublishingEndpoints.UpdateLevel(context, parser, database, user, level.Id);
 
         else return new Response(HttpStatusCode.NotFound);
     }

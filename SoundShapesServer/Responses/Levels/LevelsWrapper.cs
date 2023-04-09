@@ -3,9 +3,11 @@ using Newtonsoft.Json;
 namespace SoundShapesServer.Responses.Levels;
 public class LevelsWrapper
 {
-    public LevelResponse[] items { get; set; }
-    public int count { get; set; }
+    [JsonProperty("items")] public LevelResponse[] Levels { get; set; }
+    [JsonProperty("count")] public int LevelCount { get; set; }
     
-    [JsonProperty(NullValueHandling=NullValueHandling.Ignore)] public int? previousToken { get; set; }
-    [JsonProperty(NullValueHandling=NullValueHandling.Ignore)] public int? nextToken { get; set; }
+    [JsonProperty("previousToken", NullValueHandling=NullValueHandling.Ignore)] 
+    public int? PreviousToken { get; set; }
+    [JsonProperty("nextToken", NullValueHandling=NullValueHandling.Ignore)] 
+    public int? NextToken { get; set; }
 }

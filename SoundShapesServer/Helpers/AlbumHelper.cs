@@ -2,7 +2,10 @@ using Newtonsoft.Json;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Albums;
+using SoundShapesServer.Responses.Albums.LevelInfo;
+using SoundShapesServer.Responses.Albums.Levels;
 using SoundShapesServer.Responses.Levels;
+using SoundShapesServer.Responses.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
@@ -25,9 +28,9 @@ public static class AlbumHelper
         
         return new AlbumsWrapper()
         {
-            items = albumResponses.ToArray(),
-            previousToken = previousToken,
-            nextToken = nextToken
+            Albums = albumResponses.ToArray(),
+            PreviousToken = previousToken,
+            NextToken = nextToken
         };
     }
 
@@ -35,27 +38,27 @@ public static class AlbumHelper
     {
         if (album == null) return null;
         
-        LinerNoteResponse[] linerNoteResponses = LinerNotesToLinerNoteResponses(album.linerNotes);
+        LinerNoteResponse[] linerNoteResponses = LinerNotesToLinerNoteResponses(album.LinerNotes);
         LinerNotesWrapper linerNoteWrapper = LinerNoteResponsesToLinerNoteResponseWrapper(linerNoteResponses);
         string linerNotesString = JsonConvert.SerializeObject(linerNoteWrapper);
 
         return new AlbumResponse()
         {
-            id = album.id,
-            type = ResponseType.link.ToString(),
-            timestamp = album.date.ToUnixTimeMilliseconds().ToString(),
-            target = new AlbumTarget
+            Id = album.Id,
+            Type = ResponseType.link.ToString(),
+            CreationDate = album.CreationDate.ToUnixTimeMilliseconds().ToString(),
+            Target = new AlbumTarget
             {
-                id = IdFormatter.FormatAlbumId(album.id),
-                type = ResponseType.album.ToString(),
-                metadata = new AlbumMetadata
+                Id = IdFormatter.FormatAlbumId(album.Id),
+                Type = ResponseType.album.ToString(),
+                Metadata = new AlbumMetadata
                 {
-                    albumArtist = album.artist,
-                    linerNotes = linerNotesString,
-                    sidePanelURL = ResourceHelper.GenerateAlbumResourceUrl(album.id, AlbumResourceType.sidePanel, sessionId),
-                    date = album.date.ToString(),
-                    displayName = album.name,
-                    thumbnailURL = ResourceHelper.GenerateAlbumResourceUrl(album.id, AlbumResourceType.thumbnail, sessionId)
+                    Artist = album.Artist,
+                    LinerNotes = linerNotesString,
+                    SidePanelUrl = ResourceHelper.GenerateAlbumResourceUrl(album.Id, AlbumResourceType.sidePanel, sessionId),
+                    CreationDate = album.CreationDate.ToString(),
+                    Name = album.Name,
+                    ThumbnailUrl = ResourceHelper.GenerateAlbumResourceUrl(album.Id, AlbumResourceType.thumbnail, sessionId)
                 }
             }
         };
@@ -76,9 +79,9 @@ public static class AlbumHelper
 
         return new AlbumLevelInfosWrapper()
         {
-            items = levelResponses.ToArray(),
-            previousToken = previousToken,
-            nextToken = nextToken
+            Items = levelResponses.ToArray(),
+            PreviousToken = previousToken,
+            NextToken = nextToken
         };
     }
 
@@ -88,13 +91,13 @@ public static class AlbumHelper
 
         return new AlbumLevelInfoResponse()
         {
-            id = IdFormatter.FormatAlbumLinkId(album.id, level.id),
-            timestamp = level.modified.ToUnixTimeMilliseconds(),
-            target = new AlbumLevelInfoTarget()
+            Id = IdFormatter.FormatAlbumLinkId(album.Id, level.Id),
+            Timestamp = level.ModificationDate.ToUnixTimeMilliseconds(),
+            Target = new AlbumLevelInfoTarget()
             {
-                id = IdFormatter.FormatLevelId(level.id),
-                type = ResponseType.level.ToString(),
-                completed = level.completionists.Contains(user)
+                Id = IdFormatter.FormatLevelId(level.Id),
+                Type = ResponseType.level.ToString(),
+                Completed = level.UsersWhoHaveCompletedLevel.Contains(user)
             }
         };
     }
@@ -114,9 +117,9 @@ public static class AlbumHelper
 
         return new AlbumLevelsWrapper()
         {
-            items = levelResponses.ToArray(),
-            previousToken = previousToken,
-            nextToken = nextToken
+            Levels = levelResponses.ToArray(),
+            PreviousToken = previousToken,
+            NextToken = nextToken
         };
     }
     
@@ -126,25 +129,25 @@ public static class AlbumHelper
         
         return new AlbumLevelResponse()
         {
-            id = IdFormatter.FormatAlbumLinkId(album.id, level.id),
-            type = ResponseType.link.ToString(),
-            timestamp = level.modified.ToUnixTimeMilliseconds(),
-            target = new AlbumLevelTarget
+            Id = IdFormatter.FormatAlbumLinkId(album.Id, level.Id),
+            Type = ResponseType.link.ToString(),
+            Timestamp = level.ModificationDate.ToUnixTimeMilliseconds(),
+            Target = new AlbumLevelTarget
             {
-                id = IdFormatter.FormatLevelId(level.id),
-                type = ResponseType.level.ToString(),
-                completed = level.completionists.Contains(user),
-                latestVersion = new LevelVersionResponse
+                Id = IdFormatter.FormatLevelId(level.Id),
+                Type = ResponseType.level.ToString(),
+                Completed = level.UsersWhoHaveCompletedLevel.Contains(user),
+                LatestVersion = new LevelVersionResponse
                 {
-                    id = IdFormatter.FormatVersionId(level.modified.ToUnixTimeMilliseconds().ToString()),
+                    Id = IdFormatter.FormatVersionId(level.ModificationDate.ToUnixTimeMilliseconds().ToString()),
                 },
-                author = new UserResponse
+                Author = new UserResponse
                 {
-                    id = IdFormatter.FormatUserId(level.author.id),
-                    type = ResponseType.identity.ToString(),
-                    metadata = UserHelper.GenerateUserMetadata(level.author)
+                    Id = IdFormatter.FormatUserId(level.Author.Id),
+                    Type = ResponseType.identity.ToString(),
+                    Metadata = UserHelper.GenerateUserMetadata(level.Author)
                 },
-                metadata = LevelHelper.GenerateMetadataResponse(level)
+                Metadata = LevelHelper.GenerateMetadataResponse(level)
             }
         };
     }
@@ -153,8 +156,8 @@ public static class AlbumHelper
     {
         return new LinerNotesWrapper()
         {
-            linerNotes = linerNotes,
-            version = 1
+            LinerNotes = linerNotes,
+            Version = 1
         };
     }
     
@@ -166,8 +169,8 @@ public static class AlbumHelper
         {
             responses.Add(new LinerNoteResponse
             {
-                text = linerNotes[i].text,
-                fontType = linerNotes[i].fontType
+                Text = linerNotes[i].Text,
+                FontType = linerNotes[i].FontType
             });
         }
 

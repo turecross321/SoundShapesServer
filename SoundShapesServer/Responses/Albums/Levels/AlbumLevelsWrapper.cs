@@ -1,10 +1,10 @@
 using Newtonsoft.Json;
 
-namespace SoundShapesServer.Responses.Albums;
+namespace SoundShapesServer.Responses.Albums.Levels;
 
 public class AlbumLevelsWrapper
 {
-    public AlbumLevelResponse[] items { get; set; }
-    [JsonProperty(NullValueHandling=NullValueHandling.Ignore)] public int? previousToken { get; set; }
-    [JsonProperty(NullValueHandling=NullValueHandling.Ignore)] public int? nextToken { get; set; }
+    [JsonProperty("items")] public AlbumLevelResponse[] Levels { get; set; }
+    [JsonProperty("previousToken", NullValueHandling=NullValueHandling.Ignore)] public int? PreviousToken { get; set; }
+    [JsonProperty("nextToken", NullValueHandling=NullValueHandling.Ignore)] public int? NextToken { get; set; }
 }

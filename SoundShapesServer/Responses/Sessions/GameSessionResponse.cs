@@ -1,11 +1,12 @@
+using Newtonsoft.Json;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Responses.Sessions;
 
 public class GameSessionResponse
 {
-    public long expires { get; set; }
-    public string id { get; set; }
-    public SessionUserResponse person { get; set; }
-    public Service? service { get; set; }
+    [JsonProperty("id")] public string Id { get; set; }
+    [JsonProperty("expires")] public long ExpirationDate { get; set; }
+    [JsonProperty("person")] public SessionUserResponse User { get; set; }
+    [JsonProperty("service")] public Service? Service { get; set; }
 }

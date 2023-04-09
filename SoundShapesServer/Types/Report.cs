@@ -7,7 +7,7 @@ namespace SoundShapesServer.Types;
 public class Report : RealmObject
 {
     public ObjectId Id = ObjectId.GenerateNewId();
-    public GameUser reporter { get; set; }
-    public GameLevel level { get; set; }
-    public int reportReasonId { get; set; }
+    public GameUser Reporter { get; set; }
+    public GameLevel Level { get; set; }
+    public int ReportReasonId { get; set; }
 }

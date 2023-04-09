@@ -2,7 +2,7 @@ namespace SoundShapesServer.Types;
 
 public interface IFileType
 {
-    public const string image = "image/png";
-    public const string level = "application/vnd.soundshapes.level";
-    public const string sound = "application/vnd.soundshapes.sound";
+    public const string Image = "image/png";
+    public const string Level = "application/vnd.soundshapes.level";
+    public const string Sound = "application/vnd.soundshapes.sound";
 }

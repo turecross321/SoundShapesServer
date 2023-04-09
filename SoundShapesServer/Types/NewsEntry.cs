@@ -4,9 +4,9 @@ namespace SoundShapesServer.Types;
 
 public class NewsEntry : RealmObject
 {
-    public string language { get; set; } = "global";
-    public string title { get; set; }
-    public string text { get; set; }
-    public string fullText { get; set; }
-    public string url { get; set; }
+    public string Language { get; set; } = "global";
+    public string Title { get; set; }
+    public string Summary { get; set; }
+    public string FullText { get; set; }
+    public string Url { get; set; }
 }

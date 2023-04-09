@@ -5,6 +5,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Following;
+using SoundShapesServer.Responses.Users;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Endpoints.Profiles;
