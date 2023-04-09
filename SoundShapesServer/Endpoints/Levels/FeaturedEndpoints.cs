@@ -61,7 +61,7 @@ public class FeaturedEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(IdFormatter.DeFormatLevelIdAndVersion(body));
         if (level == null) return HttpStatusCode.NotFound;
 
-        database.SetFeaturedLevel(user, level);
+        database.SetUserFeaturedLevel(user, level);
 
         return HttpStatusCode.OK;
     }

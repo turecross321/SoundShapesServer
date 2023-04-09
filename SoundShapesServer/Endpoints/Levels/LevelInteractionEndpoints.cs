@@ -15,7 +15,7 @@ public class LevelInteractionEndpoints : EndpointGroup
     // Called from LeaderboardEndpoints
     public static void AddCompletion(RealmDatabaseContext database, GameLevel level, GameUser user)
     {
-        database.AddCompletionistToLevel(level, user);
+        database.AddUserToLevelCompletions(level, user);
         database.AddCompletionToLevel(level);
     }
     // Called from LeaderboardEndpoints

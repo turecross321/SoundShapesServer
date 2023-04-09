@@ -48,7 +48,7 @@ public partial class RealmDatabaseContext
         return GeneratePublishResponse(level);
     }
 
-    public void SetFeaturedLevel(GameUser user, GameLevel level)
+    public void SetUserFeaturedLevel(GameUser user, GameLevel level)
     {
         this._realm.Write((() =>
         {
@@ -183,7 +183,7 @@ public partial class RealmDatabaseContext
         return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
     }
 
-    public void AddCompletionistToLevel(GameLevel level, GameUser user)
+    public void AddUserToLevelCompletions(GameLevel level, GameUser user)
     {
         if (level.UsersWhoHaveCompletedLevel.Contains(user)) return;
         
