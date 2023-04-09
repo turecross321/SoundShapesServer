@@ -11,7 +11,6 @@ public class GameLevel : RealmObject
     public GameUser author { get; set; }
     public string title { get; set; }
     public string description { get; set; }
-    public string visibility { get; set; }
     public int scp_np_language { get; set; }
     public DateTimeOffset created { get; set; }
     public DateTimeOffset modified { get; set; }

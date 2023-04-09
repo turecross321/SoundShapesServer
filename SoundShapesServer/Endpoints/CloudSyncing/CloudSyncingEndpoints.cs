@@ -12,8 +12,6 @@ namespace SoundShapesServer.Endpoints.CloudSyncing;
 
 public class CloudSyncingEndpoints : EndpointGroup
 {
-    private const string savesPath = "saves";
-    
     [Endpoint("/otg/~identity:{userId}/~content:progress.put", Method.Post)]
     public Response UploadSave(RequestContext context, GameUser user, string userId, Stream body)
     {
@@ -27,12 +25,13 @@ public class CloudSyncingEndpoints : EndpointGroup
 
         byte[] combinedSave = newSave;
 
-        string key = $"{savesPath}/{user.id}";
+        string key = ResourceHelper.GetSaveResourceKey(user.id);
         
         // If there's an old one, combine them
         if (context.DataStore.TryGetDataFromStore(key, out byte[]? oldSave))
         {
-            combinedSave = CloudSyncHelper.CombineSaves(oldSave, newSave);
+            if (oldSave != null)
+                combinedSave = CloudSyncHelper.CombineSaves(oldSave, newSave);
         }
 
         context.DataStore.WriteToStore(key, combinedSave);
@@ -42,7 +41,7 @@ public class CloudSyncingEndpoints : EndpointGroup
 
     private Response DeleteSave(RequestContext context, GameUser user)
     {
-        string key = $"{savesPath}/{user.id}";
+        string key = ResourceHelper.GetSaveResourceKey(user.id);
 
         if (!context.DataStore.RemoveFromStore(key)) return HttpStatusCode.InternalServerError;
         else return HttpStatusCode.OK;
@@ -51,11 +50,12 @@ public class CloudSyncingEndpoints : EndpointGroup
     [Endpoint("/otg/~identity:{userId}/~content:progress/data.get")]
     public Response DownloadSave(RequestContext context, GameUser user, string userId)
     {
-        string key = $"{savesPath}/{user.id}";
+        string key = ResourceHelper.GetSaveResourceKey(user.id);
 
         if (context.DataStore.TryGetDataFromStore(key, out byte[]? byteArray) == false)
             return HttpStatusCode.NotFound;
 
-        return new Response(byteArray, ContentType.BinaryData);
+        if (byteArray != null) return new Response(byteArray, ContentType.BinaryData);
+        else return HttpStatusCode.NotFound;
     }
 }

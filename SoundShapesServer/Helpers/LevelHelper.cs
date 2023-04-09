@@ -1,4 +1,5 @@
 using System.Data;
+using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
@@ -7,6 +8,46 @@ namespace SoundShapesServer.Helpers;
 
 public static class LevelHelper
 {
+    private const string LevelIdCharacters = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private const int LevelIdLength = 8;
+    
+    public static string GenerateLevelId(RealmDatabaseContext database)
+    {
+        Random r = new Random();
+        string levelId = "";
+        for (int i = 0; i < LevelIdLength; i++)
+        {
+            levelId += LevelIdCharacters[r.Next(LevelIdCharacters.Length - 1)];
+        }
+
+        if (database.GetLevelWithId(levelId) == null) return levelId; // Return if LevelId has not been used before
+        return GenerateLevelId(database); // Generate new LevelId if it already exists
+    }
+
+    public static LevelPublishResponse GeneratePublishResponse(GameLevel level)
+    {
+        return new () {
+            id = IdFormatter.FormatLevelPublishId(level.id, level.created.ToUnixTimeMilliseconds()),
+            type = ResponseType.upload.ToString(),
+            author = new()
+            {
+                id = IdFormatter.FormatUserId(level.author.id),
+                type = ResponseType.identity.ToString(),
+                displayName = level.author.display_name
+            },
+            title = level.title,
+            dependencies = new List<string>(),
+            visibility = "EVERYONE",
+            description = level.description,
+            extraData = new ExtraDataResponse() { sce_np_language = level.scp_np_language },
+            parent = new()
+            {
+                id = IdFormatter.FormatLevelId(level.id),
+                type = ResponseType.level.ToString()
+            },
+            creationTime = level.created.ToUnixTimeMilliseconds()
+        };   
+    }
     public static LevelMetadataResponse GenerateMetadataResponse(GameLevel level)
     {
         float difficulty;

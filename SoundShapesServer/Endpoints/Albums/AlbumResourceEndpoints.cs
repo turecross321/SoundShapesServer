@@ -7,6 +7,7 @@ using Bunkum.HttpServer.Responses;
 using HttpMultipartParser;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
@@ -16,7 +17,6 @@ namespace SoundShapesServer.Endpoints.Albums;
 
 public class AlbumResourceEndpoints : EndpointGroup
 {
-    private const string albumsPath = "albums";
     private static Response GetResource(RequestContext context, string fileName)
     {
         if (!context.DataStore.ExistsInStore(fileName))
@@ -37,9 +37,9 @@ public class AlbumResourceEndpoints : EndpointGroup
         if (database.IsSessionInvalid(sessionId)) return HttpStatusCode.Forbidden;
         
         if (database.GetAlbumWithId(albumId) == null) return HttpStatusCode.NotFound;
-        
-        string key = $"{albumsPath}/{albumId}_{file}";
-        
+
+        string key = ResourceHelper.GetAlbumResourceKey(albumId, file);
+
         return GetResource(context, key);
     }
 }

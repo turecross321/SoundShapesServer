@@ -52,10 +52,10 @@ public static class AlbumHelper
                 {
                     albumArtist = album.artist,
                     linerNotes = linerNotesString,
-                    sidePanelURL = GenerateAlbumResourceUrl(album.id, AlbumResourceType.sidePanel, sessionId),
+                    sidePanelURL = ResourceHelper.GenerateAlbumResourceUrl(album.id, AlbumResourceType.sidePanel, sessionId),
                     date = album.date.ToString(),
                     displayName = album.name,
-                    thumbnailURL = GenerateAlbumResourceUrl(album.id, AlbumResourceType.thumbnail, sessionId)
+                    thumbnailURL = ResourceHelper.GenerateAlbumResourceUrl(album.id, AlbumResourceType.thumbnail, sessionId)
                 }
             }
         };
@@ -172,10 +172,5 @@ public static class AlbumHelper
         }
 
         return responses.ToArray();
-    }
-
-    private static string GenerateAlbumResourceUrl(string albumId, AlbumResourceType type, string sessionId)
-    {
-        return $"otg/~album:{albumId}/~content:{type.ToString()}.png/data.get/{sessionId}";
     }
 }

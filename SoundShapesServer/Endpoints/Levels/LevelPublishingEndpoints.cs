@@ -5,6 +5,7 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using HttpMultipartParser;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests;
 using SoundShapesServer.Responses.Levels;
 using SoundShapesServer.Types;
@@ -17,9 +18,10 @@ public class LevelPublishingEndpoints : EndpointGroup
     // Gets called by Endpoints.cs
     public static Response PublishLevel(RequestContext context, MultipartFormDataParser parser, RealmDatabaseContext database, GameUser user)
     {
-        string levelId = database.GenerateLevelId();
+        string levelId = LevelHelper.GenerateLevelId(database);
         
-        LevelPublishRequest levelRequest = LevelResourceEndpoints.UploadLevelResources(context, parser, levelId);
+        LevelPublishRequest? levelRequest = LevelResourceEndpoints.UploadLevelResources(context, parser, levelId);
+        if (levelRequest == null) return HttpStatusCode.InternalServerError;
 
         LevelPublishResponse publishedLevel = database.PublishLevel(levelRequest, user);
 
@@ -34,7 +36,9 @@ public class LevelPublishingEndpoints : EndpointGroup
         if (level == null) return new Response(HttpStatusCode.NotFound);
         if (!level.author.Equals(user)) return new Response(HttpStatusCode.Forbidden);
         
-        LevelPublishRequest levelRequest = LevelResourceEndpoints.UploadLevelResources(context, parser, levelId);
+        LevelPublishRequest? levelRequest = LevelResourceEndpoints.UploadLevelResources(context, parser, levelId);
+        if (levelRequest == null) return HttpStatusCode.InternalServerError;
+
         
         LevelPublishResponse? publishedLevel = database.UpdateLevel(levelRequest, level, user);
 
@@ -47,11 +51,8 @@ public class LevelPublishingEndpoints : EndpointGroup
     public static Response UnPublishLevel(RequestContext context, RealmDatabaseContext database, GameUser user, GameLevel level)
     {
         if (level.author.Equals(user) == false) return new Response(HttpStatusCode.Forbidden);  // Check if user is the level publisher
-
-        context.DataStore.RemoveFromStore(level.id + ".png");
-        context.DataStore.RemoveFromStore(level.id + ".vnd.soundshapes.level");
-        context.DataStore.RemoveFromStore(level.id + ".vnd.soundshapes.sound");
-
+        
+        LevelResourceEndpoints.RemoveLevelResources(context, level);
         return database.UnPublishLevel(level) ? new Response(HttpStatusCode.OK) : HttpStatusCode.InternalServerError;
     }
 }

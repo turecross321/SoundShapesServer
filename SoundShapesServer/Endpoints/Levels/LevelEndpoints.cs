@@ -26,17 +26,15 @@ public class LevelEndpoints : EndpointGroup
         
         if (query != null && query.Contains("metadata.displayName:"))
             return SearchForLevels(user, query, database, from, count);
-        
-        if (category == "tagged3")
-            return database.DailyLevels(user, from, count);
-        
-        if (category == "greatesthits")
-            return database.GreatestHits(user, from, count);
-        
-        if (category == "newest")
-            return database.NewestLevels(user, from, count);
-                
-        return null;
+
+        return category switch
+        {
+            "tagged3" => database.DailyLevels(user, from, count),
+            "greatesthits" => database.GreatestHits(user, from, count),
+            "newest" => database.NewestLevels(user, from, count),
+            "top" => database.TopLevels(user, from, count),
+            _ => null
+        };
     }
     
     [Endpoint("/otg/~identity:{userId}/~queued:*.page", ContentType.Json)]

@@ -20,7 +20,6 @@ public partial class RealmDatabaseContext
             author = user,
             title = request.title,
             description = request.description,
-            visibility = VisibilityType.EVERYONE.ToString(),
             scp_np_language = request.sce_np_language,
             created = DateTimeOffset.UtcNow,
             modified = DateTimeOffset.UtcNow
@@ -55,47 +54,6 @@ public partial class RealmDatabaseContext
         {
             user.featuredLevel = level;
         }));
-    }
-
-    private const string LevelIdCharacters = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private const int LevelIdLength = 8;
-    
-    public string GenerateLevelId()
-    {
-        Random r = new Random();
-        string levelId = "";
-        for (int i = 0; i < LevelIdLength; i++)
-        {
-            levelId += LevelIdCharacters[r.Next(LevelIdCharacters.Length - 1)];
-        }
-
-        if (GetLevelWithId(levelId) == null) return levelId; // Return if LevelId has not been used before
-        return GenerateLevelId(); // Generate new LevelId if it already exists
-    }
-
-    private LevelPublishResponse GeneratePublishResponse(GameLevel level)
-    {
-        return new () {
-            id = IdFormatter.FormatLevelPublishId(level.id, level.created.ToUnixTimeMilliseconds()),
-            type = ResponseType.upload.ToString(),
-            author = new()
-            {
-                id = IdFormatter.FormatUserId(level.author.id),
-                type = ResponseType.identity.ToString(),
-                displayName = level.author.display_name
-            },
-            title = level.title,
-            dependencies = new List<string>(),
-            visibility = level.visibility,
-            description = level.description,
-            extraData = new ExtraDataResponse() { sce_np_language = level.scp_np_language },
-            parent = new()
-            {
-                id = IdFormatter.FormatLevelId(level.id),
-                type = ResponseType.level.ToString()
-            },
-            creationTime = level.created.ToUnixTimeMilliseconds()
-        };   
     }
 
     public bool UnPublishLevel(GameLevel level)
@@ -197,6 +155,22 @@ public partial class RealmDatabaseContext
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()
             .OrderByDescending(l=>l.created);
+
+        IEnumerable<GameLevel> gameLevels = entries.ToList();
+        int totalEntries = gameLevels.Count();
+
+        GameLevel[] selectedEntries = gameLevels
+            .Skip(from)
+            .Take(count)
+            .ToArray();
+
+        return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
+    }
+    public LevelsWrapper TopLevels(GameUser user, int from, int count)
+    {
+        IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
+            .AsEnumerable()
+            .OrderByDescending(l=>l.uniquePlays.Count);
 
         IEnumerable<GameLevel> gameLevels = entries.ToList();
         int totalEntries = gameLevels.Count();

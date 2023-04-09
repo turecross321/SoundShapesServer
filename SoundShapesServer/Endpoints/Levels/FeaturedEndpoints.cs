@@ -3,11 +3,8 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
-using NotEnoughLogs.Definitions;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Responses.Levels;
-using SoundShapesServer.Responses.RecentActivity;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 
@@ -15,20 +12,34 @@ namespace SoundShapesServer.Endpoints.Levels;
 
 public class FeaturedEndpoints : EndpointGroup
 {
-    // TODO: MAKE THIS MODULAR AND ADD SUPPORT FOR DIFFERENT LANGUAGES
-    [Endpoint("/otg/global/featured/~metadata:*.get")]
-    [Endpoint("/otg/global/featured/{language}/~metadata:*.get", ContentType.Json)]
-    public FeaturedResponse GlobalFeatured(RequestContext context, string language)
+    // WARNING: More than 7 community tabs will CRASH the game.
+    private readonly List<CommunityTab> _communityTabs = new ()
     {
-        return new FeaturedResponse()
+        new CommunityTab
         {
             queryType = "search",
-            buttonLabel = "New Releases",
-            query = "newest\u0026type\u003dlevel",
+            buttonLabel = "Newest Levels",
+            query = "newest&type=level",
             panelDescription = "Check here daily for the latest cool levels! Always new stuff to check out!",
-            imageUrl = "", // TODO: implement this
-            panelTitle = "New Releases",
-        };
+            imageUrl = "",
+            panelTitle = "New Levels"
+        },
+        new CommunityTab
+        {
+            queryType = "search",
+            buttonLabel = "Top Levels",
+            query = "top&type=level",
+            panelDescription = "Check here for the most played levels!",
+            imageUrl = "",
+            panelTitle = "Top Levels"
+        }
+    };
+    
+    [Endpoint("/otg/global/featured/~metadata:*.get")]
+    [Endpoint("/otg/global/featured/{language}/~metadata:*.get", ContentType.Plaintext)]
+    public string GlobalFeatured(RequestContext context, RealmDatabaseContext database, string? language)
+    {
+        return FeaturedHelper.SerializeCommunityTabs(_communityTabs);
     }
 
     [Endpoint("/otg/~identity:{userId}/~metadata:featuredlevel.get", ContentType.Plaintext)]
@@ -45,7 +56,7 @@ public class FeaturedEndpoints : EndpointGroup
     }
 
     [Endpoint("/otg/~identity:{userId}/~metadata:featuredLevel.put", Method.Post)]
-    public Response SetFeaturedLevel(RequestContext context, RealmDatabaseContext database, GameUser user, string userId, string body)
+    public Response SetUserFeaturedLevel(RequestContext context, RealmDatabaseContext database, GameUser user, string userId, string body)
     {
         GameLevel? level = database.GetLevelWithId(IdFormatter.DeFormatLevelIdAndVersion(body));
         if (level == null) return HttpStatusCode.NotFound;

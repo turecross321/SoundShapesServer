@@ -6,6 +6,7 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using HttpMultipartParser;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
@@ -15,7 +16,7 @@ namespace SoundShapesServer.Endpoints.Levels;
 
 public class LevelResourceEndpoints : EndpointGroup
 {
-    private const string levelsPath = "levels";
+
     
     // Called from Publishing Endpoints
     public static LevelPublishRequest? UploadLevelResources(RequestContext context, MultipartFormDataParser parser, string levelId)
@@ -54,13 +55,9 @@ public class LevelResourceEndpoints : EndpointGroup
             MemoryStream memoryStream = new MemoryStream();
             file.Data.CopyTo(memoryStream);
             byte[] byteArray = memoryStream.ToArray();
-
-            string fileName = levelId;
-            // gets the .level from application/vnd.soundshapes.level e.g.
-            string fileExtension = file.ContentType.Split("/").Last().Split(".").Last();
-
-            string key = $"{levelsPath}/{fileName}.{fileExtension}";
             
+            string key = ResourceHelper.GetLevelResourceKey(levelId, file.ContentType);
+
             context.DataStore.WriteToStore(key, byteArray);
         }
 
@@ -76,6 +73,13 @@ public class LevelResourceEndpoints : EndpointGroup
         };
         
         return levelRequest;
+    }
+    // Called from Publishing Endpoints
+    public static void RemoveLevelResources(RequestContext context, GameLevel level)
+    {
+        context.DataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.id, IFileType.image));
+        context.DataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.id, IFileType.level));
+        context.DataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.id, IFileType.sound));
     }
     private static Response GetResource(RequestContext context, string fileName)
     {
@@ -96,26 +100,7 @@ public class LevelResourceEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;
 
-        string fileExtension = "";
-
-        switch (file)
-        {
-            case "image":
-                fileExtension = "png";
-                break;
-            case "level":
-                fileExtension = "level";
-                break;
-            case "sound":
-                fileExtension = "sound";
-                break;
-            default:
-                return HttpStatusCode.NotFound;
-        }
-        
-        string fileName = levelId;
-
-        string key = $"{levelsPath}/{fileName}.{fileExtension}";
+        string key = ResourceHelper.GetLevelResourceKey(level.id, file);
 
         return GetResource(context, key);
     }
