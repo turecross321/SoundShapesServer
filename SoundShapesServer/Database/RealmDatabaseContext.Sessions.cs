@@ -28,7 +28,7 @@ public partial class RealmDatabaseContext
         return gameSession;
     }
 
-    public GameUser? GetUserWithSessionId(string sessionId)
+    public GameSession? GetSessionWithSessionId(string sessionId)
     {
         this._realm.Refresh();
         
@@ -47,6 +47,11 @@ public partial class RealmDatabaseContext
             return null;
         }
 
-        return session.user;
+        return session;
+    }
+
+    public bool IsSessionInvalid(string id)
+    {
+        return (this._realm.All<GameSession>().FirstOrDefault(s => s.id == id) == null);
     }
 }

@@ -8,13 +8,13 @@ using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Authentication;
 
-public class GameAuthenticationProvider : IAuthenticationProvider<GameUser>
+public class GameAuthenticationProvider : IAuthenticationProvider<GameUser, GameSession>
 {
-    public GameUser? AuthenticateUser(ListenerContext request, IDatabaseContext db)
-    {
-        RealmDatabaseContext database = (RealmDatabaseContext)db;
-        Debug.Assert(database != null);
+    public GameUser? AuthenticateUser(ListenerContext request, Lazy<IDatabaseContext> db) 
+        => this.AuthenticateToken(request, db)?.user;
 
+    public GameSession? AuthenticateToken(ListenerContext request, Lazy<IDatabaseContext> db)
+    {
         string? sessionId = null;
 
         // get the request headers
@@ -30,6 +30,9 @@ public class GameAuthenticationProvider : IAuthenticationProvider<GameUser>
         // we dont have a session if null, so bail 
         if (sessionId == null) return null;
 
-        return database.GetUserWithSessionId(sessionId);
+        RealmDatabaseContext database = (RealmDatabaseContext)db.Value;
+        Debug.Assert(database != null);
+
+        return database.GetSessionWithSessionId(sessionId);
     }
 }
