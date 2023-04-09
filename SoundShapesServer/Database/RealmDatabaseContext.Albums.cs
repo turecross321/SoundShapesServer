@@ -1,3 +1,4 @@
+using SoundShapesServer.Authentication;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Albums;
 using SoundShapesServer.Types;
@@ -8,7 +9,7 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public AlbumsWrapper GetAlbums(int from, int count)
+    public AlbumsWrapper GetAlbums(string sessionId, int from, int count)
     {
         IEnumerable<GameAlbum> entries = this._realm.All<GameAlbum>()
             .AsEnumerable();
@@ -21,7 +22,7 @@ public partial class RealmDatabaseContext
             .Take(count)
             .ToArray();
 
-        return AlbumHelper.AlbumsToAlbumsWrapper(selectedEntries, totalEntries, from, count);
+        return AlbumHelper.AlbumsToAlbumsWrapper(sessionId, selectedEntries, totalEntries, from, count);
     }
 
     public GameAlbum? GetAlbumWithId(string id)

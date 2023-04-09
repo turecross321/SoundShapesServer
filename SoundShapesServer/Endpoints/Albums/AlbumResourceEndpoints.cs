@@ -5,6 +5,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using HttpMultipartParser;
+using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests;
 using SoundShapesServer.Types;
@@ -28,10 +29,13 @@ public class AlbumResourceEndpoints : EndpointGroup
         return new Response(data, ContentType.BinaryData);
     }
 
-    [Endpoint("/otg/~album:{albumId}/~content:{file}/data.get")]
+    [Endpoint("/otg/~album:{albumId}/~content:{file}/data.get/{sessionId}")]
+    [Authentication(false)] // Vita doesn't include the session id in the headers here, hence the session id being in the url
     public Response GetAlbumResource
-        (RequestContext context, RealmDatabaseContext database, string albumId, string file)
+        (RequestContext context, RealmDatabaseContext database, string albumId, string file, string sessionId)
     {
+        if (database.IsSessionInvalid(sessionId)) return HttpStatusCode.Forbidden;
+        
         if (database.GetAlbumWithId(albumId) == null) return HttpStatusCode.NotFound;
         
         string key = $"{albumsPath}/{albumId}_{file}";

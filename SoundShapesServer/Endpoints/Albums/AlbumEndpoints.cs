@@ -3,6 +3,7 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
+using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Albums;
 using SoundShapesServer.Types;
@@ -14,12 +15,12 @@ public class AlbumEndpoints : EndpointGroup
 {
     // ?count=9&decorate=metadata&order=target.id:desc
     [Endpoint("/otg/~albums/~link:*.page", ContentType.Json)]
-    public AlbumsWrapper GetAlbums(RequestContext context, RealmDatabaseContext database)
+    public AlbumsWrapper GetAlbums(RequestContext context, RealmDatabaseContext database, GameSession token)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
 
-        return database.GetAlbums(from, count);
+        return database.GetAlbums(token.id, from, count);
     } //
 
     [Endpoint("/otg/~album:{albumId}/~link:*.page", ContentType.Json)]

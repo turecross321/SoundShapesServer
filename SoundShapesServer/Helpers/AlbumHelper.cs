@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using SoundShapesServer.Authentication;
 using SoundShapesServer.Responses;
 using SoundShapesServer.Responses.Albums;
 using SoundShapesServer.Responses.Levels;
@@ -10,7 +11,7 @@ namespace SoundShapesServer.Helpers;
 
 public static class AlbumHelper
 {
-    public static AlbumsWrapper AlbumsToAlbumsWrapper(GameAlbum[] albums, int totalEntries, int from, int count)
+    public static AlbumsWrapper AlbumsToAlbumsWrapper(string sessionId, GameAlbum[] albums, int totalEntries, int from, int count)
     {
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
 
@@ -18,7 +19,7 @@ public static class AlbumHelper
 
         for (int i = 0; i < albums.Length; i++)
         {
-            AlbumResponse? albumResponse = AlbumToAlbumResponse(albums[i]);
+            AlbumResponse? albumResponse = AlbumToAlbumResponse(albums[i], sessionId);
             if (albumResponse != null) albumResponses.Add(albumResponse);
         }
         
@@ -30,14 +31,14 @@ public static class AlbumHelper
         };
     }
 
-    private static AlbumResponse? AlbumToAlbumResponse(GameAlbum? album)
+    private static AlbumResponse? AlbumToAlbumResponse(GameAlbum? album, string sessionId)
     {
         if (album == null) return null;
         
         LinerNoteResponse[] linerNoteResponses = LinerNotesToLinerNoteResponses(album.linerNotes);
         LinerNotesWrapper linerNoteWrapper = LinerNoteResponsesToLinerNoteResponseWrapper(linerNoteResponses);
         string linerNotesString = JsonConvert.SerializeObject(linerNoteWrapper);
-        
+
         return new AlbumResponse()
         {
             id = album.id,
@@ -51,10 +52,10 @@ public static class AlbumHelper
                 {
                     albumArtist = album.artist,
                     linerNotes = linerNotesString,
-                    sidePanelURL = GenerateAlbumResourceUrl(album.id, AlbumResourceType.sidePanel),
+                    sidePanelURL = GenerateAlbumResourceUrl(album.id, AlbumResourceType.sidePanel, sessionId),
                     date = album.date.ToString(),
                     displayName = album.name,
-                    thumbnailURL = GenerateAlbumResourceUrl(album.id, AlbumResourceType.thumbnail)
+                    thumbnailURL = GenerateAlbumResourceUrl(album.id, AlbumResourceType.thumbnail, sessionId)
                 }
             }
         };
@@ -173,8 +174,8 @@ public static class AlbumHelper
         return responses.ToArray();
     }
 
-    private static string GenerateAlbumResourceUrl(string albumId, AlbumResourceType type)
+    private static string GenerateAlbumResourceUrl(string albumId, AlbumResourceType type, string sessionId)
     {
-        return $"otg/~album:{albumId}/~content:{type.ToString()}.png/data.get";
+        return $"otg/~album:{albumId}/~content:{type.ToString()}.png/data.get/{sessionId}";
     }
 }
