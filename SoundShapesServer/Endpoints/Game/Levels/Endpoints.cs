@@ -9,12 +9,12 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 
-namespace SoundShapesServer.Endpoints.Levels;
+namespace SoundShapesServer.Endpoints.Game.Levels;
 
 // Doing this because Bunkum doesn't support . as a seperator
 public class Endpoints : EndpointGroup
 {
-    [Endpoint("/otg/~level:{args}")]
+    [GameEndpoint("~level:{args}")]
     public Response GetEndpoints(RequestContext context, RealmDatabaseContext database, GameUser user, string args)
     {
         string[] arguments = args.Split('.');
@@ -32,7 +32,7 @@ public class Endpoints : EndpointGroup
         else return new Response(HttpStatusCode.NotFound);
     }
 
-    [Endpoint("/otg/~level:{args}", Method.Post)]
+    [GameEndpoint("~level:{args}", Method.Post)]
     public Response PostEndpoints(RequestContext context, Stream body, RealmDatabaseContext database, GameUser user, string args)
     {
         string[] arguments = args.Split('.');

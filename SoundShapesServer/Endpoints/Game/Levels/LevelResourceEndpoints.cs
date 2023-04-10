@@ -8,10 +8,11 @@ using HttpMultipartParser;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests;
+using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 
-namespace SoundShapesServer.Endpoints.Levels;
+namespace SoundShapesServer.Endpoints.Game.Levels;
 
 public class LevelResourceEndpoints : EndpointGroup
 {
@@ -90,7 +91,7 @@ public class LevelResourceEndpoints : EndpointGroup
         return new Response(data, ContentType.BinaryData);
     }
 
-    [Endpoint("/otg/~level:{levelId}/~version:{versionId}/~content:{file}/data.get")]
+    [GameEndpoint("~level:{levelId}/~version:{versionId}/~content:{file}/data.get")]
     public Response GetLevelResource
         (RequestContext context, RealmDatabaseContext database, GameUser user, string levelId, string versionId, string file)
     {

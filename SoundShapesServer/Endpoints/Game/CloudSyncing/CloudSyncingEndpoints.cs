@@ -8,11 +8,11 @@ using HttpMultipartParser;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 
-namespace SoundShapesServer.Endpoints.CloudSyncing;
+namespace SoundShapesServer.Endpoints.Game.CloudSyncing;
 
 public class CloudSyncingEndpoints : EndpointGroup
 {
-    [Endpoint("/otg/~identity:{userId}/~content:progress.put", Method.Post)]
+    [GameEndpoint("~identity:{userId}/~content:progress.put", Method.Post)]
     public Response UploadSave(RequestContext context, GameUser user, string userId, Stream body)
     {
         MultipartFormDataParser? parser = MultipartFormDataParser.Parse(body);
@@ -47,7 +47,7 @@ public class CloudSyncingEndpoints : EndpointGroup
         else return HttpStatusCode.OK;
     }
 
-    [Endpoint("/otg/~identity:{userId}/~content:progress/data.get")]
+    [GameEndpoint("~identity:{userId}/~content:progress/data.get")]
     public Response DownloadSave(RequestContext context, GameUser user, string userId)
     {
         string key = ResourceHelper.GetSaveResourceKey(user.Id);

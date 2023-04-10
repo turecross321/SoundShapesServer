@@ -19,14 +19,14 @@ public class FriendsEndpoints : EndpointGroup
         return "";
     }
 
-    [Endpoint("/identity/person/{id}/data/psn/friends-list", ContentType.Json, Method.Post)]
+    [GameEndpoint("identity/person/{id}/data/psn/friends-list", ContentType.Json, Method.Post)]
     [AllowEmptyBody]    
     public Response UploadFriends(RequestContext context, RealmDatabaseContext database, string? body, string id, GameUser user)
     {
         return new Response(HttpStatusCode.OK);
     }
 
-    [Endpoint("/identity/person/", ContentType.Json, Method.Post)]
+    [GameEndpoint("identity/person/", ContentType.Json, Method.Post)]
     public Response GetPerson(RequestContext context)
     {
         return new Response(HttpStatusCode.OK);
