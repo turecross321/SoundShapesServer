@@ -60,6 +60,6 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 
         database.CreateUser(body.Username, BCrypt.Net.BCrypt.HashPassword(body.PasswordSha512, WorkFactor));
 
-        return Authenticate(context, database, body);
+        return HttpStatusCode.OK;
     }
 }
