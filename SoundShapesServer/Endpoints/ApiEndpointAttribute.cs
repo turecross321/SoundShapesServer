@@ -5,7 +5,7 @@ namespace SoundShapesServer.Endpoints;
 
 public class ApiEndpointAttribute : EndpointAttribute
 {
-    private const string BaseRoute = "/api/v1/";
+    public const string BaseRoute = "/api/v1/";
 
     public ApiEndpointAttribute(string route, Method method = Method.Get, ContentType contentType = ContentType.Json) 
         : base(BaseRoute + route, method, contentType)
