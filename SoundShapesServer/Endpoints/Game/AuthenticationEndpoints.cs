@@ -16,7 +16,7 @@ namespace SoundShapesServer.Endpoints.Game;
 
 public class AuthenticationEndpoints : EndpointGroup
 {
-    [Endpoint("/identity/login/token/psn", ContentType.Json, Method.Post)]
+    [GameEndpoint("identity/login/token/psn", ContentType.Json, Method.Post)]
     [NullStatusCode(HttpStatusCode.Forbidden)]
     [Authentication(false)]
     public Response? Login(RequestContext context, RealmDatabaseContext database, Stream body)
@@ -42,7 +42,12 @@ public class AuthenticationEndpoints : EndpointGroup
         if (platform == PlatformType.Unknown) return HttpStatusCode.Forbidden; 
         
         GameUser? user = database.GetUserWithUsername(ticket.Username);
-        if (user == null) return HttpStatusCode.Forbidden;
+        
+        if (user == null)
+        {
+            // TODO: Remove this once we have a website that can use the api to register accounts
+            user = database.CreateUser(ticket.Username, "");
+        }
         
         Service? service = database.GetServiceWithDisplayName(ticket.Username);
         service ??= database.CreateService(ticket.Username);
