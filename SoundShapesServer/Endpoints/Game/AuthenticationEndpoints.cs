@@ -16,7 +16,7 @@ namespace SoundShapesServer.Endpoints.Game;
 
 public class AuthenticationEndpoints : EndpointGroup
 {
-    [GameEndpoint("identity/login/token/psn", ContentType.Json, Method.Post)]
+    [Endpoint("/identity/login/token/psn", ContentType.Json, Method.Post)]
     [NullStatusCode(HttpStatusCode.Forbidden)]
     [Authentication(false)]
     public Response? Login(RequestContext context, RealmDatabaseContext database, Stream body)

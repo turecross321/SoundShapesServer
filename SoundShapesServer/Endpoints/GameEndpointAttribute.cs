@@ -5,7 +5,7 @@ namespace SoundShapesServer.Endpoints;
 
 public class GameEndpointAttribute : EndpointAttribute
 {
-    private const string BaseRoute = "/g/";
+    private const string BaseRoute = "/otg/";
     
     public GameEndpointAttribute(string route, Method method = Method.Get, ContentType contentType = ContentType.Plaintext)
         : base(BaseRoute + route, method, contentType)
