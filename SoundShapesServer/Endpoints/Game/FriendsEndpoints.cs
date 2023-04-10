@@ -11,11 +11,10 @@ namespace SoundShapesServer.Endpoints.Game;
 
 public class FriendsEndpoints : EndpointGroup
 {
+    // Game doesn't do anything with this, unless it's for Recent Activity?
     [GameEndpoint("~identity:{id}/~friends.all", ContentType.Json)]
-    public string? GetFriends(RequestContext context, string id, RealmDatabaseContext database)                                       
+    public string GetFriends(RequestContext context, RealmDatabaseContext database)                                     
     {
-        GameUser? user = database.GetUserWithId(id);
-
         return "";
     }
 
