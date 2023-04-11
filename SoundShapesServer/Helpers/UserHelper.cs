@@ -1,3 +1,4 @@
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Game.Following;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
@@ -62,6 +63,21 @@ public static class UserHelper
             LevelCount = user.Levels.Count(), // Level Count
             FollowingCount = user.Following.Count(), // Following
             LikedLevelsCount = user.LikedLevels.Count(), // Liked And Queued Levels
+        };
+    }
+    
+    // API
+
+    public static ApiUserResponse UserToApiUserResponse(GameUser user)
+    {
+        return new ApiUserResponse()
+        {
+            Username = user.Username,
+            Online = user.Sessions.Any(),
+            FollowerCount = user.Followers.Count(),
+            FollowingCount = user.Following.Count(),
+            LikedLevelsCount = user.LikedLevels.Count(),
+            PublishedLevelsCount = user.Levels.Count()
         };
     }
 }
