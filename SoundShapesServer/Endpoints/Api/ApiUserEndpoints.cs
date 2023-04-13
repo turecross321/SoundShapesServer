@@ -11,15 +11,23 @@ public class ApiUserEndpoints : EndpointGroup
 {
     [ApiEndpoint("user/{id}")]
     [Authentication(false)]
-    public ApiUserResponse? GetUser(RequestContext context, RealmDatabaseContext database, string id, GameUser? user)
+    public ApiUserResponse? GetUser(RequestContext context, RealmDatabaseContext database, string id)
     {
-        GameUser? userToGet = database.GetUserWithId(id);
-        if (userToGet == null) return null;
+        GameUser? user = database.GetUserWithId(id);
+        if (user == null) return null;
 
-        bool followedByYou = false;
-        
-        if (user != null) followedByYou = database.IsUserFollowingOtherUser(user, userToGet);
-        
-        return UserHelper.UserToApiUserResponse(userToGet, followedByYou);
+        return UserHelper.UserToApiUserResponse(user);
+    }
+
+    [ApiEndpoint("user/{id}/followed")]
+    public APiIsUserFollowedResponse? CheckIfUserIsFollowed(RequestContext context, RealmDatabaseContext database, string id, GameUser user)
+    {
+        GameUser? recipient = database.GetUserWithId(id);
+        if (recipient == null) return null;
+
+        return new APiIsUserFollowedResponse
+        {
+            IsFollowed = database.IsUserFollowingOtherUser(user, recipient)
+        };
     }
 }

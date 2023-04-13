@@ -8,5 +8,4 @@ public class ApiUserResponse
     public int FollowingCount { get; set; }
     public int LikedLevelsCount { get; set; }
     public int PublishedLevelsCount { get; set; }
-    public bool FollowedByYou { get; set; }
 }
