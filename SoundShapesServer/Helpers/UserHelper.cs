@@ -68,7 +68,7 @@ public static class UserHelper
     
     // API
 
-    public static ApiUserResponse UserToApiUserResponse(GameUser user)
+    public static ApiUserResponse UserToApiUserResponse(GameUser user, bool followedByYou)
     {
         return new ApiUserResponse()
         {
@@ -77,7 +77,8 @@ public static class UserHelper
             FollowerCount = user.Followers.Count(),
             FollowingCount = user.Following.Count(),
             LikedLevelsCount = user.LikedLevels.Count(),
-            PublishedLevelsCount = user.Levels.Count()
+            PublishedLevelsCount = user.Levels.Count(),
+            FollowedByYou = followedByYou
         };
     }
 }

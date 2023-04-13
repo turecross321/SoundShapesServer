@@ -186,7 +186,7 @@ public partial class RealmDatabaseContext
     public void AddUserToLevelCompletions(GameLevel level, GameUser user)
     {
         if (level.UsersWhoHaveCompletedLevel.Contains(user)) return;
-        
+
         this._realm.Write((() =>
         {
             level.UsersWhoHaveCompletedLevel.Add(user);
