@@ -1,10 +1,14 @@
+using System.Security.Cryptography;
 using Realms;
+using Realms.Sync;
+using SoundShapesServer.Configuration;
 using SoundShapesServer.Requests;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using static SoundShapesServer.Helpers.LevelHelper;
+using Session = SoundShapesServer.Authentication.Session;
 
 namespace SoundShapesServer.Database;
 
@@ -22,7 +26,8 @@ public partial class RealmDatabaseContext
             Description = request.Description,
             Language = request.Language,
             CreationDate = DateTimeOffset.UtcNow,
-            ModificationDate = DateTimeOffset.UtcNow
+            ModificationDate = DateTimeOffset.UtcNow,
+            FileSize = request.FileSize
         };
 
         this._realm.Write(() =>
@@ -43,6 +48,7 @@ public partial class RealmDatabaseContext
             level.Description = updatedLevel.Description;
             level.Language = updatedLevel.Language;
             level.ModificationDate = DateTimeOffset.UtcNow;
+            level.FileSize = updatedLevel.FileSize;
         });
 
         return GeneratePublishResponse(level);
@@ -124,12 +130,38 @@ public partial class RealmDatabaseContext
             .Take(count)
             .ToArray();
 
-        GameLevel[] levels = new GameLevel[dailyLevelEntries.Length];
+        GameLevel[] levels;
 
+        levels = new GameLevel[dailyLevelEntries.Length];
+            
         for (int i = 0; i < dailyLevelEntries.Length; i++)
         {
             levels[i] = dailyLevelEntries[i].Level;
         }
+
+        return LevelsToLevelsWrapper(levels, user, totalEntries, from, count);
+    }
+
+    public LevelsWrapper RandomLevels(GameUser user, int from, int count)
+    {
+        DateTime seedDateTime = DateTime.Today;
+        byte[] seedBytes = BitConverter.GetBytes(seedDateTime.Ticks);
+        byte[] hashBytes = MD5.Create().ComputeHash(seedBytes);
+        int seed = BitConverter.ToInt32(hashBytes, 0);
+
+        Random rng = new Random(seed);
+        
+        List<GameLevel> entries = this._realm.All<GameLevel>()
+            .ToList();
+
+        int totalEntries = entries.Count;
+        
+        GameLevel[] levels = entries
+            .AsEnumerable()
+            .OrderBy(level => rng.Next())
+            .Skip(from)
+            .Take(count)
+            .ToArray();
 
         return LevelsToLevelsWrapper(levels, user, totalEntries, from, count);
     }
@@ -171,6 +203,23 @@ public partial class RealmDatabaseContext
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()
             .OrderByDescending(l=>l.UniquePlays.Count);
+
+        IEnumerable<GameLevel> gameLevels = entries.ToList();
+        int totalEntries = gameLevels.Count();
+
+        GameLevel[] selectedEntries = gameLevels
+            .Skip(from)
+            .Take(count)
+            .ToArray();
+
+        return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
+    }
+
+    public LevelsWrapper LargestLevels(GameUser user, int from, int count)
+    {
+        IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
+            .AsEnumerable()
+            .OrderByDescending(l=>l.FileSize);
 
         IEnumerable<GameLevel> gameLevels = entries.ToList();
         int totalEntries = gameLevels.Count();

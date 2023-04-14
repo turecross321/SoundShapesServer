@@ -11,4 +11,5 @@ public class LevelPublishRequest
     public FilePart Song { get; set; }
     public int Language { get; set; }
     public string Id { get; set; }
+    public long FileSize { get; set; }
 }

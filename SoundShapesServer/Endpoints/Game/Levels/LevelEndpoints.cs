@@ -33,6 +33,8 @@ public class LevelEndpoints : EndpointGroup
             "greatesthits" => database.GreatestHits(user, from, count),
             "newest" => database.NewestLevels(user, from, count),
             "top" => database.TopLevels(user, from, count),
+            "random" => database.RandomLevels(user, from, count),
+            "largest" => database.LargestLevels(user, from, count),
             _ => null
         };
     }

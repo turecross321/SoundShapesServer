@@ -67,7 +67,8 @@ public class LevelResourceEndpoints : EndpointGroup
             Level = level,
             Song = sound,
             Language = int.Parse(parser.GetParameterValue("sce_np_language")),
-            Id = levelId
+            Id = levelId,
+            FileSize = level.Data.Length
         };
         
         return levelRequest;

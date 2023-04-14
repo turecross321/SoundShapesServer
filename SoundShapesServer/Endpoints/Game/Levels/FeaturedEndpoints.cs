@@ -27,6 +27,24 @@ public class FeaturedEndpoints : EndpointGroup
         new CommunityTab
         {
             QueryType = "search",
+            ButtonLabel = "Random Levels",
+            Query = "random&type=level",
+            PanelDescription = "Check here for random levels! Gets reshuffled every day!",
+            ImageUrl = "",
+            PanelTitle = "Random Levels"
+        },
+        new CommunityTab
+        {
+            QueryType = "search",
+            ButtonLabel = "Large Levels",
+            Query = "largest&type=level",
+            PanelDescription = "Check here for the largest levels, sorted by file size!",
+            ImageUrl = "",
+            PanelTitle = "Large Levels"
+        },
+        new CommunityTab
+        {
+            QueryType = "search",
             ButtonLabel = "Top Levels",
             Query = "top&type=level",
             PanelDescription = "Check here for the most played levels!",

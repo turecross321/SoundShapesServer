@@ -18,4 +18,5 @@ public class GameLevel : RealmObject
     public int CompletionCount { get; set; }
     public IList<GameUser> UsersWhoHaveCompletedLevel { get; }
     [Backlink(nameof(LevelLikeRelation.Level))] public IQueryable<LevelLikeRelation> Likes { get; }
+    public long FileSize { get; set; }
 }
