@@ -7,5 +7,5 @@ public class LeaderboardSubmissionRequest
     public int Golded { get; set; }
     public int TokenCount { get; set; }
     public long Score { get; set; }
-    public int Completed { get; set; } = 1; // is 1 by default (completed) because campaign score submissions don't use the completion parameter
+    public bool Completed { get; set; } = true; // is 1 by default (completed) because campaign score submissions don't use the completion parameter
 }

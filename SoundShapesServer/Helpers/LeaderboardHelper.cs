@@ -19,16 +19,28 @@ public class LeaderboardHelper
             string name = nameAndValue[0];
             string value = nameAndValue[1];
 
-            PropertyInfo? propertyInfo = response.GetType().GetProperty(name);
+            switch (name)
+            {
+                case "deaths":
+                    response.Deaths = int.Parse(value);
+                    break;
+                case "playtime":
+                    response.PlayTime = int.Parse(value);
+                    break;
+                case "golded":
+                    response.Golded = int.Parse(value);
+                    break;
+                case "tokenCount":
+                    response.TokenCount = int.Parse(value);
+                    break;
+                case "score":
+                    response.Score = long.Parse(value);
+                    break;
+                case "completed":
+                    response.Completed = int.Parse(value) == 1;
+                    break;
+            }
             
-            System.Type? propertyType = propertyInfo?.PropertyType;
-
-            if (propertyType == null) continue;
-            
-            TypeConverter? converter = TypeDescriptor.GetConverter(propertyType);
-            object? convertedValue = converter.ConvertFromString(value);
-            
-            propertyInfo?.SetValue(response, convertedValue);
         }
 
         return response;
