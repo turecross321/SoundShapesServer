@@ -18,7 +18,7 @@ public class FeaturedEndpoints : EndpointGroup
         new CommunityTab
         {
             QueryType = "search",
-            ButtonLabel = "Newest Levels",
+            ButtonLabel = "New Levels",
             Query = "newest&type=level",
             PanelDescription = "Check here daily for the latest cool levels! Always new stuff to check out!",
             ImageUrl = "",
