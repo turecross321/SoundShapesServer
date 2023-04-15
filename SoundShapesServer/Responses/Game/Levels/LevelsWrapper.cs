@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 namespace SoundShapesServer.Responses.Game.Levels;
 public class LevelsWrapper
 {
-    [JsonProperty("items")] public LevelResponse[] Levels { get; set; }
+    [JsonProperty("items")] public LevelResponse[] Levels { get; set; } = Array.Empty<LevelResponse>();
     [JsonProperty("count")] public int LevelCount { get; set; }
     
     [JsonProperty("previousToken", NullValueHandling=NullValueHandling.Ignore)] 

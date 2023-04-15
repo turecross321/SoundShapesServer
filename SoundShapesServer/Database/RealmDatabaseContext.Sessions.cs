@@ -7,35 +7,36 @@ public partial class RealmDatabaseContext
 {
     private const int DefaultTokenExpirySeconds = 86400; // 1 day
 
-    public Session GenerateSessionForUser(GameUser user, PlatformType platform, int tokenExpirySeconds = DefaultTokenExpirySeconds)
+    public GameSession GenerateSessionForUser(GameUser user, int sessionPlatformType, int? expirationSeconds = null, string? id = null)
     {
-        string platformString = platform.ToString();
+        double sessionExpirationSeconds = expirationSeconds ?? DefaultTokenExpirySeconds;
+        id ??= GenerateGuid();
         
-        Session session = new()
+        GameSession session = new()
         {
-            ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(tokenExpirySeconds),
-            Id = GenerateGuid(),
+            ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(sessionExpirationSeconds),
+            Id = id,
             User = user,
-            Platform = platformString
+            SessionType = sessionPlatformType
         };
 
-        IQueryable<Session>? previousSessions = this._realm.All<Session>().Where(s => s.User == user);
+        IQueryable<GameSession>? previousSessions = this._realm.All<GameSession>().Where(s => s.User == user);
         
         this._realm.Write(() =>
         {
-            this._realm.RemoveRange(previousSessions.Where(s=>s.Platform == platformString)); // removes all previous sessions with the same platform
+            this._realm.RemoveRange(previousSessions.Where(s=>s.SessionType == sessionPlatformType)); // removes all previous sessions with the same platform
             this._realm.Add(session);
         });
 
         return session;
     }
 
-    public Session? GetSessionWithSessionId(string sessionId)
+    public GameSession? GetSessionWithSessionId(string sessionId)
     {
         this._realm.Refresh();
         
-        IQueryable<Session>? sessions = this._realm.All<Session>();
-        Session? session = this._realm.All<Session>()
+        IQueryable<GameSession>? sessions = this._realm.All<GameSession>();
+        GameSession? session = this._realm.All<GameSession>()
             .FirstOrDefault(s => s.Id == sessionId);
 
         if (session == null)
@@ -54,6 +55,6 @@ public partial class RealmDatabaseContext
 
     public bool IsSessionInvalid(string id)
     {
-        return (this._realm.All<Session>().FirstOrDefault(s => s.Id == id) == null);
+        return (this._realm.All<GameSession>().FirstOrDefault(s => s.Id == id) == null);
     }
 }

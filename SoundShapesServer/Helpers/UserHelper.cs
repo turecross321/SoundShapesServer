@@ -42,14 +42,13 @@ public static class UserHelper
     }
     public static UserResponse? UserToUserResponse(GameUser? user)
     {
-        if (user == null) return null;
+        if (user == null) return new UserResponse();
         
         string formattedAuthorId = IdFormatter.FormatUserId(user.Id);
 
         return new UserResponse
         {
             Id = formattedAuthorId,
-            Type = ResponseType.identity.ToString(),
             DisplayName = user.Username
         };
     }

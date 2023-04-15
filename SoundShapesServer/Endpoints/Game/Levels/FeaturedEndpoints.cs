@@ -17,36 +17,40 @@ public class FeaturedEndpoints : EndpointGroup
     {
         new CommunityTab
         {
-            QueryType = "search",
             ButtonLabel = "New Levels",
-            Query = "newest&type=level",
+            Query = "newest",
             PanelDescription = "Check here daily for the latest cool levels! Always new stuff to check out!",
             ImageUrl = "",
             PanelTitle = "New Levels"
         },
         new CommunityTab
         {
-            QueryType = "search",
             ButtonLabel = "Random Levels",
-            Query = "random&type=level",
+            Query = "random",
             PanelDescription = "Check here for random levels! Gets reshuffled every day!",
             ImageUrl = "",
             PanelTitle = "Random Levels"
         },
         new CommunityTab
         {
-            QueryType = "search",
             ButtonLabel = "Large Levels",
-            Query = "largest&type=level",
+            Query = "largest",
             PanelDescription = "Check here for the largest levels, sorted by file size!",
             ImageUrl = "",
             PanelTitle = "Large Levels"
         },
         new CommunityTab
         {
-            QueryType = "search",
+            ButtonLabel = "Hard Levels",
+            Query = "hardest",
+            PanelDescription = "Check here for the hardest levels, sorted by difficulty!",
+            ImageUrl = "",
+            PanelTitle = "Hard Levels"
+        },
+        new CommunityTab
+        {
             ButtonLabel = "Top Levels",
-            Query = "top&type=level",
+            Query = "top",
             PanelDescription = "Check here for the most played levels!",
             ImageUrl = "",
             PanelTitle = "Top Levels"
@@ -58,29 +62,5 @@ public class FeaturedEndpoints : EndpointGroup
     public string GlobalFeatured(RequestContext context, RealmDatabaseContext database, string? language)
     {
         return FeaturedHelper.SerializeCommunityTabs(_communityTabs);
-    }
-
-    [GameEndpoint("~identity:{userId}/~metadata:featuredlevel.get", ContentType.Plaintext)]
-    public string? UserFeatured(RequestContext context, RealmDatabaseContext database, string userId)
-    {
-        GameUser? user = database.GetUserWithId(userId);
-        if (user == null) return null;
-
-        GameLevel? featuredLevel = user.FeaturedLevel;
-
-        if (featuredLevel == null) return null;
-        
-        return IdFormatter.FormatLevelIdAndVersion(featuredLevel.Id, featuredLevel.ModificationDate.ToUnixTimeMilliseconds());
-    }
-
-    [GameEndpoint("~identity:{userId}/~metadata:featuredLevel.put", Method.Post)]
-    public Response SetUserFeaturedLevel(RequestContext context, RealmDatabaseContext database, GameUser user, string userId, string body)
-    {
-        GameLevel? level = database.GetLevelWithId(IdFormatter.DeFormatLevelIdAndVersion(body));
-        if (level == null) return HttpStatusCode.NotFound;
-
-        database.SetUserFeaturedLevel(user, level);
-
-        return HttpStatusCode.OK;
     }
 }

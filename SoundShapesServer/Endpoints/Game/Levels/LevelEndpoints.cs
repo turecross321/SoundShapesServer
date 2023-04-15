@@ -11,15 +11,16 @@ public class LevelEndpoints : EndpointGroup
 {
     [GameEndpoint("~index:*.page", ContentType.Json)]
     [GameEndpoint("~index:level.page", ContentType.Json)]
-    public LevelsWrapper? LevelsEndpoint(RequestContext context, RealmDatabaseContext database, GameUser user)
+    [Authentication(false)]
+    public LevelsWrapper? LevelsEndpoint(RequestContext context, RealmDatabaseContext database, GameUser? user)
     {
+        // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
+        if (user == null) return new LevelsWrapper(); 
+        
         string? category = context.QueryString["search"];
-        string? order = context.QueryString["order"];
-        string? type = context.QueryString["type"];
         string? query = context.QueryString["query"];
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
-        string? decorated = context.QueryString["decorated"];
 
         if (query != null && query.Contains("author.id:"))
             return LevelsByUser(user, query, database, from, count);
@@ -35,6 +36,7 @@ public class LevelEndpoints : EndpointGroup
             "top" => database.TopLevels(user, from, count),
             "random" => database.RandomLevels(user, from, count),
             "largest" => database.LargestLevels(user, from, count),
+            "hardest" => database.HardestLevels(user, from, count),
             _ => null
         };
     }

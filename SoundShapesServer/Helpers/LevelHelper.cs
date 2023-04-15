@@ -31,7 +31,6 @@ public static class LevelHelper
             Author = new()
             {
                 Id = IdFormatter.FormatUserId(level.Author.Id),
-                Type = ResponseType.identity.ToString(),
                 DisplayName = level.Author.Username
             },
             Title = level.Name,

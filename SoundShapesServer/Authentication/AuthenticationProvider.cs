@@ -4,16 +4,18 @@ using Bunkum.CustomHttpListener.Request;
 using Bunkum.HttpServer.Authentication;
 using Bunkum.HttpServer.Database;
 using SoundShapesServer.Database;
+using SoundShapesServer.Endpoints;
 using SoundShapesServer.Types;
+using static SoundShapesServer.Helpers.AuthenticationHelper;
 
 namespace SoundShapesServer.Authentication;
 
-public class AuthenticationProvider : IAuthenticationProvider<GameUser, Session>
+public class AuthenticationProvider : IAuthenticationProvider<GameUser, GameSession>
 {
     public GameUser? AuthenticateUser(ListenerContext request, Lazy<IDatabaseContext> db) 
         => this.AuthenticateToken(request, db)?.User;
 
-    public Session? AuthenticateToken(ListenerContext request, Lazy<IDatabaseContext> db)
+    public GameSession? AuthenticateToken(ListenerContext request, Lazy<IDatabaseContext> db)
     {
         string? sessionId = null;
 
@@ -35,6 +37,13 @@ public class AuthenticationProvider : IAuthenticationProvider<GameUser, Session>
         RealmDatabaseContext database = (RealmDatabaseContext)db.Value;
         Debug.Assert(database != null);
 
-        return database.GetSessionWithSessionId(sessionId);
+        GameSession? session = database.GetSessionWithSessionId(sessionId);
+        if (session == null) return null;
+
+        string uriPath = request.Uri.AbsolutePath;
+
+        if (IsSessionAllowedToAccessEndpoint(session, uriPath)) return session;
+
+        return null;
     }
 }

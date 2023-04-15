@@ -14,7 +14,7 @@ namespace SoundShapesServer.Endpoints.Game.Albums;
 public class AlbumEndpoints : EndpointGroup
 {
     [GameEndpoint("~albums/~link:*.page", ContentType.Json)]
-    public AlbumsWrapper GetAlbums(RequestContext context, RealmDatabaseContext database, Session token)
+    public AlbumsWrapper GetAlbums(RequestContext context, RealmDatabaseContext database, GameSession token)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");

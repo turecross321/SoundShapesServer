@@ -8,7 +8,6 @@ using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using static SoundShapesServer.Helpers.LevelHelper;
-using Session = SoundShapesServer.Authentication.Session;
 
 namespace SoundShapesServer.Database;
 
@@ -53,15 +52,7 @@ public partial class RealmDatabaseContext
 
         return GeneratePublishResponse(level);
     }
-
-    public void SetUserFeaturedLevel(GameUser user, GameLevel level)
-    {
-        this._realm.Write((() =>
-        {
-            user.FeaturedLevel = level;
-        }));
-    }
-
+    
     public bool UnPublishLevel(GameLevel level)
     {
         this._realm.Write(() =>
@@ -220,6 +211,23 @@ public partial class RealmDatabaseContext
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()
             .OrderByDescending(l=>l.FileSize);
+
+        IEnumerable<GameLevel> gameLevels = entries.ToList();
+        int totalEntries = gameLevels.Count();
+
+        GameLevel[] selectedEntries = gameLevels
+            .Skip(from)
+            .Take(count)
+            .ToArray();
+
+        return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
+    }
+    
+    public LevelsWrapper HardestLevels(GameUser user, int from, int count)
+    {
+        IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
+            .AsEnumerable()
+            .OrderByDescending(l=>l.Deaths / l.UniquePlays.Count);
 
         IEnumerable<GameLevel> gameLevels = entries.ToList();
         int totalEntries = gameLevels.Count();

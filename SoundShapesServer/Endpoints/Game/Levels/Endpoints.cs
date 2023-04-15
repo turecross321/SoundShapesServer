@@ -49,6 +49,6 @@ public class Endpoints : EndpointGroup
 
         if (action == "update") return LevelPublishingEndpoints.UpdateLevel(context, parser, database, user, level.Id);
 
-        else return new Response(HttpStatusCode.NotFound);
+        return new Response(HttpStatusCode.NotFound);
     }
 }

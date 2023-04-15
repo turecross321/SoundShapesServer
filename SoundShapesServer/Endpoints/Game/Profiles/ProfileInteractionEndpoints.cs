@@ -42,7 +42,6 @@ public class ProfileInteractionEndpoints : EndpointGroup
                 User = new UserResponse()
                 {
                     Id = IdFormatter.FormatUserId(userBeingFollowed.Id),
-                    Type = ResponseType.identity.ToString(),
                     DisplayName = userBeingFollowed.Username
                 }
             };

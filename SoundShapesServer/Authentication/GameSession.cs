@@ -4,10 +4,10 @@ using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Authentication;
 
-public class Session : RealmObject, IToken
+public class GameSession : RealmObject, IToken
 {
     public DateTimeOffset ExpiresAt { get; set; }
     public string Id { get; set; }
     public GameUser User { get; set; }
-    public string Platform { get; set; }
+    public int SessionType { get; set; }
 }

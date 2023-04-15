@@ -18,9 +18,9 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 
     [ApiEndpoint("login", Method.Post)]
     [Authentication(false)]
-    public Response Authenticate(RequestContext context, RealmDatabaseContext database, ApiAuthenticationRequest body)
+    public Response Authenticate(RequestContext context, RealmDatabaseContext database, ApiLoginRequest body)
     {
-        GameUser? user = database.GetUserWithUsername(body.Username);
+        GameUser? user = database.GetUserWithEmail(body.Email);
         if (user == null)
         {
             return new Response(new ApiErrorResponse {Reason = "The username or password was incorrect."}, ContentType.Json, HttpStatusCode.Forbidden);   
@@ -36,7 +36,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
             return new Response(new ApiErrorResponse {Reason = "The username or password was incorrect."}, ContentType.Json, HttpStatusCode.Forbidden);
         }
 
-        Session session = database.GenerateSessionForUser(user, PlatformType.API);
+        GameSession session = database.GenerateSessionForUser(user, (int)TypeOfSession.API);
 
         ApiAuthenticationResponse response = new()
         {
@@ -48,17 +48,35 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         return new Response(response, ContentType.Json);
     }
 
-    [ApiEndpoint("register", Method.Post)]
-    [Authentication(false)]
-    public Response Register(RequestContext context, RealmDatabaseContext database, ApiAuthenticationRequest body)
+    [ApiEndpoint("setEmail", Method.Post)]
+    public Response SetUserEmail(RequestContext context, RealmDatabaseContext database, ApiSetEmailRequest body, GameSession token)
     {
-        GameUser? user = database.GetUserWithUsername(body.Username);
-        if (user != null)
+        if (token.SessionType != (int)TypeOfSession.SetEmail) return HttpStatusCode.Unauthorized;
+
+        GameUser user = token.User;
+
+        if (user.HasFinishedRegistration)
         {
-            return new Response(new ApiErrorResponse {Reason = "Username is already taken."}, ContentType.Json, HttpStatusCode.Forbidden);   
+            return new Response(new ApiErrorResponse {Reason = "User has already finished registration."}, ContentType.Json, HttpStatusCode.Forbidden);
         }
 
-        database.CreateUser(body.Username, BCrypt.Net.BCrypt.HashPassword(body.PasswordSha512, WorkFactor));
+        database.SetUserEmail(user, body.Email, token);
+
+        return HttpStatusCode.Created;
+    }
+    
+    [ApiEndpoint("setPassword", Method.Post)]
+    public Response SetUserPassword(RequestContext context, RealmDatabaseContext database, ApiSetPasswordRequest body, GameSession token)
+    {
+        if (token.SessionType != (int)TypeOfSession.SetPassword) return HttpStatusCode.Unauthorized;
+
+        GameUser user = token.User;
+        
+        if (user.HasFinishedRegistration) return HttpStatusCode.Forbidden;
+
+            string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(body.PasswordSha512, WorkFactor);
+        
+        database.SetUserPassword(user, passwordBcrypt, token);
 
         return HttpStatusCode.Created;
     }

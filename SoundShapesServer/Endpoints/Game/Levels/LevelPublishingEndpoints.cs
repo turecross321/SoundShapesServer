@@ -35,7 +35,7 @@ public class LevelPublishingEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
 
         if (level == null) return new Response(HttpStatusCode.NotFound);
-        if (!level.Author.Equals(user)) return new Response(HttpStatusCode.Forbidden);
+        if (level.Author.Equals(user) == false) return new Response(HttpStatusCode.Forbidden);
         
         LevelPublishRequest? levelRequest = LevelResourceEndpoints.UploadLevelResources(context, parser, levelId);
         if (levelRequest == null) return HttpStatusCode.InternalServerError;

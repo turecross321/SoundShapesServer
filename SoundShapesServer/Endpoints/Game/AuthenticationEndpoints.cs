@@ -8,9 +8,10 @@ using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Sessions;
-using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
+using static SoundShapesServer.Helpers.AuthenticationHelper;
 using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
+using SoundShapesServer.Configuration;
 
 namespace SoundShapesServer.Endpoints.Game;
 
@@ -19,7 +20,7 @@ public class AuthenticationEndpoints : EndpointGroup
     [Endpoint("/identity/login/token/psn", ContentType.Json, Method.Post)]
     [NullStatusCode(HttpStatusCode.Forbidden)]
     [Authentication(false)]
-    public Response? Login(RequestContext context, RealmDatabaseContext database, Stream body)
+    public Response? Login(RequestContext context, RealmDatabaseContext database, Stream body, GameServerConfig config)
     {
         Ticket ticket;
         try
@@ -31,61 +32,74 @@ public class AuthenticationEndpoints : EndpointGroup
             context.Logger.LogWarning(BunkumContext.Authentication, "Could not read ticket: " + e);
             return null;
         }
-        
-        bool genuinePsn = ticket.IssuerId switch
-        {
-            0x100 => true, // ps3, ps4, psvita
-            0x33333333 => false // rpcs3
-        };
 
-        PlatformType platform = PlatformHelper.GetPlatform(ticket.TitleId, genuinePsn);
-        if (platform == PlatformType.Unknown) return HttpStatusCode.Forbidden; 
+        bool rpcs3;
+
+        switch (ticket.IssuerId)
+        { 
+            case 0x100: // ps3, ps4, psvita
+                rpcs3 = false; 
+                break;
+            case 0x33333333: // rpcs3
+                rpcs3 = true; 
+                break;
+            default: // unknown
+                return HttpStatusCode.Forbidden; 
+        }
+
+        TypeOfSession typeOfSession = PlatformHelper.GetSessionType(ticket.TitleId, rpcs3);
+        if (typeOfSession == TypeOfSession.Unknown) return HttpStatusCode.Forbidden; 
         
         GameUser? user = database.GetUserWithUsername(ticket.Username);
-        
-        if (user == null)
-        {
-            // TODO: Remove this once we have a website that can use the api to register accounts
-            user = database.CreateUser(ticket.Username, "");
-        }
-        
-        Service? service = database.GetServiceWithDisplayName(ticket.Username);
-        service ??= database.CreateService(ticket.Username);
+        user ??= database.CreateUser(ticket.Username);
 
-        Session session = database.GenerateSessionForUser(user, platform, 14400); // 4 hours
-        
-        GameSessionResponse sessionResponse = new GameSessionResponse
+        GameSession? session = null;
+
+        if (config.ApiAuthentication)
         {
-            ExpirationDate = session.ExpiresAt.ToUnixTimeMilliseconds(),
-            Id = session.Id,
-            User = new SessionUserResponse
+            string ip = ((IPEndPoint)context.RemoteEndpoint).Address.ToString();
+        
+            // If user hasn't finished registration, or if their IP isn't authorized, give them an unauthorized Session
+            if (user.HasFinishedRegistration == false || user.AuthorizedIPAddresses.Contains(ip) == false)
             {
-                DisplayName = user.Username,
-                Id = user.Id
-            },
-            Service = service
-        };
+                session = database.GenerateSessionForUser(user, (int)TypeOfSession.Unauthorized, 5);
+            }
+        }
 
-        GameSessionWrapper responseWrapper = new ()
-        {
-            Session = sessionResponse
-        };
-        
-        Console.WriteLine($"{sessionResponse.User.DisplayName} has logged in.");
+        // Otherwise, generate an actual session
+        session ??= database.GenerateSessionForUser(user, (int)typeOfSession, 14400); // 4 hours
+        GameSessionResponse gameSessionResponse = SessionToSessionResponse(session);
 
-        context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={session.Id};Version=1;Path=/");
-        context.ResponseHeaders.Add("x-otg-identity-displayname", user.Username);
-        context.ResponseHeaders.Add("x-otg-identity-personid", user.Id);
-        context.ResponseHeaders.Add("x-otg-identity-sessionid", session.Id);
-
-        return new Response(responseWrapper, ContentType.Json, HttpStatusCode.Created);
+        return SessionResponseToResponse(context, gameSessionResponse);
     }
 
     
     [GameEndpoint("~identity:*.hello", ContentType.Json)]
-    public UserResponse Hello(RequestContext context, RealmDatabaseContext database, GameUser user)
+    [NullStatusCode(HttpStatusCode.Forbidden)]
+    public Response Hello(RequestContext context)
     {
-        return UserHelper.UserToUserResponse(user);
+        return HttpStatusCode.OK;
+    }
+    
+    [GameEndpoint("{platform}/{publisher}/{language}/~eula.get", ContentType.Json)]
+    public string? Eula(RequestContext context, GameServerConfig config, RealmDatabaseContext database, string platform, string publisher, string language, GameSession token, GameUser user)
+    {
+        if (token.SessionType != (int)TypeOfSession.Unauthorized)
+            return EulaEndpoint.NormalEula(config);
+        
+        if (user.HasFinishedRegistration == false)
+        {
+            string emailSessionId = SessionHelper.GenerateEmailSessionId(database);
+            database.GenerateSessionForUser(user, (int)TypeOfSession.SetEmail, 600, emailSessionId); // 10 minutes
+            return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}.\nYour verification code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
+        }
+
+        string ipAddress = ((IPEndPoint)context.RemoteEndpoint).Address.ToString();
+
+        if (user.AuthorizedIPAddresses.Contains(ipAddress) == false)
+            return $"Your IP Address has not been authorized. To proceed, you will have to log in to your account at {config.WebsiteUrl} and authorize the following IP Address: {ipAddress}\n-\n{DateTime.UtcNow}";
+
+        return null;
     }
     
 }

@@ -20,7 +20,7 @@ public class NewsEndpoints : EndpointGroup
 
     
     [GameEndpoint("global/news/{language}/~metadata:*.get", ContentType.Json)]
-    public NewsResponse TranslatedNews(RequestContext context, Session session, RealmDatabaseContext database, string language)
+    public NewsResponse TranslatedNews(RequestContext context, GameSession session, RealmDatabaseContext database, string language)
     {
         NewsEntry news = database.GetTranslatedNews(language);
         return NewsEntryToNewsResponse(news);
