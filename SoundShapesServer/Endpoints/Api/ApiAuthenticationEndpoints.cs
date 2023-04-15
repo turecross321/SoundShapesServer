@@ -14,8 +14,11 @@ using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Endpoints.Api;
 
-public class ApiAuthenticationEndpoints : EndpointGroup
+public partial class ApiAuthenticationEndpoints : EndpointGroup
 {
+    [GeneratedRegex("^[a-f0-9]{128}$")]
+    private static partial Regex Sha512Regex();
+    
     private const int WorkFactor = 14;
 
     [ApiEndpoint("login", Method.Post)]
@@ -85,8 +88,12 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         GameUser user = token.User;
         
         if (user.HasFinishedRegistration) return HttpStatusCode.Forbidden;
+        
+        if (body.PasswordSha512.Length != 128 || !Sha512Regex().IsMatch(body.PasswordSha512))
+            return new Response("Password is definitely not SHA512. Please hash the password.",
+                ContentType.Plaintext, HttpStatusCode.BadRequest);
 
-            string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(body.PasswordSha512, WorkFactor);
+        string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(body.PasswordSha512, WorkFactor);
         
         database.SetUserPassword(user, passwordBcrypt, token);
 
