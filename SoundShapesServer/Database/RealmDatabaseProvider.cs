@@ -22,6 +22,7 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
                 typeof(FollowRelation),
                 typeof(LevelLikeRelation),
                 typeof(GameUser),
+                typeof(IpAuthorization),
                 typeof(GameSession),
                 typeof(Service),
                 typeof(LevelParent),
@@ -32,7 +33,6 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
                 typeof(LinerNote),
                 typeof(GameAlbum),
                 typeof(Report),
-                typeof(IpAuthenticationRequest)
             },
             MigrationCallback = (migration, oldVersion) =>
             {

@@ -1,4 +1,6 @@
+using Bunkum.HttpServer;
 using SoundShapesServer.Authentication;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Database;
@@ -7,8 +9,10 @@ public partial class RealmDatabaseContext
 {
     private const int DefaultTokenExpirySeconds = 86400; // 1 day
 
-    public GameSession GenerateSessionForUser(GameUser user, int sessionPlatformType, int? expirationSeconds = null, string? id = null)
+    public GameSession GenerateSessionForUser(RequestContext context, GameUser user, int sessionPlatformType, int? expirationSeconds = null, string? id = null)
     {
+        IpAuthorization ip = IpHelper.GetIpAuthorizationFromRequestContext(context, this, user);
+
         double sessionExpirationSeconds = expirationSeconds ?? DefaultTokenExpirySeconds;
         id ??= GenerateGuid();
         
@@ -17,10 +21,11 @@ public partial class RealmDatabaseContext
             ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(sessionExpirationSeconds),
             Id = id,
             User = user,
-            SessionType = sessionPlatformType
+            SessionType = sessionPlatformType,
+            Ip = ip
         };
 
-        IQueryable<GameSession>? previousSessions = this._realm.All<GameSession>().Where(s => s.User == user);
+        IQueryable<GameSession> previousSessions = this._realm.All<GameSession>().Where(s => s.User == user);
         
         this._realm.Write(() =>
         {
@@ -56,5 +61,10 @@ public partial class RealmDatabaseContext
     public bool IsSessionInvalid(string id)
     {
         return (this._realm.All<GameSession>().FirstOrDefault(s => s.Id == id) == null);
+    }
+
+    public GameSession[] GetSessionsWithIp(IpAuthorization ip)
+    {
+        return this._realm.All<GameSession>().Where(s => s.Ip == ip).ToArray();
     }
 }

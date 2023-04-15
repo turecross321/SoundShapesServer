@@ -18,7 +18,7 @@ using RealmDatabaseProvider databaseProvider = new();
 server.UseDatabaseProvider(databaseProvider);
 server.UseDataStore(new FileSystemDataStore());
 
-server.UseAuthenticationProvider(new AuthenticationProvider());
+server.UseAuthenticationProvider(new SessionProvider());
 server.UseJsonConfig<GameServerConfig>("gameServer.json");
 
 server.AddMiddleware<CrossOriginMiddleware>();

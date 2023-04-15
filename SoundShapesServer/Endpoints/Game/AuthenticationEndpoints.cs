@@ -9,9 +9,10 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Sessions;
 using SoundShapesServer.Types;
-using static SoundShapesServer.Helpers.AuthenticationHelper;
+using static SoundShapesServer.Helpers.SessionHelper;
 using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
 using SoundShapesServer.Configuration;
+using static SoundShapesServer.Helpers.IpHelper;
 
 namespace SoundShapesServer.Endpoints.Game;
 
@@ -53,28 +54,25 @@ public class AuthenticationEndpoints : EndpointGroup
         GameUser? user = database.GetUserWithUsername(ticket.Username);
         user ??= database.CreateUser(ticket.Username);
 
+        IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
         GameSession? session = null;
 
         if (config.ApiAuthentication)
         {
-            string ipAddress = ((IPEndPoint)context.RemoteEndpoint).Address.ToString();
-        
             // If user hasn't finished registration, or if their IP isn't authorized, give them an unauthorized Session
-            if (user.HasFinishedRegistration == false)
+            if (user.HasFinishedRegistration == false || ip.Authorized == false)
             {
-                session = database.GenerateSessionForUser(user, (int)TypeOfSession.Unauthorized, 5);
+                session = database.GenerateSessionForUser(context, user, (int)TypeOfSession.Unauthorized, 30);
             }
-
-            // If the user's IP isn't authorized, give them an unauthorized Session and track their IP
-            else if (user.AuthorizedIPAddresses.Contains(ipAddress) == false)
+            
+            // If their ip is authorized for a OneTimeUse, remove the ip address
+            else if (ip.OneTimeUse)
             {
-                session = database.GenerateSessionForUser(user, (int)TypeOfSession.Unauthorized, 5);
-                database.AddUnAuthenticatedIpAddress(user, ipAddress);
+                database.UseOneTimeIpAddress(ip);
             }
         }
-
-        // Otherwise, generate an actual session
-        session ??= database.GenerateSessionForUser(user, (int)typeOfSession, 14400); // 4 hours
+        
+        session ??= database.GenerateSessionForUser(context, user, (int)typeOfSession, 14400); // 4 hours
         GameSessionResponse gameSessionResponse = SessionToSessionResponse(session);
 
         return SessionResponseToResponse(context, gameSessionResponse);
@@ -94,17 +92,17 @@ public class AuthenticationEndpoints : EndpointGroup
         if (token.SessionType != (int)TypeOfSession.Unauthorized)
             return EulaEndpoint.NormalEula(config);
         
+        IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
+        
         if (user.HasFinishedRegistration == false)
         {
             string emailSessionId = SessionHelper.GenerateSimpleSessionId(database);
-            database.GenerateSessionForUser(user, (int)TypeOfSession.SetEmail, 600, emailSessionId); // 10 minutes
+            database.GenerateSessionForUser(context, user, (int)TypeOfSession.SetEmail, 600, emailSessionId); // 10 minutes
             return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}.\nYour verification code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
         }
 
-        string ipAddress = ((IPEndPoint)context.RemoteEndpoint).Address.ToString();
-
-        if (user.AuthorizedIPAddresses.Contains(ipAddress) == false)
-            return $"Your IP Address has not been authorized. To proceed, you will have to log in to your account at {config.WebsiteUrl} and authorize the following IP Address: {ipAddress}\n-\n{DateTime.UtcNow}";
+        if (!ip.Authorized)
+            return $"Your IP Address has not been authorized. To proceed, you will have to log in to your account at {config.WebsiteUrl} and authorize the following IP Address: {ip.IpAddress}\n-\n{DateTime.UtcNow}";
 
         return null;
     }

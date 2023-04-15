@@ -14,8 +14,8 @@ public class GameUser : RealmObject, IUser
     public string? Email { get; set; }
     public string? PasswordBcrypt { get; set; }
     public bool HasFinishedRegistration { get; set; } = false;
-    public IList<string> AuthorizedIPAddresses { get; }
-    [Backlink(nameof(IpAuthenticationRequest.User))] public IQueryable<IpAuthenticationRequest> UnAuthorizedIpAddresses { get; }
+    
+    [Backlink(nameof(IpAuthorization.User))] public IQueryable<IpAuthorization> IpAddresses { get; }
 
     [Backlink(nameof(LevelLikeRelation.Liker))] public IQueryable<LevelLikeRelation> LikedLevels { get; }
     

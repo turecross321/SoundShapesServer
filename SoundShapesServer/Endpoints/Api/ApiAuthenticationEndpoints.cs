@@ -11,6 +11,8 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types;
+using static SoundShapesServer.Helpers.SessionHelper;
+using static SoundShapesServer.Helpers.IpHelper;
 
 namespace SoundShapesServer.Endpoints.Api;
 
@@ -40,8 +42,8 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         {
             return new Response(new ApiErrorResponse {Reason = "The username or password was incorrect."}, ContentType.Json, HttpStatusCode.Forbidden);
         }
-
-        GameSession session = database.GenerateSessionForUser(user, (int)TypeOfSession.API);
+        
+        GameSession session = database.GenerateSessionForUser(context, user, (int)TypeOfSession.API);
 
         ApiAuthenticationResponse response = new()
         {
@@ -72,9 +74,11 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         }
         
         database.SetUserEmail(user, body.Email, token);
-        
+
+        IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
+
         string passwordSessionId = SessionHelper.GenerateSimpleSessionId(database);
-        GameSession passwordSession = database.GenerateSessionForUser(user, (int)TypeOfSession.SetPassword, 600, passwordSessionId); // 10 minutes
+        GameSession passwordSession = database.GenerateSessionForUser(context, user, (int)TypeOfSession.SetPassword, 600, passwordSessionId); // 10 minutes
         // Todo: Send PasswordSession to mail address
 
         return HttpStatusCode.Created;
@@ -103,7 +107,10 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
     [ApiEndpoint("ipAuthorization/authorize", Method.Post)]
     public Response AuthenticateIpAddress(RequestContext context, RealmDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
     {
-        if (database.AddAuthenticatedIpAddress(user, body.IpAddress))
+        IpAuthorization? ip = database.GetIpFromAddress(user, body.IpAddress);
+        if (ip == null) return HttpStatusCode.NotFound;
+        
+        if (database.AuthorizeIpAddress(ip, body.OneTimeUse))
             return HttpStatusCode.Created;
 
         return HttpStatusCode.Conflict;
@@ -111,27 +118,31 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
     [ApiEndpoint("ipAuthorization/unAuthorize", Method.Post)]
     public Response UnAuthorizeIpAddress(RequestContext context, RealmDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
     {
-        if (database.RemoveAuthenticatedIpAddress(user, body.IpAddress))
-            return HttpStatusCode.OK;
+        IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress);
 
-        return HttpStatusCode.NotFound;
+        database.RemoveIpAddress(ip);
+        return HttpStatusCode.OK;
     }
 
-    [ApiEndpoint("ipAuthorization/attempts", Method.Get)]
-    public ApiIpAuthorizationAttempts GetIpAuthorizationAttempts(RequestContext context, RealmDatabaseContext database, GameUser user)
+    [ApiEndpoint("ipAuthorization/unAuthorized", Method.Get)]
+    public ApiIpAuthorizations GetUnAuthorizedIps(RequestContext context, RealmDatabaseContext database, GameUser user)
     {
-        List<string> addresses = new List<string>();
+        string[] addresses = database.GetUnAuthorizedIps(user);
         
-        IpAuthenticationRequest[] requests = user.UnAuthorizedIpAddresses.ToArray();
-
-        for (int i = 0; i < requests.Length; i++)
+        return new ApiIpAuthorizations()
         {
-            addresses.Add(requests[i].IpAddress);
-        }
+            IpAddresses = addresses
+        };
+    }
 
-        return new ApiIpAuthorizationAttempts()
+    [ApiEndpoint("ipAuthorization/authorized")]
+    public ApiIpAuthorizations GetAuthorizedIps(RequestContext context, RealmDatabaseContext database, GameUser user)
+    {
+        string[] addresses = database.GetAuthorizedIps(user);
+        
+        return new ApiIpAuthorizations()
         {
-            IpAddresses = addresses.ToArray()
+            IpAddresses = addresses
         };
     }
 }

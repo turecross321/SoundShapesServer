@@ -4,7 +4,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Types;
-using static SoundShapesServer.Helpers.AuthenticationHelper;
+using static SoundShapesServer.Helpers.SessionHelper;
 
 namespace SoundShapesServer.Endpoints.Game;
 

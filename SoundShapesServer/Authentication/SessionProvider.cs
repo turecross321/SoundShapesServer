@@ -6,11 +6,11 @@ using Bunkum.HttpServer.Database;
 using SoundShapesServer.Database;
 using SoundShapesServer.Endpoints;
 using SoundShapesServer.Types;
-using static SoundShapesServer.Helpers.AuthenticationHelper;
+using static SoundShapesServer.Helpers.SessionHelper;
 
 namespace SoundShapesServer.Authentication;
 
-public class AuthenticationProvider : IAuthenticationProvider<GameUser, GameSession>
+public class SessionProvider : IAuthenticationProvider<GameUser, GameSession>
 {
     public GameUser? AuthenticateUser(ListenerContext request, Lazy<IDatabaseContext> db) 
         => this.AuthenticateToken(request, db)?.User;
@@ -18,9 +18,6 @@ public class AuthenticationProvider : IAuthenticationProvider<GameUser, GameSess
     public GameSession? AuthenticateToken(ListenerContext request, Lazy<IDatabaseContext> db)
     {
         string? sessionId = null;
-
-        // get the request headers
-        NameObjectCollectionBase.KeysCollection keys = request.RequestHeaders.Keys;
 
         // check the session header. this is what the game uses
         sessionId = request.RequestHeaders["X-OTG-Identity-SessionId"];
