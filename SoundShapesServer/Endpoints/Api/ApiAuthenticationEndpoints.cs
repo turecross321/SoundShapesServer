@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Mail;
 using System.Text.RegularExpressions;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
@@ -58,6 +59,12 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         if (user.HasFinishedRegistration)
         {
             return new Response(new ApiErrorResponse {Reason = "User has already finished registration."}, ContentType.Json, HttpStatusCode.Forbidden);
+        }
+
+        // Check if user has sent a valid mail address
+        if (MailAddress.TryCreate(body.Email, out MailAddress? mailAddress) == false)
+        {
+            return new Response(new ApiErrorResponse {Reason = "Invalid Email."}, ContentType.Json, HttpStatusCode.Forbidden);
         }
 
         database.SetUserEmail(user, body.Email, token);
