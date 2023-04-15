@@ -4,19 +4,19 @@ namespace SoundShapesServer.Helpers;
 
 public static class SessionHelper
 {
-    private const string EmailSessionIdCharacters = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private const int EmailSessionIdLength = 8;
+    private const string IdCharacters = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private const int IdLength = 8;
         
-    public static string GenerateEmailSessionId(RealmDatabaseContext database)
+    public static string GenerateSimpleSessionId(RealmDatabaseContext database)
     {
         Random r = new Random();
         string levelId = "";
-        for (int i = 0; i < EmailSessionIdLength; i++)
+        for (int i = 0; i < IdLength; i++)
         {
-            levelId += EmailSessionIdCharacters[r.Next(EmailSessionIdCharacters.Length - 1)];
+            levelId += IdCharacters[r.Next(IdCharacters.Length - 1)];
         }
 
         if (database.GetSessionWithSessionId(levelId) == null) return levelId; // Return if Id has not been used before
-        return GenerateEmailSessionId(database); // Generate new Id if it already exists   
+        return GenerateSimpleSessionId(database); // Generate new Id if it already exists   
     }
 }

@@ -7,6 +7,7 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types;
@@ -66,8 +67,12 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         {
             return new Response(new ApiErrorResponse {Reason = "Invalid Email."}, ContentType.Json, HttpStatusCode.Forbidden);
         }
-
+        
         database.SetUserEmail(user, body.Email, token);
+        
+        string passwordSessionId = SessionHelper.GenerateSimpleSessionId(database);
+        GameSession passwordSession = database.GenerateSessionForUser(user, (int)TypeOfSession.SetPassword, 600, passwordSessionId); // 10 minutes
+        // Todo: Send PasswordSession to mail address
 
         return HttpStatusCode.Created;
     }

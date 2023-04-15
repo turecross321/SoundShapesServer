@@ -89,7 +89,7 @@ public class AuthenticationEndpoints : EndpointGroup
         
         if (user.HasFinishedRegistration == false)
         {
-            string emailSessionId = SessionHelper.GenerateEmailSessionId(database);
+            string emailSessionId = SessionHelper.GenerateSimpleSessionId(database);
             database.GenerateSessionForUser(user, (int)TypeOfSession.SetEmail, 600, emailSessionId); // 10 minutes
             return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}.\nYour verification code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
         }
