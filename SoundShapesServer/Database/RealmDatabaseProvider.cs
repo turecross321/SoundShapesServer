@@ -31,7 +31,8 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
                 typeof(DailyLevel),
                 typeof(LinerNote),
                 typeof(GameAlbum),
-                typeof(Report)
+                typeof(Report),
+                typeof(IpAuthenticationRequest)
             },
             MigrationCallback = (migration, oldVersion) =>
             {

@@ -99,4 +99,39 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
 
         return HttpStatusCode.Created;
     }
+
+    [ApiEndpoint("ipAuthorization/authorize", Method.Post)]
+    public Response AuthenticateIpAddress(RequestContext context, RealmDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
+    {
+        if (database.AddAuthenticatedIpAddress(user, body.IpAddress))
+            return HttpStatusCode.Created;
+
+        return HttpStatusCode.Conflict;
+    }
+    [ApiEndpoint("ipAuthorization/unAuthorize", Method.Post)]
+    public Response UnAuthorizeIpAddress(RequestContext context, RealmDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
+    {
+        if (database.RemoveAuthenticatedIpAddress(user, body.IpAddress))
+            return HttpStatusCode.OK;
+
+        return HttpStatusCode.NotFound;
+    }
+
+    [ApiEndpoint("ipAuthorization/attempts", Method.Get)]
+    public ApiIpAuthorizationAttempts GetIpAuthorizationAttempts(RequestContext context, RealmDatabaseContext database, GameUser user)
+    {
+        List<string> addresses = new List<string>();
+        
+        IpAuthenticationRequest[] requests = user.UnAuthorizedIpAddresses.ToArray();
+
+        for (int i = 0; i < requests.Length; i++)
+        {
+            addresses.Add(requests[i].IpAddress);
+        }
+
+        return new ApiIpAuthorizationAttempts()
+        {
+            IpAddresses = addresses.ToArray()
+        };
+    }
 }

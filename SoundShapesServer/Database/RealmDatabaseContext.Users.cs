@@ -36,6 +36,7 @@ public partial class RealmDatabaseContext
         {
             if (session != null) this._realm.Remove(session);
             user.PasswordBcrypt = password;
+            user.HasFinishedRegistration = true;
         }));
     }
     
@@ -53,5 +54,45 @@ public partial class RealmDatabaseContext
     {
         if (id == null) return null;
         return this._realm.All<GameUser>().FirstOrDefault(u => u.Id == id);
+    }
+
+    public void AddUnAuthenticatedIpAddress(GameUser user, string ipAddress)
+    {
+        // Check if ip address has already been tracked
+        if (this._realm.All<IpAuthenticationRequest>()
+                .FirstOrDefault(r => r.User == user && r.IpAddress == ipAddress) != null)
+            return;
+        
+        this._realm.Write(() =>
+        {
+            this._realm.Add(new IpAuthenticationRequest()
+            {
+                IpAddress = ipAddress,
+                User = user
+            });
+        });
+    }
+    public bool AddAuthenticatedIpAddress(GameUser user, string ipAddress)
+    {
+        if (user.AuthorizedIPAddresses.Contains(ipAddress)) return false;
+        
+        this._realm.Write(() =>
+        {
+            user.AuthorizedIPAddresses.Add(ipAddress);
+        });
+
+        return true;
+    }
+
+    public bool RemoveAuthenticatedIpAddress(GameUser user, string ipAddress)
+    {
+        if (user.AuthorizedIPAddresses.Contains(ipAddress) == false) return false;
+        
+        this._realm.Write(() =>
+        {
+            user.AuthorizedIPAddresses.Remove(ipAddress);
+        });
+
+        return true;
     }
 }

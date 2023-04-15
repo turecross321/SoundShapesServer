@@ -57,12 +57,19 @@ public class AuthenticationEndpoints : EndpointGroup
 
         if (config.ApiAuthentication)
         {
-            string ip = ((IPEndPoint)context.RemoteEndpoint).Address.ToString();
+            string ipAddress = ((IPEndPoint)context.RemoteEndpoint).Address.ToString();
         
             // If user hasn't finished registration, or if their IP isn't authorized, give them an unauthorized Session
-            if (user.HasFinishedRegistration == false || user.AuthorizedIPAddresses.Contains(ip) == false)
+            if (user.HasFinishedRegistration == false)
             {
                 session = database.GenerateSessionForUser(user, (int)TypeOfSession.Unauthorized, 5);
+            }
+
+            // If the user's IP isn't authorized, give them an unauthorized Session and track their IP
+            else if (user.AuthorizedIPAddresses.Contains(ipAddress) == false)
+            {
+                session = database.GenerateSessionForUser(user, (int)TypeOfSession.Unauthorized, 5);
+                database.AddUnAuthenticatedIpAddress(user, ipAddress);
             }
         }
 
