@@ -48,8 +48,9 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         ApiAuthenticationResponse response = new()
         {
             Id = session.Id,
+            ExpiresAt = session.ExpiresAt,
             UserId = user.Id,
-            ExpiresAt = session.ExpiresAt
+            Username = user.Username
         };
 
         return new Response(response, ContentType.Json);
