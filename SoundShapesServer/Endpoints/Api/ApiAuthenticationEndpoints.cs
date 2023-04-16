@@ -74,6 +74,9 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
             return new Response(new ApiErrorResponse {Reason = "Invalid Email."}, ContentType.Json, HttpStatusCode.Forbidden);
         }
         
+        // Check if mail address has been used before
+        if (database.HasEmailBeenUsedBefore(body.Email)) return new Response(new ApiErrorResponse {Reason = "Email already taken."}, ContentType.Json, HttpStatusCode.Forbidden);
+        
         database.SetUserEmail(user, body.Email, token);
 
         string passwordSessionId = GenerateSimpleSessionId(database);
