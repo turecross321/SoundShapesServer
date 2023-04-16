@@ -19,13 +19,13 @@ public static class SessionHelper
     public static string GenerateSimpleSessionId(RealmDatabaseContext database)
     {
         Random r = new Random();
-        string levelId = "";
+        string id = "";
         for (int i = 0; i < IdLength; i++)
         {
-            levelId += IdCharacters[r.Next(IdCharacters.Length - 1)];
+            id += IdCharacters[r.Next(IdCharacters.Length - 1)];
         }
 
-        if (database.GetSessionWithSessionId(levelId) == null) return levelId; // Return if Id has not been used before
+        if (database.GetSessionWithSessionId(id) == null) return id; // Return if Id has not been used before
         return GenerateSimpleSessionId(database); // Generate new Id if it already exists   
     }
     public static GameSessionResponse SessionToSessionResponse(GameSession session)
