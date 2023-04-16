@@ -25,7 +25,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
 
     [ApiEndpoint("login", Method.Post)]
     [Authentication(false)]
-    public Response Authenticate(RequestContext context, RealmDatabaseContext database, ApiLoginRequest body)
+    public Response Login(RequestContext context, RealmDatabaseContext database, ApiLoginRequest body)
     {
         GameUser? user = database.GetUserWithEmail(body.Email);
         if (user == null)
@@ -100,47 +100,5 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         database.SetUserPassword(user, passwordBcrypt, token);
 
         return HttpStatusCode.Created;
-    }
-
-    [ApiEndpoint("ipAuthorization/authorize", Method.Post)]
-    public Response AuthenticateIpAddress(RequestContext context, RealmDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
-    {
-        IpAuthorization? ip = database.GetIpFromAddress(user, body.IpAddress);
-        if (ip == null) return HttpStatusCode.NotFound;
-        
-        if (database.AuthorizeIpAddress(ip, body.OneTimeUse))
-            return HttpStatusCode.Created;
-
-        return HttpStatusCode.Conflict;
-    }
-    [ApiEndpoint("ipAuthorization/unAuthorize", Method.Post)]
-    public Response UnAuthorizeIpAddress(RequestContext context, RealmDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
-    {
-        IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress);
-
-        database.RemoveIpAddress(ip);
-        return HttpStatusCode.OK;
-    }
-
-    [ApiEndpoint("ipAuthorization/unAuthorized", Method.Get)]
-    public ApiIpAuthorizations GetUnAuthorizedIps(RequestContext context, RealmDatabaseContext database, GameUser user)
-    {
-        string[] addresses = database.GetUnAuthorizedIps(user);
-        
-        return new ApiIpAuthorizations()
-        {
-            IpAddresses = addresses
-        };
-    }
-
-    [ApiEndpoint("ipAuthorization/authorized")]
-    public ApiIpAuthorizations GetAuthorizedIps(RequestContext context, RealmDatabaseContext database, GameUser user)
-    {
-        string[] addresses = database.GetAuthorizedIps(user);
-        
-        return new ApiIpAuthorizations()
-        {
-            IpAddresses = addresses
-        };
     }
 }
