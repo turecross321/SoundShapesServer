@@ -30,7 +30,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         GameUser? user = database.GetUserWithEmail(body.Email);
         if (user == null)
         {
-            return new Response(new ApiErrorResponse {Reason = "The username or password was incorrect."}, ContentType.Json, HttpStatusCode.Forbidden);   
+            return new Response(new ApiErrorResponse {Reason = "The email address or password was incorrect."}, ContentType.Json, HttpStatusCode.Forbidden);   
         }
 
         if (BCrypt.Net.BCrypt.PasswordNeedsRehash(user.PasswordBcrypt, WorkFactor))
@@ -40,7 +40,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
 
         if (BCrypt.Net.BCrypt.Verify(body.PasswordSha512, user.PasswordBcrypt) == false)
         {
-            return new Response(new ApiErrorResponse {Reason = "The username or password was incorrect."}, ContentType.Json, HttpStatusCode.Forbidden);
+            return new Response(new ApiErrorResponse {Reason = "The email address or password was incorrect."}, ContentType.Json, HttpStatusCode.Forbidden);
         }
         
         GameSession session = database.GenerateSessionForUser(context, user, (int)TypeOfSession.API);
@@ -75,15 +75,12 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         }
         
         // Check if mail address has been used before
-        if (database.HasEmailBeenUsedBefore(body.Email)) return new Response(new ApiErrorResponse {Reason = "Email already taken."}, ContentType.Json, HttpStatusCode.Forbidden);
+        GameUser? userWithEmail = database.GetUserWithEmail(body.Email);
+        if (userWithEmail != null && !userWithEmail.Equals(user)) return new Response(new ApiErrorResponse {Reason = "Email already taken."}, ContentType.Json, HttpStatusCode.Forbidden);
         
         database.SetUserEmail(user, body.Email, token);
 
-        string passwordSessionId = GenerateSimpleSessionId(database);
-        GameSession passwordSession = database.GenerateSessionForUser(context, user, (int)TypeOfSession.SetPassword, 600, passwordSessionId); // 10 minutes
-        // Todo: Send PasswordSession to mail address
-
-        return HttpStatusCode.Created;
+        return SendPasswordSession(context, database, new ApiGetPasswordSessionRequest { Email = body.Email });
     }
     
     [ApiEndpoint("setPassword", Method.Post)]
@@ -102,6 +99,21 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(body.PasswordSha512, WorkFactor);
         
         database.SetUserPassword(user, passwordBcrypt, token);
+
+        return HttpStatusCode.Created;
+    }
+
+    [ApiEndpoint("sendPasswordSession")]
+    [Authentication(false)]
+    public Response SendPasswordSession(RequestContext context, RealmDatabaseContext database, ApiGetPasswordSessionRequest body)
+    {
+        GameUser? user = database.GetUserWithEmail(body.Email);
+
+        if (user == null) return HttpStatusCode.NotFound;
+        
+        string passwordSessionId = GenerateSimpleSessionId(database, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 8);
+        GameSession passwordSession = database.GenerateSessionForUser(context, user, (int)TypeOfSession.SetPassword, 600, passwordSessionId); // 10 minutes
+        // Todo: Send PasswordSession to mail address
 
         return HttpStatusCode.Created;
     }

@@ -94,9 +94,9 @@ public class AuthenticationEndpoints : EndpointGroup
 
         if (user.HasFinishedRegistration == false)
         {
-            string emailSessionId = GenerateSimpleSessionId(database);
+            string emailSessionId = GenerateSimpleSessionId(database, "123456789", 8);
             database.GenerateSessionForUser(context, user, (int)TypeOfSession.SetEmail, 600, emailSessionId); // 10 minutes
-            return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}.\nYour verification code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
+            return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}.\nYour email code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
         }
 
         if (token.Ip.Authorized == false)

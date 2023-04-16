@@ -55,9 +55,4 @@ public partial class RealmDatabaseContext
         if (id == null) return null;
         return this._realm.All<GameUser>().FirstOrDefault(u => u.Id == id);
     }
-
-    public bool HasEmailBeenUsedBefore(string mailAddress)
-    {
-        return this._realm.All<GameUser>().Any(u => u.Email == mailAddress);
-    }
 }

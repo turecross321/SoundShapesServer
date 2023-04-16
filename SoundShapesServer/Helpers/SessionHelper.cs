@@ -13,20 +13,17 @@ namespace SoundShapesServer.Helpers;
 
 public static class SessionHelper
 {
-    private const string IdCharacters = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private const int IdLength = 8;
-        
-    public static string GenerateSimpleSessionId(RealmDatabaseContext database)
+    public static string GenerateSimpleSessionId(RealmDatabaseContext database, string idCharacters, int idLength)
     {
         Random r = new Random();
         string id = "";
-        for (int i = 0; i < IdLength; i++)
+        for (int i = 0; i < idLength; i++)
         {
-            id += IdCharacters[r.Next(IdCharacters.Length - 1)];
+            id += idCharacters[r.Next(idCharacters.Length - 1)];
         }
 
         if (database.GetSessionWithSessionId(id) == null) return id; // Return if Id has not been used before
-        return GenerateSimpleSessionId(database); // Generate new Id if it already exists   
+        return GenerateSimpleSessionId(database, idCharacters, idLength); // Generate new Id if it already exists   
     }
     public static GameSessionResponse SessionToSessionResponse(GameSession session)
     {
@@ -106,7 +103,7 @@ public static class SessionHelper
         // If Session is an Unauthorized Session, let it only access the Eula Endpoint 
         if (session.SessionType == (int)TypeOfSession.Unauthorized)
         {
-            string eulaUrlPattern = "/otg/[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get";
+            string eulaUrlPattern = "^/otg/[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$";
 
             Match match = Regex.Match(uriPath, eulaUrlPattern);
 
