@@ -21,7 +21,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
     [GeneratedRegex("^[a-f0-9]{128}$")]
     private static partial Regex Sha512Regex();
     
-    private const int WorkFactor = 14;
+    private const int WorkFactor = 10;
 
     [ApiEndpoint("login", Method.Post)]
     [Authentication(false)]
@@ -30,7 +30,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         GameUser? user = database.GetUserWithEmail(body.Email);
         if (user == null)
         {
-            return new Response(new ApiErrorResponse {Reason = "The email address or password was incorrect."}, ContentType.Json, HttpStatusCode.Forbidden);   
+            return new Response(new ApiErrorResponse {Reason = "The email address or password was incorrect."}, ContentType.Json, HttpStatusCode.Forbidden);
         }
 
         if (BCrypt.Net.BCrypt.PasswordNeedsRehash(user.PasswordBcrypt, WorkFactor))
@@ -89,9 +89,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         if (token.SessionType != (int)TypeOfSession.SetPassword) return HttpStatusCode.Unauthorized;
 
         GameUser user = token.User;
-        
-        if (user.HasFinishedRegistration) return HttpStatusCode.Conflict;
-        
+
         if (body.PasswordSha512.Length != 128 || !Sha512Regex().IsMatch(body.PasswordSha512))
             return new Response("Password is definitely not SHA512. Please hash the password.",
                 ContentType.Plaintext, HttpStatusCode.BadRequest);
