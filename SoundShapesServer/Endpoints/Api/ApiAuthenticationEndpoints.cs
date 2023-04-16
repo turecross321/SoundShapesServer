@@ -75,9 +75,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         
         database.SetUserEmail(user, body.Email, token);
 
-        IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
-
-        string passwordSessionId = SessionHelper.GenerateSimpleSessionId(database);
+        string passwordSessionId = GenerateSimpleSessionId(database);
         GameSession passwordSession = database.GenerateSessionForUser(context, user, (int)TypeOfSession.SetPassword, 600, passwordSessionId); // 10 minutes
         // Todo: Send PasswordSession to mail address
 

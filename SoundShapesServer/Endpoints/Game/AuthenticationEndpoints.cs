@@ -91,18 +91,16 @@ public class AuthenticationEndpoints : EndpointGroup
     {
         if (token.SessionType != (int)TypeOfSession.Unauthorized)
             return EulaEndpoint.NormalEula(config);
-        
-        IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
-        
+
         if (user.HasFinishedRegistration == false)
         {
-            string emailSessionId = SessionHelper.GenerateSimpleSessionId(database);
+            string emailSessionId = GenerateSimpleSessionId(database);
             database.GenerateSessionForUser(context, user, (int)TypeOfSession.SetEmail, 600, emailSessionId); // 10 minutes
             return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}.\nYour verification code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
         }
 
-        if (!ip.Authorized)
-            return $"Your IP Address has not been authorized. To proceed, you will have to log in to your account at {config.WebsiteUrl} and authorize the following IP Address: {ip.IpAddress}\n-\n{DateTime.UtcNow}";
+        if (token.Ip.Authorized == false)
+            return $"Your IP Address has not been authorized. To proceed, you will have to log in to your account at {config.WebsiteUrl} and authorize the following IP Address: {token.Ip.IpAddress}\n-\n{DateTime.UtcNow}";
 
         return null;
     }
