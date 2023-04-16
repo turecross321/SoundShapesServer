@@ -65,13 +65,13 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
 
         if (user.HasFinishedRegistration)
         {
-            return new Response(new ApiErrorResponse {Reason = "User has already finished registration."}, ContentType.Json, HttpStatusCode.Forbidden);
+            return new Response(new ApiErrorResponse {Reason = "User has already finished registration."}, ContentType.Json, HttpStatusCode.Conflict);
         }
 
         // Check if user has sent a valid mail address
         if (MailAddress.TryCreate(body.Email, out MailAddress? mailAddress) == false)
         {
-            return new Response(new ApiErrorResponse {Reason = "Invalid Email."}, ContentType.Json, HttpStatusCode.Forbidden);
+            return new Response(new ApiErrorResponse {Reason = "Invalid Email."}, ContentType.Json, HttpStatusCode.BadRequest);
         }
         
         // Check if mail address has been used before
@@ -90,7 +90,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
 
         GameUser user = token.User;
         
-        if (user.HasFinishedRegistration) return HttpStatusCode.Forbidden;
+        if (user.HasFinishedRegistration) return HttpStatusCode.Conflict;
         
         if (body.PasswordSha512.Length != 128 || !Sha512Regex().IsMatch(body.PasswordSha512))
             return new Response("Password is definitely not SHA512. Please hash the password.",
@@ -103,13 +103,13 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         return HttpStatusCode.Created;
     }
 
-    [ApiEndpoint("sendPasswordSession")]
+    [ApiEndpoint("sendPasswordSession", Method.Post)]
     [Authentication(false)]
     public Response SendPasswordSession(RequestContext context, RealmDatabaseContext database, ApiGetPasswordSessionRequest body)
     {
         GameUser? user = database.GetUserWithEmail(body.Email);
 
-        if (user == null) return HttpStatusCode.NotFound;
+        if (user == null) return HttpStatusCode.Created; // trol
         
         string passwordSessionId = GenerateSimpleSessionId(database, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 8);
         GameSession passwordSession = database.GenerateSessionForUser(context, user, (int)TypeOfSession.SetPassword, 600, passwordSessionId); // 10 minutes
