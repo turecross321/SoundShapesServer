@@ -38,7 +38,6 @@ public static class LevelHelper
             Title = level.Name,
             Dependencies = new List<string>(),
             Visibility = "EVERYONE",
-            Description = level.Description,
             ExtraData = new ExtraDataResponse() { Language = level.Language },
             Parent = new()
             {
@@ -108,7 +107,6 @@ public static class LevelHelper
             Author = UserHelper.UserToUserResponse(level.Author),
             LatestVersion = IdFormatter.FormatLevelIdAndVersion(level.Id, level.ModificationDate.ToUnixTimeMilliseconds()),
             Title = level.Name,
-            Description = level.Description,
             Type = ResponseType.level.ToString(),
             Completed = level.UsersWhoHaveCompletedLevel.Contains(user),
             Metadata = GenerateMetadataResponse(level)

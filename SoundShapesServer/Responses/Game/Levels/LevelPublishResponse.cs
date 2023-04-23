@@ -12,7 +12,6 @@ public class LevelPublishResponse
     [JsonProperty("title")] public string Title { get; set; }
     [JsonProperty("dependencies")] public IList<string> Dependencies { get; set; }
     [JsonProperty("visibility")] public string Visibility { get; set; }
-    [JsonProperty("description")] public string Description { get; set; }
     [JsonProperty("extraData")] public ExtraDataResponse ExtraData { get; set; }
     [JsonProperty("parent")] public LevelParent Parent { get; set; }
     [JsonProperty("creationTime")] public long CreationDate { get; set; }

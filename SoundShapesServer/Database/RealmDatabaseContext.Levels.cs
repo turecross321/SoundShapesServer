@@ -22,7 +22,6 @@ public partial class RealmDatabaseContext
             Id = levelId,
             Author = user,
             Name = request.Title,
-            Description = request.Description,
             Language = request.Language,
             CreationDate = DateTimeOffset.UtcNow,
             ModificationDate = DateTimeOffset.UtcNow,
@@ -44,7 +43,6 @@ public partial class RealmDatabaseContext
         this._realm.Write(() =>
         {
             level.Name = updatedLevel.Title;
-            level.Description = updatedLevel.Description;
             level.Language = updatedLevel.Language;
             level.ModificationDate = DateTimeOffset.UtcNow;
             level.FileSize = updatedLevel.FileSize;
