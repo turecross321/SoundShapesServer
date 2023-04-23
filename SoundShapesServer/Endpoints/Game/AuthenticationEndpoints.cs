@@ -19,7 +19,6 @@ namespace SoundShapesServer.Endpoints.Game;
 public class AuthenticationEndpoints : EndpointGroup
 {
     [Endpoint("/identity/login/token/psn", ContentType.Json, Method.Post)]
-    [NullStatusCode(HttpStatusCode.Forbidden)]
     [Authentication(false)]
     public Response? Login(RequestContext context, RealmDatabaseContext database, Stream body, GameServerConfig config)
     {
@@ -31,8 +30,10 @@ public class AuthenticationEndpoints : EndpointGroup
         catch (Exception e)
         {
             context.Logger.LogWarning(BunkumContext.Authentication, "Could not read ticket: " + e);
-            return null;
+            return HttpStatusCode.BadRequest;
         }
+        
+        if (ticket.Username.Length > 16) return HttpStatusCode.BadRequest;
 
         GameUser? user = database.GetUserWithUsername(ticket.Username);
         user ??= database.CreateUser(ticket.Username);

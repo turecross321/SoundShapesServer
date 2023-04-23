@@ -19,8 +19,10 @@ public class LevelPublishingEndpoints : EndpointGroup
     // Gets called by Endpoints.cs
     public static Response PublishLevel(RequestContext context, MultipartFormDataParser parser, RealmDatabaseContext database, GameUser user)
     {
-        string levelId = LevelHelper.GenerateLevelId(database);
+        // Check if name exceeds 26 characters
+        if (parser.GetParameterValue("title").Length > 26) return HttpStatusCode.BadRequest;
         
+        string levelId = LevelHelper.GenerateLevelId(database);
         LevelPublishRequest? levelRequest = LevelResourceEndpoints.UploadLevelResources(context, parser, levelId);
         if (levelRequest == null) return HttpStatusCode.InternalServerError;
 
