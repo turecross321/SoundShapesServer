@@ -24,7 +24,6 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
                 typeof(GameUser),
                 typeof(IpAuthorization),
                 typeof(GameSession),
-                typeof(Service),
                 typeof(LevelParent),
                 typeof(GameLevel),
                 typeof(NewsEntry),
