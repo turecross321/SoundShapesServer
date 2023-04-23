@@ -64,23 +64,15 @@ public partial class RealmDatabaseContext
     }
     
     public GameLevel? GetLevelWithId(string id) => this._realm.All<GameLevel>().FirstOrDefault(l => l.Id == id);
-    public LevelsWrapper GetLevelsPublishedByUser(GameUser user, GameUser userToGetLevelsFrom, int from, int count)
+    public IQueryable<GameLevel> GetLevelsPublishedByUser(GameUser user)
     {
         IQueryable<GameLevel> entries = this._realm.All<GameLevel>()
-            .Where(l => l.Author == userToGetLevelsFrom);
+            .Where(l => l.Author == user);
 
-        int totalEntries = entries.Count();
-
-        GameLevel[] selectedEntries = entries
-            .AsEnumerable()
-            .Skip(from)
-            .Take(count)
-            .ToArray();
-
-        return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
+        return entries;
     }
 
-    public LevelsWrapper? SearchForLevels(GameUser user, string query, int from, int count)
+    public IQueryable<GameLevel> SearchForLevels(string query)
     {
         string[] keywords = query.Split(' ');
         if (keywords.Length == 0) return null;
@@ -96,44 +88,26 @@ public partial class RealmDatabaseContext
             );
         }
 
-        int totalEntries = entries.Count();
-        
-        GameLevel[] selectedEntries = entries
-            .AsEnumerable()
-            .Skip(from)
-            .Take(count)
-            .ToArray();
-
-        return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
+        return entries;
     }
 
-    public LevelsWrapper DailyLevels(GameUser user, int from, int count)
+    public IQueryable<GameLevel> DailyLevels()
     {
         List<DailyLevel> entries = this._realm.All<DailyLevel>()
             .OrderByDescending(l=>l.Date)
             .ToList();
+        
+        List<GameLevel> levels = new List<GameLevel>();
 
-        int totalEntries = entries.Count;
-
-        DailyLevel[] dailyLevelEntries = entries
-            .AsEnumerable()
-            .Skip(from)
-            .Take(count)
-            .ToArray();
-
-        GameLevel[] levels;
-
-        levels = new GameLevel[dailyLevelEntries.Length];
-            
-        for (int i = 0; i < dailyLevelEntries.Length; i++)
+        for (int i = 0; i < entries.Count; i++)
         {
-            levels[i] = dailyLevelEntries[i].Level;
+            levels.Add(entries[i].Level);
         }
 
-        return LevelsToLevelsWrapper(levels, user, totalEntries, from, count);
+        return levels.AsQueryable();
     }
 
-    public LevelsWrapper RandomLevels(GameUser user, int from, int count)
+    public IQueryable<GameLevel> RandomLevels()
     {
         DateTime seedDateTime = DateTime.Today;
         byte[] seedBytes = BitConverter.GetBytes(seedDateTime.Ticks);
@@ -141,103 +115,55 @@ public partial class RealmDatabaseContext
         int seed = BitConverter.ToInt32(hashBytes, 0);
 
         Random rng = new Random(seed);
-        
-        List<GameLevel> entries = this._realm.All<GameLevel>()
-            .ToList();
 
-        int totalEntries = entries.Count;
-        
-        GameLevel[] levels = entries
+        IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()
-            .OrderBy(level => rng.Next())
-            .Skip(from)
-            .Take(count)
-            .ToArray();
+            .OrderBy(level => rng.Next());
 
-        return LevelsToLevelsWrapper(levels, user, totalEntries, from, count);
+        return entries.AsQueryable();
     }
-    public LevelsWrapper GreatestHits(GameUser user, int from, int count)
+    public IQueryable<GameLevel> GreatestHits()
     {
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()
             .OrderByDescending(l => l.UniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.CreationDate).TotalDays * 0.5);
 
-        IEnumerable<GameLevel> gameLevels = entries.ToList();
-        int totalEntries = gameLevels.Count();
-
-        GameLevel[] selectedEntries = gameLevels
-            .Skip(from)
-            .Take(count)
-            .ToArray();
-
-        return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
+        return entries.AsQueryable();
     }
 
-    public LevelsWrapper NewestLevels(GameUser user, int from, int count)
+    public IQueryable<GameLevel> NewestLevels()
     {
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()
             .OrderByDescending(l=>l.CreationDate);
 
-        IEnumerable<GameLevel> gameLevels = entries.ToList();
-        int totalEntries = gameLevels.Count();
-
-        GameLevel[] selectedEntries = gameLevels
-            .Skip(from)
-            .Take(count)
-            .ToArray();
-
-        return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
+        return entries.AsQueryable();
     }
-    public LevelsWrapper TopLevels(GameUser user, int from, int count)
+    public IQueryable<GameLevel> TopLevels()
     {
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()
             .OrderByDescending(l=>l.UniquePlays.Count);
 
-        IEnumerable<GameLevel> gameLevels = entries.ToList();
-        int totalEntries = gameLevels.Count();
-
-        GameLevel[] selectedEntries = gameLevels
-            .Skip(from)
-            .Take(count)
-            .ToArray();
-
-        return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
+        return entries.AsQueryable();
     }
 
-    public LevelsWrapper LargestLevels(GameUser user, int from, int count)
+    public IQueryable<GameLevel> LargestLevels()
     {
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()
             .OrderByDescending(l=>l.FileSize);
 
-        IEnumerable<GameLevel> gameLevels = entries.ToList();
-        int totalEntries = gameLevels.Count();
-
-        GameLevel[] selectedEntries = gameLevels
-            .Skip(from)
-            .Take(count)
-            .ToArray();
-
-        return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
+        return entries.AsQueryable();
     }
     
-    public LevelsWrapper HardestLevels(GameUser user, int from, int count)
+    public IQueryable<GameLevel> HardestLevels()
     {
         IEnumerable<GameLevel> entries = this._realm.All<GameLevel>()
             .AsEnumerable()
             .OrderByDescending(l=>l.Deaths / l.UniquePlays.Count);
 
-        IEnumerable<GameLevel> gameLevels = entries.ToList();
-        int totalEntries = gameLevels.Count();
-
-        GameLevel[] selectedEntries = gameLevels
-            .Skip(from)
-            .Take(count)
-            .ToArray();
-
-        return LevelsToLevelsWrapper(selectedEntries, user, totalEntries, from, count);
+        return entries.AsQueryable();
     }
 
     public void AddUserToLevelCompletions(GameLevel level, GameUser user)

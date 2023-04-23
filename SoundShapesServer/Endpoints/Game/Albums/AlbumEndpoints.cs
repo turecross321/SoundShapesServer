@@ -5,9 +5,12 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Albums;
+using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
+using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Game.Albums;
 
@@ -19,7 +22,10 @@ public class AlbumEndpoints : EndpointGroup
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
 
-        return database.GetAlbums(token.Id, from, count);
+        IQueryable<GameAlbum> albums = database.GetAlbums();
+        AlbumsWrapper response = AlbumHelper.AlbumsToAlbumsWrapper(token.Id, albums, from, count);
+
+        return response;
     }
 
     [GameEndpoint("~album:{albumId}/~link:*.page", ContentType.Json)]
@@ -34,7 +40,13 @@ public class AlbumEndpoints : EndpointGroup
 
         if (album == null) return HttpStatusCode.NotFound;
 
-        if (order == "time:ascn") return new Response(database.AlbumLevels(user, album, from, count), ContentType.Json);
+        if (order == "time:ascn")
+        {
+            IQueryable<GameLevel> levels = database.AlbumLevels(album);
+            LevelsWrapper response = LevelHelper.LevelsToLevelsWrapper(levels, user, from, count);
+
+            return new Response(response, ContentType.Json);
+        }
 
         return new Response(database.GetAlbumsLevelsInfo(user, album, from, count), ContentType.Json);
     }

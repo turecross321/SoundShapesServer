@@ -8,4 +8,5 @@ public class IpAuthorization : RealmObject
     public bool Authorized { get; set; }
     public bool OneTimeUse { get; set; }
     public GameUser User { get; set; }
+    public int SessionType { get; set; }
 }

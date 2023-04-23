@@ -12,15 +12,16 @@ namespace SoundShapesServer.Helpers;
 
 public static class AlbumHelper
 {
-    public static AlbumsWrapper AlbumsToAlbumsWrapper(string sessionId, GameAlbum[] albums, int totalEntries, int from, int count)
+    public static AlbumsWrapper AlbumsToAlbumsWrapper(string sessionId, IQueryable<GameAlbum> albums, int from, int count)
     {
-        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
+        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(albums.Count(), from, count);
+        GameAlbum[] paginatedAlbums = PaginationHelper.PaginateAlbums(albums, from, count);
 
         List<AlbumResponse> albumResponses = new ();
 
-        for (int i = 0; i < albums.Length; i++)
+        for (int i = 0; i < paginatedAlbums.Length; i++)
         {
-            AlbumResponse? albumResponse = AlbumToAlbumResponse(albums[i], sessionId);
+            AlbumResponse? albumResponse = AlbumToAlbumResponse(paginatedAlbums[i], sessionId);
             if (albumResponse != null) albumResponses.Add(albumResponse);
         }
         

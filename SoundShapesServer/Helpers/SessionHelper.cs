@@ -57,18 +57,10 @@ public static class SessionHelper
         return new Response(responseWrapper, ContentType.Json, HttpStatusCode.Created);
     }
 
-    public static readonly int[] GameSessionTypes =
-    {
-        (int)TypeOfSession.PS3,
-        (int)TypeOfSession.PS4,
-        (int)TypeOfSession.PSVita,
-        (int)TypeOfSession.RPCS3
-    };
-
     public static bool IsSessionAllowedToAccessEndpoint(GameSession session, string uriPath)
     {
         // If Session is a Game Session, let it only access Game endpoints
-        if (GameSessionTypes.Contains(session.SessionType))
+        if (session.SessionType == (int)TypeOfSession.Game)
         {
             if (uriPath.StartsWith(GameEndpointAttribute.BaseRoute)) return true;
             if (uriPath.StartsWith("/identity/")) return true;

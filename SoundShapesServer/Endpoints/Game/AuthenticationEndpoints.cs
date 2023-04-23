@@ -34,45 +34,25 @@ public class AuthenticationEndpoints : EndpointGroup
             return null;
         }
 
-        bool rpcs3;
-
-        switch (ticket.IssuerId)
-        { 
-            case 0x100: // ps3, ps4, psvita
-                rpcs3 = false; 
-                break;
-            case 0x33333333: // rpcs3
-                rpcs3 = true; 
-                break;
-            default: // unknown
-                return HttpStatusCode.Forbidden; 
-        }
-
-        TypeOfSession typeOfSession = PlatformHelper.GetSessionType(ticket.TitleId, rpcs3);
-        if (typeOfSession == TypeOfSession.Unknown) return HttpStatusCode.Forbidden; 
-        
         GameUser? user = database.GetUserWithUsername(ticket.Username);
         user ??= database.CreateUser(ticket.Username);
-
-        IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
+        
         GameSession? session = null;
+        IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user, TypeOfSession.Game);
 
         if (config.ApiAuthentication)
         {
             // If user hasn't finished registration, or if their IP isn't authorized, give them an unauthorized Session
             if (user.HasFinishedRegistration == false || ip.Authorized == false)
             {
-                session = database.GenerateSessionForUser(context, user, (int)TypeOfSession.Unauthorized, 30);
-            }
-            
-            // If their ip is authorized for a OneTimeUse, remove the ip address
-            else if (ip.OneTimeUse)
-            {
-                database.UseOneTimeIpAddress(ip);
+                session = database.GenerateSessionForUser(context, user, TypeOfSession.Unauthorized, 30);
             }
         }
         
-        session ??= database.GenerateSessionForUser(context, user, (int)typeOfSession, 14400); // 4 hours
+        session ??= database.GenerateSessionForUser(context, user, (int)TypeOfSession.Game, 14400); // 4 hours
+        
+        if (session.Ip.OneTimeUse) database.UseIpAddress(session.Ip);
+
         GameSessionResponse gameSessionResponse = SessionToSessionResponse(session);
 
         return SessionResponseToResponse(context, gameSessionResponse);
@@ -95,7 +75,7 @@ public class AuthenticationEndpoints : EndpointGroup
         if (user.HasFinishedRegistration == false)
         {
             string emailSessionId = GenerateSimpleSessionId(database, "123456789", 8);
-            database.GenerateSessionForUser(context, user, (int)TypeOfSession.SetEmail, 600, emailSessionId); // 10 minutes
+            database.GenerateSessionForUser(context, user, TypeOfSession.SetEmail, 600, emailSessionId); // 10 minutes
             return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}.\nYour email code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
         }
 

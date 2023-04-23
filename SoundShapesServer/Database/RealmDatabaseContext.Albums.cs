@@ -10,38 +10,23 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public AlbumsWrapper GetAlbums(string sessionId, int from, int count)
+    public IQueryable<GameAlbum> GetAlbums()
     {
-        IEnumerable<GameAlbum> entries = this._realm.All<GameAlbum>()
-            .AsEnumerable();
+        IQueryable<GameAlbum> entries = this._realm.All<GameAlbum>();
 
-        IEnumerable<GameAlbum> gameAlbums = entries.ToList();
-        int totalEntries = gameAlbums.Count();
-
-        GameAlbum[] selectedEntries = gameAlbums
-            .Skip(from)
-            .Take(count)
-            .ToArray();
-
-        return AlbumHelper.AlbumsToAlbumsWrapper(sessionId, selectedEntries, totalEntries, from, count);
+        return entries;
     }
 
     public GameAlbum? GetAlbumWithId(string id)
     {
-        return this._realm.All<GameAlbum>().Where(a => a.Id == id).FirstOrDefault();
+        return this._realm.All<GameAlbum>().FirstOrDefault(a => a.Id == id);
     }
 
-    public AlbumLevelsWrapper AlbumLevels(GameUser user, GameAlbum album, int from, int count)
+    public IQueryable<GameLevel> AlbumLevels(GameAlbum album)
     {
         IEnumerable<GameLevel> gameLevels = album.Levels;
-        int totalEntries = gameLevels.Count();
 
-        GameLevel[] selectedEntries = gameLevels
-            .Skip(from)
-            .Take(count)
-            .ToArray();
-
-        return AlbumHelper.LevelsToAlbumLevelsWrapper(user, album, selectedEntries, totalEntries, from, count);
+        return gameLevels.AsQueryable();
     }
 
     public AlbumLevelInfosWrapper GetAlbumsLevelsInfo(GameUser user, GameAlbum album, int from, int count)

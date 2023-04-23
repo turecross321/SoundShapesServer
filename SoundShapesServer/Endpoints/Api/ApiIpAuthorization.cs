@@ -13,9 +13,9 @@ namespace SoundShapesServer.Endpoints.Api;
 public class ApiIpAuthorization : EndpointGroup
 {
     [ApiEndpoint("ip/authorize", Method.Post)]
-    public Response AuthorizeIpAddress(RequestContext context, RealmDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
+    public Response AuthorizeIpAddress(RequestContext context, RealmDatabaseContext database, ApiAuthorizeIpRequest body, GameUser user)
     {
-        IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress);
+        IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress, (int)TypeOfSession.Game);
 
         if (database.AuthorizeIpAddress(ip, body.OneTimeUse))
             return HttpStatusCode.Created;
@@ -23,31 +23,31 @@ public class ApiIpAuthorization : EndpointGroup
         return HttpStatusCode.Conflict;
     }
     [ApiEndpoint("ip/unAuthorize", Method.Post)]
-    public Response UnAuthorizeIpAddress(RequestContext context, RealmDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
+    public Response UnAuthorizeIpAddress(RequestContext context, RealmDatabaseContext database, ApiUnAuthorizeIpRequest body, GameUser user)
     {
-        IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress);
+        IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress, (int)TypeOfSession.Game);
 
         database.RemoveIpAddress(ip);
         return HttpStatusCode.OK;
     }
 
     [ApiEndpoint("ip/unAuthorized", Method.Get)]
-    public ApiIpAuthorizations UnAuthorizedIps(RequestContext context, RealmDatabaseContext database, GameUser user)
+    public ApiUnAuthorizedIpResponseWrapper UnAuthorizedIps(RequestContext context, RealmDatabaseContext database, GameUser user)
     {
-        string[] addresses = database.GetUnAuthorizedIps(user);
-        
-        return new ApiIpAuthorizations()
+        ApiUnAuthorizedIpResponse[] addresses = database.GetUnAuthorizedIps(user, TypeOfSession.Game);
+
+        return new ApiUnAuthorizedIpResponseWrapper()
         {
             IpAddresses = addresses
         };
     }
 
     [ApiEndpoint("ip/authorized")]
-    public ApiIpAuthorizations AuthorizedIps(RequestContext context, RealmDatabaseContext database, GameUser user)
+    public ApiAuthorizedIpResponseWrapper AuthorizedIps(RequestContext context, RealmDatabaseContext database, GameUser user)
     {
-        string[] addresses = database.GetAuthorizedIps(user);
-        
-        return new ApiIpAuthorizations()
+        ApiAuthorizedIpResponse[] addresses = database.GetAuthorizedIps(user, TypeOfSession.Game);
+
+        return new ApiAuthorizedIpResponseWrapper
         {
             IpAddresses = addresses
         };

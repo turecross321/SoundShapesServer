@@ -1,6 +1,6 @@
 namespace SoundShapesServer.Responses.Api;
 
-public class APiIsUserFollowedResponse
+public class ApiIsUserFollowedResponse
 {
     public bool IsFollowed { get; set; }
 }

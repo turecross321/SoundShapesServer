@@ -67,16 +67,18 @@ public static class UserHelper
     
     // API
 
-    public static ApiUserResponse UserToApiUserResponse(GameUser user)
+    public static ApiUserResponse UserToApiUserResponse(GameUser userToCheck, bool? following)
     {
         return new ApiUserResponse()
         {
-            Username = user.Username,
-            Online = user.Sessions.Any(),
-            FollowerCount = user.Followers.Count(),
-            FollowingCount = user.Following.Count(),
-            LikedLevelsCount = user.LikedLevels.Count(),
-            PublishedLevelsCount = user.Levels.Count(),
+            Id = userToCheck.Id,
+            Username = userToCheck.Username,
+            Online = userToCheck.Sessions.Any(),
+            FollowerCount = userToCheck.Followers.Count(),
+            FollowingCount = userToCheck.Following.Count(),
+            LikedLevelsCount = userToCheck.LikedLevels.Count(),
+            PublishedLevelsCount = userToCheck.Levels.Count(),
+            Following = following
         };
     }
 }

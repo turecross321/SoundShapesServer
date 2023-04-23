@@ -1,8 +1,10 @@
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Levels;
 using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
@@ -28,17 +30,20 @@ public class LevelEndpoints : EndpointGroup
         if (query != null && query.Contains("metadata.displayName:"))
             return SearchForLevels(user, query, database, from, count);
 
-        return category switch
+        IQueryable<GameLevel> levels = category switch
         {
-            "tagged3" => database.DailyLevels(user, from, count),
-            "greatesthits" => database.GreatestHits(user, from, count),
-            "newest" => database.NewestLevels(user, from, count),
-            "top" => database.TopLevels(user, from, count),
-            "random" => database.RandomLevels(user, from, count),
-            "largest" => database.LargestLevels(user, from, count),
-            "hardest" => database.HardestLevels(user, from, count),
-            _ => null
+            "tagged3" => database.DailyLevels(),
+            "greatesthits" => database.GreatestHits(),
+            "newest" => database.NewestLevels(),
+            "top" => database.TopLevels(),
+            "random" => database.RandomLevels(),
+            "largest" => database.LargestLevels(),
+            "hardest" => database.HardestLevels(),
+            _ => throw new ArgumentException("Invalid category value.")
         };
+
+        LevelsWrapper response = LevelHelper.LevelsToLevelsWrapper(levels, user, from, count);
+        return response;
     }
     
     [GameEndpoint("~identity:{userId}/~queued:*.page", ContentType.Json)]
@@ -53,7 +58,10 @@ public class LevelEndpoints : EndpointGroup
 
         if (userToGetLevelsFrom == null) return null;
 
-        return database.GetUsersLikedLevels(user, userToGetLevelsFrom, from, count);
+        IQueryable<GameLevel> levels = database.GetUsersLikedLevels(user, userToGetLevelsFrom);
+        
+        LevelsWrapper response = LevelHelper.LevelsToLevelsWrapper(levels, user, from, count);
+        return response;
     }
     
     private LevelsWrapper? LevelsByUser(GameUser user, string query, RealmDatabaseContext database, int from, int count)
@@ -64,13 +72,18 @@ public class LevelEndpoints : EndpointGroup
 
         if (usersToGetLevelsFrom == null) return null;
 
-        return database.GetLevelsPublishedByUser(user, usersToGetLevelsFrom, from, count);
+        IQueryable<GameLevel> levels = database.GetLevelsPublishedByUser(usersToGetLevelsFrom);
+
+        return LevelHelper.LevelsToLevelsWrapper(levels, user, from, count);
     }
 
     private LevelsWrapper? SearchForLevels(GameUser user, string query, RealmDatabaseContext database, int from, int count)
     {
         string levelName = query.Split(":")[1];
 
-        return database.SearchForLevels(user, levelName, from, count);
+        IQueryable<GameLevel> levels = database.SearchForLevels(levelName);
+
+        LevelsWrapper response = LevelHelper.LevelsToLevelsWrapper(levels, user, from, count);
+        return response;
     }
 }

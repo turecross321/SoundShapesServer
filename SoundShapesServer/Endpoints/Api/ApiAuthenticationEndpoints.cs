@@ -43,7 +43,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
             return new Response(new ApiErrorResponse {Reason = "The email address or password was incorrect."}, ContentType.Json, HttpStatusCode.Forbidden);
         }
         
-        GameSession session = database.GenerateSessionForUser(context, user, (int)TypeOfSession.API);
+        GameSession session = database.GenerateSessionForUser(context, user, TypeOfSession.API);
 
         ApiAuthenticationResponse response = new()
         {
@@ -110,9 +110,16 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         if (user == null) return HttpStatusCode.Created; // trol
         
         string passwordSessionId = GenerateSimpleSessionId(database, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 8);
-        GameSession passwordSession = database.GenerateSessionForUser(context, user, (int)TypeOfSession.SetPassword, 600, passwordSessionId); // 10 minutes
+        GameSession passwordSession = database.GenerateSessionForUser(context, user, TypeOfSession.SetPassword, 600, passwordSessionId); // 10 minutes
         // Todo: Send PasswordSession to mail address
 
         return HttpStatusCode.Created;
+    }
+
+    [ApiEndpoint("logout", Method.Post)]
+    public Response Logout(RequestContext context, RealmDatabaseContext database, GameSession token)
+    {
+        database.RemoveSession(token);
+        return HttpStatusCode.OK;
     }
 }

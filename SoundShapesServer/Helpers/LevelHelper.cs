@@ -1,4 +1,6 @@
 using SoundShapesServer.Database;
+using SoundShapesServer.Responses.Api;
+using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
@@ -72,15 +74,16 @@ public static class LevelHelper
         return response;
     }
 
-    public static LevelsWrapper LevelsToLevelsWrapper(GameLevel[] levels, GameUser user, int totalEntries, int from, int count)
+    public static LevelsWrapper LevelsToLevelsWrapper(IQueryable<GameLevel> levels, GameUser user, int from, int count)
     {
-        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
+        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(levels.Count(), from, count);
+        GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(levels, from, count);
 
         List<LevelResponse> levelResponses = new ();
 
-        for (int i = 0; i < levels.Length; i++)
+        for (int i = 0; i < paginatedLevels.Length; i++)
         {
-            LevelResponse? levelResponse = LevelToLevelResponse(levels[i], user);
+            LevelResponse? levelResponse = LevelToLevelResponse(paginatedLevels[i], user);
             if (levelResponse != null) levelResponses.Add(levelResponse);
         }
 
@@ -95,10 +98,8 @@ public static class LevelHelper
         return response;
     }
     
-    public static LevelResponse? LevelToLevelResponse(GameLevel? level, GameUser user)
+    public static LevelResponse? LevelToLevelResponse(GameLevel level, GameUser user)
     {
-        if (level == null) return null;
-        
         string formattedLevelId = IdFormatter.FormatLevelId(level.Id);
 
         LevelResponse levelResponse = new LevelResponse()
@@ -114,5 +115,43 @@ public static class LevelHelper
         };
 
         return levelResponse;
+    }
+    
+    // API
+
+    public static ApiLevelResponseWrapper LevelsToApiLevelResponseWrapper(IQueryable<GameLevel> levels, int from, int count, GameUser? user)
+    {
+        GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(levels, from, count);
+        
+        ApiLevelResponse[] levelResponses = new ApiLevelResponse[paginatedLevels.Length];
+        
+        for (int i = 0; i < paginatedLevels.Length; i++)
+        {
+            levelResponses[i] = LevelToApiLevelResponse(paginatedLevels[i], user);
+        }
+
+        return new ApiLevelResponseWrapper()
+        {
+            Levels = levelResponses,
+            Count = levels.Count()
+        };
+    }
+
+    public static ApiLevelResponse LevelToApiLevelResponse(GameLevel level, GameUser? user)
+    {
+        bool? completed = null;
+        if (user != null) completed = level.UsersWhoHaveCompletedLevel.Contains(user);
+        
+        return new ApiLevelResponse()
+        {
+            Id = level.Id,
+            Name = level.Name,
+            AuthorId = level.Author.Id,
+            AuthorName = level.Author.Username,
+            TotalPlays = level.Plays,
+            UniquePlays = level.UniquePlays.Count,
+            Likes = level.Likes.Count(),
+            CompletedByYou = completed
+        };
     }
 }

@@ -1,4 +1,5 @@
 using SoundShapesServer.Authentication;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types;
 using static SoundShapesServer.Helpers.IpHelper;
 using static SoundShapesServer.Helpers.SessionHelper;
@@ -7,12 +8,9 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public IpAuthorization AddUserIp(GameUser user, string ipAddress)
+    public IpAuthorization AddUserIp(GameUser user, string ipAddress, TypeOfSession sessionType)
     {
-        if (IsIpAlreadyAdded(user, ipAddress))
-            return GetIpFromAddress(user, ipAddress);
-        
-        IpAuthorization ip = new IpAuthorization() { IpAddress = ipAddress, User = user};
+        IpAuthorization ip = new IpAuthorization() { IpAddress = ipAddress, User = user, SessionType = (int)sessionType};
         
         this._realm.Write(() =>
         {
@@ -22,10 +20,10 @@ public partial class RealmDatabaseContext
         return ip;
     }
 
-    public IpAuthorization GetIpFromAddress(GameUser user, string ipAddress)
+    public IpAuthorization GetIpFromAddress(GameUser user, string ipAddress, TypeOfSession sessionType)
     {
-        IpAuthorization? ip = user.IpAddresses.FirstOrDefault(i => i.IpAddress == ipAddress);
-        if (ip == null) ip = AddUserIp(user, ipAddress);
+        IpAuthorization? ip = user.IpAddresses.FirstOrDefault(i => i.IpAddress == ipAddress && i.SessionType == (int)sessionType);
+        if (ip == null) ip = AddUserIp(user, ipAddress, sessionType);
         
         return ip;
     }
@@ -38,6 +36,8 @@ public partial class RealmDatabaseContext
             ip.Authorized = true;
             ip.OneTimeUse = oneTime;
         });
+        
+        this._realm.Refresh();
 
         return true;
     }
@@ -56,9 +56,11 @@ public partial class RealmDatabaseContext
             
             this._realm.Remove(ip);
         });
+
+        this._realm.Refresh();
     }
 
-    public void UseOneTimeIpAddress(IpAuthorization ip)
+    public void UseIpAddress(IpAuthorization ip)
     {
         this._realm.Write(() =>
         {
@@ -67,41 +69,38 @@ public partial class RealmDatabaseContext
         });
     }
 
-    public string[] GetUnAuthorizedIps(GameUser user)
+    public ApiUnAuthorizedIpResponse[] GetUnAuthorizedIps(GameUser user, TypeOfSession sessionType)
     {
         List<string> addresses = new List<string>();
         
-        IpAuthorization[] unauthorizedIpAddresses = user.IpAddresses.AsEnumerable().Where(i=>i.Authorized == false).ToArray();
+        IpAuthorization[] unAuthorizedIps = user.IpAddresses.AsEnumerable().Where(i=>i.Authorized == false && i.SessionType == (int)sessionType).ToArray();
 
-        for (int i = 0; i < unauthorizedIpAddresses.Length; i++)
+        // Convert list to response array
+
+        ApiUnAuthorizedIpResponse[] response = new ApiUnAuthorizedIpResponse[unAuthorizedIps.Length];
+        
+        for (int i = 0; i < response.Length; i++)
         {
-            addresses.Add(unauthorizedIpAddresses[i].IpAddress);
+            response[i] = IpAuthorizationToUnAuthorizedIpResponse(unAuthorizedIps[i]);
         }
 
-        return addresses.ToArray();
+        return response;
     }
 
-    public string[] GetAuthorizedIps(GameUser user)
+    public ApiAuthorizedIpResponse[] GetAuthorizedIps(GameUser user, TypeOfSession sessionType)
     {
-        List<string> authorizedIpAddresses = new List<string>();
-        
         // Get currently authorized IPs
-        List<IpAuthorization> authorizedIps = user.IpAddresses.AsEnumerable().Where(i=>i.Authorized).ToList();
-        
-        for (int i = 0; i < authorizedIps.Count; i++)
-        {
-            authorizedIpAddresses.Add(authorizedIps[i].IpAddress);
-        }
-        
-        // Get IPs with game session (this is to get the one time sessions that technically are unauthorized, but currently have a session)
-        List<string> ipsWithSession = new List<string>();
-        GameSession[] sessions = user.Sessions.AsEnumerable().Where(s=> GameSessionTypes.Contains(s.SessionType)).ToArray();
+        List<IpAuthorization> authorizedIps = user.IpAddresses.AsEnumerable().Where(i=>i.Authorized && i.SessionType == (int)sessionType).ToList();
 
-        for (int i = 0; i < sessions.Length; i++)
+        // Convert list to response array
+
+        ApiAuthorizedIpResponse[] response = new ApiAuthorizedIpResponse[authorizedIps.Count];
+        
+        for (int i = 0; i < response.Length; i++)
         {
-            ipsWithSession.Add(sessions[i].Ip.IpAddress);   
+            response[i] = IpAuthorizationToAuthorizedIpResponse(authorizedIps[i]);
         }
 
-        return authorizedIpAddresses.Union(ipsWithSession).ToArray();
+        return response;
     }
 }
