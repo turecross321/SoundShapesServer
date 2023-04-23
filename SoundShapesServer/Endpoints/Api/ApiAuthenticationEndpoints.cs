@@ -7,12 +7,10 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types;
 using static SoundShapesServer.Helpers.SessionHelper;
-using static SoundShapesServer.Helpers.IpHelper;
 
 namespace SoundShapesServer.Endpoints.Api;
 

@@ -7,7 +7,6 @@ using Bunkum.HttpServer.Responses;
 using HttpMultipartParser;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Requests;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;

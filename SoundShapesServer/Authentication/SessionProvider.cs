@@ -1,10 +1,8 @@
-using System.Collections.Specialized;
 using System.Diagnostics;
 using Bunkum.CustomHttpListener.Request;
 using Bunkum.HttpServer.Authentication;
 using Bunkum.HttpServer.Database;
 using SoundShapesServer.Database;
-using SoundShapesServer.Endpoints;
 using SoundShapesServer.Types;
 using static SoundShapesServer.Helpers.SessionHelper;
 

@@ -1,9 +1,7 @@
 using SoundShapesServer.Responses.Game.Following;
-using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
-using static SoundShapesServer.Helpers.LevelHelper;
 using static SoundShapesServer.Helpers.UserHelper;
 
 namespace SoundShapesServer.Database;

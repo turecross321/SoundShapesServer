@@ -2,7 +2,6 @@ using SoundShapesServer.Authentication;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types;
 using static SoundShapesServer.Helpers.IpHelper;
-using static SoundShapesServer.Helpers.SessionHelper;
 
 namespace SoundShapesServer.Database;
 

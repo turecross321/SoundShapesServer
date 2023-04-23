@@ -1,4 +1,3 @@
-using Realms.Sync;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Types;
 

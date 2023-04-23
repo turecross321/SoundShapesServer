@@ -31,7 +31,7 @@ public class ApiIpAuthorization : EndpointGroup
         return HttpStatusCode.OK;
     }
 
-    [ApiEndpoint("ip/unAuthorized", Method.Get)]
+    [ApiEndpoint("ip/unAuthorized")]
     public ApiUnAuthorizedIpResponseWrapper UnAuthorizedIps(RequestContext context, RealmDatabaseContext database, GameUser user)
     {
         ApiUnAuthorizedIpResponse[] addresses = database.GetUnAuthorizedIps(user, TypeOfSession.Game);

@@ -6,7 +6,6 @@ using Bunkum.HttpServer.Responses;
 using NPTicket;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Sessions;
 using SoundShapesServer.Types;
 using static SoundShapesServer.Helpers.SessionHelper;

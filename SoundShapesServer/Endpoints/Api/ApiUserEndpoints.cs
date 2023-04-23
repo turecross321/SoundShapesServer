@@ -49,7 +49,7 @@ public class ApiUserEndpoints : EndpointGroup
 
         if (database.FollowUser(user, recipient)) return HttpStatusCode.OK;
         
-        return HttpStatusCode.Forbidden;
+        return HttpStatusCode.Conflict;
     }
 
     [ApiEndpoint("user/{id}/unFollow", Method.Post)]
@@ -61,6 +61,6 @@ public class ApiUserEndpoints : EndpointGroup
 
         if (database.UnFollowUser(user, recipient)) return HttpStatusCode.OK;
         
-        return HttpStatusCode.Forbidden;
+        return HttpStatusCode.Conflict;
     }
 }
