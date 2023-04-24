@@ -8,6 +8,8 @@ public class ApiLevelResponse
     public string Name { get; set; }
     public string AuthorId { get; set; }
     public string AuthorName { get; set; }
+    public DateTimeOffset Created { get; set; }
+    public DateTimeOffset Modified { get; set; }
     public int TotalPlays { get; set; }
     public int UniquePlays { get; set; }
     public int Likes { get; set; }

@@ -145,6 +145,8 @@ public static class LevelHelper
             Name = level.Name,
             AuthorId = level.Author.Id,
             AuthorName = level.Author.Username,
+            Created = level.CreationDate,
+            Modified = level.ModificationDate,
             TotalPlays = level.Plays,
             UniquePlays = level.UniquePlays.Count,
             Likes = level.Likes.Count(),
