@@ -4,6 +4,7 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
+using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
@@ -15,17 +16,17 @@ public class ApiLevelResourceEndpoints : EndpointGroup
 {
     [ApiEndpoint("level/{levelId}/thumbnail")]
     [Authentication(false)]
-    public Response LevelThumbnail(RequestContext context, RealmDatabaseContext database, string levelId)
+    public Response LevelThumbnail(RequestContext context, IDataStore dataStore, RealmDatabaseContext database, string levelId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;
 
         string key = ResourceHelper.GetLevelResourceKey(level.Id, IFileType.Image);
 
-        if (!context.DataStore.ExistsInStore(key))
+        if (!dataStore.ExistsInStore(key))
             return HttpStatusCode.NotFound;
 
-        if (!context.DataStore.TryGetDataFromStore(key, out byte[]? data))
+        if (!dataStore.TryGetDataFromStore(key, out byte[]? data))
             return HttpStatusCode.InternalServerError;
 
         Debug.Assert(data != null);

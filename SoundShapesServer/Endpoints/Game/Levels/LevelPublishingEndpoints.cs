@@ -3,6 +3,7 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
+using Bunkum.HttpServer.Storage;
 using HttpMultipartParser;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
@@ -16,13 +17,13 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class LevelPublishingEndpoints : EndpointGroup
 {
     // Gets called by Endpoints.cs
-    public static Response PublishLevel(RequestContext context, MultipartFormDataParser parser, RealmDatabaseContext database, GameUser user)
+    public static Response PublishLevel(IDataStore dataStore, MultipartFormDataParser parser, RealmDatabaseContext database, GameUser user)
     {
         // Check if name exceeds 26 characters
         if (parser.GetParameterValue("title").Length > 26) return HttpStatusCode.BadRequest;
         
         string levelId = LevelHelper.GenerateLevelId(database);
-        LevelPublishRequest? levelRequest = LevelResourceEndpoints.UploadLevelResources(context, parser, levelId);
+        LevelPublishRequest? levelRequest = LevelResourceEndpoints.UploadLevelResources(dataStore, parser, levelId);
         if (levelRequest == null) return HttpStatusCode.InternalServerError;
 
         LevelPublishResponse publishedLevel = database.PublishLevel(levelRequest, user);
@@ -31,14 +32,14 @@ public class LevelPublishingEndpoints : EndpointGroup
     }
     
     // Gets called by Endpoints.cs
-    public static Response UpdateLevel(RequestContext context, MultipartFormDataParser parser, RealmDatabaseContext database, GameUser user, string levelId)
+    public static Response UpdateLevel(IDataStore dataStore, MultipartFormDataParser parser, RealmDatabaseContext database, GameUser user, string levelId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
 
         if (level == null) return new Response(HttpStatusCode.NotFound);
         if (level.Author.Equals(user) == false) return new Response(HttpStatusCode.Forbidden);
         
-        LevelPublishRequest? levelRequest = LevelResourceEndpoints.UploadLevelResources(context, parser, levelId);
+        LevelPublishRequest? levelRequest = LevelResourceEndpoints.UploadLevelResources(dataStore, parser, levelId);
         if (levelRequest == null) return HttpStatusCode.InternalServerError;
 
         
@@ -50,11 +51,11 @@ public class LevelPublishingEndpoints : EndpointGroup
     }
     
     // Gets called by Endpoints.cs
-    public static Response UnPublishLevel(RequestContext context, RealmDatabaseContext database, GameUser user, GameLevel level)
+    public static Response UnPublishLevel(IDataStore dataStore, RealmDatabaseContext database, GameUser user, GameLevel level)
     {
         if (level.Author.Equals(user) == false) return new Response(HttpStatusCode.Forbidden);  // Check if user is the level publisher
         
-        LevelResourceEndpoints.RemoveLevelResources(context, level);
+        LevelResourceEndpoints.RemoveLevelResources(dataStore, level);
         return database.UnPublishLevel(level) ? new Response(HttpStatusCode.OK) : HttpStatusCode.InternalServerError;
     }
 }

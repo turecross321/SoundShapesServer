@@ -4,6 +4,7 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
+using Bunkum.HttpServer.Storage;
 using HttpMultipartParser;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
@@ -16,7 +17,7 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class LevelResourceEndpoints : EndpointGroup
 {
     // Called from Publishing Endpoints
-    public static LevelPublishRequest? UploadLevelResources(RequestContext context, MultipartFormDataParser parser, string levelId)
+    public static LevelPublishRequest? UploadLevelResources(IDataStore dataStore, MultipartFormDataParser parser, string levelId)
     {
         FilePart? image = null;
         FilePart? level = null;
@@ -55,7 +56,7 @@ public class LevelResourceEndpoints : EndpointGroup
             
             string key = ResourceHelper.GetLevelResourceKey(levelId, file.ContentType);
 
-            context.DataStore.WriteToStore(key, byteArray);
+            dataStore.WriteToStore(key, byteArray);
         }
 
         LevelPublishRequest levelRequest = new ()
@@ -73,18 +74,18 @@ public class LevelResourceEndpoints : EndpointGroup
         return levelRequest;
     }
     // Called from Publishing Endpoints
-    public static void RemoveLevelResources(RequestContext context, GameLevel level)
+    public static void RemoveLevelResources(IDataStore dataStore, GameLevel level)
     {
-        context.DataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.Id, IFileType.Image));
-        context.DataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.Id, IFileType.Level));
-        context.DataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.Id, IFileType.Sound));
+        dataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.Id, IFileType.Image));
+        dataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.Id, IFileType.Level));
+        dataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.Id, IFileType.Sound));
     }
-    private static Response GetResource(RequestContext context, string fileName)
+    private static Response GetResource(IDataStore dataStore, string fileName)
     {
-        if (!context.DataStore.ExistsInStore(fileName))
+        if (!dataStore.ExistsInStore(fileName))
             return HttpStatusCode.NotFound;
 
-        if (!context.DataStore.TryGetDataFromStore(fileName, out byte[]? data))
+        if (!dataStore.TryGetDataFromStore(fileName, out byte[]? data))
             return HttpStatusCode.InternalServerError;
 
         Debug.Assert(data != null);
@@ -93,13 +94,13 @@ public class LevelResourceEndpoints : EndpointGroup
 
     [GameEndpoint("~level:{levelId}/~version:{versionId}/~content:{file}/data.get")]
     public Response GetLevelResource
-        (RequestContext context, RealmDatabaseContext database, GameUser user, string levelId, string versionId, string file)
+        (RequestContext context, IDataStore dataStore, RealmDatabaseContext database, GameUser user, string levelId, string versionId, string file)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;
 
         string key = ResourceHelper.GetLevelResourceKey(level.Id, file);
 
-        return GetResource(context, key);
+        return GetResource(dataStore, key);
     }
 }

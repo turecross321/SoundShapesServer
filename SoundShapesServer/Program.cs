@@ -6,19 +6,16 @@ using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
 using SoundShapesServer.Middlewares;
 
-BunkumHttpServer server = new()
-{
-    AssumeAuthenticationRequired = true,
-};
+BunkumHttpServer server = new();
 
 server.DiscoverEndpointsFromAssembly(Assembly.GetExecutingAssembly());
 
 using RealmDatabaseProvider databaseProvider = new();
 
 server.UseDatabaseProvider(databaseProvider);
-server.UseDataStore(new FileSystemDataStore());
+server.AddStorageService<FileSystemDataStore>();
 
-server.UseAuthenticationProvider(new SessionProvider());
+server.AddAuthenticationService(new SessionProvider(), true);
 server.UseJsonConfig<GameServerConfig>("gameServer.json");
 
 server.AddMiddleware<CrossOriginMiddleware>();
