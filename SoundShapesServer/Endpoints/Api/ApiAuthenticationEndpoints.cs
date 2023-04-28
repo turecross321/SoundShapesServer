@@ -9,7 +9,9 @@ using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api;
+using SoundShapesServer.Services;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Levels;
 using static SoundShapesServer.Helpers.SessionHelper;
 
 namespace SoundShapesServer.Endpoints.Api;
@@ -55,11 +57,11 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("setEmail", Method.Post)]
-    public Response SetUserEmail(RequestContext context, RealmDatabaseContext database, ApiSetEmailRequest body, GameSession token)
+    public Response SetUserEmail(RequestContext context, RealmDatabaseContext database, ApiSetEmailRequest body, GameSession session)
     {
-        if (token.SessionType != (int)TypeOfSession.SetEmail) return HttpStatusCode.Unauthorized;
+        if (session.SessionType != (int)TypeOfSession.SetEmail) return HttpStatusCode.Unauthorized;
 
-        GameUser user = token.User;
+        GameUser user = session.User;
 
         if (user.HasFinishedRegistration)
         {
@@ -76,17 +78,17 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         GameUser? userWithEmail = database.GetUserWithEmail(body.Email);
         if (userWithEmail != null && !userWithEmail.Equals(user)) return new Response(new ApiErrorResponse {Reason = "Email already taken."}, ContentType.Json, HttpStatusCode.Forbidden);
         
-        database.SetUserEmail(user, body.Email, token);
+        database.SetUserEmail(user, body.Email, session);
 
         return SendPasswordSession(context, database, new ApiGetPasswordSessionRequest { Email = body.Email });
     }
     
     [ApiEndpoint("setPassword", Method.Post)]
-    public Response SetUserPassword(RequestContext context, RealmDatabaseContext database, ApiSetPasswordRequest body, GameSession token)
+    public Response SetUserPassword(RequestContext context, RealmDatabaseContext database, ApiSetPasswordRequest body, GameSession session)
     {
-        if (token.SessionType != (int)TypeOfSession.SetPassword) return HttpStatusCode.Unauthorized;
+        if (session.SessionType != (int)TypeOfSession.SetPassword) return HttpStatusCode.Unauthorized;
 
-        GameUser user = token.User;
+        GameUser user = session.User;
 
         if (body.PasswordSha512.Length != 128 || !Sha512Regex().IsMatch(body.PasswordSha512))
             return new Response("Password is definitely not SHA512. Please hash the password.",
@@ -94,7 +96,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
 
         string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(body.PasswordSha512, WorkFactor);
         
-        database.SetUserPassword(user, passwordBcrypt, token);
+        database.SetUserPassword(user, passwordBcrypt, session);
 
         return HttpStatusCode.Created;
     }
@@ -109,15 +111,21 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         
         string passwordSessionId = GenerateSimpleSessionId(database, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 8);
         GameSession passwordSession = database.GenerateSessionForUser(context, user, TypeOfSession.SetPassword, 600, passwordSessionId); // 10 minutes
-        // Todo: Send PasswordSession to mail address
+
+        string emailBody = $"Dear {user.Username},\n\n" +
+                           "Here is your password code: " + passwordSession.Id + "\n" +
+                           "If this wasn't you, feel free to ignore this email.";
+
+        EmailService? emailService = context.Services.OfType<EmailService>().FirstOrDefault();
+        emailService?.SendEmail(body.Email, "Sound Shapes Password Code", emailBody);
 
         return HttpStatusCode.Created;
     }
 
     [ApiEndpoint("logout", Method.Post)]
-    public Response Logout(RequestContext context, RealmDatabaseContext database, GameSession token)
+    public Response Logout(RequestContext context, RealmDatabaseContext database, GameSession session)
     {
-        database.RemoveSession(token);
+        database.RemoveSession(session);
         return HttpStatusCode.OK;
     }
 }

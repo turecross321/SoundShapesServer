@@ -17,13 +17,13 @@ namespace SoundShapesServer.Endpoints.Game.Albums;
 public class AlbumEndpoints : EndpointGroup
 {
     [GameEndpoint("~albums/~link:*.page", ContentType.Json)]
-    public AlbumsWrapper GetAlbums(RequestContext context, RealmDatabaseContext database, GameSession token)
+    public AlbumsWrapper GetAlbums(RequestContext context, RealmDatabaseContext database, GameSession session)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
 
         IQueryable<GameAlbum> albums = database.GetAlbums();
-        AlbumsWrapper response = AlbumHelper.AlbumsToAlbumsWrapper(token.Id, albums, from, count);
+        AlbumsWrapper response = AlbumHelper.AlbumsToAlbumsWrapper(session.Id, albums, from, count);
 
         return response;
     }

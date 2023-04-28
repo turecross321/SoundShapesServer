@@ -6,6 +6,7 @@ using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api;
+using SoundShapesServer.Services;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Endpoints.Api;
@@ -24,7 +25,7 @@ public class ApiUserEndpoints : EndpointGroup
         {
             following = database.IsUserFollowingOtherUser(user, userToCheck);
         }
-        
+
         return UserHelper.UserToApiUserResponse(userToCheck, following);
     }
 

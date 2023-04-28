@@ -67,9 +67,9 @@ public class AuthenticationEndpoints : EndpointGroup
     }
     
     [GameEndpoint("{platform}/{publisher}/{language}/~eula.get", ContentType.Json)]
-    public string? Eula(RequestContext context, GameServerConfig config, RealmDatabaseContext database, string platform, string publisher, string language, GameSession token, GameUser user)
+    public string? Eula(RequestContext context, GameServerConfig config, RealmDatabaseContext database, string platform, string publisher, string language, GameSession session, GameUser user)
     {
-        if (token.SessionType != (int)TypeOfSession.Unauthorized)
+        if (session.SessionType != (int)TypeOfSession.Unauthorized)
             return EulaEndpoint.NormalEula(config);
 
         if (user.HasFinishedRegistration == false)
@@ -79,8 +79,8 @@ public class AuthenticationEndpoints : EndpointGroup
             return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}.\nYour email code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
         }
 
-        if (token.Ip.Authorized == false)
-            return $"Your IP Address has not been authorized. To proceed, you will have to log in to your account at {config.WebsiteUrl} and authorize the following IP Address: {token.Ip.IpAddress}\n-\n{DateTime.UtcNow}";
+        if (session.Ip.Authorized == false)
+            return $"Your IP Address has not been authorized. To proceed, you will have to log in to your account at {config.WebsiteUrl} and authorize the following IP Address: {session.Ip.IpAddress}\n-\n{DateTime.UtcNow}";
 
         return null;
     }

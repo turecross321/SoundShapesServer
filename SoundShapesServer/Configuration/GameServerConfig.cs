@@ -16,8 +16,8 @@ public class GameServerConfig : Config
     public string WebsiteUrl { get; set; } = "https://example.com";
     public bool ApiAuthentication { get; set; }
     public string EmailAddress { get; set; }= "";
-    public string Password { get; set; } = "";
-    public string EmailHost { get; set; } = "";
-    public int EmailHostPort { get; set; }
+    public string EmailPassword { get; set; } = "";
+    public string EmailHost { get; set; } = "smtp.gmail.com";
+    public int EmailHostPort { get; set; } = 587;
     public bool EmailSsl { get; set; } = true;
 }

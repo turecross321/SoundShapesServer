@@ -5,6 +5,7 @@ using SoundShapesServer.Authentication;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
 using SoundShapesServer.Middlewares;
+using SoundShapesServer.Services;
 
 BunkumHttpServer server = new();
 
@@ -19,5 +20,6 @@ server.AddAuthenticationService(new SessionProvider(), true);
 server.UseJsonConfig<GameServerConfig>("gameServer.json");
 
 server.AddMiddleware<CrossOriginMiddleware>();
+server.AddService<EmailService>();
 
 await server.StartAndBlockAsync();
