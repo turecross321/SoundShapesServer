@@ -60,7 +60,7 @@ public static class SessionHelper
     public static bool IsSessionAllowedToAccessEndpoint(GameSession session, string uriPath)
     {
         // If Session is a Game Session, let it only access Game endpoints
-        if (session.SessionType == (int)TypeOfSession.Game)
+        if (session.SessionType == (int)SessionType.Game)
         {
             if (uriPath.StartsWith(GameEndpointAttribute.BaseRoute)) return true;
             if (uriPath.StartsWith("/identity/")) return true;
@@ -69,7 +69,7 @@ public static class SessionHelper
         }
 
         // If Session is an API Session, let it only access api endpoints
-        if (session.SessionType == (int)TypeOfSession.API)
+        if (session.SessionType == (int)SessionType.API)
         {
             if (uriPath.StartsWith(ApiEndpointAttribute.BaseRoute)) return true;
 
@@ -77,7 +77,7 @@ public static class SessionHelper
         }
 
         // If Session is a SetEmail Session, let it only access the setEmail endpoint
-        if (session.SessionType == (int)TypeOfSession.SetEmail)
+        if (session.SessionType == (int)SessionType.SetEmail)
         {
             if (uriPath == ApiEndpointAttribute.BaseRoute + "setEmail") return true;
 
@@ -85,7 +85,7 @@ public static class SessionHelper
         }
 
         // If Session is a SetPassword Session, let it only access the SetPassword endpoint
-        if (session.SessionType == (int)TypeOfSession.SetPassword)
+        if (session.SessionType == (int)SessionType.SetPassword)
         {
             if (uriPath == ApiEndpointAttribute.BaseRoute + "setPassword") return true;
 
@@ -93,7 +93,7 @@ public static class SessionHelper
         }
 
         // If Session is an Unauthorized Session, let it only access the Eula Endpoint 
-        if (session.SessionType == (int)TypeOfSession.Unauthorized)
+        if (session.SessionType == (int)SessionType.Unauthorized)
         {
             string eulaUrlPattern = "^/otg/[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$";
 

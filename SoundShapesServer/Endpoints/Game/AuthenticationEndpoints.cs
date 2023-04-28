@@ -38,18 +38,18 @@ public class AuthenticationEndpoints : EndpointGroup
         user ??= database.CreateUser(ticket.Username);
         
         GameSession? session = null;
-        IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user, TypeOfSession.Game);
+        IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user, SessionType.Game);
 
         if (config.ApiAuthentication)
         {
             // If user hasn't finished registration, or if their IP isn't authorized, give them an unauthorized Session
             if (user.HasFinishedRegistration == false || ip.Authorized == false)
             {
-                session = database.GenerateSessionForUser(context, user, TypeOfSession.Unauthorized, 30);
+                session = database.GenerateSessionForUser(context, user, SessionType.Unauthorized, 30);
             }
         }
         
-        session ??= database.GenerateSessionForUser(context, user, (int)TypeOfSession.Game, 14400); // 4 hours
+        session ??= database.GenerateSessionForUser(context, user, (int)SessionType.Game, 14400); // 4 hours
         
         if (session.Ip.OneTimeUse) database.UseIpAddress(session.Ip);
 
@@ -69,13 +69,13 @@ public class AuthenticationEndpoints : EndpointGroup
     [GameEndpoint("{platform}/{publisher}/{language}/~eula.get", ContentType.Json)]
     public string? Eula(RequestContext context, GameServerConfig config, RealmDatabaseContext database, string platform, string publisher, string language, GameSession session, GameUser user)
     {
-        if (session.SessionType != (int)TypeOfSession.Unauthorized)
+        if (session.SessionType != (int)SessionType.Unauthorized)
             return EulaEndpoint.NormalEula(config);
 
         if (user.HasFinishedRegistration == false)
         {
             string emailSessionId = GenerateSimpleSessionId(database, "123456789", 8);
-            database.GenerateSessionForUser(context, user, TypeOfSession.SetEmail, 600, emailSessionId); // 10 minutes
+            database.GenerateSessionForUser(context, user, SessionType.SetEmail, 600, emailSessionId); // 10 minutes
             return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}.\nYour email code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
         }
 

@@ -1,5 +1,5 @@
 namespace SoundShapesServer.Types;
-public enum TypeOfSession
+public enum SessionType
 {
     Game = 0,
     API = 1,

@@ -43,7 +43,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
             return new Response(new ApiErrorResponse {Reason = "The email address or password was incorrect."}, ContentType.Json, HttpStatusCode.Forbidden);
         }
         
-        GameSession session = database.GenerateSessionForUser(context, user, TypeOfSession.API);
+        GameSession session = database.GenerateSessionForUser(context, user, SessionType.API);
 
         ApiAuthenticationResponse response = new()
         {
@@ -59,7 +59,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
     [ApiEndpoint("setEmail", Method.Post)]
     public Response SetUserEmail(RequestContext context, RealmDatabaseContext database, ApiSetEmailRequest body, GameSession session)
     {
-        if (session.SessionType != (int)TypeOfSession.SetEmail) return HttpStatusCode.Unauthorized;
+        if (session.SessionType != (int)SessionType.SetEmail) return HttpStatusCode.Unauthorized;
 
         GameUser user = session.User;
 
@@ -86,7 +86,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
     [ApiEndpoint("setPassword", Method.Post)]
     public Response SetUserPassword(RequestContext context, RealmDatabaseContext database, ApiSetPasswordRequest body, GameSession session)
     {
-        if (session.SessionType != (int)TypeOfSession.SetPassword) return HttpStatusCode.Unauthorized;
+        if (session.SessionType != (int)SessionType.SetPassword) return HttpStatusCode.Unauthorized;
 
         GameUser user = session.User;
 
@@ -110,7 +110,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         if (user == null) return HttpStatusCode.Created; // trol
         
         string passwordSessionId = GenerateSimpleSessionId(database, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 8);
-        GameSession passwordSession = database.GenerateSessionForUser(context, user, TypeOfSession.SetPassword, 600, passwordSessionId); // 10 minutes
+        GameSession passwordSession = database.GenerateSessionForUser(context, user, SessionType.SetPassword, 600, passwordSessionId); // 10 minutes
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your password code: " + passwordSession.Id + "\n" +

@@ -7,7 +7,7 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public IpAuthorization AddUserIp(GameUser user, string ipAddress, TypeOfSession sessionType)
+    public IpAuthorization AddUserIp(GameUser user, string ipAddress, SessionType sessionType)
     {
         IpAuthorization ip = new IpAuthorization() { IpAddress = ipAddress, User = user, SessionType = (int)sessionType};
         
@@ -19,7 +19,7 @@ public partial class RealmDatabaseContext
         return ip;
     }
 
-    public IpAuthorization GetIpFromAddress(GameUser user, string ipAddress, TypeOfSession sessionType)
+    public IpAuthorization GetIpFromAddress(GameUser user, string ipAddress, SessionType sessionType)
     {
         IpAuthorization? ip = user.IpAddresses.FirstOrDefault(i => i.IpAddress == ipAddress && i.SessionType == (int)sessionType);
         if (ip == null) ip = AddUserIp(user, ipAddress, sessionType);
@@ -68,7 +68,7 @@ public partial class RealmDatabaseContext
         });
     }
 
-    public ApiUnAuthorizedIpResponse[] GetUnAuthorizedIps(GameUser user, TypeOfSession sessionType)
+    public ApiUnAuthorizedIpResponse[] GetUnAuthorizedIps(GameUser user, SessionType sessionType)
     {
         List<string> addresses = new List<string>();
         
@@ -86,7 +86,7 @@ public partial class RealmDatabaseContext
         return response;
     }
 
-    public ApiAuthorizedIpResponse[] GetAuthorizedIps(GameUser user, TypeOfSession sessionType)
+    public ApiAuthorizedIpResponse[] GetAuthorizedIps(GameUser user, SessionType sessionType)
     {
         // Get currently authorized IPs
         List<IpAuthorization> authorizedIps = user.IpAddresses.AsEnumerable().Where(i=>i.Authorized && i.SessionType == (int)sessionType).ToList();

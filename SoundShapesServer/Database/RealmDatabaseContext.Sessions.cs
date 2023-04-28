@@ -10,7 +10,7 @@ public partial class RealmDatabaseContext
     private const int DefaultTokenExpirySeconds = 86400; // 1 day
     private const int SessionLimit = 3; // limit of how many sessions with one TypeOfSession you can have
 
-    public GameSession GenerateSessionForUser(RequestContext context, GameUser user, TypeOfSession sessionType, int? expirationSeconds = null, string? id = null)
+    public GameSession GenerateSessionForUser(RequestContext context, GameUser user, SessionType sessionType, int? expirationSeconds = null, string? id = null)
     {
         IpAuthorization ip = IpHelper.GetIpAuthorizationFromRequestContext(context, this, user, sessionType);
 
