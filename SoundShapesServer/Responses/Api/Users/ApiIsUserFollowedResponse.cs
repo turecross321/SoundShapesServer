@@ -1,4 +1,4 @@
-namespace SoundShapesServer.Responses.Api;
+namespace SoundShapesServer.Responses.Api.Users;
 
 public class ApiIsUserFollowedResponse
 {

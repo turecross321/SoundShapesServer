@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace SoundShapesServer.Responses.Api;
+namespace SoundShapesServer.Responses.Api.Users;
 
 public class ApiUserResponse
 {

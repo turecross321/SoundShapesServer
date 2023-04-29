@@ -1,4 +1,5 @@
 using SoundShapesServer.Responses.Api;
+using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Responses.Game.Following;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;

@@ -7,7 +7,6 @@ using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using HttpMultipartParser;
 using SoundShapesServer.Database;
-using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using static SoundShapesServer.Helpers.ResourceHelper;
@@ -17,8 +16,10 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class LevelResourceEndpoints : EndpointGroup
 {
     // Called from Publishing Endpoints
-    public static LevelPublishRequest? UploadLevelResources(IDataStore dataStore, MultipartFormDataParser parser, string levelId)
+    public static bool UploadLevelResources(IDataStore dataStore, MultipartFormDataParser parser, string levelId)
     {
+        if (parser.GetParameterValue("title").Length > 26) return false;
+
         byte[]? image = null;
         byte[]? level = null;
         byte[]? sound = null;
@@ -41,14 +42,14 @@ public class LevelResourceEndpoints : EndpointGroup
                     break;
                 default:
                     Console.WriteLine("User attempted to upload an unaccounted-for file: " + file.ContentType);
-                    return null;
+                    return true;
             }
         }
 
         if (image == null || level == null || sound == null)
         {
             Console.WriteLine("User did not upload all the required files.");
-            return null;
+            return false;
         }
 
         string imageKey = GetLevelResourceKey(levelId, FileType.Image);
@@ -58,20 +59,8 @@ public class LevelResourceEndpoints : EndpointGroup
         dataStore.WriteToStore(imageKey, image);
         dataStore.WriteToStore(levelKey, level);
         dataStore.WriteToStore(soundKey, sound);
-        
-        LevelPublishRequest levelRequest = new ()
-        {
-            Title = parser.GetParameterValue("title"),
-            Description = parser.GetParameterValue("description"),
-            Icon = image,
-            Level = level,
-            Song = sound,
-            Language = int.Parse(parser.GetParameterValue("sce_np_language")),
-            Id = levelId,
-            FileSize = level.Length
-        };
-        
-        return levelRequest;
+
+        return true;
     }
     // Called from Publishing Endpoints
     public static void RemoveLevelResources(IDataStore dataStore, GameLevel level)

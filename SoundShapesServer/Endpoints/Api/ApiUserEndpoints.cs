@@ -6,6 +6,7 @@ using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api;
+using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Services;
 using SoundShapesServer.Types;
 

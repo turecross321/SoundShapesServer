@@ -19,12 +19,17 @@ public class LevelPublishingEndpoints : EndpointGroup
     // Gets called by Endpoints.cs
     public static Response PublishLevel(IDataStore dataStore, MultipartFormDataParser parser, RealmDatabaseContext database, GameUser user)
     {
-        // Check if name exceeds 26 characters
-        if (parser.GetParameterValue("title").Length > 26) return HttpStatusCode.BadRequest;
-        
         string levelId = LevelHelper.GenerateLevelId(database);
-        LevelPublishRequest? levelRequest = LevelResourceEndpoints.UploadLevelResources(dataStore, parser, levelId);
-        if (levelRequest == null) return HttpStatusCode.InternalServerError;
+        bool uploadedResources = LevelResourceEndpoints.UploadLevelResources(dataStore, parser, levelId);
+        if (uploadedResources == false) return HttpStatusCode.BadRequest;
+        
+        LevelPublishRequest levelRequest = new ()
+        {
+            Title = parser.GetParameterValue("title"),
+            Language = int.Parse(parser.GetParameterValue("sce_np_language")),
+            Id = levelId,
+            FileSize = parser.Files.First(f => f.Name == "Level").Data.Length
+        };
 
         LevelPublishResponse publishedLevel = database.PublishLevel(levelRequest, user);
 
@@ -39,9 +44,16 @@ public class LevelPublishingEndpoints : EndpointGroup
         if (level == null) return new Response(HttpStatusCode.NotFound);
         if (level.Author.Equals(user) == false) return new Response(HttpStatusCode.Forbidden);
         
-        LevelPublishRequest? levelRequest = LevelResourceEndpoints.UploadLevelResources(dataStore, parser, levelId);
-        if (levelRequest == null) return HttpStatusCode.InternalServerError;
+        bool uploadedResources = LevelResourceEndpoints.UploadLevelResources(dataStore, parser, levelId);
+        if (uploadedResources == false) return HttpStatusCode.BadRequest;
 
+        LevelPublishRequest levelRequest = new ()
+        {
+            Title = parser.GetParameterValue("title"),
+            Language = int.Parse(parser.GetParameterValue("sce_np_language")),
+            Id = levelId,
+            FileSize = parser.Files.First(f => f.Name == "Level").Data.Length
+        };
         
         LevelPublishResponse? publishedLevel = database.UpdateLevel(levelRequest, level, user);
 
