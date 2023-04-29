@@ -1,4 +1,4 @@
-using SoundShapesServer.Responses.Api;
+using System.Text.RegularExpressions;
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Responses.Game.Following;
 using SoundShapesServer.Responses.Game.Users;
@@ -65,8 +65,6 @@ public static class UserHelper
             LikedLevelsCount = user.LikedLevels.Count(), // Liked And Queued Levels
         };
     }
-    
-    // API
 
     public static ApiUserResponse UserToApiUserResponse(GameUser userToCheck, bool? following)
     {
@@ -80,5 +78,11 @@ public static class UserHelper
             LikedLevelsCount = userToCheck.LikedLevels.Count(),
             PublishedLevelsCount = userToCheck.Levels.Count(),
         };
+    }
+
+    private const string UsernameRegex = "^[A-Za-z][A-Za-z0-9-_]{2,15}$";
+    public static bool IsUsernameLegal(string username)
+    {
+        return Regex.IsMatch(username, UsernameRegex);
     }
 }

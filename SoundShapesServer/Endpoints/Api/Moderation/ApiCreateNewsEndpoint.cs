@@ -48,6 +48,6 @@ public class ApiCreateNewsEndpoint
         dataStore.WriteToStore(GetNewsResourceKey(language), image);
         database.CreateNewsEntry(language, title, summary, fullText, url);
 
-        return HttpStatusCode.OK;
+        return HttpStatusCode.Created;
     }
 }

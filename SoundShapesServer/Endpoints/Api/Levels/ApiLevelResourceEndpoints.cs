@@ -7,7 +7,6 @@ using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using HttpMultipartParser;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using static SoundShapesServer.Helpers.ResourceHelper;

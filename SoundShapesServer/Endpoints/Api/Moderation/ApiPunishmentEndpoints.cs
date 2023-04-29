@@ -13,7 +13,7 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 public class ApiPunishmentEndpoints : EndpointGroup
 {
     [ApiEndpoint("user/{id}/punish", Method.Post)]
-    public Response PunishUser(RequestContext context, RealmDatabaseContext database, GameUser user, string id, PunishRequest body)
+    public Response PunishUser(RequestContext context, RealmDatabaseContext database, GameUser user, string id, ApiPunishRequest body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 

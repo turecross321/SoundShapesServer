@@ -1,4 +1,3 @@
-using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Database;

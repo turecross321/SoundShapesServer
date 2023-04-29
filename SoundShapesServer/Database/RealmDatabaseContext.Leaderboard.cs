@@ -54,4 +54,11 @@ public partial class RealmDatabaseContext
 
         return entries.AsQueryable();
     }
+    public void RemoveLeaderboardEntry(LeaderboardEntry entry)
+    {
+        this._realm.Write(() =>
+        {
+            this._realm.Remove(entry);
+        });
+    }
 }

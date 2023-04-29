@@ -1,6 +1,6 @@
 namespace SoundShapesServer.Requests.Api;
 
-public class ApiGetPasswordSessionRequest
+public class ApiPasswordSessionRequest
 {
     public string Email { get; set; }
 }

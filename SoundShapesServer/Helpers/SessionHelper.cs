@@ -13,7 +13,13 @@ namespace SoundShapesServer.Helpers;
 
 public static class SessionHelper
 {
-    public static string GenerateSimpleSessionId(RealmDatabaseContext database, string idCharacters, int idLength)
+    public static string GenerateEmailSessionId(RealmDatabaseContext database) =>
+        GenerateSimpleSessionId(database, "123456789", 8);
+    public static string GeneratePasswordSessionId(RealmDatabaseContext database) =>
+        GenerateSimpleSessionId(database, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 8);
+    public static string GenerateAccountRemovalSessionId(RealmDatabaseContext database) => GenerateSimpleSessionId(database,
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789", 8);
+    private static string GenerateSimpleSessionId(RealmDatabaseContext database, string idCharacters, int idLength)
     {
         Random r = new Random();
         string id = "";
@@ -59,47 +65,46 @@ public static class SessionHelper
 
     public static bool IsSessionAllowedToAccessEndpoint(GameSession session, string uriPath)
     {
-        // If Session is a Game Session, let it only access Game endpoints
-        if (session.SessionType == (int)SessionType.Game)
+        if (uriPath == GameEndpointAttribute.BaseRoute + "~identity:*.hello")
         {
-            if (uriPath.StartsWith(GameEndpointAttribute.BaseRoute)) return true;
-            if (uriPath.StartsWith("/identity/")) return true;
+            // If Session is an Unauthorized Session, let it only access the Eula Endpoint 
+            if (session.SessionType == (int)SessionType.Unauthorized) return true;
+        }
+        else if (Regex.IsMatch(uriPath, "^/otg/[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$"))
+        {
+            // If Session is an Unauthorized Session, let it only access the Eula Endpoint 
+            if (session.SessionType == (int)SessionType.Unauthorized) return true;
+        }
+        else if (uriPath.StartsWith(GameEndpointAttribute.BaseRoute))
+        {
+            // If Session is a Game Session, let it only access Game endpoints
+            if (session.SessionType == (int)SessionType.Game) return true;
+        }
+        else if (uriPath == ApiEndpointAttribute.BaseRoute + "account/setEmail")
+        {
+            // If Session is a SetEmail Session, let it only access the setEmail endpoint
+            if (session.SessionType == (int)SessionType.SetEmail) return true;
 
             return false;
         }
-
-        // If Session is an API Session, let it only access api endpoints
-        if (session.SessionType == (int)SessionType.API)
+        else if (uriPath == ApiEndpointAttribute.BaseRoute + "account/setPassword")
         {
-            if (uriPath.StartsWith(ApiEndpointAttribute.BaseRoute)) return true;
+            // If Session is a SetPassword Session, let it only access the SetPassword endpoint
+            if (session.SessionType == (int)SessionType.SetPassword) return true;
 
             return false;
         }
-
-        // If Session is a SetEmail Session, let it only access the setEmail endpoint
-        if (session.SessionType == (int)SessionType.SetEmail)
+        else if (uriPath == ApiEndpointAttribute.BaseRoute + "account/remove")
         {
-            if (uriPath == ApiEndpointAttribute.BaseRoute + "setEmail") return true;
+            // If Session is a RemoveAccount Session, let it only access the Remove endpoint
+            if (session.SessionType == (int)SessionType.RemoveAccount) return true;
 
             return false;
         }
-
-        // If Session is a SetPassword Session, let it only access the SetPassword endpoint
-        if (session.SessionType == (int)SessionType.SetPassword)
+        else if (uriPath.StartsWith(ApiEndpointAttribute.BaseRoute))
         {
-            if (uriPath == ApiEndpointAttribute.BaseRoute + "setPassword") return true;
-
-            return false;
-        }
-
-        // If Session is an Unauthorized Session, let it only access the Eula Endpoint 
-        if (session.SessionType == (int)SessionType.Unauthorized)
-        {
-            string eulaUrlPattern = "^/otg/[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$";
-
-            Match match = Regex.Match(uriPath, eulaUrlPattern);
-
-            return match.Success || uriPath == GameEndpointAttribute.BaseRoute + "~identity:*.hello";
+            // If Session is an API Session, let it only access api endpoints
+            if (session.SessionType == (int)SessionType.API) return true;
         }
 
         return false;

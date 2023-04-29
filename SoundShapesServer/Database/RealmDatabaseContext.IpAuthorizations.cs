@@ -1,5 +1,4 @@
 using SoundShapesServer.Authentication;
-using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.IP_Authorization;
 using SoundShapesServer.Types;
 using static SoundShapesServer.Helpers.IpHelper;

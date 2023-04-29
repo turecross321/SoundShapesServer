@@ -39,6 +39,16 @@ public partial class RealmDatabaseContext
         }));
     }
 
+    public void SetUsername(GameUser user, string username)
+    {
+        this.RemoveAllSessionsWithUser(user);
+        
+        this._realm.Write(() =>
+        {
+            user.Username = username;
+        });
+    }
+
     public GameUser? GetUserWithUsername(string username)
     {
         return this._realm.All<GameUser>().FirstOrDefault(u => u.Username == username);
@@ -54,5 +64,19 @@ public partial class RealmDatabaseContext
         if (id == null) return null;
         return this._realm.All<GameUser>().FirstOrDefault(u => u.Id == id);
     }
-    
+
+    public void RemoveUser(GameUser user)
+    {
+        this._realm.Write(() =>
+        {
+            this._realm.RemoveRange(user.Sessions);
+            this._realm.RemoveRange(user.Levels);
+            this._realm.RemoveRange(user.LeaderboardEntries);
+            this._realm.RemoveRange(user.Punishments);
+            this._realm.RemoveRange(user.IpAddresses);
+            this._realm.Remove(user);
+            
+            this._realm.Remove(user);
+        });
+    }
 }

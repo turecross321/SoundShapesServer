@@ -2,5 +2,5 @@ namespace SoundShapesServer.Requests.Api;
 
 public class ApiSetPasswordRequest
 {
-    public string PasswordSha512 { get; set; }
+    public string NewPasswordSha512 { get; set; }
 }

@@ -15,7 +15,7 @@ public class SessionProvider : IAuthenticationProvider<GameUser, GameSession>
 
     public GameSession? AuthenticateToken(ListenerContext request, Lazy<IDatabaseContext> db)
     {
-        string? sessionId = null;
+        string? sessionId;
 
         // check the session header. this is what the game uses
         sessionId = request.RequestHeaders["X-OTG-Identity-SessionId"];
@@ -35,6 +35,12 @@ public class SessionProvider : IAuthenticationProvider<GameUser, GameSession>
         GameSession? session = database.GetSessionWithSessionId(sessionId);
         if (session == null) return null;
 
+        if (session.ExpiresAt < DateTimeOffset.UtcNow)
+        {
+            database.RemoveSession(session);
+            return null;
+        }
+        
         string uriPath = request.Uri.AbsolutePath;
 
         if (IsSessionAllowedToAccessEndpoint(session, uriPath)) return session;

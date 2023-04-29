@@ -11,6 +11,7 @@ using SoundShapesServer.Types;
 using static SoundShapesServer.Helpers.SessionHelper;
 using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
 using SoundShapesServer.Configuration;
+using SoundShapesServer.Helpers;
 using static SoundShapesServer.Helpers.IpHelper;
 using static SoundShapesServer.Helpers.PunishmentHelper;
 
@@ -33,7 +34,7 @@ public class AuthenticationEndpoints : EndpointGroup
             return HttpStatusCode.BadRequest;
         }
         
-        if (ticket.Username.Length > 16) return HttpStatusCode.BadRequest;
+        if (!UserHelper.IsUsernameLegal(ticket.Username)) return HttpStatusCode.BadRequest;
 
         GameUser? user = database.GetUserWithUsername(ticket.Username);
         user ??= database.CreateUser(ticket.Username);
@@ -92,7 +93,7 @@ public class AuthenticationEndpoints : EndpointGroup
 
         if (user.HasFinishedRegistration == false)
         {
-            string emailSessionId = GenerateSimpleSessionId(database, "123456789", 8);
+            string emailSessionId = GenerateEmailSessionId(database);
             database.GenerateSessionForUser(context, user, SessionType.SetEmail, 600, emailSessionId); // 10 minutes
             return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}.\nYour email code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
         }

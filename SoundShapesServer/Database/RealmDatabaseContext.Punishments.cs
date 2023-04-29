@@ -5,7 +5,7 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public void PunishUser(GameUser user, PunishRequest request)
+    public void PunishUser(GameUser user, ApiPunishRequest request)
     {
         if (request.PunishmentType == (int)PunishmentType.Ban)
         {

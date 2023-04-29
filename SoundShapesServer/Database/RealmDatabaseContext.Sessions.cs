@@ -51,18 +51,7 @@ public partial class RealmDatabaseContext
         IQueryable<GameSession>? sessions = this._realm.All<GameSession>();
         GameSession? session = this._realm.All<GameSession>()
             .FirstOrDefault(s => s.Id == sessionId);
-
-        if (session == null)
-        {
-            return null;
-        }
-
-        if (session.ExpiresAt < DateTimeOffset.UtcNow)
-        {
-            this._realm.Write(() => this._realm.Remove(session));
-            return null;
-        }
-
+        
         return session;
     }
 

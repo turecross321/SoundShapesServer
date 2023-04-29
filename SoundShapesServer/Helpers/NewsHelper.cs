@@ -1,4 +1,3 @@
-using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Game.RecentActivity;
 using SoundShapesServer.Types;

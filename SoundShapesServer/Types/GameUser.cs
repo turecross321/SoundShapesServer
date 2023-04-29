@@ -1,6 +1,5 @@
 using Bunkum.HttpServer.Authentication;
 using Realms;
-using Realms.Sync;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Relations;
@@ -27,4 +26,5 @@ public class GameUser : RealmObject, IUser
     
     [Backlink(nameof(GameLevel.Author))] public IQueryable<GameLevel> Levels { get; }
     [Backlink(nameof(Punishment.User))] public IQueryable<Punishment> Punishments { get; }
+    [Backlink(nameof(LeaderboardEntry.User))] public IQueryable<LeaderboardEntry> LeaderboardEntries { get; }
 }

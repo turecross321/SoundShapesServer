@@ -1,6 +1,6 @@
 namespace SoundShapesServer.Requests.Api;
 
-public class PunishRequest
+public class ApiPunishRequest
 {
     public int PunishmentType { get; set; }
     public string Reason { get; set; }
