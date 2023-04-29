@@ -15,8 +15,4 @@
       <PackageReference Include="Realm" Version="10.21.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Endpoints\Api\Moderation\" />
-    </ItemGroup>
-
 </Project>

@@ -32,6 +32,7 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
                 typeof(LinerNote),
                 typeof(GameAlbum),
                 typeof(Report),
+                typeof(Punishment)
             },
             MigrationCallback = (migration, oldVersion) =>
             {

@@ -12,6 +12,7 @@ using static SoundShapesServer.Helpers.SessionHelper;
 using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
 using SoundShapesServer.Configuration;
 using static SoundShapesServer.Helpers.IpHelper;
+using static SoundShapesServer.Helpers.PunishmentHelper;
 
 namespace SoundShapesServer.Endpoints.Game;
 
@@ -36,7 +37,7 @@ public class AuthenticationEndpoints : EndpointGroup
 
         GameUser? user = database.GetUserWithUsername(ticket.Username);
         user ??= database.CreateUser(ticket.Username);
-        
+
         GameSession? session = null;
         IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user, SessionType.Game);
 
@@ -49,6 +50,10 @@ public class AuthenticationEndpoints : EndpointGroup
             }
         }
         
+        // Check if user is banned
+        Punishment[] bans = GetUsersPunishmentsOfType(user, PunishmentType.Ban);
+        if (bans.Length > 0) session = database.GenerateSessionForUser(context, user, SessionType.Unauthorized, 30);
+
         session ??= database.GenerateSessionForUser(context, user, (int)SessionType.Game, 14400); // 4 hours
         
         if (session.Ip.OneTimeUse) database.UseIpAddress(session.Ip);
@@ -71,6 +76,16 @@ public class AuthenticationEndpoints : EndpointGroup
     {
         if (session.SessionType != (int)SessionType.Unauthorized)
             return EulaEndpoint.NormalEula(config);
+        
+        // Check if user is banned
+        Punishment[] bans = GetUsersPunishmentsOfType(user, PunishmentType.Ban);
+        if (bans.Length > 0)
+        {
+            Punishment? longestBan = bans.MaxBy(p => p.ExpiresAt);
+            if (longestBan == null) return "User is banned.";
+            
+            return "User is banned. Expires at " + longestBan.ExpiresAt + ".";
+        }
 
         if (user.HasFinishedRegistration == false)
         {

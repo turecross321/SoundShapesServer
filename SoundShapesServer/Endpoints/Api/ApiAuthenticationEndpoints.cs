@@ -11,16 +11,14 @@ using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Services;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.Levels;
+using static SoundShapesServer.Helpers.PunishmentHelper;
 using static SoundShapesServer.Helpers.SessionHelper;
 
 namespace SoundShapesServer.Endpoints.Api;
 
-public partial class ApiAuthenticationEndpoints : EndpointGroup
+public class ApiAuthenticationEndpoints : EndpointGroup
 {
-    [GeneratedRegex("^[a-f0-9]{128}$")]
-    private static partial Regex Sha512Regex();
-    
+    private const string Sha512Pattern = "^[a-f0-9]{128}$";
     private const int WorkFactor = 10;
 
     [ApiEndpoint("login", Method.Post)]
@@ -43,12 +41,22 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
             return new Response("The email address or password was incorrect.", ContentType.Json, HttpStatusCode.Forbidden);
         }
         
+        // Check if user is banned
+        Punishment[] bans = GetUsersPunishmentsOfType(user, PunishmentType.Ban);
+        if (bans.Length > 0)
+        {
+            Punishment? longestBan = bans.MaxBy(p => p.ExpiresAt);
+            if (longestBan == null) return new Response("User is banned.", ContentType.Json, HttpStatusCode.Forbidden);
+            
+            return new Response("User is banned. Expires at " + longestBan.ExpiresAt + ".", ContentType.Json, HttpStatusCode.Forbidden);
+        }
+
         GameSession session = database.GenerateSessionForUser(context, user, SessionType.API);
 
         ApiAuthenticationResponse response = new()
         {
             Id = session.Id,
-            ExpiresAt = session.ExpiresAt,
+            ExpiresAtUtc = session.ExpiresAt,
             UserId = user.Id,
             Username = user.Username
         };
@@ -77,7 +85,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         // Check if mail address has been used before
         GameUser? userWithEmail = database.GetUserWithEmail(body.Email);
         if (userWithEmail != null && userWithEmail.Id != user.Id) return new Response("Email already taken.", ContentType.Json, HttpStatusCode.Forbidden);
-        
+
         database.SetUserEmail(user, body.Email, session);
 
         return SendPasswordSession(context, database, new ApiGetPasswordSessionRequest { Email = body.Email });
@@ -90,7 +98,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
 
         GameUser user = session.User;
 
-        if (body.PasswordSha512.Length != 128 || !Sha512Regex().IsMatch(body.PasswordSha512))
+        if (body.PasswordSha512.Length != 128 || !Regex.IsMatch(Sha512Pattern, body.PasswordSha512))
             return new Response("Password is definitely not SHA512. Please hash the password.",
                 ContentType.Plaintext, HttpStatusCode.BadRequest);
 

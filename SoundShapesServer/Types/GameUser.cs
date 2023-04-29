@@ -26,4 +26,5 @@ public class GameUser : RealmObject, IUser
     [Backlink(nameof(GameSession.User))] public IQueryable<GameSession> Sessions { get; }
     
     [Backlink(nameof(GameLevel.Author))] public IQueryable<GameLevel> Levels { get; }
+    [Backlink(nameof(Punishment.User))] public IQueryable<Punishment> Punishments { get; }
 }

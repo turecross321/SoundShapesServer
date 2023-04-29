@@ -38,7 +38,7 @@ public partial class RealmDatabaseContext
             user.HasFinishedRegistration = true;
         }));
     }
-    
+
     public GameUser? GetUserWithUsername(string username)
     {
         return this._realm.All<GameUser>().FirstOrDefault(u => u.Username == username);
@@ -54,4 +54,5 @@ public partial class RealmDatabaseContext
         if (id == null) return null;
         return this._realm.All<GameUser>().FirstOrDefault(u => u.Id == id);
     }
+    
 }

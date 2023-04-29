@@ -83,4 +83,13 @@ public partial class RealmDatabaseContext
             this._realm.Remove(session);
         });
     }
+
+    public void RemoveAllSessionsWithUser(GameUser user)
+    {
+        GameSession[] sessions = user.Sessions.ToArray();
+        for (int i = 0; i < sessions.Length; i++)
+        {
+            RemoveSession(sessions[i]);
+        }
+    }
 }
