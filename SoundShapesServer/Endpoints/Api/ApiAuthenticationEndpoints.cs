@@ -76,7 +76,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         
         // Check if mail address has been used before
         GameUser? userWithEmail = database.GetUserWithEmail(body.Email);
-        if (userWithEmail != null && !userWithEmail.Equals(user)) return new Response("Email already taken.", ContentType.Json, HttpStatusCode.Forbidden);
+        if (userWithEmail != null && userWithEmail.Id != user.Id) return new Response("Email already taken.", ContentType.Json, HttpStatusCode.Forbidden);
         
         database.SetUserEmail(user, body.Email, session);
 

@@ -12,10 +12,10 @@ public partial class RealmDatabaseContext
             User = user,
             LevelId = levelId,
             Score = request.Score,
-            Playtime = request.PlayTime,
+            PlayTime = request.PlayTime,
             Deaths = request.Deaths,
             Golded = request.Golded,
-            TokenCount = request.TokenCount,
+            Tokens = request.TokenCount,
             Completed = Convert.ToBoolean(request.Completed),
             Date = DateTimeOffset.UtcNow
         };
@@ -44,30 +44,14 @@ public partial class RealmDatabaseContext
         return true;
     }
 
-    public (LeaderboardEntry[], int) GetLeaderboardEntries(string levelId, int from, int count)
+    public IQueryable<LeaderboardEntry> GetLeaderboardEntries(string levelId)
     {
         IEnumerable<LeaderboardEntry> entries = this._realm.All<LeaderboardEntry>()
             .AsEnumerable()
             .Where(e=>e.Completed)
-            .Where(e => e.LevelId == levelId);
+            .Where(e => e.LevelId == levelId)
+            .OrderBy(e=>e.Score);
 
-        int totalEntries = entries.Count();
-
-        IEnumerable<LeaderboardEntry> selectedEntries = entries
-            .OrderBy(e => e.Score)
-            .Skip(from)
-            .Take(count);
-
-        return (selectedEntries.ToArray(), totalEntries);
-    }
-
-    public LeaderboardEntry? GetLeaderboardEntryFromPlayer(GameUser user, string levelId)
-    {
-        return this._realm.All<LeaderboardEntry>().Where(e=>e.Completed).FirstOrDefault(e => e.User == user && e.LevelId == levelId);
-    }
-
-    public int GetPositionOfLeaderboardEntry(LeaderboardEntry entry)
-    {
-        return this._realm.All<LeaderboardEntry>().Count(e => e.LevelId == entry.LevelId && e.Score < entry.Score && e.Completed) + 1;
+        return entries.AsQueryable();
     }
 }

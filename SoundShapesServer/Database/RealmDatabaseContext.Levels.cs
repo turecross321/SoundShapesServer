@@ -35,7 +35,7 @@ public partial class RealmDatabaseContext
 
     public LevelPublishResponse? UpdateLevel(LevelPublishRequest updatedLevel, GameLevel level, GameUser user)
     {
-        if (!user.Equals(level.Author)) return null;
+        if (user.Id  != level.Author.Id) return null;
         
         this._realm.Write(() =>
         {

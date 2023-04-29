@@ -1,3 +1,4 @@
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
 
@@ -27,5 +28,11 @@ public static class PaginationHelper
     public static GameAlbum[] PaginateAlbums(IQueryable<GameAlbum> albums, int from, int count)
     {
         return albums.AsEnumerable().Skip(from).Take(count).ToArray();
+    }
+
+    public static LeaderboardEntry[] PaginateLeaderboardEntries(IQueryable<LeaderboardEntry> entries, int from,
+        int count)
+    {
+        return entries.AsEnumerable().Skip(from).Take(count).ToArray();
     }
 }

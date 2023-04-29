@@ -28,7 +28,7 @@ public class LevelPublishingEndpoints : EndpointGroup
             Title = parser.GetParameterValue("title"),
             Language = int.Parse(parser.GetParameterValue("sce_np_language")),
             Id = levelId,
-            FileSize = parser.Files.First(f => f.Name == "Level").Data.Length
+            FileSize = parser.Files.First(f => f.Name == "level").Data.Length
         };
 
         LevelPublishResponse publishedLevel = database.PublishLevel(levelRequest, user);
@@ -42,7 +42,7 @@ public class LevelPublishingEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
 
         if (level == null) return new Response(HttpStatusCode.NotFound);
-        if (level.Author.Equals(user) == false) return new Response(HttpStatusCode.Forbidden);
+        if (level.Author.Id != user.Id) return new Response(HttpStatusCode.Forbidden);
         
         bool uploadedResources = LevelResourceEndpoints.UploadLevelResources(dataStore, parser, levelId);
         if (uploadedResources == false) return HttpStatusCode.BadRequest;
@@ -52,7 +52,7 @@ public class LevelPublishingEndpoints : EndpointGroup
             Title = parser.GetParameterValue("title"),
             Language = int.Parse(parser.GetParameterValue("sce_np_language")),
             Id = levelId,
-            FileSize = parser.Files.First(f => f.Name == "Level").Data.Length
+            FileSize = parser.Files.First(f => f.Name == "level").Data.Length
         };
         
         LevelPublishResponse? publishedLevel = database.UpdateLevel(levelRequest, level, user);
@@ -65,7 +65,7 @@ public class LevelPublishingEndpoints : EndpointGroup
     // Gets called by Endpoints.cs
     public static Response UnPublishLevel(IDataStore dataStore, RealmDatabaseContext database, GameUser user, GameLevel level)
     {
-        if (level.Author.Equals(user) == false) return new Response(HttpStatusCode.Forbidden);  // Check if user is the level publisher
+        if (level.Author.Id != user.Id) return new Response(HttpStatusCode.Forbidden);
         
         LevelResourceEndpoints.RemoveLevelResources(dataStore, level);
         return database.UnPublishLevel(level) ? new Response(HttpStatusCode.OK) : HttpStatusCode.InternalServerError;

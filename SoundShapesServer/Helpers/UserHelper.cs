@@ -41,7 +41,7 @@ public static class UserHelper
             User = UserToUserResponse(followed)
         };
     }
-    public static UserResponse? UserToUserResponse(GameUser? user)
+    public static UserResponse UserToUserResponse(GameUser? user)
     {
         if (user == null) return new UserResponse();
         

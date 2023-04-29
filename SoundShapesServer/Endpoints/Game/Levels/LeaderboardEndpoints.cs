@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Net;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
@@ -9,6 +10,7 @@ using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Game.Leaderboards;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using static SoundShapesServer.Helpers.LeaderboardHelper;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
 
@@ -29,7 +31,7 @@ public class LeaderboardEndpoints : EndpointGroup
 
         if (levelId == null) return HttpStatusCode.NotFound;
 
-        LeaderboardSubmissionRequest deSerializedRequest = LeaderboardHelper.DeSerializeSubmission(body);
+        LeaderboardSubmissionRequest deSerializedRequest = DeSerializeSubmission(body);
         
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level != null) // Doing this since story levels can be null
@@ -47,50 +49,31 @@ public class LeaderboardEndpoints : EndpointGroup
 
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.page", ContentType.Json)]
     [GameEndpoint("~level:{levelId}/~leaderboard.page", ContentType.Json)]
-    public LeaderboardEntriesWrapper? GetLeaderboard(RequestContext context, RealmDatabaseContext database, string levelId)
+    public LeaderboardEntriesWrapper GetLeaderboard(RequestContext context, RealmDatabaseContext database, string levelId)
     {
         int count = int.Parse(context.QueryString["count"] ?? throw new InvalidOperationException());
         int from = int.Parse(context.QueryString["from"] ?? "0");
 
-        (LeaderboardEntry[] entries, int totalEntries) = database.GetLeaderboardEntries(levelId, from, count);
+        IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntries(levelId);
 
-        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(totalEntries, from, count);
-
-        LeaderboardEntryResponse[] responseEntries = new LeaderboardEntryResponse[Math.Min(count, entries.Length)];
-
-        for (int i = 0; i < entries.Length; i++)
-        {
-            responseEntries[i] = new LeaderboardEntryResponse()
-            {
-                Position = from + (i + 1),
-                Entrant = UserHelper.UserToUserResponse(entries[i].User),
-                Score = entries[i].Score
-            };
-        }
-
-        return new LeaderboardEntriesWrapper
-        {
-            Entries = responseEntries,
-            NextToken = nextToken,
-            PreviousToken = previousToken
-        };
+        return LeaderboardEntriesToWrapper(entries, from, count);
     }
 
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near", ContentType.Json)]
     [GameEndpoint("~level:{levelId}/~leaderboard.near", ContentType.Json)]
-    public LeaderboardEntryResponse[] GetLeaderboardNearPlayer(RequestContext context, RealmDatabaseContext database, GameUser user, string levelId)
+    public LeaderboardEntryResponse[] GetLeaderboardByPlayer(RequestContext context, RealmDatabaseContext database, GameUser user, string levelId)
     {
-        LeaderboardEntry? entry = database.GetLeaderboardEntryFromPlayer(user, levelId);
+        IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntries(levelId);
+
+        LeaderboardEntry? entry =
+            entries.FirstOrDefault(e => e.LevelId == levelId && e.Completed && e.User.Id == user.Id);
         if (entry == null) return Array.Empty<LeaderboardEntryResponse>();
         
-        LeaderboardEntryResponse[] response = new LeaderboardEntryResponse[1];
-        response[0] = new LeaderboardEntryResponse()
-        {
-            Position = database.GetPositionOfLeaderboardEntry(entry),
-            Entrant = UserHelper.UserToUserResponse(entry.User),
-            Score = entry.Score
-        };
+        int position = entries.Count(e => e.LevelId == entry.LevelId && e.Score < entry.Score && e.Completed) + 1;
 
+        LeaderboardEntryResponse[] response = new LeaderboardEntryResponse[1];
+        response[0] = LeaderboardEntryToResponse(entry, position);
+        
         return response;
     }
 }

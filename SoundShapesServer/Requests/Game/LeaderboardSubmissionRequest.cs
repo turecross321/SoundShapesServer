@@ -3,7 +3,7 @@ namespace SoundShapesServer.Requests.Game;
 public class LeaderboardSubmissionRequest
 {
     public int Deaths { get; set; }
-    public int PlayTime { get; set; }
+    public long PlayTime { get; set; }
     public int Golded { get; set; }
     public int TokenCount { get; set; }
     public long Score { get; set; }

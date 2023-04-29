@@ -47,7 +47,7 @@ public class ApiUserEndpoints : EndpointGroup
     {
         GameUser? recipient = database.GetUserWithId(id);
         if (recipient == null) return HttpStatusCode.NotFound;
-        if (recipient.Equals(user)) return HttpStatusCode.Forbidden;
+        if (recipient.Id == user.Id) return HttpStatusCode.Forbidden;
 
         if (database.FollowUser(user, recipient)) return HttpStatusCode.OK;
         
@@ -59,7 +59,7 @@ public class ApiUserEndpoints : EndpointGroup
     {
         GameUser? recipient = database.GetUserWithId(id);
         if (recipient == null) return HttpStatusCode.NotFound;
-        if (recipient.Equals(user)) return HttpStatusCode.Forbidden;
+        if (recipient.Id == user.Id) return HttpStatusCode.Forbidden;
 
         if (database.UnFollowUser(user, recipient)) return HttpStatusCode.OK;
         
