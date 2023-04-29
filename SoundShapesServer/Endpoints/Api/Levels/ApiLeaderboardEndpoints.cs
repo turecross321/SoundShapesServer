@@ -19,5 +19,23 @@ public class ApiLeaderboardEndpoints : EndpointGroup
         IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntries(levelId);
 
         return LeaderboardHelper.LeaderboardEntriesToApiWrapper(entries, from, count);
-    } 
+    }
+
+    [ApiEndpoint("level/{levelId}/leaderboard/{userId}")]
+    [Authentication(false)]
+    public ApiLeaderboardEntryResponse? GetLeaderboardEntryByUser(RequestContext context, RealmDatabaseContext database,
+        string levelId, string userId)
+    {
+        GameUser? user = database.GetUserWithId(userId);
+        if (user == null) return null;
+
+        IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntries(levelId);
+
+        LeaderboardEntry? entry = entries.FirstOrDefault(e => e.User.Id == user.Id);
+        if (entry == null) return null;
+        
+        int position = entries.Count(e => e.Score < entry.Score);
+
+        return LeaderboardHelper.LeaderboardEntryToApiResponse(entry, position);
+    }
 }
