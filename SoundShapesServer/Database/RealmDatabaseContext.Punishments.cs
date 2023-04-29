@@ -12,17 +12,18 @@ public partial class RealmDatabaseContext
             this.RemoveAllSessionsWithUser(user);
         }
         
+        Punishment newPunishment = new ()
+        {
+            Id = GenerateGuid(),
+            PunishmentType = request.PunishmentType,
+            User = user,
+            Reason = request.Reason,
+            ExpiresAt = request.ExpiresAtUtc,
+            IssuedAt = DateTimeOffset.UtcNow
+        };
+        
         this._realm.Write(() =>
         {
-            Punishment newPunishment = new ()
-            {
-                PunishmentType = request.PunishmentType,
-                User = user,
-                Reason = request.Reason,
-                ExpiresAt = request.ExpiresAtUtc,
-                IssuedAt = DateTimeOffset.UtcNow
-            };
-            
             this._realm.Add(newPunishment);
         });
     }

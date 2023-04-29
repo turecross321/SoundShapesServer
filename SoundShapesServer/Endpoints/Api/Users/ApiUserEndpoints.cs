@@ -5,7 +5,7 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types;
 
-namespace SoundShapesServer.Endpoints.Api;
+namespace SoundShapesServer.Endpoints.Api.Users;
 
 public class ApiUserEndpoints : EndpointGroup
 {

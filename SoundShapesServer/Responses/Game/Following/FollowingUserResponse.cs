@@ -7,6 +7,6 @@ namespace SoundShapesServer.Responses.Game.Following;
 public class FollowingUserResponse
 {
     [JsonProperty("id")] public string Id { get; set; }
-    [JsonProperty("type")] public string Type { get; } = ResponseType.follow.ToString();
+    [JsonProperty("type")] public string Type { get; } = GameContentType.follow.ToString();
     [JsonProperty("target")] public UserResponse User { get; set; }
 }

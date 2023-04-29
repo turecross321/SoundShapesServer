@@ -6,5 +6,5 @@ namespace SoundShapesServer.Responses.Game.Levels;
 public class LevelVersionResponse
 {
     [JsonProperty("id")] public string Id { get; set; }
-    [JsonProperty("type")] public string Type { get; } = ResponseType.version.ToString();
+    [JsonProperty("type")] public string Type { get; } = GameContentType.version.ToString();
 }

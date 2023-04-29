@@ -1,6 +1,6 @@
 namespace SoundShapesServer.Types;
 
-public enum ResponseType
+public enum GameContentType
 {
     identity,
     level,

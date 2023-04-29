@@ -66,7 +66,6 @@ public class AuthenticationEndpoints : EndpointGroup
 
     
     [GameEndpoint("~identity:*.hello", ContentType.Json)]
-    [NullStatusCode(HttpStatusCode.Forbidden)]
     public Response Hello(RequestContext context)
     {
         return HttpStatusCode.OK;

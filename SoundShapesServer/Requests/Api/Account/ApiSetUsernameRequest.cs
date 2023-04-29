@@ -1,4 +1,4 @@
-namespace SoundShapesServer.Requests.Api;
+namespace SoundShapesServer.Requests.Api.Account;
 
 public class ApiSetUsernameRequest
 {

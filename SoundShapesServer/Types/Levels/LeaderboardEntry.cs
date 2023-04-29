@@ -1,11 +1,11 @@
 using MongoDB.Bson;
 using Realms;
 
-namespace SoundShapesServer.Types;
+namespace SoundShapesServer.Types.Levels;
 
 public class LeaderboardEntry : RealmObject
 {
-    public ObjectId Id = ObjectId.GenerateNewId();
+    public string Id { get; set; }
     public GameUser? User { get; set; }
     public string? LevelId { get; set; }
     public long Score { get; set; }

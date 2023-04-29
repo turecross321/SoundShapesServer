@@ -1,8 +1,8 @@
 using MongoDB.Bson;
 
-namespace SoundShapesServer.Responses.Api;
+namespace SoundShapesServer.Responses.Api.Moderation;
 
-public class PunishmentResponse
+public class ApiPunishmentResponse
 {
     public ObjectId Id { get; set; }
     public string UserId { get; set; }

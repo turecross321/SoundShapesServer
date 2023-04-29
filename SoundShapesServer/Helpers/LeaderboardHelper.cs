@@ -1,7 +1,9 @@
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Api;
+using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Responses.Game.Leaderboards;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Helpers;
 

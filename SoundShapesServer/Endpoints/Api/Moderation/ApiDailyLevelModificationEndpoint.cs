@@ -7,6 +7,7 @@ using MongoDB.Bson;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Requests.Api.Levels;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
@@ -69,7 +70,7 @@ public class ApiDailyLevelModificationEndpoint : EndpointGroup
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
-        DailyLevel? dailyLevel = database.DailyLevelWithId(ObjectId.Parse(id));
+        DailyLevel? dailyLevel = database.DailyLevelWithId(id);
         if (dailyLevel == null) return HttpStatusCode.NotFound;
         
         database.RemoveDailyLevel(dailyLevel);

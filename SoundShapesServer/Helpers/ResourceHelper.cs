@@ -1,5 +1,6 @@
 using HttpMultipartParser;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Albums;
 
 namespace SoundShapesServer.Helpers;
 

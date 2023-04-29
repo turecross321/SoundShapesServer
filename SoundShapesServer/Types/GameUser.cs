@@ -8,7 +8,7 @@ namespace SoundShapesServer.Types;
 
 public class GameUser : RealmObject, IUser
 {
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string Id { get; set; }
     public string Username { get; set; } = string.Empty;
     public int Type { get; set; } = (int)UserType.Default;
     public string? Email { get; set; }

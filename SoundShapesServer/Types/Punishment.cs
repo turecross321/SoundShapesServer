@@ -5,7 +5,7 @@ namespace SoundShapesServer.Types;
 
 public class Punishment : RealmObject
 {
-    public ObjectId Id = ObjectId.GenerateNewId();
+    public string Id { get; set; }
     public GameUser User { get; set; }
     public int PunishmentType { get; set; }
     public string Reason { get; set; }

@@ -25,8 +25,10 @@ public class ReportEndpoints : EndpointGroup
         string levelId = IdFormatter.DeFormatLevelIdAndVersion(formattedLevelId);
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;
+
+        if (level.Author.Id == user.Id) return HttpStatusCode.BadRequest;
         
-        database.SubmitReport(user, level, reportReasonId);
+        database.SubmitReport(user, level.Id, ServerContentType.Level, reportReasonId);
         
         return HttpStatusCode.OK;
     }

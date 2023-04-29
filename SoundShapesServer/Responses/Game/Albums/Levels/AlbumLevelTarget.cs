@@ -8,7 +8,7 @@ namespace SoundShapesServer.Responses.Game.Albums.Levels;
 public class AlbumLevelTarget
 {
     [JsonProperty("id")] public string Id { get; set; }
-    [JsonProperty("type")] public string Type = ResponseType.level.ToString();
+    [JsonProperty("type")] public string Type = GameContentType.level.ToString();
     [JsonProperty("latestVersion")] public LevelVersionResponse LatestVersion { get; set; }
     [JsonProperty("author")] public UserResponse Author { get; set; }
     [JsonProperty("completed")] public bool Completed { get; set; }

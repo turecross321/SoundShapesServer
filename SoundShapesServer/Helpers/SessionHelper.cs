@@ -68,40 +68,42 @@ public static class SessionHelper
         if (uriPath == GameEndpointAttribute.BaseRoute + "~identity:*.hello")
         {
             // If Session is an Unauthorized Session, let it only access the Eula Endpoint 
-            if (session.SessionType == (int)SessionType.Unauthorized) return true;
+            if (session.SessionType is (int)SessionType.Unauthorized) return true;
         }
-        else if (Regex.IsMatch(uriPath, "^/otg/[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$"))
+        if (Regex.IsMatch(uriPath, "^/otg/[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$"))
         {
             // If Session is an Unauthorized Session, let it only access the Eula Endpoint 
             if (session.SessionType == (int)SessionType.Unauthorized) return true;
         }
-        else if (uriPath.StartsWith(GameEndpointAttribute.BaseRoute))
+        if (uriPath.StartsWith(GameEndpointAttribute.BaseRoute) || uriPath.StartsWith("/identity/"))
         {
             // If Session is a Game Session, let it only access Game endpoints
             if (session.SessionType == (int)SessionType.Game) return true;
         }
-        else if (uriPath == ApiEndpointAttribute.BaseRoute + "account/setEmail")
+        if (uriPath == ApiEndpointAttribute.BaseRoute + "account/setEmail")
         {
             // If Session is a SetEmail Session, let it only access the setEmail endpoint
             if (session.SessionType == (int)SessionType.SetEmail) return true;
 
             return false;
         }
-        else if (uriPath == ApiEndpointAttribute.BaseRoute + "account/setPassword")
+
+        if (uriPath == ApiEndpointAttribute.BaseRoute + "account/setPassword")
         {
             // If Session is a SetPassword Session, let it only access the SetPassword endpoint
             if (session.SessionType == (int)SessionType.SetPassword) return true;
 
             return false;
         }
-        else if (uriPath == ApiEndpointAttribute.BaseRoute + "account/remove")
+
+        if (uriPath == ApiEndpointAttribute.BaseRoute + "account/remove")
         {
             // If Session is a RemoveAccount Session, let it only access the Remove endpoint
             if (session.SessionType == (int)SessionType.RemoveAccount) return true;
 
             return false;
         }
-        else if (uriPath.StartsWith(ApiEndpointAttribute.BaseRoute))
+        if (uriPath.StartsWith(ApiEndpointAttribute.BaseRoute))
         {
             // If Session is an API Session, let it only access api endpoints
             if (session.SessionType == (int)SessionType.API) return true;

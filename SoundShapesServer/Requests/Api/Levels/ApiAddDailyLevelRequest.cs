@@ -1,4 +1,4 @@
-namespace SoundShapesServer.Requests.Api;
+namespace SoundShapesServer.Requests.Api.Levels;
 
 public class ApiAddDailyLevelRequest
 {

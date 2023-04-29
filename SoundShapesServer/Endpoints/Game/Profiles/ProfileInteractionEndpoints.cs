@@ -38,7 +38,7 @@ public class ProfileInteractionEndpoints : EndpointGroup
             FollowResponse response = new()
             {
                 Id = userBeingFollowed.Id,
-                Type = ResponseType.follow.ToString(),
+                Type = GameContentType.follow.ToString(),
                 User = new UserResponse()
                 {
                     Id = IdFormatter.FormatUserId(userBeingFollowed.Id),

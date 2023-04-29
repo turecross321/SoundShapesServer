@@ -20,7 +20,7 @@ public partial class RealmDatabaseContext
         return dailyLevels.AsQueryable();
     }
 
-    public DailyLevel? DailyLevelWithId(ObjectId id)
+    public DailyLevel? DailyLevelWithId(string id)
     {
         return this._realm.All<DailyLevel>().FirstOrDefault(d => d.Id == id);
     }
@@ -28,6 +28,7 @@ public partial class RealmDatabaseContext
     {
         DailyLevel dailyLevel = new()
         {
+            Id = GenerateGuid(),
             Level = level,
             Date = date
         };

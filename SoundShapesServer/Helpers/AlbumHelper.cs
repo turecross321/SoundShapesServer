@@ -44,12 +44,12 @@ public static class AlbumHelper
         return new AlbumResponse()
         {
             Id = album.Id,
-            Type = ResponseType.link.ToString(),
+            Type = GameContentType.link.ToString(),
             CreationDate = album.CreationDate.ToUnixTimeMilliseconds().ToString(),
             Target = new AlbumTarget
             {
                 Id = IdFormatter.FormatAlbumId(album.Id),
-                Type = ResponseType.album.ToString(),
+                Type = GameContentType.album.ToString(),
                 Metadata = new AlbumMetadata
                 {
                     Artist = album.Artist,
@@ -95,7 +95,7 @@ public static class AlbumHelper
             Target = new AlbumLevelInfoTarget()
             {
                 Id = IdFormatter.FormatLevelId(level.Id),
-                Type = ResponseType.level.ToString(),
+                Type = GameContentType.level.ToString(),
                 Completed = level.UsersWhoHaveCompletedLevel.Contains(user)
             }
         };
@@ -129,12 +129,12 @@ public static class AlbumHelper
         return new AlbumLevelResponse()
         {
             Id = IdFormatter.FormatAlbumLinkId(album.Id, level.Id),
-            Type = ResponseType.link.ToString(),
+            Type = GameContentType.link.ToString(),
             Timestamp = level.ModificationDate.ToUnixTimeMilliseconds(),
             Target = new AlbumLevelTarget
             {
                 Id = IdFormatter.FormatLevelId(level.Id),
-                Type = ResponseType.level.ToString(),
+                Type = GameContentType.level.ToString(),
                 Completed = level.UsersWhoHaveCompletedLevel.Contains(user),
                 LatestVersion = new LevelVersionResponse
                 {

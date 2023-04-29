@@ -9,6 +9,7 @@ public partial class RealmDatabaseContext
     {
         GameUser user = new()
         {
+            Id = GenerateGuid(),
             Username = username
         };
 

@@ -28,7 +28,7 @@ public static class LevelHelper
     {
         return new () {
             Id = IdFormatter.FormatLevelPublishId(level.Id, level.CreationDate.ToUnixTimeMilliseconds()),
-            Type = ResponseType.upload.ToString(),
+            Type = GameContentType.upload.ToString(),
             Author = new()
             {
                 Id = IdFormatter.FormatUserId(level.Author.Id),
@@ -41,7 +41,7 @@ public static class LevelHelper
             Parent = new()
             {
                 Id = IdFormatter.FormatLevelId(level.Id),
-                Type = ResponseType.level.ToString()
+                Type = GameContentType.level.ToString()
             },
             CreationDate = level.CreationDate.ToUnixTimeMilliseconds()
         };   
@@ -107,7 +107,7 @@ public static class LevelHelper
             Author = UserHelper.UserToUserResponse(level.Author),
             LatestVersion = IdFormatter.FormatLevelIdAndVersion(level.Id, level.ModificationDate.ToUnixTimeMilliseconds()),
             Title = level.Name,
-            Type = ResponseType.level.ToString(),
+            Type = GameContentType.level.ToString(),
             Completed = level.UsersWhoHaveCompletedLevel.Contains(user),
             Metadata = GenerateMetadataResponse(level)
         };

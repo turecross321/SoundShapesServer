@@ -9,6 +9,7 @@ using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Requests.Api.Account;
 using SoundShapesServer.Services;
 using SoundShapesServer.Types;
 using static SoundShapesServer.Helpers.SessionHelper;
@@ -96,7 +97,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     {
         GameUser user = session.User;
 
-        if (body.NewPasswordSha512.Length != 128 || !Regex.IsMatch(Sha512Pattern, body.NewPasswordSha512))
+        if (body.NewPasswordSha512.Length != 128 || !Regex.IsMatch(body.NewPasswordSha512, Sha512Pattern))
             return new Response("Password is definitely not SHA512. Please hash the password.",
                 ContentType.Plaintext, HttpStatusCode.BadRequest);
 

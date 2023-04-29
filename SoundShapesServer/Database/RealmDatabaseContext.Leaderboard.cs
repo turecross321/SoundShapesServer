@@ -1,5 +1,6 @@
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Database;
 
@@ -9,6 +10,7 @@ public partial class RealmDatabaseContext
     {
         LeaderboardEntry entry = new()
         {
+            Id = GenerateGuid(),
             User = user,
             LevelId = levelId,
             Score = request.Score,

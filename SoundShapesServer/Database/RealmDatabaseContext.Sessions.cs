@@ -19,11 +19,11 @@ public partial class RealmDatabaseContext
         
         GameSession session = new()
         {
-            ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(sessionExpirationSeconds),
             Id = id,
             User = user,
             SessionType = (int)sessionType,
-            Ip = ip
+            Ip = ip,
+            ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(sessionExpirationSeconds)
         };
 
         IEnumerable<GameSession> sessionsToDelete = this._realm.All<GameSession>()
