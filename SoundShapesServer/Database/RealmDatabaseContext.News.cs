@@ -11,19 +11,23 @@ public partial class RealmDatabaseContext
         return translatedNews;
     }
 
-    public void CreateNewsEntry(ApiNewsEntryRequest request)
+    public void CreateNewsEntry(string language, string title, string summary, string fullText, string url)
     {
+
         NewsEntry entry = new NewsEntry()
         {
-            Language = request.Language,
-            Title = request.Title,
-            Summary = request.Summary,
-            FullText = request.FullText,
-            Url = request.Url
+            Language = language,
+            Title = title,
+            Summary = summary,
+            FullText = fullText,
+            Url = url
         };
         
         this._realm.Write(() =>
         {
+            // Remove previous entries with the same language
+            this._realm.RemoveRange<NewsEntry>(this._realm.All<NewsEntry>().Where(e=>e.Language == language));
+            
             this._realm.Add(entry);
         });
     }

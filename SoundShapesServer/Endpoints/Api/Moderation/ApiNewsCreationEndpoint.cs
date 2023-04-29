@@ -4,6 +4,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
+using HttpMultipartParser;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
@@ -15,26 +16,40 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 public class ApiNewsCreationEndpoint : EndpointGroup
 {
     [ApiEndpoint("news/create", Method.Post)]
-    public Response CreateNewsEntry(RequestContext context, RealmDatabaseContext database, ApiNewsEntryRequest body, GameUser user)
+    public Response CreateNewsEntry(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, Stream body, GameUser user)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
         
-        database.CreateNewsEntry(body);
+        MultipartFormDataParser request = MultipartFormDataParser.Parse(body);
 
-        return HttpStatusCode.OK;
-    }
+        string language;
+        string title;
+        string summary;
+        string fullText;
+        string url;
 
-    [ApiEndpoint("news/{language}/setImage", Method.Post)]
-    public Response SetNewsImage(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, byte[] body, string language)
-    {
-        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
-
-        NewsEntry? newsEntry = database.GetNews(language);
-        if (newsEntry == null) return HttpStatusCode.NotFound;
+        byte[] image;
         
-        if (!IsByteArrayPng(body)) return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
+        try
+        {
+            language = request.Parameters.First(p => p.Name == "Language").Data;
+            title = request.Parameters.First(p => p.Name == "Title").Data;
+            summary = request.Parameters.First(p => p.Name == "Summary").Data;
+            fullText = request.Parameters.First(p => p.Name == "FullText").Data;
+            url = request.Parameters.First(p => p.Name == "Url").Data;
 
-        dataStore.WriteToStore(GetNewsResourceKey(newsEntry.Language), body);
+            image = FilePartToBytes(request.Files.First(p => p.Name == "Image"));
+        }
+        catch (InvalidOperationException e)
+        {
+            return HttpStatusCode.BadRequest;
+        }
+        
+        if (!IsByteArrayPng(image)) return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
+
+        dataStore.WriteToStore(GetNewsResourceKey(language), image);
+        database.CreateNewsEntry(language, title, summary, fullText, url);
+
         return HttpStatusCode.OK;
     }
 }
