@@ -74,12 +74,11 @@ public static class UserHelper
         {
             Id = userToCheck.Id,
             Username = userToCheck.Username,
-            Online = userToCheck.Sessions.Any(),
+            UserType = userToCheck.Type,
             FollowerCount = userToCheck.Followers.Count(),
             FollowingCount = userToCheck.Following.Count(),
             LikedLevelsCount = userToCheck.LikedLevels.Count(),
             PublishedLevelsCount = userToCheck.Levels.Count(),
-            Following = following
         };
     }
 }

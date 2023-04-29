@@ -8,7 +8,7 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public FollowingUsersWrapper? GetFollowers(GameUser userBeingFollowed, int from, int count)
+    public FollowingUsersWrapper GetFollowers(GameUser userBeingFollowed, int from, int count)
     {
         IQueryable<FollowRelation> relations = this._realm.All<FollowRelation>().Where(r => r.Recipient == userBeingFollowed);
 
@@ -30,7 +30,7 @@ public partial class RealmDatabaseContext
         return UsersToFollowingUsersWrapper(userBeingFollowed, followers, totalEntries, from, count);
     }
 
-    public FollowingUsersWrapper? GetFollowedUsers(GameUser follower, int from, int count)
+    public FollowingUsersWrapper GetFollowedUsers(GameUser follower, int from, int count)
     {
         IQueryable<FollowRelation> relations = this._realm.All<FollowRelation>().Where(r => r.Follower == follower);
 

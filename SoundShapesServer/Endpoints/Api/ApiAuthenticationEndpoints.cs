@@ -47,8 +47,10 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         {
             Punishment? longestBan = bans.MaxBy(p => p.ExpiresAt);
             if (longestBan == null) return new Response("User is banned.", ContentType.Json, HttpStatusCode.Forbidden);
-            
-            return new Response("User is banned. Expires at " + longestBan.ExpiresAt + ".", ContentType.Json, HttpStatusCode.Forbidden);
+
+            string banString = "User is banned. Expires at " + longestBan.ExpiresAt + ".\n" +
+                               "Reason: " + longestBan.Reason;
+            return new Response(banString, ContentType.Json, HttpStatusCode.Forbidden);
         }
 
         GameSession session = database.GenerateSessionForUser(context, user, SessionType.API);

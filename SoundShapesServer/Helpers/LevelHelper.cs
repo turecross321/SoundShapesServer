@@ -97,7 +97,7 @@ public static class LevelHelper
         return response;
     }
     
-    public static LevelResponse? LevelToLevelResponse(GameLevel level, GameUser user)
+    public static LevelResponse LevelToLevelResponse(GameLevel level, GameUser user)
     {
         string formattedLevelId = IdFormatter.FormatLevelId(level.Id);
 

@@ -84,7 +84,10 @@ public class AuthenticationEndpoints : EndpointGroup
             Punishment? longestBan = bans.MaxBy(p => p.ExpiresAt);
             if (longestBan == null) return "User is banned.";
             
-            return "User is banned. Expires at " + longestBan.ExpiresAt + ".";
+            string banString = "User is banned. Expires at " + longestBan.ExpiresAt + ".\n" +
+                               "Reason: " + longestBan.Reason;
+            
+            return banString;
         }
 
         if (user.HasFinishedRegistration == false)

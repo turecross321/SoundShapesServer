@@ -32,7 +32,7 @@ public class LevelEndpoints : EndpointGroup
 
         IQueryable<GameLevel> levels = category switch
         {
-            "tagged3" => database.DailyLevels(),
+            "tagged3" => database.DailyLevels(DateTimeOffset.UtcNow),
             "greatesthits" => database.GreatestHits(),
             "newest" => database.NewestLevels(),
             "top" => database.TopLevels(),
@@ -77,7 +77,7 @@ public class LevelEndpoints : EndpointGroup
         return LevelHelper.LevelsToLevelsWrapper(levels, user, from, count);
     }
 
-    private LevelsWrapper? SearchForLevels(GameUser user, string query, RealmDatabaseContext database, int from, int count)
+    private LevelsWrapper SearchForLevels(GameUser user, string query, RealmDatabaseContext database, int from, int count)
     {
         string levelName = query.Split(":")[1];
 

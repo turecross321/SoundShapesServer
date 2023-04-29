@@ -86,11 +86,9 @@ public partial class RealmDatabaseContext
         return entries;
     }
 
-    public IQueryable<GameLevel> DailyLevels()
+    public IQueryable<GameLevel> DailyLevels(DateTimeOffset date)
     {
-        List<DailyLevel> entries = this._realm.All<DailyLevel>()
-            .OrderByDescending(l=>l.Date)
-            .ToList();
+        List<DailyLevel> entries = this.DailyLevelObjects(date).ToList();
         
         List<GameLevel> levels = new List<GameLevel>();
 
