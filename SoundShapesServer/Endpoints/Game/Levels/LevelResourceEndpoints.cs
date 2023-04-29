@@ -7,10 +7,10 @@ using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using HttpMultipartParser;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
 
@@ -19,22 +19,25 @@ public class LevelResourceEndpoints : EndpointGroup
     // Called from Publishing Endpoints
     public static LevelPublishRequest? UploadLevelResources(IDataStore dataStore, MultipartFormDataParser parser, string levelId)
     {
-        FilePart? image = null;
-        FilePart? level = null;
-        FilePart? sound = null;
+        byte[]? image = null;
+        byte[]? level = null;
+        byte[]? sound = null;
         
         foreach (FilePart? file in parser.Files)
         {
-            switch (file.ContentType)
+            byte[] bytes = FilePartToBytes(file);
+            FileType fileType = GetFileTypeFromFilePart(file);
+
+            switch (fileType)
             {
-                case IFileType.Image:
-                    image = file;
+                case FileType.Image:
+                    image = bytes;
                     break;
-                case IFileType.Level:
-                    level = file;
+                case FileType.Level:
+                    level = bytes;
                     break;
-                case IFileType.Sound:
-                    sound = file;
+                case FileType.Sound:
+                    sound = bytes;
                     break;
                 default:
                     Console.WriteLine("User attempted to upload an unaccounted-for file: " + file.ContentType);
@@ -48,17 +51,14 @@ public class LevelResourceEndpoints : EndpointGroup
             return null;
         }
 
-        foreach (FilePart? file in parser.Files)
-        {
-            MemoryStream memoryStream = new MemoryStream();
-            file.Data.CopyTo(memoryStream);
-            byte[] byteArray = memoryStream.ToArray();
-            
-            string key = ResourceHelper.GetLevelResourceKey(levelId, file.ContentType);
+        string imageKey = GetLevelResourceKey(levelId, FileType.Image);
+        string levelKey = GetLevelResourceKey(levelId, FileType.Level);
+        string soundKey = GetLevelResourceKey(levelId, FileType.Sound);
 
-            dataStore.WriteToStore(key, byteArray);
-        }
-
+        dataStore.WriteToStore(imageKey, image);
+        dataStore.WriteToStore(levelKey, level);
+        dataStore.WriteToStore(soundKey, sound);
+        
         LevelPublishRequest levelRequest = new ()
         {
             Title = parser.GetParameterValue("title"),
@@ -68,7 +68,7 @@ public class LevelResourceEndpoints : EndpointGroup
             Song = sound,
             Language = int.Parse(parser.GetParameterValue("sce_np_language")),
             Id = levelId,
-            FileSize = level.Data.Length
+            FileSize = level.Length
         };
         
         return levelRequest;
@@ -76,9 +76,9 @@ public class LevelResourceEndpoints : EndpointGroup
     // Called from Publishing Endpoints
     public static void RemoveLevelResources(IDataStore dataStore, GameLevel level)
     {
-        dataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.Id, IFileType.Image));
-        dataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.Id, IFileType.Level));
-        dataStore.RemoveFromStore(ResourceHelper.GetLevelResourceKey(level.Id, IFileType.Sound));
+        dataStore.RemoveFromStore(GetLevelResourceKey(level.Id, FileType.Image));
+        dataStore.RemoveFromStore(GetLevelResourceKey(level.Id, FileType.Level));
+        dataStore.RemoveFromStore(GetLevelResourceKey(level.Id, FileType.Sound));
     }
     private static Response GetResource(IDataStore dataStore, string fileName)
     {
@@ -99,7 +99,9 @@ public class LevelResourceEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;
 
-        string key = ResourceHelper.GetLevelResourceKey(level.Id, file);
+        FileType fileType = GetFileTypeFromName(file);
+        
+        string key = GetLevelResourceKey(level.Id, fileType);
 
         return GetResource(dataStore, key);
     }

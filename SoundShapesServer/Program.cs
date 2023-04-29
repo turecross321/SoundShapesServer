@@ -13,13 +13,15 @@ server.DiscoverEndpointsFromAssembly(Assembly.GetExecutingAssembly());
 
 using RealmDatabaseProvider databaseProvider = new();
 
+server.UseJsonConfig<GameServerConfig>("gameServer.json");
+
 server.UseDatabaseProvider(databaseProvider);
 
 server.AddAuthenticationService(new SessionProvider(), true);
 server.AddStorageService<FileSystemDataStore>();
 server.AddService<EmailService>();
 
-server.UseJsonConfig<GameServerConfig>("gameServer.json");
+
 
 server.AddMiddleware<CrossOriginMiddleware>();
 

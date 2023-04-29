@@ -52,6 +52,7 @@ public static class LevelHelper
 
         if (level.Deaths > 0)
         {
+            // ReSharper disable once PossibleLossOfFraction
             float rate = level.Deaths / level.Plays;
             difficulty = Math.Clamp(rate, 1, 5);
         }

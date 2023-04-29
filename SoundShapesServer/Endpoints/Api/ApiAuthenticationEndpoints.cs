@@ -30,7 +30,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
         GameUser? user = database.GetUserWithEmail(body.Email);
         if (user == null)
         {
-            return new Response(new ApiErrorResponse {Reason = "The email address or password was incorrect."}, ContentType.Json, HttpStatusCode.Forbidden);
+            return new Response("The email address or password was incorrect.", ContentType.Json, HttpStatusCode.Forbidden);
         }
 
         if (BCrypt.Net.BCrypt.PasswordNeedsRehash(user.PasswordBcrypt, WorkFactor))
@@ -40,7 +40,7 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
 
         if (BCrypt.Net.BCrypt.Verify(body.PasswordSha512, user.PasswordBcrypt) == false)
         {
-            return new Response(new ApiErrorResponse {Reason = "The email address or password was incorrect."}, ContentType.Json, HttpStatusCode.Forbidden);
+            return new Response("The email address or password was incorrect.", ContentType.Json, HttpStatusCode.Forbidden);
         }
         
         GameSession session = database.GenerateSessionForUser(context, user, SessionType.API);
@@ -65,18 +65,18 @@ public partial class ApiAuthenticationEndpoints : EndpointGroup
 
         if (user.HasFinishedRegistration)
         {
-            return new Response(new ApiErrorResponse {Reason = "User has already finished registration."}, ContentType.Json, HttpStatusCode.Conflict);
+            return new Response("User has already finished registration.", ContentType.Json, HttpStatusCode.Conflict);
         }
 
         // Check if user has sent a valid mail address
         if (MailAddress.TryCreate(body.Email, out MailAddress? mailAddress) == false)
         {
-            return new Response(new ApiErrorResponse {Reason = "Invalid Email."}, ContentType.Json, HttpStatusCode.BadRequest);
+            return new Response("Invalid Email.", ContentType.Json, HttpStatusCode.BadRequest);
         }
         
         // Check if mail address has been used before
         GameUser? userWithEmail = database.GetUserWithEmail(body.Email);
-        if (userWithEmail != null && !userWithEmail.Equals(user)) return new Response(new ApiErrorResponse {Reason = "Email already taken."}, ContentType.Json, HttpStatusCode.Forbidden);
+        if (userWithEmail != null && !userWithEmail.Equals(user)) return new Response("Email already taken.", ContentType.Json, HttpStatusCode.Forbidden);
         
         database.SetUserEmail(user, body.Email, session);
 

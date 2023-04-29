@@ -21,7 +21,7 @@ public class ApiLevelResourceEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;
 
-        string key = ResourceHelper.GetLevelResourceKey(level.Id, IFileType.Image);
+        string key = ResourceHelper.GetLevelResourceKey(level.Id, FileType.Image);
 
         if (!dataStore.ExistsInStore(key))
             return HttpStatusCode.NotFound;

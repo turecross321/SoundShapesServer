@@ -30,7 +30,6 @@ public class AlbumResourceEndpoints : EndpointGroup
         (RequestContext context, IDataStore dataStore, RealmDatabaseContext database, string albumId, string file, string sessionId)
     {
         if (database.IsSessionInvalid(sessionId)) return HttpStatusCode.Forbidden;
-        
         if (database.GetAlbumWithId(albumId) == null) return HttpStatusCode.NotFound;
 
         string key = ResourceHelper.GetAlbumResourceKey(albumId, file);

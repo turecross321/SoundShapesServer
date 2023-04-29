@@ -53,10 +53,10 @@ public class CloudSyncingEndpoints : EndpointGroup
     {
         string key = ResourceHelper.GetSaveResourceKey(user.Id);
 
-        if (dataStore.TryGetDataFromStore(key, out byte[]? byteArray) == false)
+        if (dataStore.TryGetDataFromStore(key, out byte[]? bytes) == false)
             return HttpStatusCode.NotFound;
 
-        if (byteArray != null) return new Response(byteArray, ContentType.BinaryData);
+        if (bytes != null) return new Response(bytes, ContentType.BinaryData);
         else return HttpStatusCode.NotFound;
     }
 }

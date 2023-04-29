@@ -14,7 +14,7 @@ public class NewsEndpoints : EndpointGroup
     [GameEndpoint("global/news/~metadata:*.get", ContentType.Json)]
     public NewsResponse GlobalNews(RequestContext context, RealmDatabaseContext database)
     {
-        NewsEntry news = database.GetGlobalNews();
+        NewsEntry? news = database.GetNews("global");
         return NewsEntryToNewsResponse(news);
     }
 
@@ -22,7 +22,7 @@ public class NewsEndpoints : EndpointGroup
     [GameEndpoint("global/news/{language}/~metadata:*.get", ContentType.Json)]
     public NewsResponse TranslatedNews(RequestContext context, GameSession session, RealmDatabaseContext database, string language)
     {
-        NewsEntry news = database.GetTranslatedNews(language);
+        NewsEntry? news = database.GetNews(language);
         return NewsEntryToNewsResponse(news);
     }
 }
