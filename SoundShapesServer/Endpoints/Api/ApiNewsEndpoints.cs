@@ -7,14 +7,23 @@ using Bunkum.HttpServer.Storage;
 using HttpMultipartParser;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types;
+using static SoundShapesServer.Helpers.NewsHelper;
 using static SoundShapesServer.Helpers.ResourceHelper;
 
-namespace SoundShapesServer.Endpoints.Api.Moderation;
+namespace SoundShapesServer.Endpoints.Api;
 
-public class ApiNewsCreationEndpoint : EndpointGroup
+public class ApiNewsEndpoints : EndpointGroup
 {
+    [ApiEndpoint("news/{language}")]
+    [Authentication(false)]
+    public ApiNewsResponse News(RequestContext context, RealmDatabaseContext database, string language)
+    {
+        NewsEntry? news = database.GetNews(language);
+        return NewsEntryToNewsApiResponse(news);
+    }
+    
     [ApiEndpoint("news/create", Method.Post)]
     public Response CreateNewsEntry(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, Stream body, GameUser user)
     {
