@@ -22,6 +22,8 @@ public partial class RealmDatabaseContext
 
     public IpAuthorization GetIpFromAddress(GameUser user, string ipAddress, SessionType sessionType)
     {
+        this._realm.Refresh();
+        
         IpAuthorization? ip = user.IpAddresses.FirstOrDefault(i => i.IpAddress == ipAddress && i.SessionType == (int)sessionType);
         if (ip == null) ip = AddUserIp(user, ipAddress, sessionType);
         
