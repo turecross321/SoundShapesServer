@@ -12,8 +12,8 @@ public class GameLevel : RealmObject
         Author = author;
         Name = name;
         Language = language;
-        CreationDate = DateTimeOffset.UtcNow;
-        ModificationDate = DateTimeOffset.UtcNow;
+        CreationDate = creationDate;
+        ModificationDate = creationDate;
         UniquePlays = Enumerable.Empty<GameUser>().ToList();
         UsersWhoHaveCompletedLevel = Enumerable.Empty<GameUser>().ToList();
         Likes = Enumerable.Empty<LevelLikeRelation>().AsQueryable();

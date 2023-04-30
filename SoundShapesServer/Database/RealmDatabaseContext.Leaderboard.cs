@@ -11,7 +11,7 @@ public partial class RealmDatabaseContext
         LeaderboardEntry entry = new (GenerateGuid(), user, levelId, request);
 
         LeaderboardEntry? previousEntry =
-            _realm.All<LeaderboardEntry>().AsEnumerable().FirstOrDefault(e => e.LevelId == levelId && e.User == user && e.Completed);
+            _realm.All<LeaderboardEntry>().AsEnumerable().FirstOrDefault(e => e.LevelId == levelId && e.User.Id == user.Id && e.Completed);
 
         _realm.Write(() =>
         {

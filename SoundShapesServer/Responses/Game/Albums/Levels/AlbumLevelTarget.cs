@@ -12,7 +12,6 @@ public class AlbumLevelTarget
     public AlbumLevelTarget(GameLevel level, GameUser user)
     {
         Id = IdFormatter.FormatLevelId(level.Id);
-        Type = GameContentType.level.ToString();
         Completed = level.UsersWhoHaveCompletedLevel.Contains(user);
         LatestVersion = new LevelVersionResponse(level);
         Author = new UserResponse(level.Author);
