@@ -135,6 +135,6 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     public Response RemoveAccount(RequestContext context, RealmDatabaseContext database, GameUser user, IDataStore dataStore)
     {
         database.RemoveUser(user, dataStore);
-        return new Response("o/", ContentType.Plaintext);
+        return new Response("o7", ContentType.Plaintext);
     }
 }
