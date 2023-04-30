@@ -2,6 +2,7 @@ using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Database;
 
@@ -64,8 +65,7 @@ public partial class RealmDatabaseContext
 
     public GameUser? GetUserWithId(string? id)
     {
-        if (id == null) return null;
-        return _realm.All<GameUser>().FirstOrDefault(u => u.Id == id);
+        return id == null ? null : _realm.All<GameUser>().FirstOrDefault(u => u.Id == id);
     }
 
     public void RemoveUser(GameUser user, IDataStore dataStore)
@@ -74,6 +74,8 @@ public partial class RealmDatabaseContext
         {
             RemoveLevel(level, dataStore);
         }
+        
+        dataStore.RemoveFromStore(GetSaveResourceKey(user.Id));
         
         RemoveAllReportsWithContentId(user.Id);
         
