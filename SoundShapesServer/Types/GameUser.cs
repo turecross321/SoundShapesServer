@@ -31,7 +31,7 @@ public class GameUser : RealmObject, IUser
 
     public string Id { get; init; }
     public string Username { get; set; } = string.Empty;
-    public int PermissionsType = (int)Types.PermissionsType.Default;
+    public int PermissionsType { get; set; } = (int)Types.PermissionsType.Default;
     public string? Email { get; set; }
     public string? PasswordBcrypt { get; set; }
     public bool HasFinishedRegistration { get; set; }
