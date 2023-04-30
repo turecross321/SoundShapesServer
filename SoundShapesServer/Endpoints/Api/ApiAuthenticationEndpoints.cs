@@ -50,8 +50,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 
         GameSession session = database.GenerateSessionForUser(context, user, SessionType.Api);
 
-        ApiAuthenticationResponse response = new(id: session.Id ?? throw new InvalidOperationException(), expiresAtUtc: session.ExpiresAt, userId: user.Id,
-            username: user.Username);
+        ApiAuthenticationResponse response = new(session);
 
         return new Response(response, ContentType.Json);
     }
