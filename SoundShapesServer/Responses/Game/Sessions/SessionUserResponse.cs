@@ -1,9 +1,16 @@
 using Newtonsoft.Json;
+using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Responses.Game.Sessions;
 
 public class SessionUserResponse
 {
+    public SessionUserResponse(GameUser user)
+    {
+        Username = user.Username;
+        Id = user.Id;
+    }
+
     [JsonProperty("id")] public string Id { get; set; }
     [JsonProperty("display_name")] public string Username { get; set; }
 }

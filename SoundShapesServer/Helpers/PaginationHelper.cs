@@ -40,4 +40,9 @@ public static class PaginationHelper
     {
         return entries.AsEnumerable().Skip(from).Take(count).ToArray();
     }
+
+    public static Punishment[] PaginatePunishments(IQueryable<Punishment> entries, int from, int count)
+    {
+        return entries.AsEnumerable().Skip(from).Take(count).ToArray();
+    }
 }

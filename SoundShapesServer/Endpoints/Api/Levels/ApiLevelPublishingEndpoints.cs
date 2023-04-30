@@ -25,14 +25,16 @@ public class ApiLevelPublishingEndpoints : EndpointGroup
         bool uploadedResources = ApiLevelResourceEndpoints.UploadLevelResources(dataStore, parser, levelId);
         if (uploadedResources == false) return HttpStatusCode.BadRequest;
 
-        LevelPublishRequest levelRequest = new ()
-        {
-            Title = parser.GetParameterValue("Title"),
-            Language = 0,
-            Id = levelId,
-            FileSize = parser.Files.First(f => f.Name == "Level").Data.Length
-        };
-        
+        bool suppliedModified = DateTimeOffset.TryParse(parser.GetParameterValue("Modified"), out DateTimeOffset modified);
+
+        LevelPublishRequest levelRequest = new(
+            parser.GetParameterValue("Name"),
+            int.Parse(parser.GetParameterValue("Language")),
+            levelId,
+            parser.Files.First(f => f.Name == "level").Data.Length,
+            suppliedModified ? modified : null
+            );
+
         database.PublishLevel(levelRequest, user);
 
         return new Response(HttpStatusCode.Created);

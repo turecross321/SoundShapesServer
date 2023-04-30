@@ -1,9 +1,29 @@
 using Newtonsoft.Json;
+using SoundShapesServer.Types;
+using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Responses.Api.Levels;
 
 public class ApiLevelResponse
 {
+    public ApiLevelResponse(GameLevel level, GameUser? user)
+    {
+        
+        bool? completed = null;
+        if (user != null) completed = level.UsersWhoHaveCompletedLevel.Contains(user);
+        
+        Id = level.Id;
+        Name = level.Name;
+        AuthorId = level.Author.Id;
+        AuthorName = level.Author.Username;
+        Created = level.CreationDate;
+        Modified = level.ModificationDate;
+        TotalPlays = level.Plays;
+        UniquePlays = level.UniquePlays.Count;
+        Likes = level.Likes.Count();
+        CompletedByYou = completed;
+    }
+
     public string Id { get; set; }
     public string Name { get; set; }
     public string AuthorId { get; set; }

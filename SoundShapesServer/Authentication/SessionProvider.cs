@@ -11,7 +11,7 @@ namespace SoundShapesServer.Authentication;
 public class SessionProvider : IAuthenticationProvider<GameUser, GameSession>
 {
     public GameUser? AuthenticateUser(ListenerContext request, Lazy<IDatabaseContext> db) 
-        => this.AuthenticateToken(request, db)?.User;
+        => AuthenticateToken(request, db)?.User;
 
     public GameSession? AuthenticateToken(ListenerContext request, Lazy<IDatabaseContext> db)
     {
@@ -44,8 +44,6 @@ public class SessionProvider : IAuthenticationProvider<GameUser, GameSession>
         string uriPath = request.Uri.AbsolutePath;
 
         bool allowed = IsSessionAllowedToAccessEndpoint(session, uriPath);
-        if (allowed) return session;
-
-        return null;
+        return allowed ? session : null;
     }
 }

@@ -5,7 +5,9 @@ public class LeaderboardSubmissionRequest
     public int Deaths { get; set; }
     public long PlayTime { get; set; }
     public int Golded { get; set; }
-    public int TokenCount { get; set; }
+    public int Tokens { get; set; }
     public long Score { get; set; }
-    public bool Completed { get; set; } = true; // is 1 by default (completed) because campaign score submissions don't use the completion parameter
+    
+    // is true by default (completed) because campaign score submissions don't use the completion parameter
+    public bool Completed { get; set; } = true; 
 }

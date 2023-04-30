@@ -2,6 +2,12 @@ namespace SoundShapesServer.Responses.Api.Levels;
 
 public class ApiDailyLevelsWrapper
 {
-    public ApiDailyLevelResponse[] DailyLevels { get; set; }
-    public int Count { get; set; }
+    public ApiDailyLevelsWrapper(ApiDailyLevelResponse[] dailyLevels, int count)
+    {
+        DailyLevels = dailyLevels;
+        Count = count;
+    }
+
+    public ApiDailyLevelResponse[] DailyLevels { get; }
+    public int Count { get; }
 }

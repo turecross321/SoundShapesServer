@@ -5,11 +5,16 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
+    public IQueryable<Punishment> GetPunishments()
+    {
+        return _realm.All<Punishment>();
+    }
+    
     public void PunishUser(GameUser user, ApiPunishRequest request)
     {
         if (request.PunishmentType == (int)PunishmentType.Ban)
         {
-            this.RemoveAllSessionsWithUser(user);
+            RemoveAllSessionsWithUser(user);
         }
         
         Punishment newPunishment = new ()
@@ -22,9 +27,9 @@ public partial class RealmDatabaseContext
             IssuedAt = DateTimeOffset.UtcNow
         };
         
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
-            this._realm.Add(newPunishment);
+            _realm.Add(newPunishment);
         });
     }
 }

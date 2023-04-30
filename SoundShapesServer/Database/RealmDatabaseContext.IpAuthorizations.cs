@@ -1,19 +1,18 @@
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Responses.Api.IP_Authorization;
 using SoundShapesServer.Types;
-using static SoundShapesServer.Helpers.IpHelper;
 
 namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public IpAuthorization AddUserIp(GameUser user, string ipAddress, SessionType sessionType)
+    private IpAuthorization AddUserIp(GameUser user, string ipAddress, SessionType sessionType)
     {
-        IpAuthorization ip = new IpAuthorization() { IpAddress = ipAddress, User = user, SessionType = (int)sessionType};
+        IpAuthorization ip = new() { IpAddress = ipAddress, User = user, SessionType = (int)sessionType};
         
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
-            this._realm.Add(ip);
+            _realm.Add(ip);
         });
 
         return ip;
@@ -21,7 +20,7 @@ public partial class RealmDatabaseContext
 
     public IpAuthorization GetIpFromAddress(GameUser user, string ipAddress, SessionType sessionType)
     {
-        this._realm.Refresh();
+        _realm.Refresh();
         
         IpAuthorization? ip = user.IpAddresses.FirstOrDefault(i => i.IpAddress == ipAddress && i.SessionType == (int)sessionType);
         if (ip == null) ip = AddUserIp(user, ipAddress, sessionType);
@@ -32,13 +31,13 @@ public partial class RealmDatabaseContext
     {
         if (ip.Authorized) return false;
         
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
             ip.Authorized = true;
             ip.OneTimeUse = oneTime;
         });
         
-        this._realm.Refresh();
+        _realm.Refresh();
 
         return true;
     }
@@ -47,23 +46,23 @@ public partial class RealmDatabaseContext
     {
         GameSession[] sessionsFromIp = GetSessionsWithIp(ip);
         
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
             // Remove all sessions with ip address
             foreach (var session in sessionsFromIp)
             {
-                this._realm.Remove(session);
+                _realm.Remove(session);
             }
             
-            this._realm.Remove(ip);
+            _realm.Remove(ip);
         });
 
-        this._realm.Refresh();
+        _realm.Refresh();
     }
 
     public void UseIpAddress(IpAuthorization ip)
     {
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
             ip.Authorized = false;
             ip.OneTimeUse = false;
@@ -72,8 +71,6 @@ public partial class RealmDatabaseContext
 
     public ApiUnAuthorizedIpResponse[] GetUnAuthorizedIps(GameUser user, SessionType sessionType)
     {
-        List<string> addresses = new List<string>();
-        
         IpAuthorization[] unAuthorizedIps = user.IpAddresses.AsEnumerable().Where(i=>i.Authorized == false && i.SessionType == (int)sessionType).ToArray();
 
         // Convert list to response array
@@ -82,7 +79,7 @@ public partial class RealmDatabaseContext
         
         for (int i = 0; i < response.Length; i++)
         {
-            response[i] = IpAuthorizationToUnAuthorizedIpResponse(unAuthorizedIps[i]);
+            response[i] = new ApiUnAuthorizedIpResponse(unAuthorizedIps[i]);
         }
 
         return response;
@@ -99,7 +96,7 @@ public partial class RealmDatabaseContext
         
         for (int i = 0; i < response.Length; i++)
         {
-            response[i] = IpAuthorizationToAuthorizedIpResponse(authorizedIps[i]);
+            response[i] = new ApiAuthorizedIpResponse(authorizedIps[i]);
         }
 
         return response;

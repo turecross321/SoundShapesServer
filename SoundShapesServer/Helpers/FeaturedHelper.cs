@@ -3,11 +3,11 @@ using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Helpers;
 
-public class FeaturedHelper
+public static class FeaturedHelper
 {
     public static string SerializeCommunityTabs(List<CommunityTab> communityTabs)
     {
-        JObject jObject = new JObject();
+        JObject jObject = new();
 
         for (int i = 0; i < communityTabs.Count; i++)
         {

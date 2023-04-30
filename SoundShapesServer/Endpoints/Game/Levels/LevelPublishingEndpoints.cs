@@ -22,17 +22,14 @@ public class LevelPublishingEndpoints : EndpointGroup
         bool uploadedResources = LevelResourceEndpoints.UploadLevelResources(dataStore, parser, levelId);
         if (uploadedResources == false) return HttpStatusCode.BadRequest;
         
-        LevelPublishRequest levelRequest = new ()
-        {
-            Title = parser.GetParameterValue("title"),
-            Language = int.Parse(parser.GetParameterValue("sce_np_language")),
-            Id = levelId,
-            FileSize = parser.Files.First(f => f.Name == "level").Data.Length
-        };
+        LevelPublishRequest levelRequest = new (
+            parser.GetParameterValue("title"), 
+            int.Parse(parser.GetParameterValue("sce_np_language")), 
+            levelId, 
+            parser.Files.First(f => f.Name == "level").Data.Length);
 
-        LevelPublishResponse publishedLevel = database.PublishLevel(levelRequest, user);
-
-        return new Response(publishedLevel, ContentType.Json, HttpStatusCode.Created);
+        GameLevel publishedLevel = database.PublishLevel(levelRequest, user);
+        return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
     
     // Gets called by Endpoints.cs
@@ -46,19 +43,14 @@ public class LevelPublishingEndpoints : EndpointGroup
         bool uploadedResources = LevelResourceEndpoints.UploadLevelResources(dataStore, parser, levelId);
         if (uploadedResources == false) return HttpStatusCode.BadRequest;
 
-        LevelPublishRequest levelRequest = new ()
-        {
-            Title = parser.GetParameterValue("title"),
-            Language = int.Parse(parser.GetParameterValue("sce_np_language")),
-            Id = levelId,
-            FileSize = parser.Files.First(f => f.Name == "level").Data.Length
-        };
+        LevelPublishRequest levelRequest = new (
+            parser.GetParameterValue("title"), 
+            int.Parse(parser.GetParameterValue("sce_np_language")), 
+            levelId, 
+            parser.Files.First(f => f.Name == "level").Data.Length);
         
-        LevelPublishResponse? publishedLevel = database.UpdateLevel(levelRequest, level, user);
-
-        if (publishedLevel == null) return new Response(HttpStatusCode.InternalServerError);
-
-        return new Response(publishedLevel, ContentType.Json, HttpStatusCode.Created);
+        GameLevel? publishedLevel = database.UpdateLevel(levelRequest, level, user);
+        return publishedLevel == null ? new Response(HttpStatusCode.BadRequest) : new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
     
     // Gets called by Endpoints.cs

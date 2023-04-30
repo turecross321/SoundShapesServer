@@ -14,7 +14,7 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
     
     public void Initialize()
     {
-        this._configuration = new RealmConfiguration(Path.Join(Environment.CurrentDirectory, "database.realm"))
+        _configuration = new RealmConfiguration(Path.Join(Environment.CurrentDirectory, "database.realm"))
         {
             SchemaVersion = 1,
             Schema = new []
@@ -34,7 +34,7 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
                 typeof(Report),
                 typeof(Punishment)
             },
-            MigrationCallback = (migration, oldVersion) =>
+            MigrationCallback = (_, _) =>
             {
             }
         };
@@ -43,18 +43,18 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
     private readonly ThreadLocal<Realm> _realmStorage = new(true);
     public RealmDatabaseContext GetContext() 
     {
-        this._realmStorage.Value ??= Realm.GetInstance(this._configuration);
+        _realmStorage.Value ??= Realm.GetInstance(_configuration);
         
-        return new RealmDatabaseContext(this._realmStorage.Value);
+        return new RealmDatabaseContext(_realmStorage.Value);
     }
     
     public void Dispose() 
     {
-        foreach (Realm realmStorageValue in this._realmStorage.Values) 
+        foreach (Realm realmStorageValue in _realmStorage.Values) 
         {
-            realmStorageValue?.Dispose();
+            realmStorageValue.Dispose();
         }
 
-        this._realmStorage.Dispose();
+        _realmStorage.Dispose();
     }
 }

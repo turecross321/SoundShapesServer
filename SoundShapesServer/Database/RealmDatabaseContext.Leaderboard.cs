@@ -8,34 +8,22 @@ public partial class RealmDatabaseContext
 {
     public bool SubmitScore(LeaderboardSubmissionRequest request, GameUser user, string levelId)
     {
-        LeaderboardEntry entry = new()
-        {
-            Id = GenerateGuid(),
-            User = user,
-            LevelId = levelId,
-            Score = request.Score,
-            PlayTime = request.PlayTime,
-            Deaths = request.Deaths,
-            Golded = request.Golded,
-            Tokens = request.TokenCount,
-            Completed = Convert.ToBoolean(request.Completed),
-            Date = DateTimeOffset.UtcNow
-        };
+        LeaderboardEntry entry = new (GenerateGuid(), user, levelId, request);
 
         LeaderboardEntry? previousEntry =
-            this._realm.All<LeaderboardEntry>().FirstOrDefault(e => e.LevelId == levelId && e.User == user && e.Completed);
+            _realm.All<LeaderboardEntry>().FirstOrDefault(e => e.LevelId == levelId && e.User == user && e.Completed);
 
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
             // If there is a previous entry, and it's more than the new one, remove it and replace it with the new one
             if (previousEntry != null && previousEntry.Score > entry.Score)
             {
-                this._realm.Remove(previousEntry);
-                this._realm.Add(entry);
+                _realm.Remove(previousEntry);
+                _realm.Add(entry);
             }
             else if (previousEntry == null)
             {
-                this._realm.Add(entry);
+                _realm.Add(entry);
             }
             else
             {
@@ -48,7 +36,7 @@ public partial class RealmDatabaseContext
 
     public IQueryable<LeaderboardEntry> GetLeaderboardEntries(string levelId)
     {
-        IEnumerable<LeaderboardEntry> entries = this._realm.All<LeaderboardEntry>()
+        IEnumerable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>()
             .AsEnumerable()
             .Where(e=>e.Completed)
             .Where(e => e.LevelId == levelId)
@@ -58,9 +46,9 @@ public partial class RealmDatabaseContext
     }
     public void RemoveLeaderboardEntry(LeaderboardEntry entry)
     {
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
-            this._realm.Remove(entry);
+            _realm.Remove(entry);
         });
     }
 }

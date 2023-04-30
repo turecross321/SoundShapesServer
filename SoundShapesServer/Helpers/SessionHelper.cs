@@ -1,12 +1,7 @@
-using System.Net;
 using System.Text.RegularExpressions;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Endpoints;
-using SoundShapesServer.Responses.Game.Sessions;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Helpers;
@@ -21,7 +16,7 @@ public static class SessionHelper
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789", 8);
     private static string GenerateSimpleSessionId(RealmDatabaseContext database, string idCharacters, int idLength)
     {
-        Random r = new Random();
+        Random r = new();
         string id = "";
         for (int i = 0; i < idLength; i++)
         {
@@ -30,37 +25,6 @@ public static class SessionHelper
 
         if (database.GetSessionWithSessionId(id) == null) return id; // Return if Id has not been used before
         return GenerateSimpleSessionId(database, idCharacters, idLength); // Generate new Id if it already exists   
-    }
-    public static GameSessionResponse SessionToSessionResponse(GameSession session)
-    {
-        GameSessionResponse gameSessionResponse = new GameSessionResponse
-        {
-            ExpirationDate = session.ExpiresAt.ToUnixTimeMilliseconds(),
-            Id = session.Id,
-            User = new SessionUserResponse
-            {
-                Username = session.User.Username,
-                Id = session.User.Id
-            }
-        };
-
-        return gameSessionResponse;
-    }
-    public static Response SessionResponseToResponse(RequestContext context, GameSessionResponse gameSessionResponse)
-    {
-        GameSessionWrapper responseWrapper = new ()
-        {
-            GameSession = gameSessionResponse
-        };
-        
-        Console.WriteLine($"{gameSessionResponse.User.Username} has logged in.");
-
-        context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={gameSessionResponse.Id};Version=1;Path=/");
-        context.ResponseHeaders.Add("x-otg-identity-displayname", gameSessionResponse.User.Username);
-        context.ResponseHeaders.Add("x-otg-identity-personid", gameSessionResponse.User.Id);
-        context.ResponseHeaders.Add("x-otg-identity-sessionid", gameSessionResponse.Id);
-        
-        return new Response(responseWrapper, ContentType.Json, HttpStatusCode.Created);
     }
 
     public static bool IsSessionAllowedToAccessEndpoint(GameSession session, string uriPath)
@@ -106,7 +70,7 @@ public static class SessionHelper
         if (uriPath.StartsWith(ApiEndpointAttribute.BaseRoute))
         {
             // If Session is an API Session, let it only access api endpoints
-            if (session.SessionType == (int)SessionType.API) return true;
+            if (session.SessionType == (int)SessionType.Api) return true;
         }
 
         return false;

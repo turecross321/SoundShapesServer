@@ -23,7 +23,7 @@ public static class ResourceHelper
     }
     public static byte[] FilePartToBytes(FilePart filePart)
     {
-        MemoryStream memoryStream = new MemoryStream();
+        MemoryStream memoryStream = new();
         filePart.Data.CopyTo(memoryStream);
         byte[] bytes = memoryStream.ToArray();
 
@@ -64,16 +64,16 @@ public static class ResourceHelper
 
         switch (type)
         {
-            case AlbumResourceType.thumbnail:
+            case AlbumResourceType.Thumbnail:
                 return $"{AlbumsPath}/{albumId}_thumbnail.png";
-            case AlbumResourceType.sidePanel:
+            case AlbumResourceType.SidePanel:
                 return $"{AlbumsPath}/{albumId}_sidePanel.png";
         }
 
         return "";
     }
     
-    public static string GenerateAlbumResourceUrl(string albumId, AlbumResourceType type, string sessionId)
+    public static string GenerateAlbumResourceUrl(string albumId, AlbumResourceType type, string? sessionId)
     {
         return $"otg/~album:{albumId}/~content:{type.ToString()}/data.get/{sessionId}";
     }

@@ -5,7 +5,6 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
-using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Requests.Api.Account;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types;
@@ -49,15 +48,10 @@ public class ApiAuthenticationEndpoints : EndpointGroup
             return new Response(banString, ContentType.Json, HttpStatusCode.Forbidden);
         }
 
-        GameSession session = database.GenerateSessionForUser(context, user, SessionType.API);
+        GameSession session = database.GenerateSessionForUser(context, user, SessionType.Api);
 
-        ApiAuthenticationResponse response = new()
-        {
-            Id = session.Id,
-            ExpiresAtUtc = session.ExpiresAt,
-            UserId = user.Id,
-            Username = user.Username
-        };
+        ApiAuthenticationResponse response = new(id: session.Id ?? throw new InvalidOperationException(), expiresAtUtc: session.ExpiresAt, userId: user.Id,
+            username: user.Username);
 
         return new Response(response, ContentType.Json);
     }

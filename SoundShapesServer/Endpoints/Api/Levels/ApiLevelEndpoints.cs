@@ -1,7 +1,6 @@
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
@@ -22,7 +21,7 @@ public class ApiLevelEndpoints: EndpointGroup
 
         IQueryable<GameLevel> levels = database.GetLevelsPublishedByUser(author);
 
-        return LevelHelper.LevelsToApiLevelResponseWrapper(levels, from, count, user);
+        return new ApiLevelResponseWrapper(levels, from, count, user);
     }
 
     [ApiEndpoint("level/{levelId}")]
@@ -30,8 +29,6 @@ public class ApiLevelEndpoints: EndpointGroup
     public ApiLevelResponse? Level(RequestContext context, RealmDatabaseContext database, string levelId, GameUser? user)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
-        if (level == null) return null;
-
-        return LevelHelper.LevelToApiLevelResponse(level, user);
+        return level == null ? null : new ApiLevelResponse(level, user);
     }
 }

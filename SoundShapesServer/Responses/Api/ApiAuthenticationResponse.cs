@@ -2,8 +2,16 @@ namespace SoundShapesServer.Responses.Api;
 
 public class ApiAuthenticationResponse
 {
-    public string Id { get; set; }
-    public DateTimeOffset ExpiresAtUtc { get; set; }
-    public string UserId { get; set; }
-    public string Username { get; set; }
+    public ApiAuthenticationResponse(string id, DateTimeOffset expiresAtUtc, string userId, string username)
+    {
+        Id = id;
+        ExpiresAtUtc = expiresAtUtc;
+        UserId = userId;
+        Username = username;
+    }
+
+    public string Id { get; }
+    public DateTimeOffset ExpiresAtUtc { get; }
+    public string UserId { get; }
+    public string Username { get;  }
 }

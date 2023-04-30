@@ -1,6 +1,6 @@
 namespace SoundShapesServer.Helpers;
 
-public class IdFormatter
+public static class IdFormatter
 {
     public static string FormatLevelId(string id)
     {

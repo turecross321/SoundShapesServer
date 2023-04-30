@@ -1,8 +1,6 @@
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
-using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
@@ -20,7 +18,7 @@ public class ApiLeaderboardEndpoints : EndpointGroup
         
         IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntries(levelId);
 
-        return LeaderboardHelper.LeaderboardEntriesToApiWrapper(entries, from, count);
+        return new ApiLeaderboardEntryWrapper(entries, from, count);
     }
 
     [ApiEndpoint("level/{levelId}/leaderboard/{userId}")]
@@ -38,6 +36,6 @@ public class ApiLeaderboardEndpoints : EndpointGroup
         
         int position = entries.Count(e => e.Score < entry.Score);
 
-        return LeaderboardHelper.LeaderboardEntryToApiResponse(entry, position);
+        return new ApiLeaderboardEntryResponse(entry, position);
     }
 }

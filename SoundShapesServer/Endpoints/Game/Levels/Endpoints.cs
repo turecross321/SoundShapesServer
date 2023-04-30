@@ -6,7 +6,7 @@ using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using HttpMultipartParser;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 
@@ -28,7 +28,7 @@ public class Endpoints : EndpointGroup
         if (level == null) return new Response(HttpStatusCode.NotFound);
         
         if (action == "delete") return LevelPublishingEndpoints.UnPublishLevel(dataStore, database, user, level);
-        if (action == "latest") return new Response(LevelHelper.LevelToLevelResponse(level, user), ContentType.Json);
+        if (action == "latest") return new Response(new LevelResponse(level, user), ContentType.Json);
 
         else return new Response(HttpStatusCode.NotFound);
     }

@@ -3,10 +3,8 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
-using MongoDB.Bson;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Requests.Api.Levels;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types;
@@ -31,25 +29,10 @@ public class ApiDailyLevelModificationEndpoint : EndpointGroup
         // DailyLevel objects and GameLevel objects
         
         DailyLevel[] paginatedDailyLevels = dailyLevels.AsEnumerable().Skip(from).Take(count).ToArray();
-        List<ApiDailyLevelResponse> dailyLevelResponses = new List<ApiDailyLevelResponse>();
 
-        for (int i = 0; i < paginatedDailyLevels.Length; i++)
-        {
-            ApiDailyLevelResponse dailyLevelResponse = new()
-            {
-                Id = paginatedDailyLevels[i].Id.ToString(),
-                LevelId = paginatedDailyLevels[i].Level.Id,
-                DateUtc = paginatedDailyLevels[i].Date
-            };
-            
-            dailyLevelResponses.Add(dailyLevelResponse);
-        }
-        
-        return new ApiDailyLevelsWrapper
-        {
-            DailyLevels = dailyLevelResponses.ToArray(),
-            Count = dailyLevels.Count()
-        };
+        return new ApiDailyLevelsWrapper(
+            dailyLevels: paginatedDailyLevels.Select(t => new ApiDailyLevelResponse(t)).ToArray(),
+            count: dailyLevels.Count());
     }
     
     [ApiEndpoint("daily/add", Method.Post)]

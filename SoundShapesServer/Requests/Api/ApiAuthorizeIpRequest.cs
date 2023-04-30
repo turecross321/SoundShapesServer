@@ -1,7 +1,14 @@
 namespace SoundShapesServer.Requests.Api;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiAuthorizeIpRequest
 {
-    public string IpAddress { get; set; }
-    public bool OneTimeUse { get; set; }
+    public ApiAuthorizeIpRequest(string ipAddress, bool oneTimeUse)
+    {
+        IpAddress = ipAddress;
+        OneTimeUse = oneTimeUse;
+    }
+
+    public string IpAddress { get; }
+    public bool OneTimeUse { get; }
 }

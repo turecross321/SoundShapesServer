@@ -6,6 +6,6 @@ public static class PermissionHelper
 {
     public static bool IsUserAdmin(GameUser user)
     {
-        return user.Type == (int)UserType.Administrator;
+        return GameUser.Type == (int)UserType.Administrator;
     }
 }

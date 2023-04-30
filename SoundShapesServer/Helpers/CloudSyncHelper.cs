@@ -2,11 +2,11 @@ using Newtonsoft.Json.Linq;
 
 namespace SoundShapesServer.Helpers;
 
-public class CloudSyncHelper
+public static class CloudSyncHelper
 {
     public static byte[] CombineSaves(byte[] save1, byte[] save2)
     {
-        JObject result = new JObject();
+        JObject result = new();
 
         string save1String = System.Text.Encoding.UTF8.GetString(save1, 0, save1.Length);
         JObject json1 = JObject.Parse(save1String);
@@ -19,9 +19,9 @@ public class CloudSyncHelper
             if (json2.Property(prop.Name) != null)
             {
                 JToken val1 = prop.Value;
-                JToken val2 = json2[prop.Name];
+                JToken? val2 = json2[prop.Name];
 
-                if (val1.Type == JTokenType.Integer && val2.Type == JTokenType.Integer)
+                if (val2 != null && val1.Type == JTokenType.Integer && val2.Type == JTokenType.Integer)
                 {
                     result[prop.Name] = (int)val1 > (int)val2 ? val1 : val2;
                 }

@@ -1,9 +1,26 @@
 using Newtonsoft.Json;
+using SoundShapesServer.Authentication;
+using SoundShapesServer.Helpers;
+using SoundShapesServer.Types.Albums;
 
 namespace SoundShapesServer.Responses.Game.Albums;
 
 public class AlbumMetadata
 {
+    public AlbumMetadata(GameAlbum album, GameSession session)
+    {
+        LinerNoteResponse[] linerNoteResponses = album.LinerNotes.Select(linerNote => new LinerNoteResponse(linerNote)).ToArray();
+        LinerNotesWrapper linerNoteWrapper = new (linerNoteResponses);
+        string linerNotesString = JsonConvert.SerializeObject(linerNoteWrapper);
+        
+        Artist = album.Artist;
+        LinerNotes = linerNotesString;
+        SidePanelUrl = ResourceHelper.GenerateAlbumResourceUrl(album.Id, AlbumResourceType.SidePanel, session.Id);
+        CreationDate = album.CreationDate.ToString();
+        Name = album.Name;
+        ThumbnailUrl = ResourceHelper.GenerateAlbumResourceUrl(album.Id, AlbumResourceType.Thumbnail, session.Id);
+    }
+
     [JsonProperty("albumArtist")] public string Artist { get; set; }
     [JsonProperty("linerNotes")] public string LinerNotes { get; set; }
     [JsonProperty("sidePanelURL")] public string SidePanelUrl { get; set; }

@@ -38,7 +38,7 @@ public class ApiCreateNewsEndpoint
 
             image = FilePartToBytes(request.Files.First(p => p.Name == "Image"));
         }
-        catch (InvalidOperationException e)
+        catch (InvalidOperationException)
         {
             return HttpStatusCode.BadRequest;
         }
@@ -46,7 +46,14 @@ public class ApiCreateNewsEndpoint
         if (!IsByteArrayPng(image)) return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
 
         dataStore.WriteToStore(GetNewsResourceKey(language), image);
-        database.CreateNewsEntry(language, title, summary, fullText, url);
+        database.CreateNewsEntry(new NewsEntry()
+        {
+            Language = language, 
+            Title = title, 
+            Summary = summary, 
+            FullText = fullText, 
+            Url = url
+        });
 
         return HttpStatusCode.Created;
     }

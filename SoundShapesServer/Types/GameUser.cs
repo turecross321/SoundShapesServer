@@ -8,9 +8,30 @@ namespace SoundShapesServer.Types;
 
 public class GameUser : RealmObject, IUser
 {
-    public string Id { get; set; }
+    public GameUser(string id, string? email, string? passwordBcrypt, bool hasFinishedRegistration, IQueryable<IpAuthorization> ipAddresses, IQueryable<LevelLikeRelation> likedLevels, IQueryable<FollowRelation> followers, IQueryable<FollowRelation> following, IQueryable<GameSession> sessions, IQueryable<GameLevel> levels, IQueryable<Punishment> punishments, IQueryable<LeaderboardEntry> leaderboardEntries)
+    {
+        Id = id;
+        Email = email;
+        PasswordBcrypt = passwordBcrypt;
+        HasFinishedRegistration = hasFinishedRegistration;
+        IpAddresses = ipAddresses;
+        LikedLevels = likedLevels;
+        Followers = followers;
+        Following = following;
+        Sessions = sessions;
+        Levels = levels;
+        Punishments = punishments;
+        LeaderboardEntries = leaderboardEntries;
+    }
+    
+    // Realm cries if this doesn't exist
+    #pragma warning disable CS8618
+    public GameUser() { }
+    #pragma warning restore CS8618
+
+    public string Id { get; init; }
     public string Username { get; set; } = string.Empty;
-    public int Type { get; set; } = (int)UserType.Default;
+    public static int Type => (int)UserType.Default;
     public string? Email { get; set; }
     public string? PasswordBcrypt { get; set; }
     public bool HasFinishedRegistration { get; set; }

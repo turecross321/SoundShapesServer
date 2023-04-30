@@ -1,85 +1,9 @@
 using System.Text.RegularExpressions;
-using SoundShapesServer.Responses.Api.Users;
-using SoundShapesServer.Responses.Game.Following;
-using SoundShapesServer.Responses.Game.Users;
-using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Helpers;
 
 public static class UserHelper
 {
-    public static FollowingUsersWrapper UsersToFollowingUsersWrapper
-    (GameUser user, GameUser[] users, int totalRelations, int from, int count)
-    {
-        (int? nextToken, int? previousToken) = PaginationHelper.GetPageTokens(totalRelations, from, count);
-
-        List<FollowingUserResponse> responses = new ();
-        
-        for (int i = 0; i < users.Length; i++)
-        {
-            FollowingUserResponse? response = UserToFollowingUserResponse(user, users[i]);
-            if (response != null) responses.Add(response);
-        }
-
-        FollowingUsersWrapper responsesWrapper = new()
-        {
-            Users = responses.ToArray(),
-            NextToken = nextToken,
-            PreviousToken = previousToken
-        };
-
-        return responsesWrapper;
-    }
-
-    private static FollowingUserResponse? UserToFollowingUserResponse(GameUser? follower, GameUser? followed)
-    {
-        if (follower == null || followed == null) return null;
-
-        return new FollowingUserResponse
-        {
-            Id = IdFormatter.FormatFollowId(follower.Id, followed.Id),
-            User = UserToUserResponse(followed)
-        };
-    }
-    public static UserResponse UserToUserResponse(GameUser? user)
-    {
-        if (user == null) return new UserResponse();
-        
-        string formattedAuthorId = IdFormatter.FormatUserId(user.Id);
-
-        return new UserResponse
-        {
-            Id = formattedAuthorId,
-            DisplayName = user.Username
-        };
-    }
-
-    public static UserMetadataResponse GenerateUserMetadata(GameUser user)
-    {
-        return new UserMetadataResponse()
-        {
-            DisplayName = user.Username,
-            FanCount = user.Followers.Count(), // Followers
-            LevelCount = user.Levels.Count(), // Level Count
-            FollowingCount = user.Following.Count(), // Following
-            LikedLevelsCount = user.LikedLevels.Count(), // Liked And Queued Levels
-        };
-    }
-
-    public static ApiUserResponse UserToApiUserResponse(GameUser userToCheck, bool? following)
-    {
-        return new ApiUserResponse()
-        {
-            Id = userToCheck.Id,
-            Username = userToCheck.Username,
-            UserType = userToCheck.Type,
-            FollowerCount = userToCheck.Followers.Count(),
-            FollowingCount = userToCheck.Following.Count(),
-            LikedLevelsCount = userToCheck.LikedLevels.Count(),
-            PublishedLevelsCount = userToCheck.Levels.Count(),
-        };
-    }
-
     private const string UsernameRegex = "^[A-Za-z][A-Za-z0-9-_]{2,15}$";
     public static bool IsUsernameLegal(string username)
     {

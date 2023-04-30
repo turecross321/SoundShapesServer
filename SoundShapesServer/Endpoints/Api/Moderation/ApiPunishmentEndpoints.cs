@@ -6,6 +6,7 @@ using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Responses.Api.Moderation;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
@@ -22,5 +23,18 @@ public class ApiPunishmentEndpoints : EndpointGroup
         
         database.PunishUser(user, body);
         return HttpStatusCode.Created;
+    }
+
+    [ApiEndpoint("punishments")]
+    [NullStatusCode(HttpStatusCode.Forbidden)]
+    public ApiPunishmentsWrapper? GetPunishments(RequestContext context, RealmDatabaseContext database, GameUser user)
+    {
+        if (PermissionHelper.IsUserAdmin(user) == false) return null;
+        
+        int count = int.Parse(context.QueryString["count"] ?? "9");
+        int from = int.Parse(context.QueryString["from"] ?? "0");
+
+        IQueryable<Punishment> punishments = database.GetPunishments();
+        return new ApiPunishmentsWrapper(punishments, from, count);
     }
 }

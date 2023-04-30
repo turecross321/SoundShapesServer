@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
@@ -56,12 +57,25 @@ public class AuthenticationEndpoints : EndpointGroup
         if (bans.Length > 0) session = database.GenerateSessionForUser(context, user, SessionType.Unauthorized, 30);
 
         session ??= database.GenerateSessionForUser(context, user, (int)SessionType.Game, 14400); // 4 hours
-        
+
+        Debug.Assert(session.Ip != null, "session.Ip != null");
         if (session.Ip.OneTimeUse) database.UseIpAddress(session.Ip);
 
-        GameSessionResponse gameSessionResponse = SessionToSessionResponse(session);
+        GameSessionResponse gameSessionResponse = new (session);
 
-        return SessionResponseToResponse(context, gameSessionResponse);
+        GameSessionWrapper responseWrapper = new (gameSessionResponse);
+
+        Debug.Assert(gameSessionResponse.User != null, "gameSessionResponse.User != null");
+        Console.WriteLine($"{gameSessionResponse.User.Username} has logged in.");
+
+        context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={gameSessionResponse.Id};Version=1;Path=/");
+        // ReSharper disable StringLiteralTypo
+        context.ResponseHeaders.Add("x-otg-identity-displayname", gameSessionResponse.User.Username);
+        context.ResponseHeaders.Add("x-otg-identity-personid", gameSessionResponse.User.Id);
+        context.ResponseHeaders.Add("x-otg-identity-sessionid", gameSessionResponse.Id);
+        // ReSharper restore StringLiteralTypo
+        
+        return new Response(responseWrapper, ContentType.Json, HttpStatusCode.Created);
     }
 
     
@@ -97,6 +111,7 @@ public class AuthenticationEndpoints : EndpointGroup
             return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}.\nYour email code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
         }
 
+        Debug.Assert(session.Ip != null, "session.Ip != null");
         if (session.Ip.Authorized == false)
             return $"Your IP Address has not been authorized. To proceed, you will have to log in to your account at {config.WebsiteUrl} and authorize the following IP Address: {session.Ip.IpAddress}\n-\n{DateTime.UtcNow}";
 

@@ -54,7 +54,7 @@ public class LeaderboardEndpoints : EndpointGroup
 
         IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntries(levelId);
 
-        return LeaderboardEntriesToWrapper(entries, from, count);
+        return new LeaderboardEntriesWrapper(entries, from, count);
     }
 
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near", ContentType.Json)]
@@ -70,7 +70,7 @@ public class LeaderboardEndpoints : EndpointGroup
         int position = entries.Count(e => e.LevelId == entry.LevelId && e.Score < entry.Score && e.Completed) + 1;
 
         LeaderboardEntryResponse[] response = new LeaderboardEntryResponse[1];
-        response[0] = LeaderboardEntryToResponse(entry, position);
+        response[0] = new LeaderboardEntryResponse(entry, position);
         
         return response;
     }

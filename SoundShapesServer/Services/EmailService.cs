@@ -16,7 +16,7 @@ public class EmailService : Service
     
     internal EmailService(LoggerContainer<BunkumContext> logger, GameServerConfig config) : base(logger)
     {
-        this._config = config;
+        _config = config;
         
         _smtpClient = new SmtpClient(_config.EmailHost)
         {
@@ -28,7 +28,7 @@ public class EmailService : Service
 
     public void SendEmail(string recipient, string subject, string body)
     {
-        MailMessage message = new MailMessage();
+        MailMessage message = new();
         message.From = new MailAddress(_config.EmailAddress);
         message.To.Add(recipient);
         message.Subject = subject;

@@ -8,7 +8,6 @@ using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Requests.Api.Account;
 using SoundShapesServer.Services;
 using SoundShapesServer.Types;
@@ -52,10 +51,11 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     [ApiEndpoint("account/setEmail", Method.Post)]
     public Response SetUserEmail(RequestContext context, RealmDatabaseContext database, ApiSetEmailRequest body, GameSession session)
     {
+        if (session.User == null) return HttpStatusCode.Gone;
         GameUser user = session.User;
 
         // Check if user has sent a valid mail address
-        if (MailAddress.TryCreate(body.NewEmail, out MailAddress? mailAddress) == false)
+        if (MailAddress.TryCreate(body.NewEmail, out MailAddress? _) == false)
         {
             return new Response("Invalid Email.", ContentType.Json, HttpStatusCode.BadRequest);
         }
@@ -67,7 +67,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
         database.SetUserEmail(user, body.NewEmail, session);
         
         if (!user.HasFinishedRegistration)
-            return SendPasswordSession(context, database, new ApiPasswordSessionRequest { Email = body.NewEmail });
+            return SendPasswordSession(context, database, new ApiPasswordSessionRequest(body.NewEmail));
 
         return HttpStatusCode.Created;
     }
@@ -95,6 +95,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     [ApiEndpoint("account/setPassword", Method.Post)]
     public Response SetUserPassword(RequestContext context, RealmDatabaseContext database, ApiSetPasswordRequest body, GameSession session)
     {
+        if (session.User == null) return HttpStatusCode.Gone;
         GameUser user = session.User;
 
         if (body.NewPasswordSha512.Length != 128 || !Regex.IsMatch(body.NewPasswordSha512, Sha512Pattern))

@@ -57,7 +57,7 @@ public class LevelInteractionEndpoints : EndpointGroup
         if (database.IsUserLikingLevel(user, level))
         {
             // Returning an empty class because this doesn't actually need any data. It just needs a response and some sort of object
-            LevelLikeResponse response = new LevelLikeResponse();
+            LevelLikeResponse response = new();
 
             return new Response(response, ContentType.Json);
         }

@@ -1,8 +1,16 @@
 namespace SoundShapesServer.Requests.Api;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiPunishRequest
 {
-    public int PunishmentType { get; set; }
-    public string Reason { get; set; }
-    public DateTimeOffset ExpiresAtUtc { get; set; }
+    public ApiPunishRequest(int punishmentType, string reason, DateTimeOffset expiresAtUtc)
+    {
+        PunishmentType = punishmentType;
+        Reason = reason;
+        ExpiresAtUtc = expiresAtUtc;
+    }
+
+    public int PunishmentType { get; }
+    public string Reason { get; }
+    public DateTimeOffset ExpiresAtUtc { get; }
 }

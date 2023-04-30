@@ -1,6 +1,12 @@
 namespace SoundShapesServer.Requests.Api;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiReportRequest
 {
-    public int ReportReasonId { get; set; }
+    public ApiReportRequest(int reportReasonId)
+    {
+        ReportReasonId = reportReasonId;
+    }
+    
+    public int ReportReasonId { get; }
 }

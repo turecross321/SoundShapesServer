@@ -1,9 +1,18 @@
 using Newtonsoft.Json;
+using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Responses.Game.RecentActivity;
 
 public class NewsResponse
 {
+    public NewsResponse(NewsEntry entry)
+    {
+        Title = entry.Title;
+        Summary = entry.Summary;
+        FullText = entry.FullText;
+        Url = entry.Url;
+    }
+
     [JsonProperty("00_title", NullValueHandling = NullValueHandling.Ignore)] public string Title { get; set; }
     [JsonProperty("00_text", NullValueHandling = NullValueHandling.Ignore)] public string Summary { get; set; }
     [JsonProperty("00_fullText", NullValueHandling = NullValueHandling.Ignore)] public string FullText { get; set; }

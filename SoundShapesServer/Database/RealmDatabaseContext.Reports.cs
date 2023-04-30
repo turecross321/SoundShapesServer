@@ -1,7 +1,4 @@
-using Bunkum.CustomHttpListener.Parsing;
-using MongoDB.Bson;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Database;
 
@@ -9,18 +6,18 @@ public partial class RealmDatabaseContext
 {
     public IQueryable<Report> GetReports()
     {
-        return this._realm.All<Report>();
+        return _realm.All<Report>();
     }
     public Report? GetReportWithId(string id)
     {
-        return this._realm.All<Report>().FirstOrDefault(r => r.Id == id);
+        return _realm.All<Report>().FirstOrDefault(r => r.Id == id);
     }
 
     public void RemoveReport(Report report)
     {
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
-            this._realm.Remove(report);
+            _realm.Remove(report);
         });
     } 
     public void SubmitReport(GameUser reporter, string contentId, ServerContentType contentType, int reportReasonId)
@@ -35,9 +32,9 @@ public partial class RealmDatabaseContext
             Issued = DateTimeOffset.UtcNow
         };
         
-        this._realm.Write((() =>
+        _realm.Write(() =>
         {
-            this._realm.Add(report);
-        }));
+            _realm.Add(report);
+        });
     }
 }

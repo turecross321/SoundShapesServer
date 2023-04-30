@@ -36,10 +36,7 @@ public class ApiIpAuthorization : EndpointGroup
     {
         ApiUnAuthorizedIpResponse[] addresses = database.GetUnAuthorizedIps(user, SessionType.Game);
 
-        return new ApiUnAuthorizedIpResponseWrapper()
-        {
-            IpAddresses = addresses
-        };
+        return new ApiUnAuthorizedIpResponseWrapper(addresses);
     }
 
     [ApiEndpoint("ip/authorized")]
@@ -47,9 +44,6 @@ public class ApiIpAuthorization : EndpointGroup
     {
         ApiAuthorizedIpResponse[] addresses = database.GetAuthorizedIps(user, SessionType.Game);
 
-        return new ApiAuthorizedIpResponseWrapper
-        {
-            IpAddresses = addresses
-        };
+        return new ApiAuthorizedIpResponseWrapper(addresses);
     }
 }

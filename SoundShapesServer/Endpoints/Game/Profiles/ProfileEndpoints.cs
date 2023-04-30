@@ -2,7 +2,6 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Following;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
@@ -16,9 +15,7 @@ public class ProfileEndpoints : EndpointGroup
     {
         GameUser? user = database.GetUserWithId(id);
 
-        if (user == null) return null;
-
-        return UserHelper.GenerateUserMetadata(user);
+        return user == null ? null : new UserMetadataResponse(user);
     }
 
     [GameEndpoint("~identity:{id}/~follow:*.page", ContentType.Json)]
@@ -30,7 +27,8 @@ public class ProfileEndpoints : EndpointGroup
         GameUser? follower = database.GetUserWithId(id);
         if (follower == null) return null;
 
-        return database.GetFollowedUsers(follower, from, count);
+        IQueryable<GameUser> users = database.GetFollowedUsers(follower, from, count);
+        return new FollowingUsersWrapper(follower, users, from, count);
     }
 
     [GameEndpoint("~identity:{id}/~followers.page", ContentType.Json)]
@@ -42,6 +40,7 @@ public class ProfileEndpoints : EndpointGroup
         GameUser? follower = database.GetUserWithId(id);
         if (follower == null) return null;
         
-        return database.GetFollowers(follower, from, count);
+        IQueryable<GameUser> users = database.GetFollowers(follower, from, count);
+        return new FollowingUsersWrapper(follower, users, from, count);
     }
 }

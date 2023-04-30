@@ -2,5 +2,10 @@ namespace SoundShapesServer.Responses.Api.IP_Authorization;
 
 public class ApiAuthorizedIpResponseWrapper
 {
-    public ApiAuthorizedIpResponse[] IpAddresses { get; set; }
+    public ApiAuthorizedIpResponseWrapper(ApiAuthorizedIpResponse[] ipAddresses)
+    {
+        IpAddresses = ipAddresses;
+    }
+
+    public ApiAuthorizedIpResponse[] IpAddresses { get; }
 }

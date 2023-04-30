@@ -1,101 +1,100 @@
-using SoundShapesServer.Responses.Game.Following;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
-using static SoundShapesServer.Helpers.UserHelper;
 
 namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public FollowingUsersWrapper GetFollowers(GameUser userBeingFollowed, int from, int count)
+    public IQueryable<GameUser> GetFollowers(GameUser userBeingFollowed, int from, int count)
     {
-        IQueryable<FollowRelation> relations = this._realm.All<FollowRelation>().Where(r => r.Recipient == userBeingFollowed);
+        IQueryable<FollowRelation> relations = _realm.All<FollowRelation>().Where(r => r.Recipient == userBeingFollowed);
 
-        int totalEntries = relations.Count();
-        
         FollowRelation[] selectedRelations = relations 
             .AsEnumerable()
             .Skip(from)
             .Take(count)
             .ToArray();
 
-        GameUser[] followers = new GameUser[selectedRelations.Length];
+        List<GameUser> followers = new ();
 
         for (int i = 0; i < selectedRelations.Length; i++)
         {
-            followers[i] = selectedRelations[i].Follower;
+            GameUser? gameUser = selectedRelations[i].Follower;
+            if (gameUser != null) followers.Add(gameUser);
         }
 
-        return UsersToFollowingUsersWrapper(userBeingFollowed, followers, totalEntries, from, count);
+        return followers.AsQueryable();
     }
 
-    public FollowingUsersWrapper GetFollowedUsers(GameUser follower, int from, int count)
+    public IQueryable<GameUser> GetFollowedUsers(GameUser follower, int from, int count)
     {
-        IQueryable<FollowRelation> relations = this._realm.All<FollowRelation>().Where(r => r.Follower == follower);
+        IQueryable<FollowRelation> relations = _realm.All<FollowRelation>().Where(r => r.Follower == follower);
 
-        int totalEntries = relations.Count();
-        
         FollowRelation[] selectedRelations = relations      
             .AsEnumerable()
             .Skip(from)
             .Take(count)
             .ToArray();
 
-        GameUser[] following = new GameUser[selectedRelations.Length];
+        List<GameUser> following = new();
 
-        for (int i = 0; i < selectedRelations.Count(); i++)
+        for (int i = 0; i < selectedRelations.Length; i++)
         {
-            following[i] = selectedRelations[i].Recipient;
+            GameUser? gameUser = selectedRelations[i].Recipient;
+            if (gameUser != null) following.Add(gameUser);
         }
 
-        return UsersToFollowingUsersWrapper(follower, following, totalEntries, from, count);
+        return following.AsQueryable();
     }
 
-    public IQueryable<GameLevel> GetUsersLikedLevels(GameUser user, GameUser userToGetLevelsFrom)
+    public IQueryable<GameLevel> GetUsersLikedLevels(GameUser userToGetLevelsFrom)
     {
-        List<LevelLikeRelation> relations = this._realm.All<LevelLikeRelation>()
+        List<LevelLikeRelation> relations = _realm.All<LevelLikeRelation>()
             .Where(l => l.Liker == userToGetLevelsFrom)
             .ToList();
 
-        List<GameLevel> levels = new List<GameLevel>();
+        LevelLikeRelation[] selectedRelations = relations.Where(l => l.Liker?.Id == userToGetLevelsFrom.Id).ToArray();
 
-        for (int i = 0; i < relations.Count; i++)
+        List<GameLevel> levels = new ();
+
+        for (int i = 0; i < selectedRelations.Length; i++)
         {
-            levels.Add(relations[i].Level);
+            GameLevel? level = selectedRelations[i].Level;
+            if (level != null) levels.Add(level);
         }
-
+        
         return levels.AsQueryable();
     }
 
-    public bool FollowUser(GameUser follower, GameUser userBeingFollowed)
+    public bool FollowUser(GameUser follower, GameUser recipient)
     {
-        if (IsUserFollowingOtherUser(follower, userBeingFollowed)) return false;
+        if (IsUserFollowingOtherUser(follower, recipient)) return false;
 
         FollowRelation relation = new()
         {
             Follower = follower,
-            Recipient = userBeingFollowed
+            Recipient = recipient
         };
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
-            this._realm.Add(relation);
+            _realm.Add(relation);
         });
 
         return true;
     }
     
-    public bool UnFollowUser(GameUser follower, GameUser userBeingUnFollowed)
+    public bool UnFollowUser(GameUser follower, GameUser recipient)
     {
-        if (!IsUserFollowingOtherUser(follower, userBeingUnFollowed)) return false;
+        if (!IsUserFollowingOtherUser(follower, recipient)) return false;
         
-        FollowRelation? relation = this._realm.All<FollowRelation>().FirstOrDefault(f => f.Follower == follower && f.Recipient == userBeingUnFollowed);
+        FollowRelation? relation = _realm.All<FollowRelation>().FirstOrDefault(f => f.Follower == follower && f.Recipient == recipient);
 
         if (relation == null) return false;
         
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
-            this._realm.Remove(relation);
+            _realm.Remove(relation);
         });
         
         return true;
@@ -110,9 +109,9 @@ public partial class RealmDatabaseContext
             Liker = liker,
             Level = level
         };
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
-            this._realm.Add(relation);
+            _realm.Add(relation);
         });
 
         return true;
@@ -122,13 +121,13 @@ public partial class RealmDatabaseContext
     {
         if (!IsUserLikingLevel(liker, level)) return false;
 
-        LevelLikeRelation? relation = this._realm.All<LevelLikeRelation>().FirstOrDefault(l => l.Liker == liker && l.Level == level);
+        LevelLikeRelation? relation = _realm.All<LevelLikeRelation>().FirstOrDefault(l => l.Liker == liker && l.Level == level);
 
         if (relation == null) return false;
         
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
-            this._realm.Remove(relation);
+            _realm.Remove(relation);
         });
         
         return true;
@@ -136,15 +135,13 @@ public partial class RealmDatabaseContext
 
     public bool IsUserLikingLevel(GameUser liker, GameLevel level)
     {
-        int count = this._realm.All<LevelLikeRelation>().Count(l => l.Liker == liker && l.Level == level);
-        if (count > 0) return true;
-        else return false;
+        int count = _realm.All<LevelLikeRelation>().Count(l => l.Liker == liker && l.Level == level);
+        return count > 0;
     }
     
     public bool IsUserFollowingOtherUser(GameUser follower, GameUser userBeingFollowed)
     {
-        int count = this._realm.All<FollowRelation>().Count(f => f.Follower == follower && f.Recipient == userBeingFollowed);
-        if (count > 0) return true;
-        return false;
+        int count = _realm.All<FollowRelation>().Count(f => f.Follower == follower && f.Recipient == userBeingFollowed);
+        return count > 0;
     }
 }

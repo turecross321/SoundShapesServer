@@ -26,19 +26,19 @@ public partial class RealmDatabaseContext
             ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(sessionExpirationSeconds)
         };
 
-        IEnumerable<GameSession> sessionsToDelete = this._realm.All<GameSession>()
-            .Where(s => s.User == user && s.SessionType == (int)sessionType)
+        IEnumerable<GameSession> sessionsToDelete = _realm.All<GameSession>()
             .AsEnumerable()
+            .Where(s => s.User?.Id == user.Id && s.SessionType == (int)sessionType)
             .TakeLast(SessionLimit - 1);
 
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
             foreach (GameSession gameSession in sessionsToDelete)
             {
-                this._realm.Remove(gameSession);
+                _realm.Remove(gameSession);
             }
             
-            this._realm.Add(session);
+            _realm.Add(session);
         });
 
         return session;
@@ -46,10 +46,11 @@ public partial class RealmDatabaseContext
 
     public GameSession? GetSessionWithSessionId(string sessionId)
     {
-        this._realm.Refresh();
+        _realm.Refresh();
         
-        IQueryable<GameSession>? sessions = this._realm.All<GameSession>();
-        GameSession? session = this._realm.All<GameSession>()
+        _realm.All<GameSession>();
+        GameSession? session = _realm.All<GameSession>()
+            .AsEnumerable()
             .FirstOrDefault(s => s.Id == sessionId);
         
         return session;
@@ -57,19 +58,19 @@ public partial class RealmDatabaseContext
 
     public bool IsSessionInvalid(string id)
     {
-        return this._realm.All<GameSession>().FirstOrDefault(s => s.Id == id) == null;
+        return _realm.All<GameSession>().FirstOrDefault(s => s.Id == id) == null;
     }
 
     public GameSession[] GetSessionsWithIp(IpAuthorization ip)
     {
-        return this._realm.All<GameSession>().Where(s => s.Ip == ip).ToArray();
+        return _realm.All<GameSession>().Where(s => s.Ip == ip).ToArray();
     }
 
     public void RemoveSession(GameSession session)
     {
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
-            this._realm.Remove(session);
+            _realm.Remove(session);
         });
     }
 

@@ -13,9 +13,9 @@ public partial class RealmDatabaseContext
             Username = username
         };
 
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
-            this._realm.Add(user);
+            _realm.Add(user);
         });
 
         return user;
@@ -23,28 +23,28 @@ public partial class RealmDatabaseContext
 
     public void SetUserEmail(GameUser user, string email, GameSession session)
     {
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
-            this._realm.Remove(session);
+            _realm.Remove(session);
             user.Email = email;
         });
     }
     
     public void SetUserPassword(GameUser user, string password, GameSession? session = null)
     {
-        this._realm.Write((() =>
+        _realm.Write(() =>
         {
-            if (session != null) this._realm.Remove(session);
+            if (session != null) _realm.Remove(session);
             user.PasswordBcrypt = password;
             user.HasFinishedRegistration = true;
-        }));
+        });
     }
 
     public void SetUsername(GameUser user, string username)
     {
-        this.RemoveAllSessionsWithUser(user);
+        RemoveAllSessionsWithUser(user);
         
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
             user.Username = username;
         });
@@ -52,32 +52,32 @@ public partial class RealmDatabaseContext
 
     public GameUser? GetUserWithUsername(string username)
     {
-        return this._realm.All<GameUser>().FirstOrDefault(u => u.Username == username);
+        return _realm.All<GameUser>().FirstOrDefault(u => u.Username == username);
     }
 
     public GameUser? GetUserWithEmail(string email)
     {
-        return this._realm.All<GameUser>().FirstOrDefault(u => u.Email == email);
+        return _realm.All<GameUser>().FirstOrDefault(u => u.Email == email);
     }
 
     public GameUser? GetUserWithId(string? id)
     {
         if (id == null) return null;
-        return this._realm.All<GameUser>().FirstOrDefault(u => u.Id == id);
+        return _realm.All<GameUser>().FirstOrDefault(u => u.Id == id);
     }
 
     public void RemoveUser(GameUser user)
     {
-        this._realm.Write(() =>
+        _realm.Write(() =>
         {
-            this._realm.RemoveRange(user.Sessions);
-            this._realm.RemoveRange(user.Levels);
-            this._realm.RemoveRange(user.LeaderboardEntries);
-            this._realm.RemoveRange(user.Punishments);
-            this._realm.RemoveRange(user.IpAddresses);
-            this._realm.Remove(user);
+            _realm.RemoveRange(user.Sessions);
+            _realm.RemoveRange(user.Levels);
+            _realm.RemoveRange(user.LeaderboardEntries);
+            _realm.RemoveRange(user.Punishments);
+            _realm.RemoveRange(user.IpAddresses);
+            _realm.Remove(user);
             
-            this._realm.Remove(user);
+            _realm.Remove(user);
         });
     }
 }

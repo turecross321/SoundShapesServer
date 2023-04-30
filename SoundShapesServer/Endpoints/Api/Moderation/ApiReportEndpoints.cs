@@ -7,7 +7,6 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Moderation;
 using SoundShapesServer.Types;
-using static SoundShapesServer.Helpers.ReportHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
@@ -33,7 +32,7 @@ public class ApiReportEndpoints : EndpointGroup
         Report? report = database.GetReportWithId(id);
         if (report == null) return HttpStatusCode.NotFound;
 
-        return new Response(ReportToResponse(report), ContentType.Json);
+        return new Response(new ApiReportResponse(report), ContentType.Json);
     }
 
     [ApiEndpoint("reports")]
@@ -46,6 +45,6 @@ public class ApiReportEndpoints : EndpointGroup
         int from = int.Parse(context.QueryString["from"] ?? "0");
 
         IQueryable<Report> reports = database.GetReports();
-        return ReportsToWrapper(reports, from, count);
+        return new ApiReportsWrapper(reports, from, count);
     }
 }
