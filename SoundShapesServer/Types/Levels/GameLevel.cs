@@ -28,7 +28,7 @@ public class GameLevel : RealmObject
     public GameUser Author { get; init; }
     public string Name { get; set; }
     public int Language { get; set; }
-    public DateTimeOffset CreationDate { get; }
+    public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset ModificationDate { get; set; }
     public int Plays { get; set; }
     public int Deaths { get; set; }

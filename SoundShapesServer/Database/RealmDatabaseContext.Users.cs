@@ -80,4 +80,12 @@ public partial class RealmDatabaseContext
             _realm.Remove(user);
         });
     }
+
+    public void SetUserPermissions(GameUser user, PermissionsType type)
+    {
+        _realm.Write(() =>
+        {
+            user.PermissionsType = (int)type;
+        });
+    }
 }

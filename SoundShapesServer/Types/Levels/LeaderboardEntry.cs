@@ -25,13 +25,13 @@ public class LeaderboardEntry : RealmObject
     #pragma warning restore CS8618
 
     public string Id { get; set; }
-    public GameUser User { get; init; }
-    public string LevelId { get; }
-    public long Score { get; }
-    public long PlayTime { get; }
-    public int Deaths { get; }
+    public GameUser User { get; set; }
+    public string LevelId { get; set; }
+    public long Score { get; set; }
+    public long PlayTime { get; set; }
+    public int Deaths { get; set; }
     public int Golded { get; set; }
-    public int Tokens { get; }
-    public bool Completed { get; }
-    public DateTimeOffset Date { get; }
+    public int Tokens { get; set; }
+    public bool Completed { get; set; }
+    public DateTimeOffset Date { get; set; }
 }

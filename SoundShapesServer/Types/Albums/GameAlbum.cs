@@ -20,10 +20,10 @@ public class GameAlbum : RealmObject
     public GameAlbum() { }
     #pragma warning restore CS8618
     
-    public string Id { get; }
-    public string Name { get; }
-    public string Artist { get; }
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public string Artist { get; set; }
     public IList<LinerNote> LinerNotes { get; }
-    public DateTimeOffset CreationDate { get; }
+    public DateTimeOffset CreationDate { get; set; }
     public IList<GameLevel> Levels { get; }
 }

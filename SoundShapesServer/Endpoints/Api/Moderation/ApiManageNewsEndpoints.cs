@@ -11,7 +11,7 @@ using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
-public class ApiCreateNewsEndpoint
+public class ApiManageNewsEndpoints
 {
     [ApiEndpoint("news/create", Method.Post)]
     public Response CreateNewsEntry(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, Stream body, GameUser user)
@@ -56,5 +56,17 @@ public class ApiCreateNewsEndpoint
         });
 
         return HttpStatusCode.Created;
+    }
+
+    [ApiEndpoint("news/{language}/delete", Method.Post)]
+    public Response DeleteNewsEntry(RequestContext context, RealmDatabaseContext database, GameUser user, string language)
+    {
+        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
+
+        NewsEntry? newsEntry = database.GetNews(language);
+        if (newsEntry == null) return HttpStatusCode.NotFound;
+        
+        database.RemoveNewsEntry(newsEntry);
+        return HttpStatusCode.OK;
     }
 }

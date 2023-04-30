@@ -20,4 +20,12 @@ public partial class RealmDatabaseContext
             _realm.Add(entry);
         });
     }
+
+    public void RemoveNewsEntry(NewsEntry entry)
+    {
+        _realm.Write(() =>
+        {
+            _realm.Remove(entry);
+        });
+    }
 }
