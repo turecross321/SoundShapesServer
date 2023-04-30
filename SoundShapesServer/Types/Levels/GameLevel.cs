@@ -1,4 +1,5 @@
 using Realms;
+using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Relations;
 
 namespace SoundShapesServer.Types.Levels;
@@ -16,6 +17,7 @@ public class GameLevel : RealmObject
         UniquePlays = Enumerable.Empty<GameUser>().ToList();
         UsersWhoHaveCompletedLevel = Enumerable.Empty<GameUser>().ToList();
         Likes = Enumerable.Empty<LevelLikeRelation>().AsQueryable();
+        Albums = Enumerable.Empty<GameAlbum>().AsQueryable();
         FileSize = fileSize;
     }
     
@@ -36,5 +38,7 @@ public class GameLevel : RealmObject
     public int CompletionCount { get; set; }
     public IList<GameUser> UsersWhoHaveCompletedLevel { get; }
     [Backlink(nameof(LevelLikeRelation.Level))] public IQueryable<LevelLikeRelation> Likes { get; }
+    [Backlink(nameof(GameAlbum.Levels))] public IQueryable<GameAlbum> Albums { get; }
+    [Backlink(nameof(DailyLevel.Level))] public IQueryable<DailyLevel> DailyLevels { get; set; }
     public long FileSize { get; set; }
 }

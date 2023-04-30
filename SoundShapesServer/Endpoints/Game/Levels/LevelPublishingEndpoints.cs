@@ -58,7 +58,8 @@ public class LevelPublishingEndpoints : EndpointGroup
     {
         if (level.Author.Id != user.Id) return new Response(HttpStatusCode.Forbidden);
         
-        LevelResourceEndpoints.RemoveLevelResources(dataStore, level);
-        return database.UnPublishLevel(level) ? new Response(HttpStatusCode.OK) : HttpStatusCode.InternalServerError;
+        database.RemoveLevel(level, dataStore);
+
+        return HttpStatusCode.OK;
     }
 }

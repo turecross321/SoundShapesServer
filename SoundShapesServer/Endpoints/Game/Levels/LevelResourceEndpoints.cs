@@ -62,13 +62,6 @@ public class LevelResourceEndpoints : EndpointGroup
 
         return true;
     }
-    // Called from Publishing Endpoints
-    public static void RemoveLevelResources(IDataStore dataStore, GameLevel level)
-    {
-        dataStore.RemoveFromStore(GetLevelResourceKey(level.Id, FileType.Image));
-        dataStore.RemoveFromStore(GetLevelResourceKey(level.Id, FileType.Level));
-        dataStore.RemoveFromStore(GetLevelResourceKey(level.Id, FileType.Sound));
-    }
     private static Response GetResource(IDataStore dataStore, string fileName)
     {
         if (!dataStore.ExistsInStore(fileName))

@@ -4,6 +4,7 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
+using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
@@ -14,7 +15,7 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 public class ApiManageUserEndpoints : EndpointGroup
 {
     [ApiEndpoint("user/{id}/remove", Method.Post)]
-    public Response RemoveUser(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    public Response RemoveUser(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
@@ -23,7 +24,7 @@ public class ApiManageUserEndpoints : EndpointGroup
 
         if (userToRemove.PermissionsType >= user.PermissionsType) return HttpStatusCode.Unauthorized;
         
-        database.RemoveUser(userToRemove);
+        database.RemoveUser(userToRemove, dataStore);
         return HttpStatusCode.OK;
     }
 

@@ -5,6 +5,7 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
+using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
@@ -131,9 +132,9 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("account/remove", Method.Post)]
-    public Response RemoveAccount(RequestContext context, RealmDatabaseContext database, GameUser user)
+    public Response RemoveAccount(RequestContext context, RealmDatabaseContext database, GameUser user, IDataStore dataStore)
     {
-        database.RemoveUser(user);
+        database.RemoveUser(user, dataStore);
         return new Response("o/", ContentType.Plaintext);
     }
 }

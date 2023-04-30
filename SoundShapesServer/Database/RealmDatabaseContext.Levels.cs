@@ -1,10 +1,14 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Security.Cryptography;
+using Bunkum.HttpServer.Storage;
 using Realms;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Relations;
+using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Database;
 
@@ -39,14 +43,26 @@ public partial class RealmDatabaseContext
         return level;
     }
     
-    public bool UnPublishLevel(GameLevel level)
+    // Not database related, but idk where this should be otherwise.
+    private static void RemoveLevelResources(GameLevel level, IDataStore dataStore)
     {
+        dataStore.RemoveFromStore(GetLevelResourceKey(level.Id, FileType.Image));
+        dataStore.RemoveFromStore(GetLevelResourceKey(level.Id, FileType.Level));
+        dataStore.RemoveFromStore(GetLevelResourceKey(level.Id, FileType.Sound));
+    }
+    
+    public void RemoveLevel(GameLevel level, IDataStore dataStore)
+    {
+        RemoveLevelResources(level, dataStore);
+
         _realm.Write(() =>
         {
+            _realm.RemoveRange(level.Albums);
+            _realm.RemoveRange(level.DailyLevels);
+            _realm.RemoveRange(level.Likes);
+            _realm.RemoveRange(GetLeaderboardEntries(level.Id));
             _realm.Remove(level);
         });
-
-        return true;
     }
     
     public GameLevel? GetLevelWithId(string id) => _realm.All<GameLevel>().FirstOrDefault(l => l.Id == id);
