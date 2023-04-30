@@ -76,8 +76,6 @@ public partial class RealmDatabaseContext
             _realm.RemoveRange(user.Punishments);
             _realm.RemoveRange(user.IpAddresses);
             _realm.Remove(user);
-            
-            _realm.Remove(user);
         });
     }
 
