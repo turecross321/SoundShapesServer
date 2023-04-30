@@ -75,6 +75,8 @@ public partial class RealmDatabaseContext
             RemoveLevel(level, dataStore);
         }
         
+        RemoveAllReportsWithContentId(user.Id);
+        
         _realm.Write(() =>
         {
             _realm.RemoveRange(user.Sessions);

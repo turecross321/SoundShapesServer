@@ -55,12 +55,14 @@ public partial class RealmDatabaseContext
     {
         RemoveLevelResources(level, dataStore);
 
+        RemoveAllReportsWithContentId(level.Id);
+        
         _realm.Write(() =>
         {
             _realm.RemoveRange(level.Albums);
             _realm.RemoveRange(level.DailyLevels);
             _realm.RemoveRange(level.Likes);
-            _realm.RemoveRange(GetLeaderboardEntries(level.Id));
+            _realm.RemoveRange(_realm.All<LeaderboardEntry>().Where(e=>e.LevelId == level.Id));
             _realm.Remove(level);
         });
     }

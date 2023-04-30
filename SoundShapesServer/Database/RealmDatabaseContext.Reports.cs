@@ -19,7 +19,15 @@ public partial class RealmDatabaseContext
         {
             _realm.Remove(report);
         });
-    } 
+    }
+
+    public void RemoveAllReportsWithContentId(string id)
+    {
+        _realm.Write(() =>
+        {
+            _realm.RemoveRange(_realm.All<Report>().Where(r=>r.ContentId == id));
+        });
+    }
     public void SubmitReport(GameUser reporter, string contentId, ServerContentType contentType, int reportReasonId)
     {
         Report report = new ()
