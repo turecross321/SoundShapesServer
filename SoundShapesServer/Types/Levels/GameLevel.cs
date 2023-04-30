@@ -18,6 +18,7 @@ public class GameLevel : RealmObject
         UsersWhoHaveCompletedLevel = Enumerable.Empty<GameUser>().ToList();
         Likes = Enumerable.Empty<LevelLikeRelation>().AsQueryable();
         Albums = Enumerable.Empty<GameAlbum>().AsQueryable();
+        DailyLevels = Enumerable.Empty<DailyLevel>().AsQueryable();
         FileSize = fileSize;
     }
     
@@ -39,6 +40,6 @@ public class GameLevel : RealmObject
     public IList<GameUser> UsersWhoHaveCompletedLevel { get; }
     [Backlink(nameof(LevelLikeRelation.Level))] public IQueryable<LevelLikeRelation> Likes { get; }
     [Backlink(nameof(GameAlbum.Levels))] public IQueryable<GameAlbum> Albums { get; }
-    [Backlink(nameof(DailyLevel.Level))] public IQueryable<DailyLevel> DailyLevels { get; set; }
+    [Backlink(nameof(DailyLevel.Level))] public IQueryable<DailyLevel> DailyLevels { get; }
     public long FileSize { get; set; }
 }
