@@ -59,7 +59,10 @@ public partial class RealmDatabaseContext
         
         _realm.Write(() =>
         {
-            _realm.RemoveRange(level.Albums);
+            foreach (GameAlbum album in level.Albums)
+            {
+                album.Levels.Remove(level);
+            }
             _realm.RemoveRange(level.DailyLevels);
             _realm.RemoveRange(level.Likes);
             _realm.RemoveRange(_realm.All<LeaderboardEntry>().Where(e=>e.LevelId == level.Id));
