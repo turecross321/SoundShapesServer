@@ -67,12 +67,12 @@ public class LevelInteractionEndpoints : EndpointGroup
     private Response LikeLevel(GameUser user, GameLevel level, RealmDatabaseContext database)
     {
         if (database.LikeLevel(user, level)) return new Response(HttpStatusCode.OK);
-        else return new Response(HttpStatusCode.BadRequest);  
+        return new Response(HttpStatusCode.BadRequest);
     }
 
     private Response UnLikeLevel(GameUser user, GameLevel level, RealmDatabaseContext database)
     {
         if (database.UnLikeLevel(user, level)) return new Response(HttpStatusCode.OK);
-        else return new Response(HttpStatusCode.BadRequest);  
+        return new Response(HttpStatusCode.BadRequest);
     }
 }

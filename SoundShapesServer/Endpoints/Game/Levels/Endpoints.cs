@@ -30,7 +30,7 @@ public class Endpoints : EndpointGroup
         if (action == "delete") return LevelPublishingEndpoints.UnPublishLevel(dataStore, database, user, level);
         if (action == "latest") return new Response(new LevelResponse(level, user), ContentType.Json);
 
-        else return new Response(HttpStatusCode.NotFound);
+        return new Response(HttpStatusCode.NotFound);
     }
 
     [GameEndpoint("~level:{args}", Method.Post)]

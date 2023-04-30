@@ -44,19 +44,17 @@ public class CloudSyncingEndpoints : EndpointGroup
     {
         string key = ResourceHelper.GetSaveResourceKey(user.Id);
 
-        if (!dataStore.RemoveFromStore(key)) return HttpStatusCode.InternalServerError;
-        else return HttpStatusCode.OK;
+        return !dataStore.RemoveFromStore(key) ? HttpStatusCode.InternalServerError : HttpStatusCode.OK;
     }
 
     [GameEndpoint("~identity:{userId}/~content:progress/data.get")]
-    public Response DownloadSave(IDataStore dataStore, GameUser user, string userId)
+    public Response DownloadSave(RequestContext context, IDataStore dataStore, GameUser user, string userId)
     {
         string key = ResourceHelper.GetSaveResourceKey(user.Id);
 
         if (dataStore.TryGetDataFromStore(key, out byte[]? bytes) == false)
             return HttpStatusCode.NotFound;
 
-        if (bytes != null) return new Response(bytes, ContentType.BinaryData);
-        else return HttpStatusCode.NotFound;
+        return bytes != null ? new Response(bytes, ContentType.BinaryData) : HttpStatusCode.NotFound;
     }
 }

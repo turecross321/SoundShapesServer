@@ -82,7 +82,7 @@ public static class ResourceHelper
 
     public static string GetSaveResourceKey(string userId)
     {
-        return $"{SavesPath}/{userId}";
+        return $"{SavesPath}/{userId}.json";
     }
 
     private const string NewsPath = "news";
