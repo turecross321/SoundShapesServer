@@ -5,7 +5,7 @@ using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 
-namespace SoundShapesServer.Endpoints.Api.Levels;
+namespace SoundShapesServer.Endpoints.Api;
 
 public class ApiLeaderboardEndpoints : EndpointGroup
 {

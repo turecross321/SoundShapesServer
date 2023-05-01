@@ -4,13 +4,14 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
+using SoundShapesServer.Endpoints.Game.Levels;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Game.Leaderboards;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using static SoundShapesServer.Helpers.LeaderboardHelper;
 
-namespace SoundShapesServer.Endpoints.Game.Levels;
+namespace SoundShapesServer.Endpoints.Game;
 
 public class LeaderboardEndpoints : EndpointGroup
 {
