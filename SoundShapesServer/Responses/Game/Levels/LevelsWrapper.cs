@@ -6,10 +6,12 @@ using SoundShapesServer.Types.Levels;
 namespace SoundShapesServer.Responses.Game.Levels;
 public class LevelsWrapper
 {
-    public LevelsWrapper(IQueryable<GameLevel> levels, GameUser user, int from, int count)
+    public LevelsWrapper(IQueryable<GameLevel> levels, GameUser user, int from, int count, LevelOrderType order)
     {
-        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(levels.Count(), from, count);
-        GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(levels, from, count);
+        IQueryable<GameLevel> orderedLevels = LevelHelper.OrderLevels(levels, order);
+        
+        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(orderedLevels.Count(), from, count);
+        GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(orderedLevels, from, count);
 
         List<LevelResponse> levelResponses = paginatedLevels.Select(t => new LevelResponse(t, user)).ToList();
 

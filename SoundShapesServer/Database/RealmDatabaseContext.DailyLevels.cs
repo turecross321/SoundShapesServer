@@ -4,7 +4,7 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public IQueryable<DailyLevel> DailyLevelObjects(DateTimeOffset? date = null)
+    public IQueryable<DailyLevel> GetDailyLevelObjects(DateTimeOffset? date = null)
     {
         List<DailyLevel> dailyLevels = _realm.All<DailyLevel>()
             .OrderByDescending(l => l.Date)
@@ -15,7 +15,7 @@ public partial class RealmDatabaseContext
         return levelsToday.Any() ? levelsToday : dailyLevels.AsQueryable();
     }
 
-    public DailyLevel? DailyLevelWithId(string id)
+    public DailyLevel? GetDailyLevelWithId(string id)
     {
         return _realm.All<DailyLevel>().FirstOrDefault(d => d.Id == id);
     }

@@ -6,21 +6,24 @@ namespace SoundShapesServer.Responses.Api.Levels;
 
 public class ApiLevelResponseWrapper
 {
-    public ApiLevelResponseWrapper(IQueryable<GameLevel> levels, int from, int count, GameUser? user)
+    public ApiLevelResponseWrapper(IQueryable<GameLevel> levels, int from, int count, GameUser? user, LevelOrderType order, bool descending)
     {
-        GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(levels, from, count);
+        IQueryable<GameLevel> orderedLevels = LevelHelper.OrderLevels(levels, order);
+        IQueryable<GameLevel> fullyOrderedLevels = descending ? orderedLevels.OrderDescending() : orderedLevels;
+
+        GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(fullyOrderedLevels, from, count);
         
-        ApiLevelResponse[] levelResponses = new ApiLevelResponse[paginatedLevels.Length];
+        ApiLevelSummaryResponse[] levelResponses = new ApiLevelSummaryResponse[paginatedLevels.Length];
         
         for (int i = 0; i < paginatedLevels.Length; i++)
         {
-            levelResponses[i] = new ApiLevelResponse(paginatedLevels[i], user);
+            levelResponses[i] = new ApiLevelSummaryResponse(paginatedLevels[i], user);
         }
 
         Levels = levelResponses;
         Count = levels.Count();
     }
 
-    public ApiLevelResponse[] Levels { get; set; }
+    public ApiLevelSummaryResponse[] Levels { get; set; }
     public int Count { get; set; }
 }

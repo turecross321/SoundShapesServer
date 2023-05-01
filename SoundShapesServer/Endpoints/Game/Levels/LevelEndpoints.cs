@@ -18,30 +18,56 @@ public class LevelEndpoints : EndpointGroup
         // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
         if (user == null) return new LevelsWrapper(); 
         
-        string? category = context.QueryString["search"];
+        string? orderString = context.QueryString["orderBy"];
         string? query = context.QueryString["query"];
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
+        string categoryString = context.QueryString["search"] ?? "all";
+
+        IQueryable<GameLevel>? levels = null;
+        LevelOrderType? order = null;
 
         if (query != null && query.Contains("author.id:"))
-            return LevelsByUser(user, query, database, from, count);
-        
-        if (query != null && query.Contains("metadata.displayName:"))
-            return SearchForLevels(user, query, database, from, count);
-
-        IQueryable<GameLevel>? levels = category switch
         {
-            "tagged3" => database.DailyLevels(DateTimeOffset.UtcNow),
-            "greatesthits" => database.GreatestHits(),
-            "newest" => database.NewestLevels(),
-            "top" => database.TopLevels(),
-            "random" => database.RandomLevels(),
-            "largest" => database.LargestLevels(),
-            "hardest" => database.HardestLevels(),
-            _ => null
+            string id = query.Split(":")[2];
+
+            GameUser? usersToGetLevelsFrom = database.GetUserWithId(id);
+            if (usersToGetLevelsFrom == null) return null;
+
+            levels = usersToGetLevelsFrom.Levels;
+            order = LevelOrderType.CreationDate;
+        }
+
+        else if (query != null && query.Contains("metadata.displayName:"))
+        {
+            levels = database.SearchForLevels(query.Split(":")[1]);
+            order = LevelOrderType.Relevance;
+        }
+        
+        else switch (categoryString)
+        {
+            case "queasy3":
+                levels = database.GetDailyLevels(DateTimeOffset.UtcNow);
+                order = LevelOrderType.UniquePlays;
+                break;
+            // ReSharper disable once StringLiteralTypo
+            case "greatesthits":
+                order = LevelOrderType.Relevance;
+                break;
+        }
+
+        levels ??= database.GetLevels();
+        order ??= orderString switch
+        {
+            "creationDate" => LevelOrderType.CreationDate,
+            "uniquePlays" => LevelOrderType.UniquePlays,
+            "random" => LevelOrderType.Random,
+            "fileSize" => LevelOrderType.FileSize,
+            "difficulty" => LevelOrderType.Difficulty,
+            _ => LevelOrderType.DoNotOrder
         };
 
-        return levels == null ? null : new LevelsWrapper(levels, user, from, count);
+        return new LevelsWrapper(levels, user, from, count, (LevelOrderType)order);
     }
     
     [GameEndpoint("~identity:{userId}/~queued:*.page", ContentType.Json)]
@@ -58,27 +84,6 @@ public class LevelEndpoints : EndpointGroup
 
         IQueryable<GameLevel> levels = database.GetUsersLikedLevels(userToGetLevelsFrom);
         
-        return new LevelsWrapper(levels, user, from, count);
-    }
-    
-    private LevelsWrapper? LevelsByUser(GameUser user, string query, RealmDatabaseContext database, int from, int count)
-    {
-        string id = query.Split(":")[2];
-
-        GameUser? usersToGetLevelsFrom = database.GetUserWithId(id);
-
-        if (usersToGetLevelsFrom == null) return null;
-
-        IQueryable<GameLevel> levels = database.GetLevelsPublishedByUser(usersToGetLevelsFrom);
-
-        return new LevelsWrapper(levels, user, from, count);
-    }
-
-    private LevelsWrapper SearchForLevels(GameUser user, string query, RealmDatabaseContext database, int from, int count)
-    {
-        string levelName = query.Split(":")[1];
-
-        IQueryable<GameLevel> levels = database.SearchForLevels(levelName);
-        return new LevelsWrapper(levels, user, from, count);
+        return new LevelsWrapper(levels, user, from, count, LevelOrderType.DoNotOrder);
     }
 }

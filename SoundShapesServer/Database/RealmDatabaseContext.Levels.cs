@@ -69,14 +69,6 @@ public partial class RealmDatabaseContext
     }
     
     public GameLevel? GetLevelWithId(string id) => _realm.All<GameLevel>().FirstOrDefault(l => l.Id == id);
-    public IQueryable<GameLevel> GetLevelsPublishedByUser(GameUser user)
-    {
-        IEnumerable<GameLevel> entries = _realm.All<GameLevel>()
-            .AsEnumerable()
-            .Where(l => l.Author.Id == user.Id);
-
-        return entries.AsQueryable();
-    }
 
     public IQueryable<GameLevel> SearchForLevels(string query)
     {
@@ -97,9 +89,9 @@ public partial class RealmDatabaseContext
         return entries;
     }
 
-    public IQueryable<GameLevel> DailyLevels(DateTimeOffset date)
+    public IQueryable<GameLevel> GetDailyLevels(DateTimeOffset date)
     {
-        List<DailyLevel> entries = DailyLevelObjects(date).ToList();
+        List<DailyLevel> entries = GetDailyLevelObjects(date).ToList();
         
         List<GameLevel> levels = entries.Where(dailyLevel=>dailyLevel.Level != null).Select(l =>
         {
@@ -110,63 +102,9 @@ public partial class RealmDatabaseContext
         return levels.AsQueryable();
     }
 
-    public IQueryable<GameLevel> RandomLevels()
+    public IQueryable<GameLevel> GetLevels()
     {
-        DateTime seedDateTime = DateTime.Today;
-        byte[] seedBytes = BitConverter.GetBytes(seedDateTime.Ticks);
-        byte[] hashBytes = MD5.Create().ComputeHash(seedBytes);
-        int seed = BitConverter.ToInt32(hashBytes, 0);
-
-        Random rng = new(seed);
-
-        IEnumerable<GameLevel> entries = _realm.All<GameLevel>()
-            .AsEnumerable()
-            .OrderBy(_ => rng.Next());
-
-        return entries.AsQueryable();
-    }
-    public IQueryable<GameLevel> GreatestHits()
-    {
-        IEnumerable<GameLevel> entries = _realm.All<GameLevel>()
-            .AsEnumerable()
-            .OrderByDescending(l => l.UniquePlays.Count() * 0.5 + (DateTimeOffset.UtcNow - l.CreationDate).TotalDays * 0.5);
-
-        return entries.AsQueryable();
-    }
-
-    public IQueryable<GameLevel> NewestLevels()
-    {
-        IEnumerable<GameLevel> entries = _realm.All<GameLevel>()
-            .AsEnumerable()
-            .OrderByDescending(l=>l.CreationDate);
-
-        return entries.AsQueryable();
-    }
-    public IQueryable<GameLevel> TopLevels()
-    {
-        IEnumerable<GameLevel> entries = _realm.All<GameLevel>()
-            .AsEnumerable()
-            .OrderByDescending(l=>l.UniquePlays.Count);
-
-        return entries.AsQueryable();
-    }
-
-    public IQueryable<GameLevel> LargestLevels()
-    {
-        IEnumerable<GameLevel> entries = _realm.All<GameLevel>()
-            .AsEnumerable()
-            .OrderByDescending(l=>l.FileSize);
-
-        return entries.AsQueryable();
-    }
-    
-    public IQueryable<GameLevel> HardestLevels()
-    {
-        IEnumerable<GameLevel> entries = _realm.All<GameLevel>()
-            .AsEnumerable()
-            .OrderByDescending(l=>l.Deaths / l.UniquePlays.Count);
-
-        return entries.AsQueryable();
+        return _realm.All<GameLevel>();
     }
 
     public void AddUserToLevelCompletions(GameLevel level, GameUser user)
@@ -183,6 +121,25 @@ public partial class RealmDatabaseContext
         _realm.Write(() =>
         {
             level.CompletionCount++;
+        });
+    }
+
+    public void SetLevelDifficulty(GameLevel level)
+    {
+        _realm.Refresh();
+        
+        float difficulty;
+        if (level.Deaths > 0)
+        {
+            // ReSharper disable once PossibleLossOfFraction
+            float rate = level.Deaths / level.Plays;
+            difficulty = Math.Min(rate, 1);
+        }
+        else difficulty = 0;
+
+        _realm.Write(() =>
+        {
+            level.Difficulty = difficulty;
         });
     }
     public void AddPlayToLevel(GameLevel level)

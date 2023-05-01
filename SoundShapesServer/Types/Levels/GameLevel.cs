@@ -42,4 +42,5 @@ public class GameLevel : RealmObject
     [Backlink(nameof(GameAlbum.Levels))] public IQueryable<GameAlbum> Albums { get; }
     [Backlink(nameof(DailyLevel.Level))] public IQueryable<DailyLevel> DailyLevels { get; }
     public long FileSize { get; set; }
+    public float Difficulty { get; set; }
 }

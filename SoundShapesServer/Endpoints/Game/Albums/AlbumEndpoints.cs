@@ -39,10 +39,10 @@ public class AlbumEndpoints : EndpointGroup
 
         if (album == null) return HttpStatusCode.NotFound;
 
-        IQueryable<GameLevel> levels = database.AlbumLevels(album);
+        IQueryable<GameLevel> levels = album.Levels.AsQueryable();
         
         if (order == "time:ascn")
-            return new Response(new LevelsWrapper(levels, user, from, count), ContentType.Json);
+            return new Response(new LevelsWrapper(levels, user, from, count, LevelOrderType.DoNotOrder), ContentType.Json);
 
         return new Response(new AlbumLevelInfosWrapper(user, album, levels, from, count), ContentType.Json);
     }

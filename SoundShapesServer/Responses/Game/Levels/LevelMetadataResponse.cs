@@ -8,19 +8,9 @@ public class LevelMetadataResponse
 {
     public LevelMetadataResponse(GameLevel level)
     {
-        float difficulty;
-
-        if (level.Deaths > 0)
-        {
-            // ReSharper disable once PossibleLossOfFraction
-            float rate = level.Deaths / level.Plays;
-            difficulty = Math.Clamp(rate, 1, 5);
-        }
-        else difficulty = 0;
-
         Name = level.Name;
         UniquePlaysCount = level.UniquePlays.Count.ToString();
-        Difficulty = difficulty.ToString(CultureInfo.InvariantCulture);
+        Difficulty = level.Difficulty.ToString(CultureInfo.InvariantCulture);
         Timestamp = level.ModificationDate.ToUnixTimeMilliseconds().ToString();
         TotalPlaysCount = level.Plays.ToString();
         Language = level.Language.ToString();

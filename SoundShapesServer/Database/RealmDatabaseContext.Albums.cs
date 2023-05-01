@@ -16,11 +16,4 @@ public partial class RealmDatabaseContext
     {
         return _realm.All<GameAlbum>().FirstOrDefault(a => a.Id == id);
     }
-
-    public IQueryable<GameLevel> AlbumLevels(GameAlbum album)
-    {
-        IEnumerable<GameLevel> gameLevels = album.Levels;
-
-        return gameLevels.AsQueryable();
-    }
 }

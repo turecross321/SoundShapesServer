@@ -20,7 +20,7 @@ public class ApiDailyLevelModificationEndpoint : EndpointGroup
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return null;
         
-        IQueryable<DailyLevel> dailyLevels = database.DailyLevelObjects();
+        IQueryable<DailyLevel> dailyLevels = database.GetDailyLevelObjects();
         
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
@@ -53,7 +53,7 @@ public class ApiDailyLevelModificationEndpoint : EndpointGroup
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
-        DailyLevel? dailyLevel = database.DailyLevelWithId(id);
+        DailyLevel? dailyLevel = database.GetDailyLevelWithId(id);
         if (dailyLevel == null) return HttpStatusCode.NotFound;
         
         database.RemoveDailyLevel(dailyLevel);

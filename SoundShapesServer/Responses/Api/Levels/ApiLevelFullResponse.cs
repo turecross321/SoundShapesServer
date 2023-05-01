@@ -4,9 +4,9 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Responses.Api.Levels;
 
-public class ApiLevelResponse
+public class ApiLevelFullResponse
 {
-    public ApiLevelResponse(GameLevel level, GameUser? user)
+    public ApiLevelFullResponse(GameLevel level, GameUser? user)
     {
         bool? completed = null;
         if (user != null) completed = level.UsersWhoHaveCompletedLevel.Contains(user);
@@ -20,6 +20,9 @@ public class ApiLevelResponse
         TotalPlays = level.Plays;
         UniquePlays = level.UniquePlays.Count;
         Likes = level.Likes.Count();
+        Deaths = level.Deaths;
+        Language = level.Language;
+        Difficulty = level.Difficulty;
         AlbumIds = level.Albums.Select(a => a.Levels).Select(l => Id).ToArray();
         DailyLevelIds = (string[])level.DailyLevels.Select(d => d.Id).ToArray();
         CompletedByYou = completed;
@@ -34,6 +37,9 @@ public class ApiLevelResponse
     public int TotalPlays { get; set; }
     public int UniquePlays { get; set; }
     public int Likes { get; set; }
+    public int Deaths { get; set; }
+    public int Language { get; set; }
+    public float Difficulty { get; set; }
     public string[] AlbumIds { get; set; }
     public string[] DailyLevelIds { get; set; }
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public bool? CompletedByYou { get; set; }

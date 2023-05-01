@@ -12,23 +12,23 @@ public class FeaturedEndpoints : EndpointGroup
     // WARNING: More than 7 community tabs will CRASH the game.
     private readonly List<CommunityTab> _communityTabs = new ()
     {
-        new CommunityTab(buttonLabel: "New Levels", query: "newest",
+        new CommunityTab(buttonLabel: "New Levels", query: "all&orderBy=creationDate",
             panelDescription: "Check here daily for the latest cool levels! Always new stuff to check out!",
             imageUrl: "", panelTitle: "New Levels"),
         
-        new CommunityTab(buttonLabel: "Random Levels", query: "random",
+        new CommunityTab(buttonLabel: "Random Levels", query: "all&orderBy=random",
             panelDescription: "Check here for random levels! Gets reshuffled every day!", imageUrl: "",
             panelTitle: "Random Levels"),
         
-        new CommunityTab(buttonLabel: "Large Levels", query: "largest",
+        new CommunityTab(buttonLabel: "Large Levels", query: "all&orderBy=fileSize",
             panelDescription: "Check here for the largest levels, sorted by file size!", imageUrl: "",
             panelTitle: "Large Levels"),
         
-        new CommunityTab(buttonLabel: "Hard Levels", query: "hardest",
+        new CommunityTab(buttonLabel: "Hard Levels", query: "all&orderBy=difficulty",
             panelDescription: "Check here for the hardest levels, sorted by difficulty!", imageUrl: "",
             panelTitle: "Hard Levels"),
         
-        new CommunityTab(buttonLabel: "Top Levels", query: "top",
+        new CommunityTab(buttonLabel: "Top Levels", query: "all&orderBy=uniquePlays",
             panelDescription: "Check here for the most played levels!", imageUrl: "", panelTitle: "Top Levels")
     };
     

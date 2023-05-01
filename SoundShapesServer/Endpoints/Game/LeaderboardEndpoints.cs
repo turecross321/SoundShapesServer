@@ -39,6 +39,7 @@ public class LeaderboardEndpoints : EndpointGroup
             LevelInteractionEndpoints.AddPlay(database, level);
             LevelInteractionEndpoints.AddUniquePlay(database, level, user);
             LevelInteractionEndpoints.AddDeathsToLevel(database, level, deSerializedRequest.Deaths);
+            database.SetLevelDifficulty(level);
         }
 
         if (!database.SubmitScore(deSerializedRequest, user, levelId)) return HttpStatusCode.InternalServerError;
