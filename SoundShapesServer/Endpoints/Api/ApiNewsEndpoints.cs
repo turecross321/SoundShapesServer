@@ -16,5 +16,8 @@ public class ApiNewsEndpoints : EndpointGroup
         return news == null ? null : new ApiNewsResponse(news);
     }
     
+    // Todo: revamp this system entirely
+    // todo: add it in api docs
+    
     // News Creation is in ./Moderation/ApiCreateNewsEndpoint.cs
 }

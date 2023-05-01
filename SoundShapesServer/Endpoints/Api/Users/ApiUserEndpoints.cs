@@ -1,3 +1,4 @@
+using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
@@ -9,15 +10,17 @@ namespace SoundShapesServer.Endpoints.Api.Users;
 
 public class ApiUserEndpoints : EndpointGroup
 {
-    [ApiEndpoint("user/{id}")]
+    [ApiEndpoint("user/{id}", ContentType.Json)]
     [Authentication(false)]
     public ApiUserResponse? GetUser(RequestContext context, RealmDatabaseContext database, string id)
     {
         GameUser? userToCheck = database.GetUserWithId(id);
         return userToCheck == null ? null : new ApiUserResponse(userToCheck);
+        
+        // TODO: POSTMAN ERROR
     }
 
-    [ApiEndpoint("users")]
+    [ApiEndpoint("users", ContentType.Json)]
     [Authentication(false)]
     public ApiUsersWrapper? GetUsers(RequestContext context, RealmDatabaseContext database)
     {
@@ -48,5 +51,7 @@ public class ApiUserEndpoints : EndpointGroup
         };
 
         return new ApiUsersWrapper(database, users, from, count, order, descending);
+        
+        // TODO: POSTMAN ERROR
     }
 }

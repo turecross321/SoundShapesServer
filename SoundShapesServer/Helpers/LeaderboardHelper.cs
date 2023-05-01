@@ -130,7 +130,7 @@ public static class LeaderboardHelper
         {
             LeaderboardOrderType.Score => entries.OrderBy(e => e.Score),
             LeaderboardOrderType.PlayTime => entries.OrderBy(e => e.PlayTime),
-            LeaderboardOrderType.Tokens => entries.OrderBy(e => e.Tokens),
+            LeaderboardOrderType.TokenCount => entries.OrderBy(e => e.Tokens),
             LeaderboardOrderType.Date => entries.OrderBy(e => e.Date),
             _ => entries.OrderBy(e=>e.Score)
         };

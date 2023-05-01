@@ -11,8 +11,8 @@ namespace SoundShapesServer.Endpoints.Api.Users;
 
 public class ApiUserInteractionEndpoints : EndpointGroup
 {
-    [ApiEndpoint("user/{id}/followed")]
-    public ApiIsUserFollowedResponse? CheckIfUserIsFollowed(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    [ApiEndpoint("user/{id}/following")]
+    public ApiIsUserFollowedResponse? CheckIfFollowingUser(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
     {
         GameUser? recipient = database.GetUserWithId(id);
         if (recipient == null) return null;
@@ -21,6 +21,8 @@ public class ApiUserInteractionEndpoints : EndpointGroup
         {
             IsFollowed = database.IsUserFollowingOtherUser(user, recipient)
         };
+        
+        // TODO: FIX POSTMAN ERROR
     }
 
     [ApiEndpoint("user/{id}/follow", Method.Post)]

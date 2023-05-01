@@ -12,8 +12,8 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 
 public class ApiReportEndpoints : EndpointGroup
 {
-    [ApiEndpoint("report/{id}/dismiss", Method.Post)]
-    public Response DismissReport(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    [ApiEndpoint("report/{id}/remove", Method.Post)]
+    public Response RemoveReport(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
@@ -44,6 +44,8 @@ public class ApiReportEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
 
+        // todo: add filtering by content id
+        
         IQueryable<Report> reports = database.GetReports();
         return new ApiReportsWrapper(reports, from, count);
     }

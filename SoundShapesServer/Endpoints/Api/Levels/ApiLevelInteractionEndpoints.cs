@@ -1,6 +1,7 @@
 using System.Net;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
+using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Levels;
@@ -9,9 +10,9 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Api.Levels;
 
-public class ApiLevelInteractionEndpoints
+public class ApiLevelInteractionEndpoints : EndpointGroup
 {
-    [ApiEndpoint("level/{id}/liked")]
+    [ApiEndpoint("level/{id}/liked", ContentType.Json)]
     public ApiIsLevelLikedResponse? CheckIfUserHasLikedLevel(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);
@@ -21,6 +22,8 @@ public class ApiLevelInteractionEndpoints
         {
             IsLiked = database.IsUserLikingLevel(user, level)
         };
+        
+        // TODO: FIX POSTMAN ERROR 
     }
 
     [ApiEndpoint("level/{id}/like", Method.Post)]

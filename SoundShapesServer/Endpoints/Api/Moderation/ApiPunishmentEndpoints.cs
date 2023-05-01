@@ -62,6 +62,8 @@ public class ApiPunishmentEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
 
+        // todo: add user, add filtering for dismissed cases
+        
         IQueryable<Punishment> punishments = database.GetPunishments();
         return new ApiPunishmentsWrapper(punishments, from, count);
     }
