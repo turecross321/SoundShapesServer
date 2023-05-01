@@ -8,8 +8,13 @@ public class GameAlbum : RealmObject
     public string Id { get; set; } = "";
     public string Name { get; set; } = "";
     public string Artist { get; set; } = "";
-    // this is because album creation isnt implemented yet!
-    public IList<LinerNote> LinerNotes { get; } = new List<LinerNote>();
     public DateTimeOffset CreationDate { get; set; }
-    public IList<GameLevel> Levels { get; } = new List<GameLevel>();
+    
+    // ReSharper disable UnassignedGetOnlyAutoProperty
+    #pragma warning disable CS8618
+    // this warning is because album creation isnt implemented yet!
+    public IList<LinerNote> LinerNotes { get; }
+    public IList<GameLevel> Levels { get; }
+    #pragma warning restore CS8618
+    // ReSharper restore UnassignedGetOnlyAutoProperty
 }
