@@ -46,7 +46,7 @@ public class LevelEndpoints : EndpointGroup
         
         else switch (categoryString)
         {
-            case "queasy3":
+            case "tagged3":
                 levels = database.GetDailyLevels(DateTimeOffset.UtcNow);
                 order = LevelOrderType.UniquePlays;
                 break;
