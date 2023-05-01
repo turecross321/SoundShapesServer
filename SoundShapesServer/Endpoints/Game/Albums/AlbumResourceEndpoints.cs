@@ -14,11 +14,8 @@ public class AlbumResourceEndpoints : EndpointGroup
 {
     private static Response GetResource(IDataStore dataStore, string fileName)
     {
-        if (dataStore.ExistsInStore(fileName))
+        if (!dataStore.TryGetDataFromStore(fileName, out byte[]? data))
             return HttpStatusCode.NotFound;
-
-        if (dataStore.TryGetDataFromStore(fileName, out byte[]? data))
-            return HttpStatusCode.InternalServerError;
 
         Debug.Assert(data != null);
         return new Response(data, ContentType.BinaryData);
