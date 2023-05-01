@@ -19,7 +19,7 @@ public partial class RealmDatabaseContext
     {
         return _realm.All<DailyLevel>().FirstOrDefault(d => d.Id == id);
     }
-    public void AddDailyLevel(GameLevel level, DateTimeOffset date)
+    public DailyLevel AddDailyLevel(GameLevel level, DateTimeOffset date)
     {
         DailyLevel dailyLevel = new()
         {
@@ -32,6 +32,8 @@ public partial class RealmDatabaseContext
         {
             _realm.Add(dailyLevel);
         });
+
+        return dailyLevel;
     }
 
     public void RemoveDailyLevel(DailyLevel dailyLevel)

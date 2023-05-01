@@ -11,7 +11,7 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public GameLevel PublishLevel(LevelPublishRequest request, GameUser user)
+    public GameLevel PublishLevel(PublishLevelRequest request, GameUser user)
     {
         string levelId = request.Id;
             
@@ -25,19 +25,25 @@ public partial class RealmDatabaseContext
         return level;
     }
 
-    public GameLevel? UpdateLevel(LevelPublishRequest updatedLevel, GameLevel level, GameUser user)
+    public GameLevel EditLevel(PublishLevelRequest updatedPublishLevel, GameLevel level, GameUser user)
     {
-        if (user.Id  != level.Author.Id) return null;
-        
         _realm.Write(() =>
         {
-            level.Name = updatedLevel.Title;
-            level.Language = updatedLevel.Language;
+            level.Name = updatedPublishLevel.Title;
+            level.Language = updatedPublishLevel.Language;
             level.ModificationDate = DateTimeOffset.UtcNow;
-            level.FileSize = updatedLevel.FileSize;
+            level.FileSize = updatedPublishLevel.FileSize;
         });
 
         return level;
+    }
+
+    public void SetLevelFileSize(GameLevel level, long fileSize)
+    {
+        _realm.Write(() =>
+        {
+            level.FileSize = fileSize;
+        });
     }
     
     // Not database related, but idk where this should be otherwise.

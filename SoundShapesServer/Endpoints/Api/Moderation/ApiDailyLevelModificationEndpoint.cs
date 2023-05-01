@@ -25,10 +25,7 @@ public class ApiDailyLevelModificationEndpoint : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
         
-        // normally these things would be in helpers, but I've decided against that here to avoid confusion between
-        // DailyLevel objects and GameLevel objects
-        
-        DailyLevel[] paginatedDailyLevels = dailyLevels.AsEnumerable().Skip(from).Take(count).ToArray();
+        DailyLevel[] paginatedDailyLevels = PaginationHelper.PaginateDailyLevels(dailyLevels, from, count);
 
         return new ApiDailyLevelsWrapper(
             dailyLevels: paginatedDailyLevels.Select(t => new ApiDailyLevelResponse(t)).ToArray(),
@@ -43,9 +40,8 @@ public class ApiDailyLevelModificationEndpoint : EndpointGroup
         GameLevel? level = database.GetLevelWithId(body.LevelId);
         if (level == null) return HttpStatusCode.NotFound;
 
-        database.AddDailyLevel(level, body.DateUtc);
-
-        return HttpStatusCode.Created;
+        DailyLevel createdDailyLevel = database.AddDailyLevel(level, body.DateUtc);
+        return new Response(new ApiDailyLevelResponse(createdDailyLevel), ContentType.Json, HttpStatusCode.Created);
     }
     
     [ApiEndpoint("daily/{id}/remove", Method.Post)]

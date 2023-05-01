@@ -6,6 +6,8 @@ using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Responses.Api;
+using SoundShapesServer.Responses.Game.RecentActivity;
 using SoundShapesServer.Types;
 using static SoundShapesServer.Helpers.ResourceHelper;
 
@@ -22,8 +24,8 @@ public class ApiNewsManagementEndpoints
         NewsEntry? newsEntry = database.GetNews(request.Language);
         if (newsEntry != null) return HttpStatusCode.Conflict;
         
-        database.CreateNewsEntry(request);
-        return HttpStatusCode.Created;
+        NewsEntry createdNewsEntry = database.CreateNewsEntry(request);
+        return new Response(new ApiNewsResponse(createdNewsEntry), ContentType.Json, HttpStatusCode.Created);
     }
 
     [ApiEndpoint("news/{language}/edit", Method.Post)]
@@ -38,8 +40,8 @@ public class ApiNewsManagementEndpoints
         NewsEntry? newsEntry = database.GetNews(language);
         if (newsEntry == null) return HttpStatusCode.NotFound;
         
-        database.EditNewsEntry(newsEntry, body);
-        return HttpStatusCode.Created;
+        NewsEntry createdNewsEntry = database.EditNewsEntry(newsEntry, body);
+        return new Response(new NewsResponse(createdNewsEntry), ContentType.Json, HttpStatusCode.Created);
     }
     
     [ApiEndpoint("news/{language}/setImage", Method.Post)]

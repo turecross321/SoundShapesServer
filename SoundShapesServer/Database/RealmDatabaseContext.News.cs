@@ -11,7 +11,7 @@ public partial class RealmDatabaseContext
         return translatedNews;
     }
 
-    public void CreateNewsEntry(ApiCreateNewsEntryRequest request)
+    public NewsEntry CreateNewsEntry(ApiCreateNewsEntryRequest request)
     {
         NewsEntry entry = new ()
         {
@@ -26,9 +26,11 @@ public partial class RealmDatabaseContext
         {
             _realm.Add(entry);
         });
+
+        return entry;
     }
 
-    public void EditNewsEntry(NewsEntry entry, ApiCreateNewsEntryRequest request)
+    public NewsEntry EditNewsEntry(NewsEntry entry, ApiCreateNewsEntryRequest request)
     {
         _realm.Write(() =>
         {
@@ -38,6 +40,8 @@ public partial class RealmDatabaseContext
             entry.FullText = request.FullText;
             entry.Url = request.Url;
         });
+
+        return entry;
     }
 
     public void RemoveNewsEntry(NewsEntry entry)

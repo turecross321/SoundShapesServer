@@ -7,6 +7,7 @@ using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Responses.Api.Albums;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using static SoundShapesServer.Helpers.ResourceHelper;
@@ -20,8 +21,8 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
 
-        database.CreateAlbum(body);
-        return HttpStatusCode.Created;
+        GameAlbum album = database.CreateAlbum(body);
+        return new Response(new ApiAlbumResponse(album), ContentType.Json, HttpStatusCode.Created);
     }
 
     [ApiEndpoint("album/{id}/edit", Method.Post)]
@@ -32,8 +33,8 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
         GameAlbum? album = database.GetAlbumWithId(id);
         if (album == null) return HttpStatusCode.NotFound;
         
-        database.EditAlbum(album, body);
-        return HttpStatusCode.Created;
+        GameAlbum editedAlbum = database.EditAlbum(album, body);
+        return new Response(new ApiAlbumResponse(editedAlbum), ContentType.Json, HttpStatusCode.Created);
     }
 
     [ApiEndpoint("album/{id}/setThumbnail", Method.Post)]

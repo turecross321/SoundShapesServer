@@ -24,13 +24,13 @@ public class LevelPublishingEndpoints : EndpointGroup
         Response? uploadedResources = UploadLevelResources(dataStore, parser, levelId);
         if (uploadedResources == null) return uploadedResources ?? HttpStatusCode.InternalServerError;
         
-        LevelPublishRequest levelRequest = new (
+        PublishLevelRequest publishLevelRequest = new (
             parser.GetParameterValue("title"), 
             int.Parse(parser.GetParameterValue("sce_np_language")), 
             levelId, 
             parser.Files.First(f => f.Name == "level").Data.Length);
 
-        GameLevel publishedLevel = database.PublishLevel(levelRequest, user);
+        GameLevel publishedLevel = database.PublishLevel(publishLevelRequest, user);
         return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
     
@@ -42,17 +42,19 @@ public class LevelPublishingEndpoints : EndpointGroup
         if (level == null) return new Response(HttpStatusCode.NotFound);
         if (level.Author.Id != user.Id) return new Response(HttpStatusCode.Forbidden);
         
+        if (user.Id  != level.Author.Id) return HttpStatusCode.Unauthorized;
+        
         Response? uploadedResources = UploadLevelResources(dataStore, parser, levelId);
         if (uploadedResources == null) return uploadedResources ?? HttpStatusCode.InternalServerError;
 
-        LevelPublishRequest levelRequest = new (
+        PublishLevelRequest publishLevelRequest = new (
             parser.GetParameterValue("title"), 
             int.Parse(parser.GetParameterValue("sce_np_language")), 
             levelId, 
             parser.Files.First(f => f.Name == "level").Data.Length);
         
-        GameLevel? publishedLevel = database.UpdateLevel(levelRequest, level, user);
-        return publishedLevel == null ? new Response(HttpStatusCode.BadRequest) : new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
+        GameLevel publishedLevel = database.EditLevel(publishLevelRequest, level, user);
+        return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
 
 

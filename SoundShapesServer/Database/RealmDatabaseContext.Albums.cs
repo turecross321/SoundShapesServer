@@ -6,7 +6,7 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public void CreateAlbum(ApiCreateAlbumRequest request)
+    public GameAlbum CreateAlbum(ApiCreateAlbumRequest request)
     {
         GameLevel[] levels = GetLevelsWithIds(request.LevelIds.AsEnumerable()).ToArray();
         GameAlbum album = new(GenerateGuid(), request, DateTimeOffset.UtcNow, levels);
@@ -15,6 +15,8 @@ public partial class RealmDatabaseContext
         {
             _realm.Add(album);
         });
+
+        return album;
     }
 
     public void RemoveAlbum(GameAlbum album)
@@ -25,7 +27,7 @@ public partial class RealmDatabaseContext
         });
     }
     
-    public void EditAlbum(GameAlbum album, ApiCreateAlbumRequest request)
+    public GameAlbum EditAlbum(GameAlbum album, ApiCreateAlbumRequest request)
     {
         _realm.Write(() =>
         {
@@ -41,6 +43,8 @@ public partial class RealmDatabaseContext
                 album.Levels.Add(level);
             }
         });
+
+        return album;
     }
     public IQueryable<GameAlbum> GetAlbums()
     {

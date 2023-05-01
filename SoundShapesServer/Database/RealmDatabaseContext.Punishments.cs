@@ -15,7 +15,7 @@ public partial class RealmDatabaseContext
         return _realm.All<Punishment>().FirstOrDefault(p => p.Id == id);
     }
     
-    public void PunishUser(GameUser user, ApiPunishRequest request)
+    public Punishment PunishUser(GameUser user, ApiPunishRequest request)
     {
         if (request.PunishmentType == (int)PunishmentType.Ban)
         {
@@ -36,6 +36,8 @@ public partial class RealmDatabaseContext
         {
             _realm.Add(newPunishment);
         });
+
+        return newPunishment;
     }
 
     public void EditPunishment(Punishment punishment, ApiPunishRequest request, GameUser user)

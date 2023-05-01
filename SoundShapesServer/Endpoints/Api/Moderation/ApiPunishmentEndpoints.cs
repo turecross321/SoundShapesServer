@@ -21,8 +21,8 @@ public class ApiPunishmentEndpoints : EndpointGroup
         GameUser? userToPunish = database.GetUserWithId(body.UserId);
         if (userToPunish == null) return HttpStatusCode.NotFound;
         
-        database.PunishUser(user, body);
-        return HttpStatusCode.Created;
+        Punishment createdPunishment = database.PunishUser(user, body);
+        return new Response(new ApiPunishmentResponse(createdPunishment), ContentType.Json, HttpStatusCode.Created);
     }
 
     [ApiEndpoint("punishment/{id}/edit", Method.Post)]

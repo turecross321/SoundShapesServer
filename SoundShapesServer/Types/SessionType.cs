@@ -6,6 +6,5 @@ public enum SessionType
     SetPassword = 2,
     SetEmail = 3,
     RemoveAccount = 4,
-    Unauthorized = 5,
-    Unknown = 6
+    Unauthorized = 5
 }
