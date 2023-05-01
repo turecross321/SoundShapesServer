@@ -11,7 +11,7 @@ using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
-public class ApiManageNewsEndpoints
+public class ApiNewsManagementEndpoints
 {
     [ApiEndpoint("news/create", Method.Post)]
     public Response CreateNewsEntry(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, Stream body, GameUser user)

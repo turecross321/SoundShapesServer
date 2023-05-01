@@ -10,7 +10,7 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
-public class ApiManageLeaderboardEndpoints : EndpointGroup
+public class ApiLeaderboardManagementEndpoints : EndpointGroup
 {
     [ApiEndpoint("leaderboard/{id}/remove", Method.Post)]
     public Response RemoveEntry(RequestContext context, RealmDatabaseContext database, GameUser user, string id)

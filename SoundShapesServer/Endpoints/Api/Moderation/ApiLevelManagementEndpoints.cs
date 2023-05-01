@@ -11,7 +11,7 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
-public class ApiManageLevelEndpoints : EndpointGroup
+public class ApiLevelManagementEndpoints : EndpointGroup
 {
     [ApiEndpoint("level/{id}/remove", Method.Post)]
     public Response RemoveLevel(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, string id)
