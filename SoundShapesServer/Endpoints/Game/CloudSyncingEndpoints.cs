@@ -44,7 +44,7 @@ public class CloudSyncingEndpoints : EndpointGroup
     {
         string key = ResourceHelper.GetSaveResourceKey(user.Id);
 
-        return !dataStore.RemoveFromStore(key) ? HttpStatusCode.InternalServerError : HttpStatusCode.OK;
+        return dataStore.RemoveFromStore(key) ? HttpStatusCode.OK : HttpStatusCode.InternalServerError;
     }
 
     [GameEndpoint("~identity:{userId}/~content:progress/data.get")]
