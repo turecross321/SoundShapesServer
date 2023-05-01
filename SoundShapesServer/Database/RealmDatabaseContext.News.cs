@@ -1,3 +1,4 @@
+using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Database;
@@ -10,14 +11,32 @@ public partial class RealmDatabaseContext
         return translatedNews;
     }
 
-    public void CreateNewsEntry(NewsEntry entry)
+    public void CreateNewsEntry(ApiCreateNewsEntryRequest request)
+    {
+        NewsEntry entry = new ()
+        {
+            Language = request.Language,
+            Title = request.Title,
+            Summary = request.Summary,
+            FullText = request.FullText,
+            Url = request.Url
+        };
+        
+        _realm.Write(() =>
+        {
+            _realm.Add(entry);
+        });
+    }
+
+    public void EditNewsEntry(NewsEntry entry, ApiCreateNewsEntryRequest request)
     {
         _realm.Write(() =>
         {
-            // Remove previous entries with the same language
-            _realm.RemoveRange(_realm.All<NewsEntry>().Where(e=>e.Language == entry.Language));
-            
-            _realm.Add(entry);
+            entry.Language = request.Language;
+            entry.Title = request.Title;
+            entry.Summary = request.Summary;
+            entry.FullText = request.FullText;
+            entry.Url = request.Url;
         });
     }
 

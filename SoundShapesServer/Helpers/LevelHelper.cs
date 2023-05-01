@@ -37,22 +37,22 @@ public static class LevelHelper
             .OrderBy(_ => rng.Next())
             .AsQueryable();
     }
-    public static IQueryable<GameLevel> OrderLevels(IQueryable<GameLevel> levels, LevelOrderType orderType)
+    public static IQueryable<GameLevel> OrderLevels(IEnumerable<GameLevel> levels, LevelOrderType orderType)
     {
         return orderType switch
         {
-            LevelOrderType.CreationDate => levels.AsEnumerable().OrderBy(l => l.CreationDate).AsQueryable(),
-            LevelOrderType.ModificationDate => levels.AsEnumerable().OrderBy(l => l.ModificationDate).AsQueryable(),
-            LevelOrderType.Plays => levels.AsEnumerable().OrderBy(l => l.Plays).AsQueryable(),
-            LevelOrderType.UniquePlays => levels.AsEnumerable().OrderBy(l => l.UniquePlays.Count).AsQueryable(),
-            LevelOrderType.FileSize => levels.AsEnumerable().OrderBy(l => l.FileSize).AsQueryable(),
-            LevelOrderType.Difficulty => levels.AsEnumerable().OrderBy(l => l.Difficulty).AsQueryable(),
-            LevelOrderType.Relevance => levels.AsEnumerable()
+            LevelOrderType.CreationDate => levels.OrderBy(l => l.CreationDate).AsQueryable(),
+            LevelOrderType.ModificationDate => levels.OrderBy(l => l.ModificationDate).AsQueryable(),
+            LevelOrderType.Plays => levels.OrderBy(l => l.Plays).AsQueryable(),
+            LevelOrderType.UniquePlays => levels.OrderBy(l => l.UniquePlays.Count).AsQueryable(),
+            LevelOrderType.FileSize => levels.OrderBy(l => l.FileSize).AsQueryable(),
+            LevelOrderType.Difficulty => levels.OrderBy(l => l.Difficulty).AsQueryable(),
+            LevelOrderType.Relevance => levels
                 .OrderBy(l=> l.UniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.CreationDate).TotalDays * 0.5)
                 .AsQueryable(),
-            LevelOrderType.Random => RandomizeLevelOrder(levels),
-            LevelOrderType.DoNotOrder => levels,
-            _ => levels.OrderBy(u=>u.CreationDate)
+            LevelOrderType.Random => RandomizeLevelOrder(levels.AsQueryable()),
+            LevelOrderType.DoNotOrder => levels.AsQueryable(),
+            _ => levels.OrderBy(u=>u.CreationDate).AsQueryable()
         };
     }
 }

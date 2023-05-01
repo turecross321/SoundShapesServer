@@ -3,9 +3,9 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
-using HttpMultipartParser;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
 using static SoundShapesServer.Helpers.ResourceHelper;
 
@@ -14,47 +14,50 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 public class ApiNewsManagementEndpoints
 {
     [ApiEndpoint("news/create", Method.Post)]
-    public Response CreateNewsEntry(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, Stream body, GameUser user)
+    public Response CreateNewsEntry(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, 
+        GameUser user, ApiCreateNewsEntryRequest request)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
-        
-        MultipartFormDataParser request = MultipartFormDataParser.Parse(body);
 
-        string language;
-        string title;
-        string summary;
-        string fullText;
-        string url;
+        NewsEntry? newsEntry = database.GetNews(request.Language);
+        if (newsEntry != null) return HttpStatusCode.Conflict;
+        
+        database.CreateNewsEntry(request);
+        return HttpStatusCode.Created;
+    }
+
+    [ApiEndpoint("news/{language}/edit", Method.Post)]
+    public Response EditNewsEntry(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, 
+        GameUser user, ApiCreateNewsEntryRequest body, string language)
+    {
+        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
+
+        NewsEntry? newsEntryThatAlreadyHasLanguage = database.GetNews(body.Language);
+        if (newsEntryThatAlreadyHasLanguage != null) return HttpStatusCode.Conflict;
+
+        NewsEntry? newsEntry = database.GetNews(language);
+        if (newsEntry == null) return HttpStatusCode.NotFound;
+        
+        database.EditNewsEntry(newsEntry, body);
+        return HttpStatusCode.Created;
+    }
+    
+    [ApiEndpoint("news/{language}/setImage", Method.Post)]
+    public Response SetNewsAssets(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, string language, Stream body)
+    {
+        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
         byte[] image;
-        
-        try
-        {
-            language = request.Parameters.First(p => p.Name == "Language").Data;
-            title = request.Parameters.First(p => p.Name == "Title").Data;
-            summary = request.Parameters.First(p => p.Name == "Summary").Data;
-            fullText = request.Parameters.First(p => p.Name == "FullText").Data;
-            url = request.Parameters.First(p => p.Name == "Url").Data;
 
-            image = FilePartToBytes(request.Files.First(p => p.Name == "Image"));
-        }
-        catch (InvalidOperationException)
+        using (MemoryStream memoryStream = new ())
         {
-            return HttpStatusCode.BadRequest;
+            body.CopyTo(memoryStream);
+            image = memoryStream.ToArray();
         }
         
         if (!IsByteArrayPng(image)) return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
 
         dataStore.WriteToStore(GetNewsResourceKey(language), image);
-        database.CreateNewsEntry(new NewsEntry()
-        {
-            Language = language, 
-            Title = title, 
-            Summary = summary, 
-            FullText = fullText, 
-            Url = url
-        });
-
         return HttpStatusCode.Created;
     }
 

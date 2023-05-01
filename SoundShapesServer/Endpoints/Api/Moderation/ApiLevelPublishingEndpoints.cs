@@ -15,7 +15,7 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 
 public class ApiLevelPublishingEndpoints : EndpointGroup
 {
-    [ApiEndpoint("level/publish", Method.Post)]
+    [ApiEndpoint("levels/publish", Method.Post)]
     public Response PublishLevels(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, Stream body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;

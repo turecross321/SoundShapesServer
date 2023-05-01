@@ -69,6 +69,19 @@ public partial class RealmDatabaseContext
     
     public GameLevel? GetLevelWithId(string id) => _realm.All<GameLevel>().FirstOrDefault(l => l.Id == id);
 
+    private IQueryable<GameLevel> GetLevelsWithIds(IEnumerable<string> ids)
+    {
+        List<GameLevel> levels = new ();
+        
+        foreach (string levelId in ids) 
+        {
+            GameLevel? level = GetLevelWithId(levelId);
+            if (level != null) levels.Add(level);
+        }
+
+        return levels.AsQueryable();
+    }
+
     public IQueryable<GameLevel> SearchForLevels(string query)
     {
         string[] keywords = query.Split(' ');

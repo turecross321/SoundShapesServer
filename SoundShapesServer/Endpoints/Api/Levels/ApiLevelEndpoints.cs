@@ -15,9 +15,10 @@ public class ApiLevelEndpoints: EndpointGroup
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
+        
         bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
-
         string? orderString = context.QueryString["orderBy"];
+        
         string category = context.QueryString["category"] ?? "all";
         
         string? byUser = context.QueryString["byUser"];

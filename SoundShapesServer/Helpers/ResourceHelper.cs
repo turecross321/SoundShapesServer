@@ -58,19 +58,14 @@ public static class ResourceHelper
     }
     
     private const string AlbumsPath = "albums";
-    public static string GetAlbumResourceKey(string albumId, string file)
+    public static string GetAlbumResourceKey(string albumId, AlbumResourceType resourceType)
     {
-        if (Enum.TryParse(file, out AlbumResourceType type) == false) return "";
-
-        switch (type)
+        return resourceType switch
         {
-            case AlbumResourceType.Thumbnail:
-                return $"{AlbumsPath}/{albumId}_thumbnail.png";
-            case AlbumResourceType.SidePanel:
-                return $"{AlbumsPath}/{albumId}_sidePanel.png";
-        }
-
-        return "";
+            AlbumResourceType.Thumbnail => $"{AlbumsPath}/{albumId}_thumbnail.png",
+            AlbumResourceType.SidePanel => $"{AlbumsPath}/{albumId}_sidePanel.png",
+            _ => ""
+        };
     }
     
     public static string GenerateAlbumResourceUrl(string albumId, AlbumResourceType type, string? sessionId)

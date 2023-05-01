@@ -1,4 +1,4 @@
-namespace SoundShapesServer.Requests.Api.Levels;
+namespace SoundShapesServer.Requests.Api;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ApiAddDailyLevelRequest
