@@ -12,7 +12,7 @@ public class ApiNewsResponse
         FullText = entry.FullText;
         Url = entry.Url;
     }
-
+    
     public string Language { get; set; }
     public string Title { get; set; }
     public string Summary { get; set; }

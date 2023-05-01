@@ -22,9 +22,6 @@ public class ApiNewsManagementEndpoints : EndpointGroup
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
-        NewsEntry? newsEntry = database.GetNews(body.Language);
-        if (newsEntry != null) return HttpStatusCode.Conflict;
-        
         NewsEntry createdNewsEntry = database.CreateNewsEntry(body);
         return new Response(new ApiNewsResponse(createdNewsEntry), ContentType.Json, HttpStatusCode.Created);
     }
@@ -35,14 +32,11 @@ public class ApiNewsManagementEndpoints : EndpointGroup
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
-        NewsEntry? newsEntryThatAlreadyHasLanguage = database.GetNews(body.Language);
-        if (newsEntryThatAlreadyHasLanguage != null) return HttpStatusCode.Conflict;
-
         NewsEntry? newsEntry = database.GetNews(language);
         if (newsEntry == null) return HttpStatusCode.NotFound;
         
         NewsEntry createdNewsEntry = database.EditNewsEntry(newsEntry, body);
-        return new Response(new NewsResponse(createdNewsEntry), ContentType.Json, HttpStatusCode.Created);
+        return new Response(new ApiNewsResponse(createdNewsEntry), ContentType.Json, HttpStatusCode.Created);
     }
     
     [ApiEndpoint("news/{language}/setImage", Method.Post)]

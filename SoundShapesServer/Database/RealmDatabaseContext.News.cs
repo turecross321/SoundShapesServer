@@ -24,6 +24,7 @@ public partial class RealmDatabaseContext
         
         _realm.Write(() =>
         {
+            _realm.RemoveRange(_realm.All<NewsEntry>().Where(e=>e.Language == request.Language));
             _realm.Add(entry);
         });
 
