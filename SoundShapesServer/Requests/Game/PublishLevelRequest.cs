@@ -16,7 +16,7 @@ public class PublishLevelRequest
 
     public PublishLevelRequest(ApiPublishLevelRequest request, string levelId)
     {
-        Title = request.Title;
+        Title = request.Name;
         Language = request.Language;
         Id = levelId;
         FileSize = 0;

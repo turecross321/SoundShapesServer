@@ -1,6 +1,7 @@
 using System.Net;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
+using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Database;
@@ -13,7 +14,7 @@ using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
-public class ApiNewsManagementEndpoints
+public class ApiNewsManagementEndpoints : EndpointGroup
 {
     [ApiEndpoint("news/create", Method.Post)]
     public Response CreateNewsEntry(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, 

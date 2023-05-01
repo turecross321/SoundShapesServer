@@ -2,14 +2,14 @@ namespace SoundShapesServer.Requests.Api;
 
 public class ApiPublishLevelRequest
 {
-    public ApiPublishLevelRequest(int language, string title, DateTimeOffset modified)
+    public ApiPublishLevelRequest(int language, string name, DateTimeOffset modified)
     {
         Language = language;
-        Title = title;
+        Name = name;
         Modified = modified;
     }
 
-    public string Title { get; }
+    public string Name { get; }
     public int Language { get; }
     public DateTimeOffset? Modified { get; set; } 
 }

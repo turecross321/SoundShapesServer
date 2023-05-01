@@ -50,4 +50,9 @@ public static class PaginationHelper
     {
         return entries.AsEnumerable().Skip(from).Take(count).ToArray();
     }
+
+    public static DailyLevel[] PaginateDailyLevels(IQueryable<DailyLevel> entries, int from, int count)
+    {
+        return entries.AsEnumerable().Skip(from).Take(count).ToArray();
+    }
 }
