@@ -36,7 +36,7 @@ public partial class RealmDatabaseContext
             Issuer = reporter,
             ContentId = contentId,
             ContentType = (int)contentType,
-            ReportReasonId = reportReasonId,
+            ReportReasonId = Math.Clamp(reportReasonId, 0, 6),
             Issued = DateTimeOffset.UtcNow
         };
         
