@@ -18,8 +18,6 @@ public class ApiLeaderboardEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
         
         bool descending = Parse(context.QueryString["descending"] ?? "false");
-        
-        // TODO: fix error handling. right now if you give an invalid response it returns a 500
 
         bool onlyBest = Parse(context.QueryString["onlyBest"] ?? "false");
         

@@ -1,6 +1,7 @@
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types;
 
@@ -28,42 +29,12 @@ public class ApiUserEndpoints : EndpointGroup
 
         bool registered = bool.Parse(context.QueryString["registered"] ?? "true");
         
-        string? whoIsFollowing = context.QueryString["whoIsFollowing"]; 
-        string? whoIsFollowedBy = context.QueryString["whoIsFollowedBy"]; 
+        string? following = context.QueryString["following"]; 
+        string? followedBy = context.QueryString["followedBy"]; 
 
-        IQueryable<GameUser> users = database.GetUsers();
-
-        if (registered)
-        {
-            users = users
-                .AsEnumerable()
-                .Where(u => u.HasFinishedRegistration)
-                .AsQueryable();
-        }
-
-        if (whoIsFollowing != null)
-        {
-            GameUser? userToGetUsersFrom = database.GetUserWithId(whoIsFollowing);
-            if (userToGetUsersFrom == null) return null;
-
-            users = users
-                .AsEnumerable()
-                .Where(u => userToGetUsersFrom.Followers
-                    .Select(r => r.Follower.Id).Contains(u.Id))
-                .AsQueryable();
-        }
-        
-        if (whoIsFollowedBy != null)
-        {
-            GameUser? userToGetUsersFrom = database.GetUserWithId(whoIsFollowing);
-            if (userToGetUsersFrom == null) return null;
-
-            users = users
-                .AsEnumerable()
-                .Where(u => userToGetUsersFrom.Following
-                    .Select(r => r.Recipient.Id).Contains(u.Id))
-                .AsQueryable();
-        }
+        IQueryable<GameUser>? users = database.GetUsers();
+        users = UserHelper.FilterUsers(database, users, registered, following, followedBy);
+        if (users == null) return null;
 
         UserOrderType order = orderString switch
         {

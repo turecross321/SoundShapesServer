@@ -7,9 +7,7 @@ using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
-using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Api.Albums;
 

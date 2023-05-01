@@ -35,9 +35,7 @@ public partial class RealmDatabaseContext
     {
         return _realm.All<LeaderboardEntry>().FirstOrDefault(e => e.Id == id);
     }
-
-
-    // todo: moderators should be able to calkl this
+    
     public void RemoveLeaderboardEntry(LeaderboardEntry entry)
     {
         _realm.Write(() =>

@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using SoundShapesServer.Database;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Helpers;
@@ -37,6 +38,47 @@ public static class LevelHelper
             .OrderBy(_ => rng.Next())
             .AsQueryable();
     }
+
+    public static IQueryable<GameLevel>? FilterLevels(RealmDatabaseContext database, IQueryable<GameLevel> levels, string? byUser, string? likedByUser, string? inAlbum)
+    {
+        IQueryable<GameLevel> response = levels;
+        if (byUser != null)
+        {
+            GameUser? userToGetLevelsFrom = database.GetUserWithId(byUser);
+            if (userToGetLevelsFrom == null) return null;
+
+            response = response
+                .AsEnumerable()
+                .Where(l => l.Author.Id == byUser)
+                .AsQueryable();
+        }
+        if (likedByUser != null)
+        {
+            GameUser? userToGetLevelsFrom = database.GetUserWithId(likedByUser);
+            if (userToGetLevelsFrom == null) return null;
+
+            response = response
+                .AsEnumerable()
+                .Where(l => userToGetLevelsFrom.LikedLevels
+                    .Select(relation => relation.Level.Id)
+                    .Contains(l.Id))
+                .AsQueryable();
+        }
+
+        if (inAlbum != null)
+        {
+            GameAlbum? albumToGetLevelsFrom = database.GetAlbumWithId(inAlbum);
+            if (albumToGetLevelsFrom == null) return null;
+
+            response = response
+                .AsEnumerable()
+                .Where(l => albumToGetLevelsFrom.Levels.Contains(l))
+                .AsQueryable();
+        }
+
+        return response;
+    }
+
     public static IQueryable<GameLevel> OrderLevels(IEnumerable<GameLevel> levels, LevelOrderType orderType)
     {
         return orderType switch

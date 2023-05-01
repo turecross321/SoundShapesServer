@@ -1,6 +1,6 @@
-using System.Text.RegularExpressions;
 using SoundShapesServer.Database;
 using SoundShapesServer.Types;
+using static System.Text.RegularExpressions.Regex;
 
 namespace SoundShapesServer.Helpers;
 
@@ -9,7 +9,46 @@ public static class UserHelper
     private const string UsernameRegex = "^[A-Za-z][A-Za-z0-9-_]{2,15}$";
     public static bool IsUsernameLegal(string username)
     {
-        return Regex.IsMatch(username, UsernameRegex);
+        return IsMatch(username, UsernameRegex);
+    }
+
+    public static IQueryable<GameUser>? FilterUsers(RealmDatabaseContext database, IQueryable<GameUser> users, bool registered, string? following, string? followedBy)
+    {
+        IQueryable<GameUser> response = users;
+
+        if (registered)
+        {
+            response = response
+                .AsEnumerable()
+                .Where(u => u.HasFinishedRegistration)
+                .AsQueryable();
+        }
+
+        if (following != null)
+        {
+            GameUser? userToGetUsersFrom = database.GetUserWithId(following);
+            if (userToGetUsersFrom == null) return null;
+
+            response = response
+                .AsEnumerable()
+                .Where(u => userToGetUsersFrom.Followers
+                    .Select(r => r.Follower.Id).Contains(u.Id))
+                .AsQueryable();
+        }
+        
+        if (followedBy != null)
+        {
+            GameUser? userToGetUsersFrom = database.GetUserWithId(following);
+            if (userToGetUsersFrom == null) return null;
+
+            response = response
+                .AsEnumerable()
+                .Where(u => userToGetUsersFrom.Following
+                    .Select(r => r.Recipient.Id).Contains(u.Id))
+                .AsQueryable();
+        }
+
+        return response;
     }
 
     public static IQueryable<GameUser> OrderUsers(RealmDatabaseContext database, IQueryable<GameUser> users, UserOrderType order)
