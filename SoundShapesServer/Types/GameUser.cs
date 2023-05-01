@@ -16,18 +16,22 @@ public class GameUser : RealmObject, IUser
     public bool HasFinishedRegistration { get; set; }
     public DateTimeOffset CreationDate { get; set; }
 
+    #pragma warning disable CS8618
+    // ReSharper disable all UnassignedGetOnlyAutoProperty
+    
     [Backlink(nameof(IpAuthorization.User))]
-    public IQueryable<IpAuthorization> IpAddresses { get; } = Enumerable.Empty<IpAuthorization>().AsQueryable();
+    public IQueryable<IpAuthorization> IpAddresses { get; }
 
-    [Backlink(nameof(LevelLikeRelation.Liker))] public IQueryable<LevelLikeRelation> LikedLevels { get; } = Enumerable.Empty<LevelLikeRelation>().AsQueryable();
-    [Backlink(nameof(GameLevel.UniquePlays))] public IQueryable<GameLevel> PlayedLevels { get; } = Enumerable.Empty<GameLevel>().AsQueryable();
+    [Backlink(nameof(LevelLikeRelation.Liker))] public IQueryable<LevelLikeRelation> LikedLevels { get; }
+    [Backlink(nameof(GameLevel.UniquePlays))] public IQueryable<GameLevel> PlayedLevels { get; }
 
-    [Backlink(nameof(FollowRelation.Recipient))] public IQueryable<FollowRelation> Followers { get; } = Enumerable.Empty<FollowRelation>().AsQueryable();
+    [Backlink(nameof(FollowRelation.Recipient))] public IQueryable<FollowRelation> Followers { get; }
     
-    [Backlink(nameof(FollowRelation.Follower))] public IQueryable<FollowRelation> Following { get; } = Enumerable.Empty<FollowRelation>().AsQueryable();
-    [Backlink(nameof(GameSession.User))] public IQueryable<GameSession> Sessions { get; } = Enumerable.Empty<GameSession>().AsQueryable();
+    [Backlink(nameof(FollowRelation.Follower))] public IQueryable<FollowRelation> Following { get; }
+    [Backlink(nameof(GameSession.User))] public IQueryable<GameSession> Sessions { get; }
     
-    [Backlink(nameof(GameLevel.Author))] public IQueryable<GameLevel> Levels { get; } = Enumerable.Empty<GameLevel>().AsQueryable();
-    [Backlink(nameof(Punishment.User))] public IQueryable<Punishment> Punishments { get; } = Enumerable.Empty<Punishment>().AsQueryable();
-    [Backlink(nameof(LeaderboardEntry.User))] public IQueryable<LeaderboardEntry> LeaderboardEntries { get; } = Enumerable.Empty<LeaderboardEntry>().AsQueryable();
+    [Backlink(nameof(GameLevel.Author))] public IQueryable<GameLevel> Levels { get; }
+    [Backlink(nameof(Punishment.User))] public IQueryable<Punishment> Punishments { get; }
+    [Backlink(nameof(LeaderboardEntry.User))] public IQueryable<LeaderboardEntry> LeaderboardEntries { get; }
+    #pragma warning restore CS8618
 }
