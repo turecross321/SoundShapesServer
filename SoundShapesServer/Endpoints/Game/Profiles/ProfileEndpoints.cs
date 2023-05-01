@@ -27,7 +27,7 @@ public class ProfileEndpoints : EndpointGroup
         GameUser? follower = database.GetUserWithId(id);
         if (follower == null) return null;
 
-        IQueryable<GameUser> users = database.GetFollowedUsers(follower, from, count);
+        IQueryable<GameUser> users = database.GetFollowedUsers(follower);
         return new FollowingUsersWrapper(follower, users, from, count);
     }
 
@@ -40,7 +40,7 @@ public class ProfileEndpoints : EndpointGroup
         GameUser? follower = database.GetUserWithId(id);
         if (follower == null) return null;
         
-        IQueryable<GameUser> users = database.GetFollowers(follower, from, count);
+        IQueryable<GameUser> users = database.GetFollowers(follower);
         return new FollowingUsersWrapper(follower, users, from, count);
     }
 }

@@ -10,10 +10,11 @@ public partial class RealmDatabaseContext
 {
     public GameUser CreateUser(string username)
     {
-        GameUser user = new()
+        GameUser user = new ()
         {
             Id = GenerateGuid(),
-            Username = username
+            Username = username,
+            CreationDate = DateTimeOffset.UtcNow
         };
 
         _realm.Write(() =>
@@ -51,6 +52,11 @@ public partial class RealmDatabaseContext
         {
             user.Username = username;
         });
+    }
+
+    public IQueryable<GameUser> GetUsers()
+    {
+        return _realm.All<GameUser>();
     }
 
     public GameUser? GetUserWithUsername(string username)

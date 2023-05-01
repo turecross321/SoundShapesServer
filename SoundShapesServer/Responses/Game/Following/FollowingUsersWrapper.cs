@@ -8,9 +8,10 @@ public class FollowingUsersWrapper
 {
     public FollowingUsersWrapper(GameUser user, IQueryable<GameUser> users, int from, int count)
     {
+        IQueryable<GameUser> paginatedUsers = PaginationHelper.PaginateUsers(users, from, count).AsQueryable();
         (int? nextToken, int? previousToken) = PaginationHelper.GetPageTokens(users.Count(), from, count);
 
-        Users = users.Select(t => new FollowingUserResponse(user, t)).ToArray();
+        Users = paginatedUsers.Select(t => new FollowingUserResponse(user, t)).ToArray();
         NextToken = nextToken;
         PreviousToken = previousToken;
     }

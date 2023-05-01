@@ -1,4 +1,3 @@
-using System.Net;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
@@ -34,6 +33,17 @@ public class ApiLevelEndpoints: EndpointGroup
                 if (userToGetLevelsFrom == null) return null;
 
                 levels = userToGetLevelsFrom.Levels;
+                break;
+            }
+            case "likedByUser":
+            {
+                string? userId = context.QueryString["userId"];
+                if (userId == null) return null;
+
+                GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
+                if (userToGetLevelsFrom == null) return null;
+
+                levels = userToGetLevelsFrom.LikedLevels.Select(r=>r.Level);
                 break;
             }
             case "daily":

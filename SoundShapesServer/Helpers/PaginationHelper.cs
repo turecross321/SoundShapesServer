@@ -24,6 +24,11 @@ public static class PaginationHelper
     {
         return levels.AsEnumerable().Skip(from).Take(count).ToArray();
     }
+    
+    public static GameUser[] PaginateUsers(IQueryable<GameUser> users, int from, int count)
+    {
+        return users.AsEnumerable().Skip(from).Take(count).ToArray();
+    }
 
     public static GameAlbum[] PaginateAlbums(IQueryable<GameAlbum> albums, int from, int count)
     {

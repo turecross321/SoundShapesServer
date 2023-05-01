@@ -1,5 +1,6 @@
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Levels;
+using static SoundShapesServer.Helpers.LeaderboardHelper;
 
 namespace SoundShapesServer.Responses.Api.Levels;
 
@@ -10,7 +11,7 @@ public class ApiLeaderboardEntryWrapper
     {
         LeaderboardEntry[] paginatedEntries = PaginationHelper.PaginateLeaderboardEntries(entries, from, count);
 
-        Entries = paginatedEntries.Select((t, i) => new ApiLeaderboardEntryResponse(t, i + from)).ToArray();
+        Entries = paginatedEntries.Select(entry => new ApiLeaderboardEntryResponse(entry, GetEntryPlacement(entries, entry))).ToArray();
         Count = entries.Count();
     }
 

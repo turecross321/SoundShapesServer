@@ -6,44 +6,29 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public IQueryable<GameUser> GetFollowers(GameUser userBeingFollowed, int from, int count)
+    public IQueryable<GameUser> GetFollowers(GameUser userBeingFollowed)
     {
         IQueryable<FollowRelation> relations = _realm.All<FollowRelation>().Where(r => r.Recipient == userBeingFollowed);
 
         FollowRelation[] selectedRelations = relations 
             .AsEnumerable()
-            .Skip(from)
-            .Take(count)
             .ToArray();
 
-        List<GameUser> followers = new ();
-
-        for (int i = 0; i < selectedRelations.Length; i++)
-        {
-            GameUser? gameUser = selectedRelations[i].Follower;
-            if (gameUser != null) followers.Add(gameUser);
-        }
+        List<GameUser> followers = selectedRelations.Select(t => t.Follower).ToList();
 
         return followers.AsQueryable();
     }
 
-    public IQueryable<GameUser> GetFollowedUsers(GameUser follower, int from, int count)
+    public IQueryable<GameUser> GetFollowedUsers(GameUser follower)
     {
         IQueryable<FollowRelation> relations = _realm.All<FollowRelation>().Where(r => r.Follower == follower);
 
-        FollowRelation[] selectedRelations = relations      
+        FollowRelation[] selectedRelations = relations
             .AsEnumerable()
-            .Skip(from)
-            .Take(count)
+            .OrderBy(r=>r.Date)
             .ToArray();
 
-        List<GameUser> following = new();
-
-        for (int i = 0; i < selectedRelations.Length; i++)
-        {
-            GameUser? gameUser = selectedRelations[i].Recipient;
-            if (gameUser != null) following.Add(gameUser);
-        }
+        List<GameUser> following = selectedRelations.Select(t => t.Recipient).ToList();
 
         return following.AsQueryable();
     }
@@ -54,16 +39,10 @@ public partial class RealmDatabaseContext
             .Where(l => l.Liker == userToGetLevelsFrom)
             .ToList();
 
-        LevelLikeRelation[] selectedRelations = relations.Where(l => l.Liker?.Id == userToGetLevelsFrom.Id).ToArray();
+        LevelLikeRelation[] selectedRelations = relations.Where(l => l.Liker.Id == userToGetLevelsFrom.Id).ToArray();
 
-        List<GameLevel> levels = new ();
+        List<GameLevel> levels = selectedRelations.Select(t => t.Level).ToList();
 
-        for (int i = 0; i < selectedRelations.Length; i++)
-        {
-            GameLevel? level = selectedRelations[i].Level;
-            if (level != null) levels.Add(level);
-        }
-        
         return levels.AsQueryable();
     }
 
@@ -73,6 +52,7 @@ public partial class RealmDatabaseContext
 
         FollowRelation relation = new()
         {
+            Date = DateTimeOffset.UtcNow,
             Follower = follower,
             Recipient = recipient
         };
@@ -106,6 +86,7 @@ public partial class RealmDatabaseContext
         
         LevelLikeRelation relation = new()
         {
+            Date = DateTimeOffset.UtcNow,
             Liker = liker,
             Level = level
         };

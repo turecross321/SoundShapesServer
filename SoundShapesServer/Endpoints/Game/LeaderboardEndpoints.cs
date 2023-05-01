@@ -54,26 +54,23 @@ public class LeaderboardEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? throw new InvalidOperationException());
         int from = int.Parse(context.QueryString["from"] ?? "0");
 
-        IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntries(levelId);
+        IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntriesOnLevel(levelId);
 
         return new LeaderboardEntriesWrapper(entries, from, count);
     }
 
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near", ContentType.Json)]
     [GameEndpoint("~level:{levelId}/~leaderboard.near", ContentType.Json)]
-    public LeaderboardEntryResponse[] GetLeaderboardByPlayer(RequestContext context, RealmDatabaseContext database, GameUser user, string levelId)
+    public LeaderboardEntryResponse[] GetLeaderboardNearPlayer(RequestContext context, RealmDatabaseContext database, GameUser user, string levelId)
     {
-        IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntries(levelId);
+        IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntriesOnLevel(levelId);
 
-        LeaderboardEntry? entry =
-            entries.FirstOrDefault(e => e.LevelId == levelId && e.Completed && e.User.Id == user.Id);
-        if (entry == null) return Array.Empty<LeaderboardEntryResponse>();
-        
-        int position = entries.Count(e => e.LevelId == entry.LevelId && e.Score < entry.Score && e.Completed) + 1;
+        LeaderboardEntry? bestEntry = GetBestEntry(entries, user);
+        if (bestEntry == null) return Array.Empty<LeaderboardEntryResponse>();
 
         LeaderboardEntryResponse[] response = new LeaderboardEntryResponse[1];
-        response[0] = new LeaderboardEntryResponse(entry, position);
-        
+        response[0] = new LeaderboardEntryResponse(bestEntry, GetEntryPlacement(entries, bestEntry) + 1);
+
         return response;
     }
 }

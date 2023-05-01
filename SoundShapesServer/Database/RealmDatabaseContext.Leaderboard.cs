@@ -34,7 +34,7 @@ public partial class RealmDatabaseContext
         return true;
     }
 
-    public IQueryable<LeaderboardEntry> GetLeaderboardEntries(string levelId)
+    public IQueryable<LeaderboardEntry> GetLeaderboardEntriesOnLevel(string levelId)
     {
         IEnumerable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>()
             .AsEnumerable()
@@ -44,6 +44,7 @@ public partial class RealmDatabaseContext
 
         return entries.AsQueryable();
     }
+    
     public void RemoveLeaderboardEntry(LeaderboardEntry entry)
     {
         _realm.Write(() =>

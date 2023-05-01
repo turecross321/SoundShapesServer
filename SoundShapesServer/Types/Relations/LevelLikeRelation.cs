@@ -5,6 +5,7 @@ namespace SoundShapesServer.Types.Relations;
 
 public class LevelLikeRelation : RealmObject
 {
-    public GameUser? Liker { get; init; }
-    public GameLevel? Level { get; init; }
+    public DateTimeOffset Date { get; set; }
+    public GameUser Liker { get; init; } = new();
+    public GameLevel Level { get; init; } = new();
 }
