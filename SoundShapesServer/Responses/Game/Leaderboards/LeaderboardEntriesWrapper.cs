@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using static SoundShapesServer.Helpers.LeaderboardHelper;
 
@@ -7,10 +8,14 @@ namespace SoundShapesServer.Responses.Game.Leaderboards;
 
 public class LeaderboardEntriesWrapper
 {
-    public LeaderboardEntriesWrapper(IQueryable<LeaderboardEntry> entries, int from, int count)
+    public LeaderboardEntriesWrapper(IQueryable<LeaderboardEntry> entries, int from, int count, LeaderboardOrderType order, string onLevel)
     {
+        IQueryable<LeaderboardEntry> orderedEntries = OrderEntries(entries, order);
+        IQueryable<LeaderboardEntry> fullyOrderedEntries = orderedEntries.Reverse();
+        IQueryable<LeaderboardEntry> filteredEntries = FilterEntries(fullyOrderedEntries, onLevel, null, true, true);
+
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(entries.Count(), from, count);
-        LeaderboardEntry[] paginatedEntries = PaginationHelper.PaginateLeaderboardEntries(entries, from, count);
+        LeaderboardEntry[] paginatedEntries = PaginationHelper.PaginateLeaderboardEntries(filteredEntries, from, count);
 
         Entries = paginatedEntries.Select(entry => new LeaderboardEntryResponse(entry, GetEntryPlacement(entries, entry) + 1)).ToArray();
         NextToken = nextToken;

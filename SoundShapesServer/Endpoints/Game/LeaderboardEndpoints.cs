@@ -54,9 +54,8 @@ public class LeaderboardEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? throw new InvalidOperationException());
         int from = int.Parse(context.QueryString["from"] ?? "0");
 
-        IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntriesOnLevel(levelId);
-
-        return new LeaderboardEntriesWrapper(entries, from, count);
+        IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntries();
+        return new LeaderboardEntriesWrapper(entries, from, count, LeaderboardOrderType.Score, levelId);
     }
 
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near", ContentType.Json)]

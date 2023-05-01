@@ -25,40 +25,46 @@ public class ApiUserEndpoints : EndpointGroup
 
         bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
         string? orderString = context.QueryString["orderBy"];
-        string category = context.QueryString["category"] ?? "registered";
 
-        IQueryable<GameUser>? users = null;
+        bool registered = bool.Parse(context.QueryString["registered"] ?? "true");
         
-        string? userId = context.QueryString["userId"];
-        switch (category)
+        string? whoIsFollowing = context.QueryString["whoIsFollowing"]; 
+        string? whoIsFollowedBy = context.QueryString["whoIsFollowedBy"]; 
+
+        IQueryable<GameUser> users = database.GetUsers();
+
+        if (registered)
         {
-            case "registered":
-            {
-                users = database.GetUsers().Where(u => u.HasFinishedRegistration);
-                break;
-            }
-            case "following":
-            {
-                if (userId == null) return null;
+            users = users
+                .AsEnumerable()
+                .Where(u => u.HasFinishedRegistration)
+                .AsQueryable();
+        }
 
-                GameUser? followingUsers = database.GetUserWithId(userId);
-                if (followingUsers == null) return null;
+        if (whoIsFollowing != null)
+        {
+            GameUser? userToGetUsersFrom = database.GetUserWithId(whoIsFollowing);
+            if (userToGetUsersFrom == null) return null;
 
-                users = followingUsers.Following.Select(r=>r.Recipient);
-                break;
-            }
-            case "followers":
-                if (userId == null) return null;
-
-                GameUser? followedUsers = database.GetUserWithId(userId);
-                if (followedUsers == null) return null;
-
-                users = followedUsers.Followers.Select(r=>r.Follower);
-                break;
+            users = users
+                .AsEnumerable()
+                .Where(u => userToGetUsersFrom.Followers
+                    .Select(r => r.Follower.Id).Contains(u.Id))
+                .AsQueryable();
         }
         
-        users ??= database.GetUsers();
-        
+        if (whoIsFollowedBy != null)
+        {
+            GameUser? userToGetUsersFrom = database.GetUserWithId(whoIsFollowing);
+            if (userToGetUsersFrom == null) return null;
+
+            users = users
+                .AsEnumerable()
+                .Where(u => userToGetUsersFrom.Following
+                    .Select(r => r.Recipient.Id).Contains(u.Id))
+                .AsQueryable();
+        }
+
         UserOrderType order = orderString switch
         {
             "followerCount" => UserOrderType.FollowerCount,

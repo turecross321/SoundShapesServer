@@ -1,4 +1,5 @@
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using static SoundShapesServer.Helpers.LeaderboardHelper;
 
@@ -7,12 +8,17 @@ namespace SoundShapesServer.Responses.Api.Levels;
 public class ApiLeaderboardEntryWrapper
 {
     public ApiLeaderboardEntryWrapper(IQueryable<LeaderboardEntry> entries, int from,
-        int count)
+        int count, LeaderboardOrderType order, bool descending, bool onlyShowBest, bool completed, string? onLevel, string? byUser)
     {
-        LeaderboardEntry[] paginatedEntries = PaginationHelper.PaginateLeaderboardEntries(entries, from, count);
+        IQueryable<LeaderboardEntry> orderedEntries = OrderEntries(entries, order);
+        IQueryable<LeaderboardEntry> fullyOrderedEntries = descending ? orderedEntries.Reverse() : orderedEntries;
+        IQueryable<LeaderboardEntry> filteredEntries =
+            FilterEntries(fullyOrderedEntries, onLevel, byUser, completed, onlyShowBest);
+
+        LeaderboardEntry[] paginatedEntries = PaginationHelper.PaginateLeaderboardEntries(filteredEntries, from, count);
 
         Entries = paginatedEntries.Select(entry => new ApiLeaderboardEntryResponse(entry, GetEntryPlacement(entries, entry))).ToArray();
-        Count = entries.Count();
+        Count = filteredEntries.Count();
     }
 
     public ApiLeaderboardEntryResponse[] Entries { get; set; }

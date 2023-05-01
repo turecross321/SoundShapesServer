@@ -19,39 +19,40 @@ public class ApiLevelEndpoints: EndpointGroup
 
         string? orderString = context.QueryString["orderBy"];
         string category = context.QueryString["category"] ?? "all";
-
-        IQueryable<GameLevel>? levels = null;
         
-        switch (category)
+        string? byUser = context.QueryString["byUser"];
+        string? likedByUser = context.QueryString["likedByUser"];
+
+        IQueryable<GameLevel>? levels = category switch
         {
-            case "byUser":
-            {
-                string? userId = context.QueryString["userId"];
-                if (userId == null) return null;
-
-                GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
-                if (userToGetLevelsFrom == null) return null;
-
-                levels = userToGetLevelsFrom.Levels;
-                break;
-            }
-            case "likedByUser":
-            {
-                string? userId = context.QueryString["userId"];
-                if (userId == null) return null;
-
-                GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
-                if (userToGetLevelsFrom == null) return null;
-
-                levels = userToGetLevelsFrom.LikedLevels.Select(r=>r.Level);
-                break;
-            }
-            case "daily":
-                levels = database.GetDailyLevels(DateTimeOffset.UtcNow);
-                break;
-        }
+            "daily" => database.GetDailyLevels(DateTimeOffset.UtcNow),
+            _ => null
+        };
 
         levels ??= database.GetLevels();
+        
+        if (byUser != null)
+        {
+            GameUser? userToGetLevelsFrom = database.GetUserWithId(byUser);
+            if (userToGetLevelsFrom == null) return null;
+
+            levels = levels
+                .AsEnumerable()
+                .Where(l => l.Author.Id == byUser)
+                .AsQueryable();
+        }
+        if (likedByUser != null)
+        {
+            GameUser? userToGetLevelsFrom = database.GetUserWithId(likedByUser);
+            if (userToGetLevelsFrom == null) return null;
+
+            levels = levels.AsEnumerable()
+                    .Where(l => userToGetLevelsFrom.LikedLevels
+                    .AsEnumerable()
+                    .Select(relation => relation.Level.Id)
+                    .Contains(l.Id))
+                    .AsQueryable();
+        }
 
         LevelOrderType order = orderString switch
         {

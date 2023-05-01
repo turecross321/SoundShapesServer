@@ -60,6 +60,38 @@ public static class LeaderboardHelper
         return entry;
     }
 
+    public static IQueryable<LeaderboardEntry> FilterEntries(IQueryable<LeaderboardEntry> entries, string? onLevel, string? byUser, bool completed, bool onlyShowBest)
+    {
+        IQueryable<LeaderboardEntry> response = entries;
+        
+        if (onLevel != null)
+        {
+            response = response
+                .AsEnumerable()
+                .Where(e => e.LevelId == onLevel)
+                .AsQueryable();
+        }
+
+        if (byUser != null)
+        {
+            response = response
+                .AsEnumerable()
+                .Where(e => e.User.Id == byUser)
+                .AsQueryable();
+        }
+
+        if (completed) response = response.AsEnumerable().Where(e => e.Completed).AsQueryable();
+
+        if (onlyShowBest)
+        {
+            response = response.AsEnumerable()
+                .GroupBy(e => e.User.Id)
+                .Select(g => g.First()).AsQueryable();
+        }
+        
+        return response;
+    }
+
     public static int GetEntryPlacement(IQueryable<LeaderboardEntry> entries, LeaderboardEntry entry)
     {
         return entries.ToList().IndexOf(entry);
@@ -82,5 +114,18 @@ public static class LeaderboardHelper
         }
 
         return count;
+    }
+
+    public static IQueryable<LeaderboardEntry> OrderEntries(IQueryable<LeaderboardEntry> entries,
+        LeaderboardOrderType order)
+    {
+        return order switch
+        {
+            LeaderboardOrderType.Score => entries.OrderBy(e => e.Score),
+            LeaderboardOrderType.PlayTime => entries.OrderBy(e => e.PlayTime),
+            LeaderboardOrderType.Tokens => entries.OrderBy(e => e.Tokens),
+            LeaderboardOrderType.Date => entries.OrderBy(e => e.Date),
+            _ => entries.OrderBy(e=>e.Score)
+        };
     }
 }

@@ -10,41 +10,29 @@ public partial class RealmDatabaseContext
     {
         LeaderboardEntry entry = new (GenerateGuid(), user, levelId, request);
 
-        LeaderboardEntry? previousEntry =
-            _realm.All<LeaderboardEntry>().AsEnumerable().FirstOrDefault(e => e.LevelId == levelId && e.User.Id == user.Id && e.Completed);
-
         _realm.Write(() =>
         {
-            // If there is a previous entry, and it's more than the new one, remove it and replace it with the new one
-            if (previousEntry != null && previousEntry.Score > entry.Score)
-            {
-                _realm.Remove(previousEntry);
-                _realm.Add(entry);
-            }
-            else if (previousEntry == null)
-            {
-                _realm.Add(entry);
-            }
-            else
-            {
-                Console.WriteLine("not submitting score");
-            }
+            _realm.Add(entry);
         });
 
         return true;
     }
 
+    public IQueryable<LeaderboardEntry> GetLeaderboardEntries()
+    {
+        return _realm.All<LeaderboardEntry>();
+    }
+
     public IQueryable<LeaderboardEntry> GetLeaderboardEntriesOnLevel(string levelId)
     {
-        IEnumerable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>()
+        return _realm.All<LeaderboardEntry>()            
             .AsEnumerable()
-            .Where(e=>e.Completed)
-            .Where(e => e.LevelId == levelId)
-            .OrderBy(e=>e.Score);
-
-        return entries.AsQueryable();
+            .Where(e=>e.LevelId == levelId)
+            .AsQueryable();
     }
-    
+
+
+    // todo: moderators should be able to calkl this
     public void RemoveLeaderboardEntry(LeaderboardEntry entry)
     {
         _realm.Write(() =>
