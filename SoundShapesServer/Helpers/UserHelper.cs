@@ -23,7 +23,7 @@ public static class UserHelper
             UserOrderType.PlayedLevelsCount => users.OrderBy(u=>u.PlayedLevels.Count()),
             UserOrderType.LeaderboardPlacements => users.OrderByDescending(u=> LeaderboardHelper.GetTotalLeaderboardPlacements(database, u)),
             UserOrderType.DoNotOrder => users,
-            _ => users
+            _ => users.OrderBy(u=>u.CreationDate)
         };
     }
 }

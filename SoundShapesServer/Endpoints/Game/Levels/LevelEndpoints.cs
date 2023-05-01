@@ -64,7 +64,7 @@ public class LevelEndpoints : EndpointGroup
             "random" => LevelOrderType.Random,
             "fileSize" => LevelOrderType.FileSize,
             "difficulty" => LevelOrderType.Difficulty,
-            _ => LevelOrderType.DoNotOrder
+            _ => LevelOrderType.CreationDate
         };
 
         return new LevelsWrapper(levels, user, from, count, (LevelOrderType)order);

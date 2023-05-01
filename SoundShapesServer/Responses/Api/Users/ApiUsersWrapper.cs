@@ -11,7 +11,7 @@ public class ApiUsersWrapper
         IQueryable<GameUser> orderedUsers = UserHelper.OrderUsers(database, users, order);
         IQueryable<GameUser> fullyOrderedUsers = descending ? orderedUsers
             .AsEnumerable()
-            .OrderDescending()
+            .Reverse()
             .AsQueryable() : orderedUsers;
         
         GameUser[] paginatedUsers = PaginationHelper.PaginateUsers(fullyOrderedUsers, from, count);

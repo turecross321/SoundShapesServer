@@ -67,7 +67,7 @@ public class ApiUserEndpoints : EndpointGroup
             "creationDate" => UserOrderType.CreationDate,
             "playedLevelsCount" => UserOrderType.PlayedLevelsCount,
             "leaderboardPlacements" => UserOrderType.LeaderboardPlacements,
-            _ => UserOrderType.DoNotOrder
+            _ => UserOrderType.CreationDate
         };
 
         return new ApiUsersWrapper(database, users, from, count, order, descending);

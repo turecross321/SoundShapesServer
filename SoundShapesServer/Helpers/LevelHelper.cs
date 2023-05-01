@@ -52,7 +52,7 @@ public static class LevelHelper
                 .AsQueryable(),
             LevelOrderType.Random => RandomizeLevelOrder(levels),
             LevelOrderType.DoNotOrder => levels,
-            _ => levels
+            _ => levels.OrderBy(u=>u.CreationDate)
         };
     }
 }

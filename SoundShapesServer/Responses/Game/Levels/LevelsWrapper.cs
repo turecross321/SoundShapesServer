@@ -9,7 +9,7 @@ public class LevelsWrapper
     public LevelsWrapper(IQueryable<GameLevel> levels, GameUser user, int from, int count, LevelOrderType order)
     {
         IQueryable<GameLevel> orderedLevels = LevelHelper.OrderLevels(levels, order);
-        
+
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(orderedLevels.Count(), from, count);
         GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(orderedLevels, from, count);
 
