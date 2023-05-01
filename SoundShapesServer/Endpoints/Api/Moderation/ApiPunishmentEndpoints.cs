@@ -13,19 +13,45 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 
 public class ApiPunishmentEndpoints : EndpointGroup
 {
-    [ApiEndpoint("user/{id}/punish", Method.Post)]
-    public Response PunishUser(RequestContext context, RealmDatabaseContext database, GameUser user, string id, ApiPunishRequest body)
+    [ApiEndpoint("punishments/create", Method.Post)]
+    public Response PunishUser(RequestContext context, RealmDatabaseContext database, GameUser user, ApiPunishRequest body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
-        GameUser? userToPunish = database.GetUserWithId(id);
+        GameUser? userToPunish = database.GetUserWithId(body.UserId);
         if (userToPunish == null) return HttpStatusCode.NotFound;
         
         database.PunishUser(user, body);
         return HttpStatusCode.Created;
     }
 
-    // todo: dismiss punishments
+    [ApiEndpoint("punishment/{id}/edit", Method.Post)]
+    public Response EditPunishment(RequestContext context, RealmDatabaseContext database, GameUser user, string id,
+        ApiPunishRequest body)
+    {
+        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
+
+        Punishment? punishment = database.GetPunishmentWithId(id);
+        if (punishment == null) return HttpStatusCode.NotFound;
+
+        GameUser? userToPunish = database.GetUserWithId(body.UserId);
+        if (userToPunish == null) return HttpStatusCode.NotFound;
+
+        database.EditPunishment(punishment, body, userToPunish);
+        return HttpStatusCode.Created;
+    }
+
+    [ApiEndpoint("punishment/{id}/dismiss", Method.Post)]
+    public Response DismissPunishment(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    {
+        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
+
+        Punishment? punishment = database.GetPunishmentWithId(id);
+        if (punishment == null) return HttpStatusCode.NotFound;
+        
+        database.DismissPunishment(punishment);
+        return HttpStatusCode.OK;
+    }
     
     [ApiEndpoint("punishments")]
     [NullStatusCode(HttpStatusCode.Forbidden)]

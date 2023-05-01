@@ -7,7 +7,7 @@ public static class PunishmentHelper
     public static IQueryable<Punishment> GetActivePunishments(GameUser user)
     {
         DateTimeOffset now = DateTimeOffset.UtcNow;
-        return user.Punishments.AsEnumerable().Where(p=>p.ExpiresAt > now && !p.Revoked).AsQueryable();
+        return user.Punishments.AsEnumerable().Where(p=>p.ExpiresAt > now && !p.Dismissed).AsQueryable();
     }
     
     public static Punishment[] GetUsersPunishmentsOfType(GameUser user, PunishmentType type)

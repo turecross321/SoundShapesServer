@@ -11,7 +11,7 @@ public class ApiPunishmentResponse
         UserId = punishment.User.Id;
         PunishmentType = punishment.PunishmentType;
         Reason = punishment.Reason;
-        Revoked = punishment.Revoked;
+        Revoked = punishment.Dismissed;
         IssuedAtUtc = punishment.IssuedAt;
         ExpiresAtUtc = punishment.ExpiresAt;
     }
