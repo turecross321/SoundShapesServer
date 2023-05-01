@@ -6,6 +6,7 @@ public class ApiLeaderboardEntryResponse
 {
     public ApiLeaderboardEntryResponse(LeaderboardEntry entry, int position)
     {
+        Id = entry.Id;
         LevelId = entry.LevelId;
         Position = position;
 
@@ -18,6 +19,7 @@ public class ApiLeaderboardEntryResponse
         Date = entry.Date;
     }
 
+    public string Id { get; set; }
     public string LevelId { get; set; }
     public int Position { get; set; }
     public string? UserId { get; set; }

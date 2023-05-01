@@ -31,6 +31,11 @@ public partial class RealmDatabaseContext
             .AsQueryable();
     }
 
+    public LeaderboardEntry? GetLeaderboardWithId(string id)
+    {
+        return _realm.All<LeaderboardEntry>().FirstOrDefault(e => e.Id == id);
+    }
+
 
     // todo: moderators should be able to calkl this
     public void RemoveLeaderboardEntry(LeaderboardEntry entry)
