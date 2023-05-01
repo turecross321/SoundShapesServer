@@ -9,7 +9,7 @@ using HttpMultipartParser;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 
-namespace SoundShapesServer.Endpoints.Game.CloudSyncing;
+namespace SoundShapesServer.Endpoints.Game;
 
 public class CloudSyncingEndpoints : EndpointGroup
 {
