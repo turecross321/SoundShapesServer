@@ -26,11 +26,13 @@ public class Endpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         
         if (level == null) return new Response(HttpStatusCode.NotFound);
-        
-        if (action == "delete") return LevelPublishingEndpoints.UnPublishLevel(dataStore, database, user, level);
-        if (action == "latest") return new Response(new LevelResponse(level, user), ContentType.Json);
 
-        return new Response(HttpStatusCode.NotFound);
+        return action switch
+        {
+            "delete" => LevelPublishingEndpoints.UnPublishLevel(dataStore, database, user, level),
+            "latest" => new Response(new LevelResponse(level, user), ContentType.Json),
+            _ => new Response(HttpStatusCode.NotFound)
+        };
     }
 
     [GameEndpoint("~level:{args}", Method.Post)]
@@ -48,8 +50,6 @@ public class Endpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return new Response(HttpStatusCode.NotFound);
 
-        if (action == "update") return LevelPublishingEndpoints.UpdateLevel(dataStore, parser, database, user, level.Id);
-
-        return new Response(HttpStatusCode.NotFound);
+        return action == "update" ? LevelPublishingEndpoints.UpdateLevel(dataStore, parser, database, user, level.Id) : new Response(HttpStatusCode.NotFound);
     }
 }
