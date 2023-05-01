@@ -1,5 +1,4 @@
 using SoundShapesServer.Types.Albums;
-using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Database;
 

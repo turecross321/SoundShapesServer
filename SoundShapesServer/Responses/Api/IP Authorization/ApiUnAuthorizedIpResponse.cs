@@ -6,7 +6,7 @@ public class ApiUnAuthorizedIpResponse
 {
     public ApiUnAuthorizedIpResponse(IpAuthorization ip)
     {
-        IpAddress = ip.IpAddress ?? "";
+        IpAddress = ip.IpAddress;
     }
 
     public string IpAddress { get; set; }

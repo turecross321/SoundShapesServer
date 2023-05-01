@@ -6,8 +6,8 @@ public class ApiDailyLevelResponse
 {
     public ApiDailyLevelResponse(DailyLevel dailyLevel)
     {
-        Id = dailyLevel.Id ?? "";
-        LevelId = dailyLevel.Level?.Id ?? "";
+        Id = dailyLevel.Id;
+        LevelId = dailyLevel.Level.Id;
         DateUtc = dailyLevel.Date;
     }
 

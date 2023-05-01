@@ -6,7 +6,7 @@ public class ApiAuthorizedIpResponse
 {
     public ApiAuthorizedIpResponse(IpAuthorization ip)
     {
-        IpAddress = ip.IpAddress ?? "";
+        IpAddress = ip.IpAddress;
         OneTimeUse = ip.OneTimeUse;
     }
 

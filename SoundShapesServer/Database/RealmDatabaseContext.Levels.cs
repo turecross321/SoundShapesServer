@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Security.Cryptography;
 using Bunkum.HttpServer.Storage;
 using Realms;
 using SoundShapesServer.Requests.Game;
@@ -93,7 +92,7 @@ public partial class RealmDatabaseContext
     {
         List<DailyLevel> entries = GetDailyLevelObjects(date).ToList();
         
-        List<GameLevel> levels = entries.Where(dailyLevel=>dailyLevel.Level != null).Select(l =>
+        List<GameLevel> levels = entries.Select(l =>
         {
             Debug.Assert(l.Level != null, "l.Level != null");
             return l.Level;

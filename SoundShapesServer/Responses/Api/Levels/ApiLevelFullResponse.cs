@@ -23,8 +23,8 @@ public class ApiLevelFullResponse
         Deaths = level.Deaths;
         Language = level.Language;
         Difficulty = level.Difficulty;
-        AlbumIds = level.Albums.Select(a => a.Levels).Select(l => Id).ToArray();
-        DailyLevelIds = (string[])level.DailyLevels.Select(d => d.Id).ToArray();
+        AlbumIds = level.Albums.AsEnumerable().Select(a => a.Levels).Select(_ => Id).ToArray();
+        DailyLevelIds = level.DailyLevels.AsEnumerable().Select(d => d.Id).ToArray();
         CompletedByYou = completed;
     }
 

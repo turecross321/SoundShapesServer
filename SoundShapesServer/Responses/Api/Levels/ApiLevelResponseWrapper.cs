@@ -9,7 +9,10 @@ public class ApiLevelResponseWrapper
     public ApiLevelResponseWrapper(IQueryable<GameLevel> levels, int from, int count, GameUser? user, LevelOrderType order, bool descending)
     {
         IQueryable<GameLevel> orderedLevels = LevelHelper.OrderLevels(levels, order);
-        IQueryable<GameLevel> fullyOrderedLevels = descending ? orderedLevels.OrderDescending() : orderedLevels;
+        IQueryable<GameLevel> fullyOrderedLevels = descending ? orderedLevels
+            .AsEnumerable()
+            .OrderDescending()
+            .AsQueryable() : orderedLevels;
 
         GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(fullyOrderedLevels, from, count);
         

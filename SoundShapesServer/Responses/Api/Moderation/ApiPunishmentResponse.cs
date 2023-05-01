@@ -7,10 +7,10 @@ public class ApiPunishmentResponse
 {
     public ApiPunishmentResponse(Punishment punishment)
     {
-        Id = punishment.Id ?? "";
-        UserId = punishment.User?.Id ?? "";
+        Id = punishment.Id;
+        UserId = punishment.User.Id;
         PunishmentType = punishment.PunishmentType;
-        Reason = punishment.Reason ?? "";
+        Reason = punishment.Reason;
         Revoked = punishment.Revoked;
         IssuedAtUtc = punishment.IssuedAt;
         ExpiresAtUtc = punishment.ExpiresAt;

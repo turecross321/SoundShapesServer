@@ -6,12 +6,12 @@ public class ApiReportResponse
 {
     public ApiReportResponse(Report report)
     {
-        Id = report.Id ?? "";
-        ContentId = report.ContentId ?? "";
+        Id = report.Id;
+        ContentId = report.ContentId;
         ContentType = report.ContentType;
         ReportReasonId = report.ReportReasonId;
         Issued = report.Issued;
-        IssuerId = report.Issuer?.Id ?? "";
+        IssuerId = report.Issuer.Id;
     }
 
     public string Id { get; set; }
