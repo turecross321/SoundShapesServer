@@ -7,8 +7,8 @@ public partial class RealmDatabaseContext
 {
     public NewsEntry? GetNews(string language)
     {
-        NewsEntry? translatedNews = _realm.All<NewsEntry>().FirstOrDefault(n => n.Language == language);
-        return translatedNews;
+        NewsEntry? news = _realm.All<NewsEntry>().FirstOrDefault(n => n.Language == language);
+        return news;
     }
 
     public NewsEntry CreateNewsEntry(ApiCreateNewsEntryRequest request)

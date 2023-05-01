@@ -18,14 +18,14 @@ public class ApiNewsManagementEndpoints : EndpointGroup
 {
     [ApiEndpoint("news/create", Method.Post)]
     public Response CreateNewsEntry(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, 
-        GameUser user, ApiCreateNewsEntryRequest request)
+        GameUser user, ApiCreateNewsEntryRequest body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
-        NewsEntry? newsEntry = database.GetNews(request.Language);
+        NewsEntry? newsEntry = database.GetNews(body.Language);
         if (newsEntry != null) return HttpStatusCode.Conflict;
         
-        NewsEntry createdNewsEntry = database.CreateNewsEntry(request);
+        NewsEntry createdNewsEntry = database.CreateNewsEntry(body);
         return new Response(new ApiNewsResponse(createdNewsEntry), ContentType.Json, HttpStatusCode.Created);
     }
 
