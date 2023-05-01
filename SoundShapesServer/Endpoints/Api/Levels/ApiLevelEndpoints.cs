@@ -24,7 +24,7 @@ public class ApiLevelEndpoints: EndpointGroup
         
         switch (category)
         {
-            case "fromUser":
+            case "byUser":
             {
                 string? userId = context.QueryString["userId"];
                 if (userId == null) return null;
