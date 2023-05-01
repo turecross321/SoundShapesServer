@@ -25,6 +25,8 @@ public class ApiPunishmentEndpoints : EndpointGroup
         return HttpStatusCode.Created;
     }
 
+    // todo: dismiss punishments
+    
     [ApiEndpoint("punishments")]
     [NullStatusCode(HttpStatusCode.Forbidden)]
     public ApiPunishmentsWrapper? GetPunishments(RequestContext context, RealmDatabaseContext database, GameUser user)

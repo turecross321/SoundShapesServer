@@ -35,7 +35,7 @@ public class ApiDailyLevelModificationEndpoint : EndpointGroup
             count: dailyLevels.Count());
     }
     
-    [ApiEndpoint("daily/add", Method.Post)]
+    [ApiEndpoint("daily/create", Method.Post)]
     public Response AddDailyLevel(RequestContext context, RealmDatabaseContext database, GameUser user, ApiAddDailyLevelRequest body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;

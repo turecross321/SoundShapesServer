@@ -61,7 +61,7 @@ public class ApiNewsManagementEndpoints
         return HttpStatusCode.Created;
     }
 
-    [ApiEndpoint("news/{language}/delete", Method.Post)]
+    [ApiEndpoint("news/{language}/remove", Method.Post)]
     public Response DeleteNewsEntry(RequestContext context, RealmDatabaseContext database, GameUser user, string language)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
