@@ -11,6 +11,8 @@ public class ApiAlbumResponse
         Name = album.Name;
         LinerNotes = album.LinerNotes;
         TotalLevels = album.Levels.Count;
+        CreationDate = album.CreationDate;
+        ModificationDate = album.ModificationDate;
     }
 
     public string Id { get; set; }
@@ -18,4 +20,6 @@ public class ApiAlbumResponse
     public string Name { get; set; }
     public string LinerNotes { get; set; }
     public int TotalLevels { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
+    public DateTimeOffset ModificationDate { get; set; }
 }

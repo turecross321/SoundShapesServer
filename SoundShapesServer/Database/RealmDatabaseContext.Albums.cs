@@ -17,6 +17,14 @@ public partial class RealmDatabaseContext
         });
     }
 
+    public void RemoveAlbum(GameAlbum album)
+    {
+        _realm.Write(() =>
+        {
+            _realm.Remove(album);
+        });
+    }
+    
     public void EditAlbum(GameAlbum album, ApiCreateAlbumRequest request)
     {
         _realm.Write(() =>

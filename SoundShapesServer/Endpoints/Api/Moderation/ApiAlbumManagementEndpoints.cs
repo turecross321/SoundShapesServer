@@ -58,4 +58,16 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
         dataStore.WriteToStore(GetAlbumResourceKey(album.Id, resourceType), image);
         return HttpStatusCode.Created;
     }
+
+    [ApiEndpoint("album/{id}/remove", Method.Post)]
+    public Response RemoveAlbum(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    {
+        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
+
+        GameAlbum? albumToRemove = database.GetAlbumWithId(id);
+        if (albumToRemove == null) return HttpStatusCode.NotFound;
+        
+        database.RemoveAlbum(albumToRemove);
+        return HttpStatusCode.OK;
+    }
 }
