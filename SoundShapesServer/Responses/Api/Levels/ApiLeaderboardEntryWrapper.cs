@@ -8,16 +8,16 @@ namespace SoundShapesServer.Responses.Api.Levels;
 public class ApiLeaderboardEntryWrapper
 {
     public ApiLeaderboardEntryWrapper(IQueryable<LeaderboardEntry> entries, int from,
-        int count, LeaderboardOrderType order, bool descending, bool onlyShowBest, bool completed, string? onLevel, string? byUser)
+        int count, LeaderboardOrderType order, bool descending, bool onlyBest, bool? completed, string? onLevel, string? byUser)
     {
         IQueryable<LeaderboardEntry> orderedEntries = OrderEntries(entries, order);
         IQueryable<LeaderboardEntry> fullyOrderedEntries = descending ? orderedEntries.Reverse() : orderedEntries;
         IQueryable<LeaderboardEntry> filteredEntries =
-            FilterEntries(fullyOrderedEntries, onLevel, byUser, completed, onlyShowBest);
+            FilterEntries(fullyOrderedEntries, onLevel, byUser, completed, onlyBest);
 
         LeaderboardEntry[] paginatedEntries = PaginationHelper.PaginateLeaderboardEntries(filteredEntries, from, count);
 
-        Entries = paginatedEntries.Select(entry => new ApiLeaderboardEntryResponse(entry, GetEntryPlacement(entries, entry))).ToArray();
+        Entries = paginatedEntries.Select(entry => new ApiLeaderboardEntryResponse(entry, GetEntryPlacement(filteredEntries, entry))).ToArray();
         Count = filteredEntries.Count();
     }
 

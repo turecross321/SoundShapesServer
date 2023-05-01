@@ -36,15 +36,36 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
         return HttpStatusCode.Created;
     }
 
-    [ApiEndpoint("album/{id}/set{assetType}", Method.Post)]
-    public Response SetAlbumAssets(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, Stream body, string id, string resource)
+    [ApiEndpoint("album/{id}/setThumbnail", Method.Post)]
+    public Response SetAlbumThumbnail(RequestContext context, RealmDatabaseContext database, IDataStore dataStore,
+        GameUser user, Stream body, string id) 
+        => SetAlbumAssets(
+            database,
+            dataStore,
+            user,
+            body, 
+            id,
+            AlbumResourceType.Thumbnail
+    );
+    
+    [ApiEndpoint("album/{id}/setSidePanel", Method.Post)]
+    public Response SetAlbumSidePanel(RequestContext context, RealmDatabaseContext database, IDataStore dataStore,
+        GameUser user, Stream body, string id) 
+        => SetAlbumAssets(
+            database,
+            dataStore,
+            user,
+            body, 
+            id,
+            AlbumResourceType.SidePanel
+        );
+    
+    private Response SetAlbumAssets(RealmDatabaseContext database, IDataStore dataStore, GameUser user, Stream body, string id, AlbumResourceType resourceType)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
         GameAlbum? album = database.GetAlbumWithId(id);
         if (album == null) return HttpStatusCode.NotFound;
-        
-        if (!Enum.TryParse(resource, out AlbumResourceType resourceType)) return HttpStatusCode.NotFound;
-        
+
         byte[] image;
 
         using (MemoryStream memoryStream = new ())

@@ -3,6 +3,7 @@ using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Api.Levels;
@@ -23,6 +24,7 @@ public class ApiLevelEndpoints: EndpointGroup
         
         string? byUser = context.QueryString["byUser"];
         string? likedByUser = context.QueryString["likedByUser"];
+        string? album = context.QueryString["album"];
 
         IQueryable<GameLevel>? levels = category switch
         {
@@ -47,13 +49,26 @@ public class ApiLevelEndpoints: EndpointGroup
             GameUser? userToGetLevelsFrom = database.GetUserWithId(likedByUser);
             if (userToGetLevelsFrom == null) return null;
 
-            levels = levels.AsEnumerable()
-                    .Where(l => userToGetLevelsFrom.LikedLevels
+            levels = levels
                     .AsEnumerable()
+                    .Where(l => userToGetLevelsFrom.LikedLevels
                     .Select(relation => relation.Level.Id)
                     .Contains(l.Id))
                     .AsQueryable();
         }
+
+        if (album != null)
+        {
+            GameAlbum? albumToGetLevelsFrom = database.GetAlbumWithId(album);
+            if (albumToGetLevelsFrom == null) return null;
+
+            levels = levels
+                .AsEnumerable()
+                .Where(l => albumToGetLevelsFrom.Levels.Contains(l))
+                .AsQueryable();
+        }
+        
+        // todo but this in helper maybge=?
 
         LevelOrderType order = orderString switch
         {

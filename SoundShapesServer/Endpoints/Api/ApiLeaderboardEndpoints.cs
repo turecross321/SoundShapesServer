@@ -4,6 +4,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using static System.Boolean;
 
 namespace SoundShapesServer.Endpoints.Api;
 
@@ -11,17 +12,21 @@ public class ApiLeaderboardEndpoints : EndpointGroup
 {
     [ApiEndpoint("leaderboard")]
     [Authentication(false)]
-    public ApiLeaderboardEntryWrapper? GetLeaderboard(RequestContext context, RealmDatabaseContext database, string id)
+    public ApiLeaderboardEntryWrapper GetLeaderboard(RequestContext context, RealmDatabaseContext database, string id)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
         
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "false");
+        bool descending = Parse(context.QueryString["descending"] ?? "false");
+        
+        // TODO: fix error handling. right now if you give an invalid response it returns a 500
 
-        bool onlyShowBest = bool.Parse(context.QueryString["onlyBest"] ?? "true");
-        bool completed = bool.Parse(context.QueryString["completed"] ?? "true");
+        bool onlyBest = Parse(context.QueryString["onlyBest"] ?? "false");
+        
+        bool? completed = null;
+        if (TryParse(context.QueryString["completed"], out bool completedTemp)) completed = completedTemp;
 
-        string? onLevel = context.QueryString["level"];
+        string? onLevel = context.QueryString["onLevel"];
         string? byUser = context.QueryString["byUser"];
         
         string? orderString = context.QueryString["orderBy"];
@@ -37,6 +42,6 @@ public class ApiLeaderboardEndpoints : EndpointGroup
             _ => LeaderboardOrderType.Score
         };
 
-        return new ApiLeaderboardEntryWrapper(entries, from, count, order, descending, onlyShowBest, completed, onLevel, byUser);
+        return new ApiLeaderboardEntryWrapper(entries, from, count, order, descending, onlyBest, completed, onLevel, byUser);
     }
 }

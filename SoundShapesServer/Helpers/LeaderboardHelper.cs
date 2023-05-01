@@ -60,7 +60,7 @@ public static class LeaderboardHelper
         return entry;
     }
 
-    public static IQueryable<LeaderboardEntry> FilterEntries(IQueryable<LeaderboardEntry> entries, string? onLevel, string? byUser, bool completed, bool onlyShowBest)
+    public static IQueryable<LeaderboardEntry> FilterEntries(IQueryable<LeaderboardEntry> entries, string? onLevel, string? byUser, bool? completed, bool onlyBest)
     {
         IQueryable<LeaderboardEntry> response = entries;
         
@@ -80,9 +80,16 @@ public static class LeaderboardHelper
                 .AsQueryable();
         }
 
-        if (completed) response = response.AsEnumerable().Where(e => e.Completed).AsQueryable();
+        if (completed != null)
+        {
+            response = response
+                .AsEnumerable()
+                .Where(e => e.Completed == completed)
+                .AsQueryable();   
+        }
 
-        if (onlyShowBest)
+
+        if (onlyBest)
         {
             response = response.AsEnumerable()
                 .GroupBy(e => e.User.Id)

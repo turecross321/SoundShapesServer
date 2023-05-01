@@ -43,6 +43,7 @@ public class ApiLevelResourceEndpoints : EndpointGroup
         dataStore.WriteToStore(soundKey, sound);
 
         return true;
+        // todo: move these kinds of things to the publish endpoint tbh
     }
     
     [ApiEndpoint("level/{levelId}/thumbnail")]
