@@ -29,7 +29,6 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
                 typeof(NewsEntry),
                 typeof(LeaderboardEntry),
                 typeof(DailyLevel),
-                typeof(LinerNote),
                 typeof(GameAlbum),
                 typeof(Report),
                 typeof(Punishment)

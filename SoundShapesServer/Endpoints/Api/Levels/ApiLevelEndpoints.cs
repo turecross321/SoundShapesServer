@@ -11,7 +11,7 @@ public class ApiLevelEndpoints: EndpointGroup
 {
     [ApiEndpoint("levels")]
     [Authentication(false)]
-    public ApiLevelResponseWrapper? Levels(RequestContext context, RealmDatabaseContext database, GameUser? user)
+    public ApiLevelResponseWrapper? GetLevels(RequestContext context, RealmDatabaseContext database, GameUser? user)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");

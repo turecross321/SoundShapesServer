@@ -11,7 +11,6 @@ public class AlbumTarget
     public AlbumTarget(GameAlbum album, GameSession session)
     {
         Id = IdFormatter.FormatAlbumId(album.Id);
-        Type = GameContentType.album.ToString();
         Metadata = new AlbumMetadata(album, session);
     }
 

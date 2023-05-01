@@ -9,11 +9,10 @@ public class GameAlbum : RealmObject
     public string Name { get; set; } = "";
     public string Artist { get; set; } = "";
     public DateTimeOffset CreationDate { get; set; }
+    public string LinerNotes { get; set; } = "";
     
     // ReSharper disable UnassignedGetOnlyAutoProperty
     #pragma warning disable CS8618
-    // this warning is because album creation isnt implemented yet!
-    public IList<LinerNote> LinerNotes { get; }
     public IList<GameLevel> Levels { get; }
     #pragma warning restore CS8618
     // ReSharper restore UnassignedGetOnlyAutoProperty

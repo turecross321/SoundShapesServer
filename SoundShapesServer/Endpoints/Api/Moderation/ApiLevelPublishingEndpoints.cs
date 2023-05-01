@@ -6,11 +6,12 @@ using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using HttpMultipartParser;
 using SoundShapesServer.Database;
+using SoundShapesServer.Endpoints.Api.Levels;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
 
-namespace SoundShapesServer.Endpoints.Api.Levels;
+namespace SoundShapesServer.Endpoints.Api.Moderation;
 
 public class ApiLevelPublishingEndpoints : EndpointGroup
 {

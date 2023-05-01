@@ -9,8 +9,7 @@ public class AlbumMetadata
 {
     public AlbumMetadata(GameAlbum album, GameSession session)
     {
-        LinerNoteResponse[] linerNoteResponses = album.LinerNotes.Select(linerNote => new LinerNoteResponse(linerNote)).ToArray();
-        LinerNotesWrapper linerNoteWrapper = new (linerNoteResponses);
+        LinerNotesWrapper linerNoteWrapper = new (AlbumHelper.HtmlToLinerNotes(album.LinerNotes));
         string linerNotesString = JsonConvert.SerializeObject(linerNoteWrapper);
         
         Artist = album.Artist;
