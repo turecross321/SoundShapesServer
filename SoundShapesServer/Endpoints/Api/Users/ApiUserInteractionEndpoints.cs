@@ -19,10 +19,8 @@ public class ApiUserInteractionEndpoints : EndpointGroup
 
         return new ApiIsUserFollowedResponse
         {
-            IsFollowed = database.IsUserFollowingOtherUser(user, recipient)
+            IsFollowing = database.IsUserFollowingOtherUser(user, recipient)
         };
-        
-        // TODO: FIX POSTMAN ERROR
     }
 
     [ApiEndpoint("user/{id}/follow", Method.Post)]
@@ -32,7 +30,7 @@ public class ApiUserInteractionEndpoints : EndpointGroup
         if (recipient == null) return HttpStatusCode.NotFound;
         if (recipient.Id == user.Id) return HttpStatusCode.Forbidden;
 
-        if (database.FollowUser(user, recipient)) return HttpStatusCode.OK;
+        if (database.FollowUser(user, recipient)) return HttpStatusCode.Created;
         
         return HttpStatusCode.Conflict;
     }

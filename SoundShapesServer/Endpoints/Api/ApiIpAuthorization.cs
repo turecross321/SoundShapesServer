@@ -37,8 +37,6 @@ public class ApiIpAuthorization : EndpointGroup
         ApiUnAuthorizedIpResponse[] addresses = database.GetUnAuthorizedIps(user, SessionType.Game);
 
         return new ApiUnAuthorizedIpResponseWrapper(addresses);
-        
-        // TODO: POSTMAN ERROR
     }
 
     [ApiEndpoint("ip/authorized")]
@@ -47,7 +45,5 @@ public class ApiIpAuthorization : EndpointGroup
         ApiAuthorizedIpResponse[] addresses = database.GetAuthorizedIps(user, SessionType.Game);
 
         return new ApiAuthorizedIpResponseWrapper(addresses);
-        
-        // TODO: POSTMAN ERROR
     }
 }

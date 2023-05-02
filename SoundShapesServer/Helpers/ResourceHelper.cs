@@ -82,8 +82,8 @@ public static class ResourceHelper
 
     private const string NewsPath = "news";
 
-    public static string GetNewsResourceKey(string language)
+    public static string GetNewsResourceKey(string id)
     {
-        return $"{NewsPath}/{language}.png";
+        return $"{NewsPath}/{id}.png";
     }
 }

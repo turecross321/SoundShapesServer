@@ -5,16 +5,22 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public NewsEntry? GetNews(string language)
+    public IQueryable<NewsEntry> GetNews()
     {
-        NewsEntry? news = _realm.All<NewsEntry>().FirstOrDefault(n => n.Language == language);
-        return news;
+        return _realm.All<NewsEntry>();
+    }
+
+    public NewsEntry? GetNewsEntryWithId(string id)
+    {
+        return _realm.All<NewsEntry>().FirstOrDefault(e => e.Id == id);
     }
 
     public NewsEntry CreateNewsEntry(ApiCreateNewsEntryRequest request)
     {
         NewsEntry entry = new ()
         {
+            Id = GenerateGuid(),
+            Date = DateTimeOffset.UtcNow,
             Language = request.Language,
             Title = request.Title,
             Summary = request.Summary,
@@ -24,7 +30,6 @@ public partial class RealmDatabaseContext
         
         _realm.Write(() =>
         {
-            _realm.RemoveRange(_realm.All<NewsEntry>().Where(e=>e.Language == request.Language));
             _realm.Add(entry);
         });
 

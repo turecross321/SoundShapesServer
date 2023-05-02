@@ -6,6 +6,8 @@ public class ApiNewsResponse
 {
     public ApiNewsResponse(NewsEntry entry)
     {
+        Id = entry.Id;
+        Date = entry.Date;
         Language = entry.Language;
         Title = entry.Title;
         Summary = entry.Summary;
@@ -13,6 +15,8 @@ public class ApiNewsResponse
         Url = entry.Url;
     }
     
+    public string Id { get; set; }
+    public DateTimeOffset Date { get; set; }
     public string Language { get; set; }
     public string Title { get; set; }
     public string Summary { get; set; }

@@ -13,6 +13,14 @@ public class NewsResponse
         Url = entry.Url;
     }
 
+    public NewsResponse()
+    {
+        Title = "News";
+        Summary = "There are no news yet.";
+        FullText = "";
+        Url = "";
+    }
+
     [JsonProperty("00_title", NullValueHandling = NullValueHandling.Ignore)] public string Title { get; set; }
     [JsonProperty("00_text", NullValueHandling = NullValueHandling.Ignore)] public string Summary { get; set; }
     [JsonProperty("00_fullText", NullValueHandling = NullValueHandling.Ignore)] public string FullText { get; set; }

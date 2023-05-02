@@ -22,8 +22,6 @@ public class ApiLevelInteractionEndpoints : EndpointGroup
         {
             IsLiked = database.IsUserLikingLevel(user, level)
         };
-        
-        // TODO: FIX POSTMAN ERROR 
     }
 
     [ApiEndpoint("level/{id}/like", Method.Post)]
@@ -32,7 +30,7 @@ public class ApiLevelInteractionEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(id);
         if (level == null) return HttpStatusCode.NotFound;
 
-        if (database.LikeLevel(user, level)) return HttpStatusCode.OK;
+        if (database.LikeLevel(user, level)) return HttpStatusCode.Created;
         
         return HttpStatusCode.Conflict;
     }

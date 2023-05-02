@@ -1,7 +1,13 @@
+using System.Net;
+using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
+using Bunkum.HttpServer.Responses;
+using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
@@ -19,21 +25,14 @@ public class ApiLevelEndpoints: EndpointGroup
         
         bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
         string? orderString = context.QueryString["orderBy"];
-        
-        string category = context.QueryString["category"] ?? "all";
-        
+
         string? byUser = context.QueryString["byUser"];
         string? likedByUser = context.QueryString["likedByUser"];
         string? inAlbum = context.QueryString["inAlbum"];
+        string? inDaily = context.QueryString["inDaily"];
 
-        IQueryable<GameLevel>? levels = category switch
-        {
-            "daily" => database.GetDailyLevels(DateTimeOffset.UtcNow),
-            _ => null
-        };
-
-        levels ??= database.GetLevels();
-        levels = LevelHelper.FilterLevels(database, levels, byUser, likedByUser, inAlbum);
+        IQueryable<GameLevel>? levels = database.GetLevels();
+        levels = LevelHelper.FilterLevels(database, levels, byUser, likedByUser, inAlbum, inDaily);
         if (levels == null) return null;
 
         LevelOrderType order = orderString switch
@@ -57,5 +56,40 @@ public class ApiLevelEndpoints: EndpointGroup
     {
         GameLevel? level = database.GetLevelWithId(levelId);
         return level == null ? null : new ApiLevelFullResponse(level, user);
+    }
+    
+    [ApiEndpoint("level/{id}/edit", Method.Post)]
+    public Response EditLevel(RequestContext context, RealmDatabaseContext database, GameUser user,
+        ApiEditLevelRequest body, string id)
+    {
+        if (body == null) throw new ArgumentNullException(nameof(body));
+
+        GameLevel? level = database.GetLevelWithId(id);
+        if (level == null) return HttpStatusCode.NotFound;
+
+        if (level.Author.Id != user.Id)
+        {
+            if (PermissionHelper.IsUserAdmin(user) == false)
+                return HttpStatusCode.Unauthorized;
+        }
+        
+        GameLevel publishedLevel = database.EditLevel(new PublishLevelRequest(body), level);
+        return new Response(new ApiLevelFullResponse(publishedLevel, user), ContentType.Json, HttpStatusCode.Created);
+    }
+    
+    [ApiEndpoint("level/{id}/remove", Method.Post)]
+    public Response RemoveLevel(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, string id)
+    {
+        GameLevel? level = database.GetLevelWithId(id);
+        if (level == null) return HttpStatusCode.NotFound;
+
+        if (level.Author.Id != user.Id)
+        {
+            if (PermissionHelper.IsUserAdmin(user) == false)
+                return HttpStatusCode.Unauthorized;
+        }
+
+        database.RemoveLevel(level, dataStore);
+        return HttpStatusCode.OK;
     }
 }

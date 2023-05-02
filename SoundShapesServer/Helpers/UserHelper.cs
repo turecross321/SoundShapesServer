@@ -16,13 +16,10 @@ public static class UserHelper
     {
         IQueryable<GameUser> response = users;
 
-        if (registered)
-        {
-            response = response
-                .AsEnumerable()
-                .Where(u => u.HasFinishedRegistration)
-                .AsQueryable();
-        }
+        response = response
+            .AsEnumerable()
+            .Where(u => u.HasFinishedRegistration == registered)
+            .AsQueryable();
 
         if (following != null)
         {
@@ -62,7 +59,7 @@ public static class UserHelper
             UserOrderType.PlayedLevelsCount => users.OrderBy(u=>u.PlayedLevels.Count()),
             UserOrderType.LeaderboardPlacements => users.OrderByDescending(u=> LeaderboardHelper.GetTotalLeaderboardPlacements(database, u)),
             UserOrderType.DoNotOrder => users,
-            _ => users.OrderBy(u=>u.CreationDate)
+            _ => OrderUsers(database, users, UserOrderType.CreationDate)
         };
     }
 }

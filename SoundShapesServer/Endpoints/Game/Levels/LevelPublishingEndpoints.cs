@@ -20,9 +20,9 @@ public class LevelPublishingEndpoints : EndpointGroup
     // Gets called by Endpoints.cs
     public static Response PublishLevel(IDataStore dataStore, MultipartFormDataParser parser, RealmDatabaseContext database, GameUser user)
     {
-        string levelId = LevelHelper.GenerateLevelId(database);
+        string levelId = LevelHelper.GenerateLevelId();
         Response? uploadedResources = UploadLevelResources(dataStore, parser, levelId);
-        if (uploadedResources == null) return uploadedResources ?? HttpStatusCode.InternalServerError;
+        if (uploadedResources != null) return (Response)uploadedResources;
         
         PublishLevelRequest publishLevelRequest = new (
             parser.GetParameterValue("title"), 
@@ -53,7 +53,7 @@ public class LevelPublishingEndpoints : EndpointGroup
             levelId, 
             parser.Files.First(f => f.Name == "level").Data.Length);
         
-        GameLevel publishedLevel = database.EditLevel(publishLevelRequest, level, user);
+        GameLevel publishedLevel = database.EditLevel(publishLevelRequest, level);
         return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
 

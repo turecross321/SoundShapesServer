@@ -37,19 +37,19 @@ public class ApiPunishmentEndpoints : EndpointGroup
         GameUser? userToPunish = database.GetUserWithId(body.UserId);
         if (userToPunish == null) return HttpStatusCode.NotFound;
 
-        database.EditPunishment(punishment, body, userToPunish);
-        return HttpStatusCode.Created;
+        Punishment editedPunishment =database.EditPunishment(punishment, body, userToPunish);
+        return new Response(new ApiPunishmentResponse(editedPunishment), ContentType.Json, HttpStatusCode.Created);
     }
 
-    [ApiEndpoint("punishment/{id}/dismiss", Method.Post)]
-    public Response DismissPunishment(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    [ApiEndpoint("punishment/{id}/revoke", Method.Post)]
+    public Response RevokePunishment(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
         Punishment? punishment = database.GetPunishmentWithId(id);
         if (punishment == null) return HttpStatusCode.NotFound;
         
-        database.DismissPunishment(punishment);
+        database.RevokePunishment(punishment);
         return HttpStatusCode.OK;
     }
     
@@ -62,9 +62,18 @@ public class ApiPunishmentEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
 
-        // todo: add user, add filtering for dismissed cases
+        string? byUser = context.QueryString["byUser"];
+        string? forUser = context.QueryString["forUser"];
         
+        bool revoked = bool.Parse(context.QueryString["revoked"] ?? "false");
+        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
+
         IQueryable<Punishment> punishments = database.GetPunishments();
-        return new ApiPunishmentsWrapper(punishments, from, count);
+        IQueryable<Punishment> filteredPunishments =
+            PunishmentHelper.FilterPunishments(punishments, byUser, forUser, revoked);
+        IQueryable<Punishment> orderedPunishments =
+            descending ? filteredPunishments.AsEnumerable().Reverse().AsQueryable() : filteredPunishments;
+        
+        return new ApiPunishmentsWrapper(orderedPunishments, from, count);
     }
 }

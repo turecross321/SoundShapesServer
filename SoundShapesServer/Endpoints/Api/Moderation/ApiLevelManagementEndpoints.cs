@@ -25,39 +25,25 @@ public class ApiLevelManagementEndpoints : EndpointGroup
         if (body == null) throw new ArgumentNullException(nameof(body));
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
 
-        string levelId = LevelHelper.GenerateLevelId(database);
+        string levelId = LevelHelper.GenerateLevelId();
         
         GameLevel publishedLevel = database.PublishLevel(new PublishLevelRequest(body, levelId), user);
         return new Response(new ApiLevelFullResponse(publishedLevel, user), ContentType.Json, HttpStatusCode.Created);
     }
 
-    [ApiEndpoint("level/{id}/edit")]
-    public Response EditLevel(RequestContext context, RealmDatabaseContext database, GameUser user,
-        ApiPublishLevelRequest body, string id)
-    {
-        if (body == null) throw new ArgumentNullException(nameof(body));
-        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
-
-        GameLevel? level = database.GetLevelWithId(id);
-        if (level == null) return HttpStatusCode.NotFound;
-
-        GameLevel publishedLevel = database.EditLevel(new PublishLevelRequest(body, id), level, user);
-        return new Response(new ApiLevelFullResponse(publishedLevel, user), ContentType.Json, HttpStatusCode.Created);
-    }
-
-    [ApiEndpoint("level/{id}/setLevel")]
+    [ApiEndpoint("level/{id}/setLevel", Method.Post)]
     public Response UploadLevelFile
     (RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, Stream body,
         string id)
         => UploadLevelResources(database, dataStore, user, body, id, FileType.Level);
     
-    [ApiEndpoint("level/{id}/setSound")]
+    [ApiEndpoint("level/{id}/setSound", Method.Post)]
     public Response UploadSoundFile
     (RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, Stream body,
         string id)
         => UploadLevelResources(database, dataStore, user, body, id, FileType.Sound);
     
-    [ApiEndpoint("level/{id}/setThumbnail")]
+    [ApiEndpoint("level/{id}/setThumbnail", Method.Post)]
     public Response UploadThumbnail
     (RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, Stream body,
         string id)
@@ -85,17 +71,5 @@ public class ApiLevelManagementEndpoints : EndpointGroup
         if (fileType == FileType.Level) database.SetLevelFileSize(level, file.Length);
 
         return HttpStatusCode.Created;
-    }
-    
-    [ApiEndpoint("level/{id}/remove", Method.Post)]
-    public Response RemoveLevel(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, string id)
-    {
-        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
-
-        GameLevel? levelToRemove = database.GetLevelWithId(id);
-        if (levelToRemove == null) return HttpStatusCode.NotFound;
-
-        database.RemoveLevel(levelToRemove, dataStore);
-        return HttpStatusCode.OK;
     }
 }

@@ -40,6 +40,6 @@ public class ApiManageUserEndpoints : EndpointGroup
         
         
         database.SetUserPermissions(userToSetPermissionsOf, type);
-        return HttpStatusCode.OK;
+        return HttpStatusCode.Created;
     }
 }

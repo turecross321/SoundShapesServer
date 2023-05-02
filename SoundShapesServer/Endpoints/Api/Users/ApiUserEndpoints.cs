@@ -16,8 +16,6 @@ public class ApiUserEndpoints : EndpointGroup
     {
         GameUser? userToCheck = database.GetUserWithId(id);
         return userToCheck == null ? null : new ApiUserResponse(userToCheck);
-        
-        // TODO: POSTMAN ERROR
     }
 
     [ApiEndpoint("users", ContentType.Json)]
@@ -51,7 +49,5 @@ public class ApiUserEndpoints : EndpointGroup
         };
 
         return new ApiUsersWrapper(database, users, from, count, order, descending);
-        
-        // TODO: POSTMAN ERROR
     }
 }

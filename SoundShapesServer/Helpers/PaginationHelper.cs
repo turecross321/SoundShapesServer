@@ -55,4 +55,9 @@ public static class PaginationHelper
     {
         return entries.AsEnumerable().Skip(from).Take(count).ToArray();
     }
+
+    public static NewsEntry[] PaginateNews(IQueryable<NewsEntry> entries, int from, int count)
+    {
+        return entries.AsEnumerable().Skip(from).Take(count).ToArray();
+    }
 }

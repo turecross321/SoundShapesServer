@@ -11,7 +11,7 @@ public static class LevelHelper
     private const string LevelIdCharacters = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private const int LevelIdLength = 8;
     
-    public static string GenerateLevelId(RealmDatabaseContext database)
+    public static string GenerateLevelId()
     {
         Random r = new();
         string levelId = "";
@@ -20,8 +20,7 @@ public static class LevelHelper
             levelId += LevelIdCharacters[r.Next(LevelIdCharacters.Length - 1)];
         }
 
-        if (database.GetLevelWithId(levelId) == null) return levelId; // Return if LevelId has not been used before
-        return GenerateLevelId(database); // Generate new LevelId if it already exists
+        return levelId;
     }
 
     private static IQueryable<GameLevel> RandomizeLevelOrder(IQueryable<GameLevel> levels)
@@ -39,7 +38,7 @@ public static class LevelHelper
             .AsQueryable();
     }
 
-    public static IQueryable<GameLevel>? FilterLevels(RealmDatabaseContext database, IQueryable<GameLevel> levels, string? byUser, string? likedByUser, string? inAlbum)
+    public static IQueryable<GameLevel>? FilterLevels(RealmDatabaseContext database, IQueryable<GameLevel> levels, string? byUser, string? likedByUser, string? inAlbum, string? inDaily)
     {
         IQueryable<GameLevel> response = levels;
         if (byUser != null)
@@ -76,6 +75,14 @@ public static class LevelHelper
                 .AsQueryable();
         }
 
+        if (inDaily != null)
+        {
+            DateTimeOffset date = DateTimeOffset.Parse(inDaily);
+            IQueryable<DailyLevel> dailyLevelObjects = database.GetDailyLevelObjects(date);
+
+            response = response.AsEnumerable().Where(l => dailyLevelObjects.Select(d => d.Level).Contains(l)).AsQueryable();
+        }
+
         return response;
     }
 
@@ -94,7 +101,7 @@ public static class LevelHelper
                 .AsQueryable(),
             LevelOrderType.Random => RandomizeLevelOrder(levels.AsQueryable()),
             LevelOrderType.DoNotOrder => levels.AsQueryable(),
-            _ => levels.OrderBy(u=>u.CreationDate).AsQueryable()
+            _ => OrderLevels(levels, LevelOrderType.CreationDate)
         };
     }
 }

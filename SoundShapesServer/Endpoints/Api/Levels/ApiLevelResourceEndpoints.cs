@@ -32,6 +32,4 @@ public class ApiLevelResourceEndpoints : EndpointGroup
         Debug.Assert(data != null);
         return new Response(data, ContentType.BinaryData);
     }
-    
-    // todo: implement level removing
 }

@@ -8,9 +8,8 @@ public class ApiPunishmentsWrapper
     public ApiPunishmentsWrapper(IQueryable<Punishment> punishments, int from, int count)
     {
         Punishment[] paginatedPunishments = PaginationHelper.PaginatePunishments(punishments, from, count);
-        ApiPunishmentResponse[] punishmentResponses = paginatedPunishments.Select(p => new ApiPunishmentResponse(p)).ToArray();
 
-        Punishments = punishmentResponses;
+        Punishments = paginatedPunishments.Select(p => new ApiPunishmentResponse(p)).ToArray();
         Count = punishments.Count();
     }
 

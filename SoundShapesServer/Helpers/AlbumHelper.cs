@@ -43,7 +43,7 @@ public static class AlbumHelper
             AlbumOrderType.LevelCount => albums.OrderBy(a=>a.Levels.Count).AsQueryable(),
             AlbumOrderType.FileSize => albums.OrderBy(a=> a.Levels.Select(l=>l.FileSize).Sum()).AsQueryable(),
             AlbumOrderType.Difficulty => albums.OrderBy(a=> a.Levels.Select(l=>l.Difficulty).Sum()).AsQueryable(),
-            _ => albums.OrderBy(a=>a.CreationDate).AsQueryable()
+            _ => OrderAlbums(albums, AlbumOrderType.CreationDate)
         };
     }
 }

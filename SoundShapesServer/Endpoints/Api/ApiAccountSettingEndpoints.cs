@@ -52,7 +52,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     [ApiEndpoint("account/setEmail", Method.Post)]
     public Response SetUserEmail(RequestContext context, RealmDatabaseContext database, ApiSetEmailRequest body, GameSession session)
     {
-        if (session.User == null) return HttpStatusCode.Gone;
+        if (session.User == null) return HttpStatusCode.NotFound;
         GameUser user = session.User;
 
         // Check if user has sent a valid mail address

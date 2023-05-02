@@ -132,7 +132,7 @@ public static class LeaderboardHelper
             LeaderboardOrderType.PlayTime => entries.OrderBy(e => e.PlayTime),
             LeaderboardOrderType.TokenCount => entries.OrderBy(e => e.Tokens),
             LeaderboardOrderType.Date => entries.OrderBy(e => e.Date),
-            _ => entries.OrderBy(e=>e.Score)
+            _ => OrderEntries(entries, order)
         };
     }
 }

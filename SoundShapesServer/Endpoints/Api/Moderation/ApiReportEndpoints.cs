@@ -43,10 +43,15 @@ public class ApiReportEndpoints : EndpointGroup
         
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
-
-        // todo: add filtering by content id
         
+        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
+        string? contentId = context.QueryString["contentId"];
+
         IQueryable<Report> reports = database.GetReports();
-        return new ApiReportsWrapper(reports, from, count);
+        IQueryable<Report> filteredReports = ReportHelper.FilterReports(reports, contentId);
+        IQueryable<Report> orderedReports =
+            descending ? filteredReports.AsEnumerable().Reverse().AsQueryable() : filteredReports;
+        
+        return new ApiReportsWrapper(orderedReports, from, count);
     }
 }

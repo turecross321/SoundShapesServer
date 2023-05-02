@@ -5,9 +5,9 @@ namespace SoundShapesServer.Requests.Game;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class PublishLevelRequest
 {
-    public PublishLevelRequest(string title, int language, string id, long fileSize, DateTimeOffset? modified = null)
+    public PublishLevelRequest(string name, int language, string id, long fileSize, DateTimeOffset? modified = null)
     {
-        Title = title;
+        Name = name;
         Language = language;
         Id = id;
         FileSize = fileSize;
@@ -16,14 +16,20 @@ public class PublishLevelRequest
 
     public PublishLevelRequest(ApiPublishLevelRequest request, string levelId)
     {
-        Title = request.Name;
+        Name = request.Name;
         Language = request.Language;
         Id = levelId;
         FileSize = 0;
         Modified = request.Modified ?? DateTimeOffset.UtcNow;
     }
 
-    public string Title { get; }
+    public PublishLevelRequest(ApiEditLevelRequest request)
+    {
+        Name = request.Name;
+        Language = request.Language;
+    }
+
+    public string Name { get; }
     public int Language { get; }
     public string Id { get; }
     public long FileSize { get; }

@@ -1,3 +1,4 @@
+using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
@@ -10,7 +11,7 @@ namespace SoundShapesServer.Endpoints.Api;
 
 public class ApiLeaderboardEndpoints : EndpointGroup
 {
-    [ApiEndpoint("leaderboard")]
+    [ApiEndpoint("leaderboard", ContentType.Json)]
     [Authentication(false)]
     public ApiLeaderboardEntryWrapper GetLeaderboard(RequestContext context, RealmDatabaseContext database, string id)
     {

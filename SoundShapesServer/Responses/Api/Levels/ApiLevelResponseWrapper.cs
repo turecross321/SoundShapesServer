@@ -15,15 +15,8 @@ public class ApiLevelResponseWrapper
             .AsQueryable() : orderedLevels;
 
         GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(fullyOrderedLevels, from, count);
-        
-        ApiLevelSummaryResponse[] levelResponses = new ApiLevelSummaryResponse[paginatedLevels.Length];
-        
-        for (int i = 0; i < paginatedLevels.Length; i++)
-        {
-            levelResponses[i] = new ApiLevelSummaryResponse(paginatedLevels[i], user);
-        }
 
-        Levels = levelResponses;
+        Levels = paginatedLevels.Select(l=> new ApiLevelSummaryResponse(l, user)).ToArray();
         Count = levels.Count();
     }
 

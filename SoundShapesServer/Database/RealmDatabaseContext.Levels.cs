@@ -14,8 +14,7 @@ public partial class RealmDatabaseContext
     public GameLevel PublishLevel(PublishLevelRequest request, GameUser user)
     {
         string levelId = request.Id;
-            
-        GameLevel level = new(levelId, user, request.Title, request.Language, request.FileSize, request.Modified);
+        GameLevel level = new(levelId, user, request.Name, request.Language, request.FileSize, request.Modified);
 
         _realm.Write(() =>
         {
@@ -25,14 +24,13 @@ public partial class RealmDatabaseContext
         return level;
     }
 
-    public GameLevel EditLevel(PublishLevelRequest updatedPublishLevel, GameLevel level, GameUser user)
+    public GameLevel EditLevel(PublishLevelRequest updatedPublishLevel, GameLevel level)
     {
         _realm.Write(() =>
         {
-            level.Name = updatedPublishLevel.Title;
+            level.Name = updatedPublishLevel.Name;
             level.Language = updatedPublishLevel.Language;
             level.ModificationDate = DateTimeOffset.UtcNow;
-            level.FileSize = updatedPublishLevel.FileSize;
         });
 
         return level;
@@ -107,9 +105,9 @@ public partial class RealmDatabaseContext
         return entries;
     }
 
-    public IQueryable<GameLevel> GetDailyLevels(DateTimeOffset date)
+    public IQueryable<GameLevel> GetDailyLevels(DateTimeOffset date, bool getOldLevelsIfThereAreNone = false)
     {
-        List<DailyLevel> entries = GetDailyLevelObjects(date).ToList();
+        List<DailyLevel> entries = GetDailyLevelObjects(date, getOldLevelsIfThereAreNone).ToList();
         
         List<GameLevel> levels = entries.Select(l =>
         {

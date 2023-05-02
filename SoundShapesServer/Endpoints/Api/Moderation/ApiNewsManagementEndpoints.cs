@@ -26,24 +26,27 @@ public class ApiNewsManagementEndpoints : EndpointGroup
         return new Response(new ApiNewsResponse(createdNewsEntry), ContentType.Json, HttpStatusCode.Created);
     }
 
-    [ApiEndpoint("news/{language}/edit", Method.Post)]
+    [ApiEndpoint("news/{id}/edit", Method.Post)]
     public Response EditNewsEntry(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, 
-        GameUser user, ApiCreateNewsEntryRequest body, string language)
+        GameUser user, ApiCreateNewsEntryRequest body, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
-        NewsEntry? newsEntry = database.GetNews(language);
+        NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
         if (newsEntry == null) return HttpStatusCode.NotFound;
-        
-        NewsEntry createdNewsEntry = database.EditNewsEntry(newsEntry, body);
-        return new Response(new ApiNewsResponse(createdNewsEntry), ContentType.Json, HttpStatusCode.Created);
+
+        NewsEntry editedNewsEntry = database.EditNewsEntry(newsEntry, body);
+        return new Response(new ApiNewsResponse(editedNewsEntry), ContentType.Json, HttpStatusCode.Created);
     }
     
-    [ApiEndpoint("news/{language}/setImage", Method.Post)]
-    public Response SetNewsAssets(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, string language, Stream body)
+    [ApiEndpoint("news/{id}/setImage", Method.Post)]
+    public Response SetNewsAssets(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, string id, Stream body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
+        NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
+        if (newsEntry == null) return HttpStatusCode.NotFound;
+        
         byte[] image;
 
         using (MemoryStream memoryStream = new ())
@@ -54,16 +57,16 @@ public class ApiNewsManagementEndpoints : EndpointGroup
         
         if (!IsByteArrayPng(image)) return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
 
-        dataStore.WriteToStore(GetNewsResourceKey(language), image);
+        dataStore.WriteToStore(GetNewsResourceKey(id), image);
         return HttpStatusCode.Created;
     }
 
-    [ApiEndpoint("news/{language}/remove", Method.Post)]
-    public Response DeleteNewsEntry(RequestContext context, RealmDatabaseContext database, GameUser user, string language)
+    [ApiEndpoint("news/{id}/remove", Method.Post)]
+    public Response DeleteNewsEntry(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
-        NewsEntry? newsEntry = database.GetNews(language);
+        NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
         if (newsEntry == null) return HttpStatusCode.NotFound;
         
         database.RemoveNewsEntry(newsEntry);

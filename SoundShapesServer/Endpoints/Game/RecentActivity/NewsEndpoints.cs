@@ -3,6 +3,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.RecentActivity;
 using SoundShapesServer.Types;
 
@@ -13,16 +14,21 @@ public class NewsEndpoints : EndpointGroup
     [GameEndpoint("global/news/~metadata:*.get", ContentType.Json)]
     public NewsResponse GlobalNews(RequestContext context, RealmDatabaseContext database)
     {
-        NewsEntry news = database.GetNews("global") ?? new NewsEntry();
-        return new NewsResponse(news);
+        IQueryable<NewsEntry> entries = database.GetNews();
+        IQueryable<NewsEntry> filteredNews = NewsHelper.FilterNews(entries, "global");
+        NewsEntry? entry = filteredNews.LastOrDefault();
+
+        return entry == null ? new NewsResponse() : new NewsResponse(entry);
     }
 
     
     [GameEndpoint("global/news/{language}/~metadata:*.get", ContentType.Json)]
     public NewsResponse? TranslatedNews(RequestContext context, GameSession session, RealmDatabaseContext database, string language)
     {
-        NewsEntry? news = database.GetNews(language);
+        IQueryable<NewsEntry> entries = database.GetNews();
+        IQueryable<NewsEntry> filteredNews = NewsHelper.FilterNews(entries, language);
+        NewsEntry? entry = filteredNews.LastOrDefault();
 
-        return news == null ? null : new NewsResponse(news);
+        return entry == null ? null : new NewsResponse(entry);
     }
 }

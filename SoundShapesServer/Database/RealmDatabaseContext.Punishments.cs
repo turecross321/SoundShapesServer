@@ -40,7 +40,7 @@ public partial class RealmDatabaseContext
         return newPunishment;
     }
 
-    public void EditPunishment(Punishment punishment, ApiPunishRequest request, GameUser user)
+    public Punishment EditPunishment(Punishment punishment, ApiPunishRequest request, GameUser user)
     {
         _realm.Write(() =>
         {
@@ -49,13 +49,15 @@ public partial class RealmDatabaseContext
             punishment.Reason = request.Reason;
             punishment.ExpiresAt = request.ExpiresAtUtc;
         });
+
+        return punishment;
     }
 
-    public void DismissPunishment(Punishment punishment)
+    public void RevokePunishment(Punishment punishment)
     {
         _realm.Write(() =>
         {
-            punishment.Dismissed = true;
+            punishment.Revoked = true;
         });
     }
 }
