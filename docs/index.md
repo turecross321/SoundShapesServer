@@ -12,7 +12,7 @@ The value of the authorization should always be your **Session Id** unless speci
 | [/users](#Users)             |
 | [/levels](#Levels)           |
 | [/albums](#Albums)           |
-| [/leaderboard](#leaderboard) |
+| [/leaderboard](#Leaderboard) |
 | [/daily](#Daily)             |
 | [/news](#News)               |
 | [/reports](#Reports)         |
