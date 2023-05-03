@@ -6,11 +6,8 @@ namespace SoundShapesServer.Responses.Api.Levels;
 
 public class ApiLevelFullResponse
 {
-    public ApiLevelFullResponse(GameLevel level, GameUser? user)
+    public ApiLevelFullResponse(GameLevel level)
     {
-        bool? completed = null;
-        if (user != null) completed = level.UsersWhoHaveCompletedLevel.Contains(user);
-        
         Id = level.Id;
         Name = level.Name;
         AuthorId = level.Author.Id;
@@ -25,7 +22,6 @@ public class ApiLevelFullResponse
         Difficulty = level.Difficulty;
         AlbumIds = level.Albums.AsEnumerable().Select(a => a.Id).ToArray();
         DailyLevelIds = level.DailyLevels.AsEnumerable().Select(d => d.Id).ToArray();
-        CompletedByYou = completed;
     }
 
     public string Id { get; set; }
@@ -42,5 +38,4 @@ public class ApiLevelFullResponse
     public float Difficulty { get; set; }
     public string[] AlbumIds { get; set; }
     public string[] DailyLevelIds { get; set; }
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public bool? CompletedByYou { get; set; }
 }

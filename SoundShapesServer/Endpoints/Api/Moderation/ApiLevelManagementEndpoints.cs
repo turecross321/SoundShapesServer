@@ -28,7 +28,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
         string levelId = LevelHelper.GenerateLevelId();
         
         GameLevel publishedLevel = database.PublishLevel(new PublishLevelRequest(body, levelId), user);
-        return new Response(new ApiLevelFullResponse(publishedLevel, user), ContentType.Json, HttpStatusCode.Created);
+        return new Response(new ApiLevelFullResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
 
     [ApiEndpoint("levels/{id}/setLevel", Method.Post)]

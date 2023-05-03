@@ -18,7 +18,7 @@ public class ApiLevelEndpoints: EndpointGroup
 {
     [ApiEndpoint("levels")]
     [Authentication(false)]
-    public ApiLevelResponseWrapper? GetLevels(RequestContext context, RealmDatabaseContext database, GameUser? user)
+    public ApiLevelResponseWrapper? GetLevels(RequestContext context, RealmDatabaseContext database)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
@@ -47,15 +47,15 @@ public class ApiLevelEndpoints: EndpointGroup
             _ => LevelOrderType.CreationDate
         };
         
-        return new ApiLevelResponseWrapper(levels, from, count, user, order, descending);
+        return new ApiLevelResponseWrapper(levels, from, count, order, descending);
     }
 
     [ApiEndpoint("levels/{levelId}")]
     [Authentication(false)]
-    public ApiLevelFullResponse? Level(RequestContext context, RealmDatabaseContext database, string levelId, GameUser? user)
+    public ApiLevelFullResponse? Level(RequestContext context, RealmDatabaseContext database, string levelId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
-        return level == null ? null : new ApiLevelFullResponse(level, user);
+        return level == null ? null : new ApiLevelFullResponse(level);
     }
     
     [ApiEndpoint("levels/{id}/edit", Method.Post)]
@@ -74,7 +74,7 @@ public class ApiLevelEndpoints: EndpointGroup
         }
         
         GameLevel publishedLevel = database.EditLevel(new PublishLevelRequest(body), level);
-        return new Response(new ApiLevelFullResponse(publishedLevel, user), ContentType.Json, HttpStatusCode.Created);
+        return new Response(new ApiLevelFullResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
     
     [ApiEndpoint("levels/{id}/remove", Method.Post)]
@@ -91,5 +91,16 @@ public class ApiLevelEndpoints: EndpointGroup
 
         database.RemoveLevel(level, dataStore);
         return HttpStatusCode.OK;
+    }
+
+    [ApiEndpoint("levels/{id}/completed")]
+    public Response HasUserCompletedLevel(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    {
+        GameLevel? level = database.GetLevelWithId(id);
+        if (level == null) return HttpStatusCode.NotFound;
+        
+        bool completed = level.UsersWhoHaveCompletedLevel.Contains(user);
+
+        return new Response(new ApiHasUserCompletedLevelResponse(completed));
     }
 }
