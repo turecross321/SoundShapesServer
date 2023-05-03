@@ -1,4 +1,4 @@
-# Project: API Documentation
+# API Documentation
 
 # 📁 Collection: Account
 
@@ -570,7 +570,7 @@
 ### Method: POST
 
 > ```
-> http://{ip}:10061/api/v1/user/{otherUserId}/remove
+> http://{ip}:10061/api/v1/user/{userId}/remove
 > ```
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
@@ -580,7 +580,7 @@
 ### Method: POST
 
 > ```
-> http://{ip}:10061/api/v1/user/{otherUserId}/setPermissions
+> http://{ip}:10061/api/v1/user/{userId}/setPermissions
 > ```
 
 ### Body (**raw**)
@@ -715,7 +715,7 @@
 
 ```json
 {
-  "UserId": "{otherUserId}",
+  "UserId": "{userId}",
   "PunishmentType": 0, // 0 = Ban
   "Reason": "Not Good...",
   "ExpiresAtUtc": "2023-06-02T09:58:43.5485486+00:00"
@@ -750,7 +750,7 @@
 
 ```json
 {
-  "UserId": "{otherUserId}",
+  "UserId": "{userId}",
   "PunishmentType": 0, // 0 = Ban
   "Reason": "Even Worse...",
   "ExpiresAtUtc": "2030-06-02T09:58:43.5485486+00:00"
@@ -923,7 +923,7 @@
 ### Method: GET
 
 > ```
-> http://{ip}:10061/api/v1/user/{otherUserId}
+> http://{ip}:10061/api/v1/user/{userId}
 > ```
 
 ### 🔑 Authentication noauth
@@ -1005,7 +1005,7 @@
 ### Method: GET
 
 > ```
-> http://{ip}:10061/api/v1/user/{otherUserId}/following
+> http://{ip}:10061/api/v1/user/{userId}/following
 > ```
 
 ### Response: 200
@@ -1023,7 +1023,7 @@
 ### Method: POST
 
 > ```
-> http://{ip}:10061/api/v1/user/{otherUserId}/follow
+> http://{ip}:10061/api/v1/user/{userId}/follow
 > ```
 
 ### Response: 201
@@ -1039,7 +1039,7 @@
 ### Method: POST
 
 > ```
-> http://{ip}:10061/api/v1/user/{otherUserId}/unFollow
+> http://{ip}:10061/api/v1/user/{userId}/unFollow
 > ```
 
 ### Response: 200
