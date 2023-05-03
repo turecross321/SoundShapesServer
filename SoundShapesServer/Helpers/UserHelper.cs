@@ -14,7 +14,7 @@ public static class UserHelper
 
     public static IQueryable<GameUser>? FilterUsers(RealmDatabaseContext database, IQueryable<GameUser> users, string? following, string? followedBy)
     {
-        IQueryable<GameUser> response = users;
+        IQueryable<GameUser> response = users.Where(u=>u.HasFinishedRegistration);
         
         if (following != null)
         {
