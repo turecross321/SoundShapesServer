@@ -1502,6 +1502,17 @@ Should be a PNG
 
 ## End-point: Submit Report
 
+### 💡 Content Id is either a Level Id or a User Id.
+
+| Reason Id | Reason                 |
+|-----------|------------------------|
+| 0         | Mature                 |
+| 1         | Offensive              |
+| 2         | Defamation             |
+| 3         | Impersonation          |
+| 4         | Inappropriate Username |
+| 5         | Other                  |
+
 ### Method: POST
 
 > ```
@@ -1512,8 +1523,8 @@ Should be a PNG
 
 ```json
 {
-  "ContentId": "{levelId}", // Can be either a level id or a user id
-  "ReportReasonId": 0 // 0 = Mature, 1 = Offensive, 3 = Defamation, 4 = Impersonation, 5 = Inappropriate Username, 6 = Other
+  "ContentId": "{levelId}",
+  "ReportReasonId": 0
 }
 ```
 
@@ -1557,6 +1568,8 @@ Should be a PNG
 
 ### Query Params
 
+| Param |
+| ---- |
 | from |
 | count |
 | forUser |
@@ -1589,6 +1602,10 @@ Should be a PNG
 
 ### ⚠️ This requires administrator permissions.
 
+| PunishmentType | Punishment  |
+|----------------|-------------|
+| 0              | Ban         |
+
 ### Method: POST
 
 > ```
@@ -1600,7 +1617,7 @@ Should be a PNG
 ```json
 {
   "UserId": "{userId}",
-  "PunishmentType": 0, // 0 = Ban
+  "PunishmentType": 0,
   "Reason": "Not Good...",
   "ExpiresAtUtc": "2023-06-02T09:58:43.5485486+00:00"
 }
