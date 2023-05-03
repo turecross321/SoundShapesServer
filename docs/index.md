@@ -167,7 +167,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 ```json
 {
-  "NewUsername": "{newUsername}
+  "NewUsername": "{newUsername}"
 }
 ```
 
@@ -328,7 +328,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
       "FollowingCount": 0,
       "LikedLevelsCount": 0,
       "PublishedLevelsCount": 1
-    }
+    },
     {
       "Id": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c",
       "Username": "turecross321",
@@ -511,7 +511,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
       "UniquePlays": 0,
       "Likes": 0,
       "Difficulty": 0
-    }
+    },
     {
       "Id": "mXjC41dW",
       "Name": "Titled",
@@ -523,7 +523,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
       "UniquePlays": 1,
       "Likes": 0,
       "Difficulty": 0
-    }
+    },
     {
       "Id": "NqwU4AYF",
       "Name": "Untitled",
@@ -535,7 +535,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
       "UniquePlays": 1,
       "Likes": 0,
       "Difficulty": 0
-    }
+    },
     {
       "Id": "1zyrrn7g",
       "Name": "This is an updated level name",
@@ -980,7 +980,7 @@ Should be a Sound Shapes Sound File
   "Name": "We The Best",
   "Artist": "DJ Khaled",
   "LinerNotes": "<html><h1>This is a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
-  "LevelIds": [{levelId}]
+  "LevelIds": ["{levelId}"]
 }
 ```
 
