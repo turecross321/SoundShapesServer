@@ -35,7 +35,7 @@ The value of the authorization should always be your **Session Id** unless speci
 ```json
 {
   "Email": "{email}",
-  "PasswordSha512": "{passwordSha512}
+  "PasswordSha512": "{passwordSha512}"
 }
 ```
 
@@ -67,7 +67,7 @@ The value of the authorization should always be your **Session Id** unless speci
 
 ```json
 {
-  "Email": "{email}
+  "Email": "{email}"
 }
 ```
 
@@ -93,7 +93,7 @@ The value of the authorization should always be your **Session Id** unless speci
 
 ```json
 {
-  "NewEmail": "{email}
+  "NewEmail": "{email}"
 }
 ```
 
@@ -272,7 +272,7 @@ The value of the authorization should always be your **Session Id** unless speci
 
 ```json
 {
-  "IpAddress": "{ipAddress}
+  "IpAddress": "{ipAddress}"
 }
 ```
 
@@ -327,7 +327,7 @@ The value of the authorization should always be your **Session Id** unless speci
       "FollowingCount": 0,
       "LikedLevelsCount": 0,
       "PublishedLevelsCount": 1
-    }",
+    }
     {
       "Id": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c",
       "Username": "turecross321",
@@ -509,7 +509,7 @@ The value of the authorization should always be your **Session Id** unless speci
       "UniquePlays": 0,
       "Likes": 0,
       "Difficulty": 0
-    }",
+    }
     {
       "Id": "mXjC41dW",
       "Name": "Titled",
@@ -521,7 +521,7 @@ The value of the authorization should always be your **Session Id** unless speci
       "UniquePlays": 1,
       "Likes": 0,
       "Difficulty": 0
-    }",
+    }
     {
       "Id": "NqwU4AYF",
       "Name": "Untitled",
@@ -533,7 +533,7 @@ The value of the authorization should always be your **Session Id** unless speci
       "UniquePlays": 1,
       "Likes": 0,
       "Difficulty": 0
-    }",
+    }
     {
       "Id": "1zyrrn7g",
       "Name": "This is an updated level name",
@@ -692,8 +692,7 @@ The value of the authorization should always be your **Session Id** unless speci
   "Language": 4,
   "Difficulty": 0,
   "AlbumIds": [],
-  "DailyLevelIds": [],
-  "CompletedByYou": false
+  "DailyLevelIds": []
 }
 ```
 
@@ -754,8 +753,7 @@ The value of the authorization should always be your **Session Id** unless speci
   "Language": 0,
   "Difficulty": 0,
   "AlbumIds": [],
-  "DailyLevelIds": [],
-  "CompletedByYou": false
+  "DailyLevelIds": []
 }
 ```
 
@@ -796,10 +794,6 @@ Should be a Sound Shapes Level File
 ### Body (**binary**)
 
 Should be a Sound Shapes Sound File
-
-```
-xڽ�]
-```
 
 ### Response: 201
 
@@ -917,11 +911,7 @@ xڽ�]
 
 ### Response: 200
 
-```binary
-�PNG
-
-���
-```
+Should be PNG
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
@@ -937,11 +927,7 @@ xڽ�]
 
 ### Response: 200
 
-```binary
-�PNG
-
-���
-```
+Should be PNG
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
@@ -999,7 +985,7 @@ xڽ�]
   "Name": "We Not The Best",
   "Artist": "DJ Khaled the Second",
   "LinerNotes": "<html><h1>This is still a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
-  "LevelIds": [{levelId}", {levelId2}]
+  "LevelIds": ["{levelId}", "{levelId2}"]
 }
 ```
 
@@ -1164,7 +1150,7 @@ Should be a PNG
 ### Method: GET
 
 > ```
-> {url}:10061/api/v1/daily?date=2023-05-03
+> {url}:10061/api/v1/daily?date=2023-05-02
 > ```
 
 ### Query Params
@@ -1283,7 +1269,7 @@ Should be a PNG
       "Summary": "A man has fallen into the river in Lego City!",
       "FullText": "A man has fallen into the river in Lego City! Start the new rescue helicopter. HEY! Build the helicopter and off to the rescue. Prepare the lifeline, lower the stretcher, and make the rescue. The new Emergency Collection from Lego City!",
       "Url": "https://LEGO.com"
-    }",
+    }
     {
       "Id": "e9ecde58-c0c3-4135-ac54-f130a0273757",
       "Date": "2023-05-02T22:38:17.6127246+00:00",
