@@ -678,7 +678,7 @@ The value of the authorization should always be your **Session Id** unless speci
 
 ## End-point: Edit Level Metadata
 
-### ⚠️ Administrators can do this on any level. Non-irators can only do this on their own levels.
+### ⚠️ Administrators can do this on any level. People with default perms can only do this on their own levels.
 
 ### Method: POST
 
@@ -1145,7 +1145,7 @@ Should be a PNG
 
 ## End-point: Remove Leaderboard Entry
 
-##### ⚠️ Only administrators can do this.
+### ⚠️ This requires administrator permissions.
 
 ### Method: POST
 
