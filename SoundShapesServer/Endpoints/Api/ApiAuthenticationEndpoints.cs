@@ -35,24 +35,12 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         {
             return new Response("The email address or password was incorrect.", ContentType.Json, HttpStatusCode.Forbidden);
         }
+
+        Punishment? ban = IsUserBanned(user);
+        GameSession session = database.GenerateSessionForUser(context, user, ban == null ? SessionType.Api : SessionType.Banned);
         
-        // Check if user is banned
-        Punishment[] bans = GetUsersPunishmentsOfType(user, PunishmentType.Ban);
-        if (bans.Length > 0)
-        {
-            Punishment? longestBan = bans.MaxBy(p => p.ExpiresAt);
-            if (longestBan == null) return new Response("User is banned.", ContentType.Json, HttpStatusCode.Forbidden);
-
-            string banString = "User is banned. Expires at " + longestBan.ExpiresAt + ".\n" +
-                               "Reason: " + longestBan.Reason;
-            return new Response(banString, ContentType.Json, HttpStatusCode.Forbidden);
-        }
-
-        GameSession session = database.GenerateSessionForUser(context, user, SessionType.Api);
-
-        ApiAuthenticationResponse response = new(session);
-
-        return new Response(response, ContentType.Json);
+        if (ban != null) return new Response(new ApiBannedResponse(ban, session), ContentType.Json);
+        return new Response(new ApiAuthenticationResponse(session), ContentType.Json);
     }
 
     [ApiEndpoint("account/logout", Method.Post)]

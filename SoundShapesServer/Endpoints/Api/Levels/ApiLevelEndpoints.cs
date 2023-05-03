@@ -107,6 +107,6 @@ public class ApiLevelEndpoints: EndpointGroup
         
         bool completed = level.UsersWhoHaveCompletedLevel.Contains(user);
 
-        return new Response(new ApiHasUserCompletedLevelResponse(completed));
+        return new Response(new ApiHasUserCompletedLevelResponse(completed), ContentType.Json);
     }
 }

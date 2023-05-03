@@ -29,15 +29,11 @@ public static class SessionHelper
 
     public static bool IsSessionAllowedToAccessEndpoint(GameSession session, string uriPath)
     {
-        if (uriPath == GameEndpointAttribute.BaseRoute + "~identity:*.hello")
+        if (uriPath == GameEndpointAttribute.BaseRoute + "~identity:*.hello" ||
+            Regex.IsMatch(uriPath, $"^{GameEndpointAttribute.BaseRoute}[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$")
+           )
         {
-            // If Session is an Unauthorized Session, let it only access the Eula Endpoint 
-            if (session.SessionType is (int)SessionType.Unauthorized) return true;
-        }
-        if (Regex.IsMatch(uriPath, "^/otg/[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$"))
-        {
-            // If Session is an Unauthorized Session, let it only access the Eula Endpoint 
-            if (session.SessionType == (int)SessionType.Unauthorized) return true;
+            if (session.SessionType is (int)SessionType.Unauthorized or (int)SessionType.Banned) return true;
         }
         if (uriPath.StartsWith(GameEndpointAttribute.BaseRoute) || uriPath.StartsWith("/identity/"))
         {
@@ -71,6 +67,12 @@ public static class SessionHelper
         {
             // If Session is an API Session, let it only access api endpoints
             if (session.SessionType == (int)SessionType.Api) return true;
+        }
+
+        if (uriPath == ApiEndpointAttribute.BaseRoute + "account/sendRemovalSession")
+        {
+            if (session.SessionType == (int)SessionType.Banned)
+                return true;
         }
 
         return false;

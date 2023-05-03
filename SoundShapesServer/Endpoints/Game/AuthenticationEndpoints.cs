@@ -52,9 +52,7 @@ public class AuthenticationEndpoints : EndpointGroup
             }
         }
         
-        // Check if user is banned
-        Punishment[] bans = GetUsersPunishmentsOfType(user, PunishmentType.Ban);
-        if (bans.Length > 0) session = database.GenerateSessionForUser(context, user, SessionType.Unauthorized, 30);
+        if (IsUserBanned(user) != null) session = database.GenerateSessionForUser(context, user, SessionType.Banned, 30);
 
         session ??= database.GenerateSessionForUser(context, user, (int)SessionType.Game, 14400); // 4 hours
 
@@ -88,17 +86,18 @@ public class AuthenticationEndpoints : EndpointGroup
     [GameEndpoint("{platform}/{publisher}/{language}/~eula.get", ContentType.Json)]
     public string? Eula(RequestContext context, GameServerConfig config, RealmDatabaseContext database, string platform, string publisher, string language, GameSession session, GameUser user)
     {
-        if (session.SessionType != (int)SessionType.Unauthorized)
+        if (session.SessionType == (int)SessionType.Game)
             return EulaEndpoint.NormalEula(config);
         
-        // Check if user is banned
-        Punishment[] bans = GetUsersPunishmentsOfType(user, PunishmentType.Ban);
-        if (bans.Length > 0)
+        if (session.SessionType == (int)SessionType.Banned)
         {
-            Punishment? longestBan = bans.MaxBy(p => p.ExpiresAt);
-            if (longestBan == null) return "User is banned.";
+            Punishment? longestBan = user.Punishments
+                .AsEnumerable()
+                .Where(p=>p is { PunishmentType: (int)PunishmentType.Ban, Revoked: false })
+                .MaxBy(p => p.ExpiresAt);
+            if (longestBan == null) return "You are banned.";
             
-            string banString = "User is banned. Expires at " + longestBan.ExpiresAt + ".\n" +
+            string banString = "You are banned. Expires at " + longestBan.ExpiresAt.Date + ".\n" +
                                "Reason: " + longestBan.Reason;
             
             return banString;

@@ -1,4 +1,5 @@
 using SoundShapesServer.Authentication;
+using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Responses.Api;
 

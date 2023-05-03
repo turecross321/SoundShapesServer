@@ -33,5 +33,5 @@ public class GameUser : RealmObject, IUser
     [Backlink(nameof(GameLevel.Author))] public IQueryable<GameLevel> Levels { get; }
     [Backlink(nameof(Punishment.User))] public IQueryable<Punishment> Punishments { get; }
     [Backlink(nameof(LeaderboardEntry.User))] public IQueryable<LeaderboardEntry> LeaderboardEntries { get; }
-    #pragma warning restore CS8618
+#pragma warning restore CS8618
 }
