@@ -1,6 +1,9 @@
 # API Documentation
 
-# 📁 Collection: Account
+Every endpoint, unless specified otherwise, requires an Authorization header.
+The value of the authorization should always be your **Session Id** unless specified otherwise.
+
+# 📁 Account
 
 ## End-point: Log In
 
@@ -19,7 +22,7 @@
 }
 ```
 
-### 🔑 Authentication noauth
+### 🔑 This does not require authentication.
 
 | Param | value | Type |
 | ----- | ----- | ---- |
@@ -54,7 +57,7 @@
 }
 ```
 
-### 🔑 Authentication noauth
+### 🔑 This does not require authentication.
 
 | Param | value | Type |
 | ----- | ----- | ---- |
@@ -76,6 +79,8 @@
 > ```
 
 ### Body (**raw**)
+
+### 🔑 This requires a Email Code instead of a Session Id in the Authorization header.
 
 ```json
 {
@@ -107,7 +112,7 @@
 }
 ```
 
-### 🔑 Authentication apikey
+### 🔑 This requires a Password Code instead of a Session Id in the Authorization header.
 
 | Param | value | Type |
 | ----- | ----- | ---- |
@@ -173,7 +178,7 @@
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
-# 📁 Collection: IP Authorization
+# 📁 IP Authorization
 
 ## End-point: Get Unauthorized Ips
 
@@ -278,7 +283,7 @@
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
-# 📁 Collection: Moderation
+# 📁 Moderation
 
 ## End-point: Create Album
 
@@ -916,7 +921,7 @@
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
-# 📁 Collection: Users
+# 📁 Users
 
 ## End-point: Get User
 
@@ -926,7 +931,7 @@
 > http://{ip}:10061/api/v1/user/{userId}
 > ```
 
-### 🔑 Authentication noauth
+### 🔑 This does not require authentication.
 
 | Param | value | Type |
 | ----- | ----- | ---- |
@@ -965,7 +970,7 @@
 | registered | false        |
 | orderBy    | creationDate |
 
-### 🔑 Authentication noauth
+### 🔑 This does not require authentication.
 
 | Param | value | Type |
 | ----- | ----- | ---- |
@@ -1050,7 +1055,7 @@
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
-# 📁 Collection: Levels
+# 📁 Levels
 
 ## End-point: Get Levels
 
@@ -1173,7 +1178,7 @@
 > http://{ip}:10061/api/v1/level/{levelId}/thumbnail
 > ```
 
-### 🔑 Authentication noauth
+### 🔑 This does not require authentication.
 
 | Param | value | Type |
 | ----- | ----- | ---- |
@@ -1318,7 +1323,7 @@ N�؀������s�~�:���A�\"Y�;|dgG,Rgf3�K�Ѻ}�?�
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
-# 📁 Collection: Albums
+# 📁 Albums
 
 ## End-point: Get Album
 
@@ -1328,7 +1333,7 @@ N�؀������s�~�:���A�\"Y�;|dgG,Rgf3�K�Ѻ}�?�
 > http://{ip}:10061/api/v1/album/{albumId}
 > ```
 
-### 🔑 Authentication noauth
+### 🔑 This does not require authentication.
 
 | Param | value | Type |
 | ----- | ----- | ---- |
@@ -1366,7 +1371,7 @@ N�؀������s�~�:���A�\"Y�;|dgG,Rgf3�K�Ѻ}�?�
 | descending | true         |
 | orderBy    | creationDate |
 
-### 🔑 Authentication noauth
+### 🔑 This does not require authentication.
 
 | Param | value | Type |
 | ----- | ----- | ---- |
@@ -1400,7 +1405,7 @@ N�؀������s�~�:���A�\"Y�;|dgG,Rgf3�K�Ѻ}�?�
 > http://{ip}:10061/api/v1/album/{albumId}/thumbnail
 > ```
 
-### 🔑 Authentication noauth
+### 🔑 This does not require authentication.
 
 | Param | value | Type |
 | ----- | ----- | ---- |
@@ -1423,7 +1428,7 @@ N�؀������s�~�:���A�\"Y�;|dgG,Rgf3�K�Ѻ}�?�
 > http://{ip}:10061/api/v1/album/{albumId}/sidePanel
 > ```
 
-### 🔑 Authentication noauth
+### 🔑 This does not require authentication.
 
 | Param | value | Type |
 | ----- | ----- | ---- |
@@ -1484,7 +1489,7 @@ N�؀������s�~�:���A�\"Y�;|dgG,Rgf3�K�Ѻ}�?�
 | byUser     | {userId}  |
 | onLevel    | {levelId} |
 
-### 🔑 Authentication noauth
+### 🔑 This does not require authentication.
 
 | Param | value | Type |
 | ----- | ----- | ---- |
@@ -1531,7 +1536,7 @@ N�؀������s�~�:���A�\"Y�;|dgG,Rgf3�K�Ѻ}�?�
 | orderBy    | date   |
 | language   | global |
 
-### 🔑 Authentication noauth
+### 🔑 This does not require authentication.
 
 | Param | value | Type |
 | ----- | ----- | ---- |

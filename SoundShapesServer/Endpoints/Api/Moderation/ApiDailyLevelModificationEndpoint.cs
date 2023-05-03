@@ -25,6 +25,8 @@ public class ApiDailyLevelModificationEndpoint : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
         
+        // Todo: Add descending and date
+
         DailyLevel[] paginatedDailyLevels = PaginationHelper.PaginateDailyLevels(dailyLevels, from, count);
 
         return new ApiDailyLevelsWrapper(
