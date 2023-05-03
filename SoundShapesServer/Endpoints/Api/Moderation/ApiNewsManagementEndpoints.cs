@@ -62,14 +62,14 @@ public class ApiNewsManagementEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("news/{id}/remove", Method.Post)]
-    public Response DeleteNewsEntry(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    public Response DeleteNewsEntry(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
         if (newsEntry == null) return HttpStatusCode.NotFound;
         
-        database.RemoveNewsEntry(newsEntry);
+        database.RemoveNewsEntry(dataStore, newsEntry);
         return HttpStatusCode.OK;
     }
 }

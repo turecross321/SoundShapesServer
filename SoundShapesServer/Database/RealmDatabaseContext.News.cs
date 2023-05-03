@@ -1,3 +1,5 @@
+using Bunkum.HttpServer.Storage;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
 
@@ -50,8 +52,10 @@ public partial class RealmDatabaseContext
         return entry;
     }
 
-    public void RemoveNewsEntry(NewsEntry entry)
+    public void RemoveNewsEntry(IDataStore dataStore, NewsEntry entry)
     {
+        dataStore.RemoveFromStore(ResourceHelper.GetNewsResourceKey(entry.Id));
+        
         _realm.Write(() =>
         {
             _realm.Remove(entry);
