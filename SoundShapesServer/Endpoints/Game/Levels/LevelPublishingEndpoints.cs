@@ -4,6 +4,7 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using HttpMultipartParser;
+using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
@@ -18,8 +19,10 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class LevelPublishingEndpoints : EndpointGroup
 {
     // Gets called by Endpoints.cs
-    public static Response PublishLevel(IDataStore dataStore, MultipartFormDataParser parser, RealmDatabaseContext database, GameUser user)
+    public static Response PublishLevel(GameServerConfig config, IDataStore dataStore, MultipartFormDataParser parser, RealmDatabaseContext database, GameUser user)
     {
+        if (user.Levels.Count() >= config.LevelPublishLimit) return HttpStatusCode.Forbidden;
+        
         string levelId = LevelHelper.GenerateLevelId();
         Response? uploadedResources = UploadLevelResources(dataStore, parser, levelId);
         if (uploadedResources != null) return (Response)uploadedResources;

@@ -14,8 +14,9 @@ public class GameServerConfig : Config
     
     public string EulaText { get; set; } = "Welcome back to Sound Shapes!";
     public string WebsiteUrl { get; set; } = "https://example.com";
+    public int LevelPublishLimit = 200;
     public bool ApiAuthentication { get; set; }
-    public string EmailAddress { get; set; }= "";
+    public string EmailAddress { get; set; } = "";
     public string EmailPassword { get; set; } = "";
     public string EmailHost { get; set; } = "smtp.gmail.com";
     public int EmailHostPort { get; set; } = 587;
