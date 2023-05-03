@@ -1,4 +1,5 @@
 using Bunkum.HttpServer.Storage;
+using Realms;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
@@ -72,6 +73,25 @@ public partial class RealmDatabaseContext
     public GameUser? GetUserWithId(string? id)
     {
         return id == null ? null : _realm.All<GameUser>().FirstOrDefault(u => u.Id == id);
+    }
+    
+    public IQueryable<GameUser> SearchForUsers(string query)
+    {
+        string[] keywords = query.Split(' ');
+        if (keywords.Length == 0) return Enumerable.Empty<GameUser>().AsQueryable();
+        
+        IQueryable<GameUser>? entries = _realm.All<GameUser>();
+        
+        foreach (string keyword in keywords)
+        {
+            if (string.IsNullOrWhiteSpace(keyword)) continue;
+
+            entries = entries.Where(u =>
+                u.Username.Like(keyword, false)
+            );
+        }
+
+        return entries;
     }
 
     public void RemoveUser(GameUser user, IDataStore dataStore)

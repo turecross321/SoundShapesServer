@@ -31,7 +31,13 @@ public class ApiLevelEndpoints: EndpointGroup
         string? inAlbum = context.QueryString["inAlbum"];
         string? inDaily = context.QueryString["inDaily"];
 
-        IQueryable<GameLevel>? levels = database.GetLevels();
+        string? search = context.QueryString["search"];
+
+        IQueryable<GameLevel>? levels = null;
+
+        if (search != null) levels = database.SearchForLevels(search);
+        levels ??= database.GetLevels();
+        
         levels = LevelHelper.FilterLevels(database, levels, byUser, likedByUser, inAlbum, inDaily);
         if (levels == null) return null;
 

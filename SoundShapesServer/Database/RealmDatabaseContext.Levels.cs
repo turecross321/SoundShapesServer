@@ -98,7 +98,7 @@ public partial class RealmDatabaseContext
             if (string.IsNullOrWhiteSpace(keyword)) continue;
 
             entries = entries.Where(l =>
-                l.Name.Like(keyword, false)
+                l.Name.Like(keyword, false) || l.Author.Username.Like(keyword, false)
             );
         }
 

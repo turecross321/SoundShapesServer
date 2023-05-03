@@ -302,6 +302,7 @@ The value of the authorization should always be your **Session Id** unless speci
 | ---------- |
 | from       |
 | count      |
+| search     |
 | descending |
 | orderBy    |
 
@@ -480,6 +481,7 @@ The value of the authorization should always be your **Session Id** unless speci
 | likedByUser |
 | inAlbum     |
 | inDaily     |
+| search      |
 | descending  |
 | orderBy     |
 

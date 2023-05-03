@@ -29,9 +29,15 @@ public class ApiUserEndpoints : EndpointGroup
         string? orderString = context.QueryString["orderBy"];
 
         string? following = context.QueryString["following"]; 
-        string? followedBy = context.QueryString["followedBy"]; 
+        string? followedBy = context.QueryString["followedBy"];
 
-        IQueryable<GameUser>? users = database.GetUsers();
+        string? search = context.QueryString["search"];
+
+        IQueryable<GameUser>? users = null;
+
+        if (search != null) users = database.SearchForUsers(search);
+        users ??= database.GetUsers();
+        
         users = UserHelper.FilterUsers(database, users, following, followedBy);
         if (users == null) return null;
 
