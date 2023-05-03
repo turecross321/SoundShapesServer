@@ -43,6 +43,8 @@ public partial class RealmDatabaseContext
             user.PasswordBcrypt = password;
             user.HasFinishedRegistration = true;
         });
+
+        _realm.Refresh();
     }
 
     public void SetUsername(GameUser user, string username)
