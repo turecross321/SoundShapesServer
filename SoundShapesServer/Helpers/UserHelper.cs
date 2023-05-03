@@ -12,15 +12,10 @@ public static class UserHelper
         return IsMatch(username, UsernameRegex);
     }
 
-    public static IQueryable<GameUser>? FilterUsers(RealmDatabaseContext database, IQueryable<GameUser> users, bool registered, string? following, string? followedBy)
+    public static IQueryable<GameUser>? FilterUsers(RealmDatabaseContext database, IQueryable<GameUser> users, string? following, string? followedBy)
     {
         IQueryable<GameUser> response = users;
-
-        response = response
-            .AsEnumerable()
-            .Where(u => u.HasFinishedRegistration == registered)
-            .AsQueryable();
-
+        
         if (following != null)
         {
             GameUser? userToGetUsersFrom = database.GetUserWithId(following);

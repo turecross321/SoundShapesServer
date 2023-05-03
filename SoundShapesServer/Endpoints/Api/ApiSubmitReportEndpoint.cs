@@ -20,7 +20,7 @@ public class ApiSubmitReportEndpoint : EndpointGroup
 
         if (level == null && userToReport == null) return HttpStatusCode.NotFound;
 
-        ServerContentType type = level != null ? ServerContentType.Level : ServerContentType.User;
+        string type = level != null ? ServerContentType.Level : ServerContentType.User;
 
         database.SubmitReport(user, body.ContentId, type, body.ReportReasonId);
         return HttpStatusCode.Created;

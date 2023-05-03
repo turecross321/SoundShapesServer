@@ -12,7 +12,7 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 
 public class ApiReportEndpoints : EndpointGroup
 {
-    [ApiEndpoint("report/{id}/remove", Method.Post)]
+    [ApiEndpoint("reports/{id}/remove", Method.Post)]
     public Response RemoveReport(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
@@ -24,7 +24,7 @@ public class ApiReportEndpoints : EndpointGroup
         return HttpStatusCode.OK;
     }
 
-    [ApiEndpoint("report/{id}")]
+    [ApiEndpoint("reports/{id}")]
     public Response GetReport(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
@@ -46,9 +46,10 @@ public class ApiReportEndpoints : EndpointGroup
         
         bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
         string? contentId = context.QueryString["contentId"];
+        string? contentType = context.QueryString["contentType"];
 
         IQueryable<Report> reports = database.GetReports();
-        IQueryable<Report> filteredReports = ReportHelper.FilterReports(reports, contentId);
+        IQueryable<Report> filteredReports = ReportHelper.FilterReports(reports, contentId, contentType);
         IQueryable<Report> orderedReports =
             descending ? filteredReports.AsEnumerable().Reverse().AsQueryable() : filteredReports;
         

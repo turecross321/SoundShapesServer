@@ -13,13 +13,13 @@ namespace SoundShapesServer.Endpoints.Api.Albums;
 
 public class ApiAlbumResourceEndpoints : EndpointGroup
 {
-    [ApiEndpoint("album/{id}/thumbnail")]
+    [ApiEndpoint("albums/{id}/thumbnail")]
     [Authentication(false)]
     public Response GetAlbumThumbnail(RequestContext context, IDataStore dataStore, RealmDatabaseContext database,
         string id)
         => GetAlbumResource(dataStore, database, id, AlbumResourceType.Thumbnail);
     
-    [ApiEndpoint("album/{id}/sidePanel")]
+    [ApiEndpoint("albums/{id}/sidePanel")]
     [Authentication(false)]
     public Response GetAlbumSidePanel(RequestContext context, IDataStore dataStore, RealmDatabaseContext database,
         string id)

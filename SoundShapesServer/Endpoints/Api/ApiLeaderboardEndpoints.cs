@@ -11,7 +11,7 @@ namespace SoundShapesServer.Endpoints.Api;
 
 public class ApiLeaderboardEndpoints : EndpointGroup
 {
-    [ApiEndpoint("leaderboard", ContentType.Json)]
+    [ApiEndpoint("leaderboard")]
     [Authentication(false)]
     public ApiLeaderboardEntryWrapper GetLeaderboard(RequestContext context, RealmDatabaseContext database, string id)
     {

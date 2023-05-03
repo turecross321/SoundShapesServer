@@ -50,7 +50,7 @@ public class ApiLevelEndpoints: EndpointGroup
         return new ApiLevelResponseWrapper(levels, from, count, user, order, descending);
     }
 
-    [ApiEndpoint("level/{levelId}")]
+    [ApiEndpoint("levels/{levelId}")]
     [Authentication(false)]
     public ApiLevelFullResponse? Level(RequestContext context, RealmDatabaseContext database, string levelId, GameUser? user)
     {
@@ -58,7 +58,7 @@ public class ApiLevelEndpoints: EndpointGroup
         return level == null ? null : new ApiLevelFullResponse(level, user);
     }
     
-    [ApiEndpoint("level/{id}/edit", Method.Post)]
+    [ApiEndpoint("levels/{id}/edit", Method.Post)]
     public Response EditLevel(RequestContext context, RealmDatabaseContext database, GameUser user,
         ApiEditLevelRequest body, string id)
     {
@@ -77,7 +77,7 @@ public class ApiLevelEndpoints: EndpointGroup
         return new Response(new ApiLevelFullResponse(publishedLevel, user), ContentType.Json, HttpStatusCode.Created);
     }
     
-    [ApiEndpoint("level/{id}/remove", Method.Post)]
+    [ApiEndpoint("levels/{id}/remove", Method.Post)]
     public Response RemoveLevel(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);

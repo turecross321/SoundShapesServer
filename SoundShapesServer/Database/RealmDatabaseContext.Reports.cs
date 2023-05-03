@@ -28,14 +28,14 @@ public partial class RealmDatabaseContext
             _realm.RemoveRange(_realm.All<Report>().Where(r=>r.ContentId == id));
         });
     }
-    public void SubmitReport(GameUser reporter, string contentId, ServerContentType contentType, int reportReasonId)
+    public void SubmitReport(GameUser reporter, string contentId, string contentType, int reportReasonId)
     {
         Report report = new ()
         {
             Id = GenerateGuid(),            
             Issuer = reporter,
             ContentId = contentId,
-            ContentType = (int)contentType,
+            ContentType = contentType,
             ReportReasonId = Math.Clamp(reportReasonId, 0, 6),
             Issued = DateTimeOffset.UtcNow
         };

@@ -1,7 +1,7 @@
 namespace SoundShapesServer.Types;
 
-public enum ServerContentType
+public static class ServerContentType
 {
-    Level = 0,
-    User = 1
+    public static readonly string Level = "level";
+    public static readonly string User = "user";
 }

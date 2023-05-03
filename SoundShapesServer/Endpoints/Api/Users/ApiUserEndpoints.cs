@@ -10,7 +10,7 @@ namespace SoundShapesServer.Endpoints.Api.Users;
 
 public class ApiUserEndpoints : EndpointGroup
 {
-    [ApiEndpoint("user/{id}", ContentType.Json)]
+    [ApiEndpoint("users/{id}")]
     [Authentication(false)]
     public ApiUserResponse? GetUser(RequestContext context, RealmDatabaseContext database, string id)
     {
@@ -18,7 +18,7 @@ public class ApiUserEndpoints : EndpointGroup
         return userToCheck == null ? null : new ApiUserResponse(userToCheck);
     }
 
-    [ApiEndpoint("users", ContentType.Json)]
+    [ApiEndpoint("users")]
     [Authentication(false)]
     public ApiUsersWrapper? GetUsers(RequestContext context, RealmDatabaseContext database)
     {
@@ -28,13 +28,11 @@ public class ApiUserEndpoints : EndpointGroup
         bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
         string? orderString = context.QueryString["orderBy"];
 
-        bool registered = bool.Parse(context.QueryString["registered"] ?? "true");
-        
         string? following = context.QueryString["following"]; 
         string? followedBy = context.QueryString["followedBy"]; 
 
         IQueryable<GameUser>? users = database.GetUsers();
-        users = UserHelper.FilterUsers(database, users, registered, following, followedBy);
+        users = UserHelper.FilterUsers(database, users, following, followedBy);
         if (users == null) return null;
 
         UserOrderType order = orderString switch

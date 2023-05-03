@@ -8,7 +8,7 @@ namespace SoundShapesServer.Endpoints.Api.Albums;
 
 public class ApiAlbumEndpoints : EndpointGroup
 {
-    [ApiEndpoint("album/{id}")]
+    [ApiEndpoint("albums/{id}")]
     [Authentication(false)]
     public ApiAlbumResponse? GetAlbum(RequestContext context, RealmDatabaseContext database, string id)
     {

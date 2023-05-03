@@ -19,7 +19,7 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 
 public class ApiLevelManagementEndpoints : EndpointGroup
 {
-    [ApiEndpoint("levels/create", Method.Post)]
+    [ApiEndpoint("levelss/create", Method.Post)]
     public Response PublishLevel(RequestContext context, RealmDatabaseContext database, GameUser user, ApiPublishLevelRequest body)
     {
         if (body == null) throw new ArgumentNullException(nameof(body));
@@ -31,19 +31,19 @@ public class ApiLevelManagementEndpoints : EndpointGroup
         return new Response(new ApiLevelFullResponse(publishedLevel, user), ContentType.Json, HttpStatusCode.Created);
     }
 
-    [ApiEndpoint("level/{id}/setLevel", Method.Post)]
+    [ApiEndpoint("levels/{id}/setLevel", Method.Post)]
     public Response UploadLevelFile
     (RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, Stream body,
         string id)
         => UploadLevelResources(database, dataStore, user, body, id, FileType.Level);
     
-    [ApiEndpoint("level/{id}/setSound", Method.Post)]
+    [ApiEndpoint("levels/{id}/setSound", Method.Post)]
     public Response UploadSoundFile
     (RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, Stream body,
         string id)
         => UploadLevelResources(database, dataStore, user, body, id, FileType.Sound);
     
-    [ApiEndpoint("level/{id}/setThumbnail", Method.Post)]
+    [ApiEndpoint("levels/{id}/setThumbnail", Method.Post)]
     public Response UploadThumbnail
     (RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, Stream body,
         string id)

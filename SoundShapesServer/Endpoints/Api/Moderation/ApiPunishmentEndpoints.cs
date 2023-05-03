@@ -25,7 +25,7 @@ public class ApiPunishmentEndpoints : EndpointGroup
         return new Response(new ApiPunishmentResponse(createdPunishment), ContentType.Json, HttpStatusCode.Created);
     }
 
-    [ApiEndpoint("punishment/{id}/edit", Method.Post)]
+    [ApiEndpoint("punishments/{id}/edit", Method.Post)]
     public Response EditPunishment(RequestContext context, RealmDatabaseContext database, GameUser user, string id,
         ApiPunishRequest body)
     {
@@ -41,7 +41,7 @@ public class ApiPunishmentEndpoints : EndpointGroup
         return new Response(new ApiPunishmentResponse(editedPunishment), ContentType.Json, HttpStatusCode.Created);
     }
 
-    [ApiEndpoint("punishment/{id}/revoke", Method.Post)]
+    [ApiEndpoint("punishments/{id}/revoke", Method.Post)]
     public Response RevokePunishment(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;

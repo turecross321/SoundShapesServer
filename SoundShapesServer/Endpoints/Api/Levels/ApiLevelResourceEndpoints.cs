@@ -14,7 +14,7 @@ namespace SoundShapesServer.Endpoints.Api.Levels;
 
 public class ApiLevelResourceEndpoints : EndpointGroup
 {
-    [ApiEndpoint("level/{levelId}/thumbnail")]
+    [ApiEndpoint("levels/{levelId}/thumbnail")]
     [Authentication(false)]
     public Response LevelThumbnail(RequestContext context, IDataStore dataStore, RealmDatabaseContext database, string levelId)
     {
