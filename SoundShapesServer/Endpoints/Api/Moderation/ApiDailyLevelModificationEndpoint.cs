@@ -9,25 +9,28 @@ using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using static System.Boolean;
+using static SoundShapesServer.Helpers.DailyLevelHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
 public class ApiDailyLevelModificationEndpoint : EndpointGroup
 {
     [ApiEndpoint("daily")]
-    [NullStatusCode(HttpStatusCode.Forbidden)]
-    public ApiDailyLevelsWrapper? GetDailyLevelObjects(RequestContext context, RealmDatabaseContext database, GameUser user)
+    public ApiDailyLevelsWrapper GetDailyLevelObjects(RequestContext context, RealmDatabaseContext database, GameUser user)
     {
-        if (PermissionHelper.IsUserAdmin(user) == false) return null;
-        
-        IQueryable<DailyLevel> dailyLevels = database.GetDailyLevelObjects();
-        
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
         
-        // Todo: Add descending and date
+        string? date = context.QueryString["date"];
+        bool descending = Parse(context.QueryString["descending"] ?? "true");
+        
+        IQueryable<DailyLevel> dailyLevels = database.GetDailyLevelObjects();
+        IQueryable<DailyLevel> filteredDailyLevels = FilterDailyLevels(dailyLevels, date);
+        IQueryable<DailyLevel> orderedDailyLevels =
+            descending ? filteredDailyLevels.AsEnumerable().Reverse().AsQueryable() : filteredDailyLevels;
 
-        DailyLevel[] paginatedDailyLevels = PaginationHelper.PaginateDailyLevels(dailyLevels, from, count);
+        DailyLevel[] paginatedDailyLevels = PaginationHelper.PaginateDailyLevels(orderedDailyLevels, from, count);
 
         return new ApiDailyLevelsWrapper(
             dailyLevels: paginatedDailyLevels.Select(t => new ApiDailyLevelResponse(t)).ToArray(),

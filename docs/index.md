@@ -1161,7 +1161,6 @@ Should be a PNG
 | count      |
 | date       |
 | descending |
-| orderBy    |
 
 ### Response: 200
 
