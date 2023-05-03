@@ -1,9 +1,9 @@
 # API Documentation
 
-## Authorization Information
+## Information
 
-Every endpoint, unless specified otherwise, requires an Authorization header.
-The value of the authorization should always be your **Session Id** unless specified otherwise.
+Every endpoint, unless specified otherwise, requires an `Authorization` header.
+The value of `Authorization` should always be your **Session Id**, unless specified otherwise.
 
 | Endpoints                    |
 | ---------------------------- |
