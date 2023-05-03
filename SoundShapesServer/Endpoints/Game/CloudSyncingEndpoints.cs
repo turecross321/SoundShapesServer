@@ -6,6 +6,8 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using HttpMultipartParser;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 
@@ -48,13 +50,30 @@ public class CloudSyncingEndpoints : EndpointGroup
     }
 
     [GameEndpoint("~identity:{userId}/~content:progress/data.get")]
-    public Response DownloadSave(RequestContext context, IDataStore dataStore, GameUser user, string userId)
+    public Response GetSave(RequestContext context, IDataStore dataStore, GameUser user, string userId)
     {
         string key = ResourceHelper.GetSaveResourceKey(user.Id);
 
-        if (dataStore.TryGetDataFromStore(key, out byte[]? bytes) == false)
-            return HttpStatusCode.NotFound;
+        dataStore.TryGetDataFromStore(key, out byte[]? bytes);
+        if (bytes == null) return HttpStatusCode.NotFound;
+        
+        // This next part here sets the onlineID parameter to the user's username.
+        // This makes so cloud saves don't break when a user changes their username.
+        
+        // convert save byte array to string
+        string jsonString = Encoding.UTF8.GetString(bytes);
+        // parse the string to a Newtonsoft JObject
+        JObject? json = JsonConvert.DeserializeObject<JObject>(jsonString);
+        if (json == null) return HttpStatusCode.InternalServerError;
 
-        return bytes != null ? new Response(bytes, ContentType.BinaryData) : HttpStatusCode.NotFound;
+        json["onlineID"] = user.Username;
+        
+        // serialize the JObject to a JSON string
+        string responseString = JsonConvert.SerializeObject(json);
+
+        // convert the JSON string to a byte array
+        byte[] responseData = Encoding.UTF8.GetBytes(responseString);
+        
+        return new Response(responseData, ContentType.BinaryData);
     }
 }
