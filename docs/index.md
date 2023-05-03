@@ -83,8 +83,6 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 ### Method: POST
 
-### 🔑 This requires an Email Code instead of a Session Id in the Authorization header.
-
 > ```
 > {ip}:10061/api/v1/account/sendEmailSession
 > ```
@@ -132,6 +130,8 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
 ## End-point: Set Email
+
+### 🔑 This requires an Email Code instead of a Session Id in the Authorization header.
 
 ### Method: POST
 
