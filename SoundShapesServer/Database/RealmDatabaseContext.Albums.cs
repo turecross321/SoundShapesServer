@@ -1,3 +1,5 @@
+using Bunkum.HttpServer.Storage;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
@@ -19,8 +21,11 @@ public partial class RealmDatabaseContext
         return album;
     }
 
-    public void RemoveAlbum(GameAlbum album)
+    public void RemoveAlbum(IDataStore dataStore, GameAlbum album)
     {
+        dataStore.RemoveFromStore(ResourceHelper.GetAlbumResourceKey(album.Id, AlbumResourceType.Thumbnail));
+        dataStore.RemoveFromStore(ResourceHelper.GetAlbumResourceKey(album.Id, AlbumResourceType.SidePanel));
+        
         _realm.Write(() =>
         {
             _realm.Remove(album);
