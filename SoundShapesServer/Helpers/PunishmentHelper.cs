@@ -16,7 +16,7 @@ public static class PunishmentHelper
             .Where(p => p.PunishmentType == (int)type).ToArray();
     }
 
-    public static IQueryable<Punishment> FilterPunishments(IQueryable<Punishment> punishments, string? byUser, string? forUser, bool revoked)
+    public static IQueryable<Punishment> FilterPunishments(IQueryable<Punishment> punishments, string? byUser, string? forUser, bool? revoked)
     {
         IQueryable<Punishment> response = punishments;
 
@@ -30,7 +30,10 @@ public static class PunishmentHelper
             response = response.Where(p => p.User.Id == forUser);
         }
 
-        response = response.Where(p => p.Revoked == revoked);
+        if (revoked != null)
+        {
+            response = response.Where(p => p.Revoked == revoked);
+        }
 
         return response;
     }

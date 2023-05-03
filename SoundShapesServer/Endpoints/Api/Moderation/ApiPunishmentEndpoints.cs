@@ -8,6 +8,7 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Moderation;
 using SoundShapesServer.Types;
+using static System.Boolean;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
@@ -64,9 +65,11 @@ public class ApiPunishmentEndpoints : EndpointGroup
 
         string? byUser = context.QueryString["byUser"];
         string? forUser = context.QueryString["forUser"];
+
+        bool? revoked = null;
+        if (TryParse(context.QueryString["revoked"], out bool revokedTemp)) revoked = revokedTemp;
         
-        bool revoked = bool.Parse(context.QueryString["revoked"] ?? "false");
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
+        bool descending = Parse(context.QueryString["descending"] ?? "true");
 
         IQueryable<Punishment> punishments = database.GetPunishments();
         IQueryable<Punishment> filteredPunishments =

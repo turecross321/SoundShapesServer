@@ -19,7 +19,7 @@ public class ApiNewsEndpoints : EndpointGroup
         bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
         string? orderString = context.QueryString["orderBy"];
 
-        string language = context.QueryString["language"] ?? "global";
+        string? language = context.QueryString["language"];
         
         IQueryable<NewsEntry> entries = database.GetNews();
         IQueryable<NewsEntry> filteredEntries = NewsHelper.FilterNews(entries, language);
