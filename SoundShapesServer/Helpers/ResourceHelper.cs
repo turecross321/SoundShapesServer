@@ -50,9 +50,9 @@ public static class ResourceHelper
     private const string LevelsPath = "levels";
     public static string GetLevelResourceKey(string levelId, FileType fileType)
     {
-        if (fileType == FileType.Image) return $"{LevelsPath}/{levelId}.png";
-        if (fileType == FileType.Level) return $"{LevelsPath}/{levelId}.level";
-        if (fileType == FileType.Sound) return $"{LevelsPath}/{levelId}.sound";
+        if (fileType == FileType.Image) return $"{LevelsPath}/{levelId}_thumbnail.png";
+        if (fileType == FileType.Level) return $"{LevelsPath}/{levelId}_level.level";
+        if (fileType == FileType.Sound) return $"{LevelsPath}/{levelId}_sound.sound";
 
         return "";
     }
@@ -77,13 +77,13 @@ public static class ResourceHelper
 
     public static string GetSaveResourceKey(string userId)
     {
-        return $"{SavesPath}/{userId}.json";
+        return $"{SavesPath}/{userId}_save.json";
     }
 
     private const string NewsPath = "news";
 
     public static string GetNewsResourceKey(string id)
     {
-        return $"{NewsPath}/{id}.png";
+        return $"{NewsPath}/{id}_thumbnail.png";
     }
 }
