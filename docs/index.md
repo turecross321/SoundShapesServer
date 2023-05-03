@@ -202,7 +202,7 @@ The value of the authorization should always be your **Session Id** unless speci
   "IpAddresses": [
     {
       "IpAddress": "192.168.1.134"
-    }",
+    },
     {
       "IpAddress": "192.168.1.223"
     }
