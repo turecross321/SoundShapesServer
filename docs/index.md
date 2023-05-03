@@ -34,8 +34,8 @@ The value of the authorization should always be your **Session Id** unless speci
 
 ```json
 {
-  "Email": {email},
-  "PasswordSha512": {passwordSha512}
+  "Email": "{email}",
+  "PasswordSha512": "{passwordSha512}
 }
 ```
 
@@ -67,7 +67,7 @@ The value of the authorization should always be your **Session Id** unless speci
 
 ```json
 {
-  "Email": {email}
+  "Email": "{email}
 }
 ```
 
@@ -83,7 +83,7 @@ The value of the authorization should always be your **Session Id** unless speci
 
 ### Method: POST
 
-### 🔑 This requires a Email Code instead of a Session Id in the Authorization header.
+### 🔑 This requires an Email Code instead of a Session Id in the Authorization header.
 
 > ```
 > {ip}:10061/api/v1/account/sendEmailSession
@@ -93,7 +93,7 @@ The value of the authorization should always be your **Session Id** unless speci
 
 ```json
 {
-  "NewEmail": {email}
+  "NewEmail": "{email}
 }
 ```
 
@@ -119,7 +119,7 @@ The value of the authorization should always be your **Session Id** unless speci
 
 ```json
 {
-  "NewPasswordSha512": {passwordSha512}
+  "NewPasswordSha512": "{passwordSha512}"
 }
 ```
 
@@ -143,7 +143,7 @@ The value of the authorization should always be your **Session Id** unless speci
 
 ```json
 {
-  "NewEmail": {email}
+  "NewEmail": "{email}"
 }
 ```
 
@@ -167,7 +167,7 @@ The value of the authorization should always be your **Session Id** unless speci
 
 ```json
 {
-  "NewUsername": {newUsername}
+  "NewUsername": "{newUsername}
 }
 ```
 
@@ -202,7 +202,7 @@ The value of the authorization should always be your **Session Id** unless speci
   "IpAddresses": [
     {
       "IpAddress": "192.168.1.134"
-    },
+    }",
     {
       "IpAddress": "192.168.1.223"
     }
@@ -224,7 +224,7 @@ The value of the authorization should always be your **Session Id** unless speci
 
 ```json
 {
-  "IpAddress": {ipAddress},
+  "IpAddress": "{ipAddress}",
   "OneTimeUse": false
 }
 ```
@@ -272,7 +272,7 @@ The value of the authorization should always be your **Session Id** unless speci
 
 ```json
 {
-  "IpAddress": {ipAddress}
+  "IpAddress": "{ipAddress}
 }
 ```
 
@@ -327,7 +327,7 @@ The value of the authorization should always be your **Session Id** unless speci
       "FollowingCount": 0,
       "LikedLevelsCount": 0,
       "PublishedLevelsCount": 1
-    },
+    }",
     {
       "Id": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c",
       "Username": "turecross321",
@@ -509,7 +509,7 @@ The value of the authorization should always be your **Session Id** unless speci
       "UniquePlays": 0,
       "Likes": 0,
       "Difficulty": 0
-    },
+    }",
     {
       "Id": "mXjC41dW",
       "Name": "Titled",
@@ -521,7 +521,7 @@ The value of the authorization should always be your **Session Id** unless speci
       "UniquePlays": 1,
       "Likes": 0,
       "Difficulty": 0
-    },
+    }",
     {
       "Id": "NqwU4AYF",
       "Name": "Untitled",
@@ -533,7 +533,7 @@ The value of the authorization should always be your **Session Id** unless speci
       "UniquePlays": 1,
       "Likes": 0,
       "Difficulty": 0
-    },
+    }",
     {
       "Id": "1zyrrn7g",
       "Name": "This is an updated level name",
@@ -999,7 +999,7 @@ xڽ�]
   "Name": "We Not The Best",
   "Artist": "DJ Khaled the Second",
   "LinerNotes": "<html><h1>This is still a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
-  "LevelIds": [{levelId}, {levelId2}]
+  "LevelIds": [{levelId}", {levelId2}]
 }
 ```
 
@@ -1208,7 +1208,7 @@ Should be a PNG
 
 ```json
 {
-  "LevelId": {levelId},
+  "LevelId": "{levelId}",
   "DateUtc": "2023-05-02T09:58:43.5485486+00:00"
 }
 ```
@@ -1283,7 +1283,7 @@ Should be a PNG
       "Summary": "A man has fallen into the river in Lego City!",
       "FullText": "A man has fallen into the river in Lego City! Start the new rescue helicopter. HEY! Build the helicopter and off to the rescue. Prepare the lifeline, lower the stretcher, and make the rescue. The new Emergency Collection from Lego City!",
       "Url": "https://LEGO.com"
-    },
+    }",
     {
       "Id": "e9ecde58-c0c3-4135-ac54-f130a0273757",
       "Date": "2023-05-02T22:38:17.6127246+00:00",
@@ -1495,7 +1495,7 @@ Should be a PNG
 
 ```json
 {
-  "ContentId": {levelId}, // Can be either a level id or a user id
+  "ContentId": "{levelId}", // Can be either a level id or a user id
   "ReportReasonId": 0 // 0 = Mature, 1 = Offensive, 3 = Defamation, 4 = Impersonation, 5 = Inappropriate Username, 6 = Other
 }
 ```
@@ -1582,7 +1582,7 @@ Should be a PNG
 
 ```json
 {
-  "UserId": {userId},
+  "UserId": "{userId}",
   "PunishmentType": 0, // 0 = Ban
   "Reason": "Not Good...",
   "ExpiresAtUtc": "2023-06-02T09:58:43.5485486+00:00"
@@ -1619,7 +1619,7 @@ Should be a PNG
 
 ```json
 {
-  "UserId": {userId},
+  "UserId": "{userId}",
   "PunishmentType": 0, // 0 = Ban
   "Reason": "Even Worse...",
   "ExpiresAtUtc": "2030-06-02T09:58:43.5485486+00:00"
