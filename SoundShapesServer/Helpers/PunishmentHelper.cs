@@ -19,8 +19,7 @@ public static class PunishmentHelper
     public static Punishment? IsUserBanned(GameUser user)
     {
         Punishment[] bans = GetUsersPunishmentsOfType(user, PunishmentType.Ban);
-        if (bans.Length > 0) return bans.AsEnumerable().OrderByDescending(p => p.ExpiresAt).First();
-        return null;
+        return bans.Length > 0 ? bans.AsEnumerable().OrderByDescending(p => p.ExpiresAt).First() : null;
     }
 
     public static IQueryable<Punishment> FilterPunishments(IQueryable<Punishment> punishments, string? byUser, string? forUser, bool? revoked)
