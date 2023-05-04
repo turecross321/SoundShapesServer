@@ -7,22 +7,16 @@ namespace SoundShapesServer.Middlewares;
 
 public class LimitContentSizeMiddleware : IMiddleware
 {
-    private const long GameFileSizeLimit = 2000000; // 1 mb
-    private const long ApiFileSizeLimit = 16000000; // 16 mb
+    private const long FileSizeLimit = 8000000; // 8 mb
     
     public void HandleRequest(ListenerContext context, Lazy<IDatabaseContext> database, Action next)
     {
-        if (context.Uri.AbsolutePath.StartsWith(ApiEndpointAttribute.BaseRoute))
+        if (context.ContentLength > FileSizeLimit)
         {
-            Console.WriteLine("ContentLength exceeded the API file size limit. Denying request...");
-            if (context.ContentLength > ApiFileSizeLimit) return;
+            Console.WriteLine("ContentLength exceeded the file size limit. Denying request...");
+            return;
         }
-        else
-        {
-            Console.WriteLine("ContentLength exceeded the Game file size limit. Denying request...");
-            if (context.ContentLength > GameFileSizeLimit) return;
-        }
-        
+
         next();
     }
 }
