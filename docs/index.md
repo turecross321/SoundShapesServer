@@ -3,7 +3,7 @@
 ## Information
 
 Every endpoint, unless specified otherwise, requires an `Authorization` header.
-The value of `Authorization` should always be your **Session Id**, unless specified otherwise.
+The value of `Authorization` should always be your **Session Id**, unless specified otherwise. Your Session Id is the Id which is provided when logging in.
 
 | Endpoints                    |
 | ---------------------------- |
@@ -22,7 +22,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 ## End-point: Log In
 
-### 🔑 This does not require authentication.
+### 🔑 This does not require the `Authorization` header..
 
 ### Method: POST
 
@@ -55,7 +55,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 ## End-point: Send Password Session
 
-### 🔑 This does not require authentication.
+### 🔑 This does not require the `Authorization` header..
 
 ### Method: POST
 
@@ -107,7 +107,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 ### Method: POST
 
-### 🔑 This requires a Password Code instead of a Session Id in the Authorization header.
+### 🔑 This requires a Password Session Id instead of an API Session Id in the Authorization header.
 
 > ```
 > {ip}:10061/api/v1/account/setPassword
@@ -131,7 +131,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 ## End-point: Set Email
 
-### 🔑 This requires an Email Code instead of a Session Id in the Authorization header.
+### 🔑 This requires an Email Session Id instead of an API Session Id in the Authorization header.
 
 ### Method: POST
 
@@ -178,6 +178,41 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 ```
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+## End-point: Send Account Removal Session
+
+### Method: POST
+
+> ```
+> {ip}:10061/api/v1/account/sendRemovalSession
+> ```
+
+### Response: 201
+
+```json
+
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+## End-point: Remove Account
+
+### 🔑 This requires an Account Removal Session Id instead of a normal API Session Id in the Authorization header.
+
+### Method: POST
+
+> ```
+> {ip}:10061/api/v1/account/remove
+> ```
+
+### Response: 200
+
+```
+o7
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
 
 # 📁 IP Authorization {#Ip}
 
@@ -288,7 +323,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 ## End-point: Get Users
 
-### 🔑 This does not require authentication.
+### 🔑 This does not require the `Authorization` header..
 
 ### Method: GET
 
@@ -347,7 +382,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 ## End-point: Get User
 
-### 🔑 This does not require authentication.
+### 🔑 This does not require the `Authorization` header..
 
 ### Method: GET
 
@@ -463,7 +498,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 ## End-point: Get Levels
 
-### 🔑 This does not require authentication.
+### 🔑 This does not require the `Authorization` header..
 
 ### Method: GET
 
@@ -557,7 +592,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 ## End-point: Get Level
 
-### 🔑 This does not require authentication.
+### 🔑 This does not require the `Authorization` header..
 
 ### Method: GET
 
@@ -608,7 +643,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 ## End-point: Get Level Thumbnail
 
-### 🔑 This does not require authentication.
+### 🔑 This does not require the `Authorization` header..
 
 ### Method: GET
 
@@ -845,7 +880,7 @@ Should be a Sound Shapes Sound File
 
 ## End-point: Get Albums
 
-### 🔑 This does not require authentication.
+### 🔑 This does not require the `Authorization` header..
 
 ### Method: GET
 
@@ -895,7 +930,7 @@ Should be a Sound Shapes Sound File
 
 ## End-point: Get Album
 
-### 🔑 This does not require authentication.
+### 🔑 This does not require the `Authorization` header..
 
 ### Method: GET
 
@@ -921,7 +956,7 @@ Should be a Sound Shapes Sound File
 
 ## End-point: Get Album Thumbnail
 
-### 🔑 This does not require authentication.
+### 🔑 This does not require the `Authorization` header..
 
 ### Method: GET
 
@@ -943,7 +978,7 @@ Should be a Sound Shapes Sound File
 
 ## End-point: Get Album Side Panel
 
-### 🔑 This does not require authentication.
+### 🔑 This does not require the `Authorization` header..
 
 ### Method: GET
 
@@ -1103,7 +1138,7 @@ Should be a PNG
 
 ## End-point: Get Leaderboard
 
-### 🔑 This does not require authentication.
+### 🔑 This does not require the `Authorization` header..
 
 ### Method: GET
 
@@ -1264,7 +1299,7 @@ Should be a PNG
 
 ## End-point: Get News
 
-### 🔑 This does not require authentication.
+### 🔑 This does not require the `Authorization` header..
 
 ### Method: GET
 
