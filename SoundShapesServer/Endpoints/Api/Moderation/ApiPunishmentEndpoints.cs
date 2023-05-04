@@ -24,7 +24,7 @@ public class ApiPunishmentEndpoints : EndpointGroup
 
         if (userToPunish.Id == user.Id) return HttpStatusCode.MethodNotAllowed;
         
-        Punishment createdPunishment = database.PunishUser(user, body);
+        Punishment createdPunishment = database.PunishUser(user, userToPunish, body);
         return new Response(new ApiPunishmentResponse(createdPunishment), ContentType.Json, HttpStatusCode.Created);
     }
 
@@ -39,8 +39,10 @@ public class ApiPunishmentEndpoints : EndpointGroup
 
         GameUser? userToPunish = database.GetUserWithId(body.UserId);
         if (userToPunish == null) return HttpStatusCode.NotFound;
+        
+        if (userToPunish.Id == user.Id) return HttpStatusCode.MethodNotAllowed;
 
-        Punishment editedPunishment =database.EditPunishment(punishment, body, userToPunish);
+        Punishment editedPunishment = database.EditPunishment(punishment, userToPunish, body);
         return new Response(new ApiPunishmentResponse(editedPunishment), ContentType.Json, HttpStatusCode.Created);
     }
 

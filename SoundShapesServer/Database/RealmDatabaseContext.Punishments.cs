@@ -15,21 +15,22 @@ public partial class RealmDatabaseContext
         return _realm.All<Punishment>().FirstOrDefault(p => p.Id == id);
     }
     
-    public Punishment PunishUser(GameUser user, ApiPunishRequest request)
+    public Punishment PunishUser(GameUser issuer, GameUser recipient, ApiPunishRequest request)
     {
         if (request.PunishmentType == (int)PunishmentType.Ban)
         {
-            RemoveAllSessionsWithUser(user);
+            RemoveAllSessionsWithUser(recipient);
         }
         
         Punishment newPunishment = new ()
         {
             Id = GenerateGuid(),
             PunishmentType = request.PunishmentType,
-            User = user,
+            User = recipient,
             Reason = request.Reason,
             ExpiresAt = request.ExpiresAtUtc,
-            IssuedAt = DateTimeOffset.UtcNow
+            IssuedAt = DateTimeOffset.UtcNow,
+            Issuer = issuer
         };
         
         _realm.Write(() =>
@@ -40,11 +41,11 @@ public partial class RealmDatabaseContext
         return newPunishment;
     }
 
-    public Punishment EditPunishment(Punishment punishment, ApiPunishRequest request, GameUser user)
+    public Punishment EditPunishment(Punishment punishment, GameUser recipient, ApiPunishRequest request)
     {
         _realm.Write(() =>
         {
-            punishment.User = user;
+            punishment.User = recipient;
             punishment.PunishmentType = request.PunishmentType;
             punishment.Reason = request.Reason;
             punishment.ExpiresAt = request.ExpiresAtUtc;

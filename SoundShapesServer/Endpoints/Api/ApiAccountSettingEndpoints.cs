@@ -26,7 +26,10 @@ public class ApiAccountSettingEndpoints : EndpointGroup
         if (!UserHelper.IsUsernameLegal(body.NewUsername)) return new Response("Not a valid username.", ContentType.Plaintext, HttpStatusCode.BadRequest);
         
         GameUser? userWithNewName = database.GetUserWithUsername(body.NewUsername);
-        if (userWithNewName != null) return new Response("Username already taken.", ContentType.Plaintext, HttpStatusCode.Conflict);
+        if (userWithNewName != null)
+        {
+            return new Response("Username is not available.", ContentType.Plaintext, HttpStatusCode.Conflict);
+        }
         
         database.SetUsername(user, body.NewUsername);
         
@@ -63,7 +66,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
         
         // Check if mail address has been used before
         GameUser? userWithEmail = database.GetUserWithEmail(body.NewEmail);
-        if (userWithEmail != null && userWithEmail.Id != user.Id) return new Response("Email already taken.", ContentType.Json, HttpStatusCode.Forbidden);
+        if (userWithEmail != null && userWithEmail.Id != user.Id) return new Response("Email is already in use.", ContentType.Json, HttpStatusCode.Forbidden);
 
         database.SetUserEmail(user, body.NewEmail, session);
         

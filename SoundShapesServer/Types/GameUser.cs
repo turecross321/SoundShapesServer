@@ -14,6 +14,7 @@ public class GameUser : RealmObject, IUser
     public string? Email { get; set; }
     public string? PasswordBcrypt { get; set; }
     public bool HasFinishedRegistration { get; set; }
+    public bool Deleted { get; set; }
     public DateTimeOffset CreationDate { get; set; }
 
     #pragma warning disable CS8618

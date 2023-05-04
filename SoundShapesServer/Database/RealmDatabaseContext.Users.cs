@@ -110,11 +110,21 @@ public partial class RealmDatabaseContext
         _realm.Write(() =>
         {
             _realm.RemoveRange(user.Sessions);
-            _realm.RemoveRange(user.Punishments);
             _realm.RemoveRange(user.IpAddresses);
             _realm.RemoveRange(user.Followers);
             _realm.RemoveRange(user.Following);
+
+            string id = user.Id;
+            string username = user.Username;
+            
             _realm.Remove(user);
+            
+            _realm.Add(new GameUser
+            {
+                Id = id,
+                Username = username,
+                Deleted = true
+            });
         });
     }
 

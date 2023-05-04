@@ -52,7 +52,7 @@ public class AuthenticationEndpoints : EndpointGroup
             }
         }
         
-        if (IsUserBanned(user) != null) session = database.GenerateSessionForUser(context, user, SessionType.Banned, 30);
+        if (IsUserBanned(user) != null) session = database.GenerateSessionForUser(context, user, SessionType.Unauthorized, 30);
 
         session ??= database.GenerateSessionForUser(context, user, (int)SessionType.Game, 14400); // 4 hours
 
@@ -88,18 +88,18 @@ public class AuthenticationEndpoints : EndpointGroup
     {
         if (session.SessionType == (int)SessionType.Game)
             return EulaEndpoint.NormalEula(config);
-        
-        if (session.SessionType == (int)SessionType.Banned)
+
+        if (user.Deleted)
         {
-            Punishment? longestBan = user.Punishments
-                .AsEnumerable()
-                .Where(p=>p is { PunishmentType: (int)PunishmentType.Ban, Revoked: false })
-                .MaxBy(p => p.ExpiresAt);
-            if (longestBan == null) return "You are banned.";
+            return $"The account attached to your username ({user.Username}) has been deleted, and is no longer available.";
+        }
+
+        Punishment? ban = IsUserBanned(user);
             
-            string banString = "You are banned. Expires at " + longestBan.ExpiresAt.Date + ".\n" +
-                               "Reason: " + longestBan.Reason;
-            
+        if (ban != null)
+        {
+            string banString = "You are banned. Expires at " + ban.ExpiresAt.Date + ".\n" +
+                               "Reason: " + ban.Reason;
             return banString;
         }
 
