@@ -51,7 +51,7 @@ public class LeaderboardEndpoints : EndpointGroup
     [GameEndpoint("~level:{levelId}/~leaderboard.page", ContentType.Json)]
     public LeaderboardEntriesWrapper GetLeaderboard(RequestContext context, RealmDatabaseContext database, string levelId)
     {
-        int count = int.Parse(context.QueryString["count"] ?? throw new InvalidOperationException());
+        int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
 
         IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntries();
