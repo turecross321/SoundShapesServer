@@ -48,7 +48,7 @@ public class LevelPublishingEndpoints : EndpointGroup
         if (user.Id  != level.Author.Id) return HttpStatusCode.Unauthorized;
         
         Response? uploadedResources = UploadLevelResources(dataStore, parser, levelId);
-        if (uploadedResources == null) return uploadedResources ?? HttpStatusCode.InternalServerError;
+        if (uploadedResources != null) return (Response)uploadedResources;
 
         PublishLevelRequest publishLevelRequest = new (
             parser.GetParameterValue("title"), 
