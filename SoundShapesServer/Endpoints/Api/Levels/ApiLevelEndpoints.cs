@@ -11,6 +11,7 @@ using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using static System.Boolean;
 
 namespace SoundShapesServer.Endpoints.Api.Levels;
 
@@ -18,12 +19,12 @@ public class ApiLevelEndpoints: EndpointGroup
 {
     [ApiEndpoint("levels")]
     [Authentication(false)]
-    public ApiLevelResponseWrapper? GetLevels(RequestContext context, RealmDatabaseContext database)
+    public ApiLevelResponseWrapper? GetLevels(RequestContext context, RealmDatabaseContext database, GameUser? user)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
         
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
+        bool descending = Parse(context.QueryString["descending"] ?? "true");
         string? orderString = context.QueryString["orderBy"];
 
         string? byUser = context.QueryString["byUser"];
@@ -32,13 +33,16 @@ public class ApiLevelEndpoints: EndpointGroup
         string? inDaily = context.QueryString["inDaily"];
 
         string? search = context.QueryString["search"];
+        
+        bool? completed = null;
+        if (TryParse(context.QueryString["revoked"], out bool revokedTemp)) completed = revokedTemp;
 
         IQueryable<GameLevel>? levels = null;
 
         if (search != null) levels = database.SearchForLevels(search);
         levels ??= database.GetLevels();
         
-        levels = LevelHelper.FilterLevels(database, levels, byUser, likedByUser, inAlbum, inDaily);
+        levels = LevelHelper.FilterLevels(database, user, levels, byUser, likedByUser, inAlbum, inDaily, completed);
         if (levels == null) return null;
 
         LevelOrderType order = orderString switch

@@ -38,7 +38,7 @@ public static class LevelHelper
             .AsQueryable();
     }
 
-    public static IQueryable<GameLevel>? FilterLevels(RealmDatabaseContext database, IQueryable<GameLevel> levels, string? byUser, string? likedByUser, string? inAlbum, string? inDaily)
+    public static IQueryable<GameLevel>? FilterLevels(RealmDatabaseContext database, GameUser? user, IQueryable<GameLevel> levels, string? byUser, string? likedByUser, string? inAlbum, string? inDaily, bool? completed)
     {
         IQueryable<GameLevel> response = levels;
         if (byUser != null)
@@ -81,6 +81,11 @@ public static class LevelHelper
             IQueryable<DailyLevel> dailyLevelObjects = database.GetDailyLevelObjects(date);
 
             response = response.AsEnumerable().Where(l => dailyLevelObjects.Select(d => d.Level).Contains(l)).AsQueryable();
+        }
+
+        if (user != null && completed != null)
+        {
+            response = response.Where(l => l.UsersWhoHaveCompletedLevel.Contains(user));
         }
 
         return response;

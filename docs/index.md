@@ -498,7 +498,7 @@ o7
 
 ## End-point: Get Levels
 
-### 🔑 This does not require the `Authorization` header..
+### 🔑 This does not require the `Authorization` header, **unless you use the completed param**.
 
 ### Method: GET
 
@@ -517,6 +517,7 @@ o7
 | inAlbum     |
 | inDaily     |
 | search      |
+| completed |
 | descending  |
 | orderBy     |
 
