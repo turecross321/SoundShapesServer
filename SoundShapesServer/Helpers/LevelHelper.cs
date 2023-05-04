@@ -48,7 +48,7 @@ public static class LevelHelper
 
             response = response
                 .AsEnumerable()
-                .Where(l => l.Author.Id == byUser)
+                .Where(l => l.Author?.Id == byUser)
                 .AsQueryable();
         }
         if (likedByUser != null)

@@ -13,7 +13,7 @@ public class LevelResponse
         string formattedLevelId = IdFormatter.FormatLevelId(level.Id);
 
         Id = formattedLevelId;
-        Author = new UserResponse(level.Author);
+        Author = new UserResponse(level.Author ?? new GameUser());
         LatestVersion = IdFormatter.FormatLevelIdAndVersion(level.Id, level.ModificationDate.ToUnixTimeMilliseconds());
         Title = level.Name;
         Type = GameContentType.level.ToString();

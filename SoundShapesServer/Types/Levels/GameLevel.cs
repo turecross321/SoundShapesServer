@@ -28,7 +28,7 @@ public class GameLevel : RealmObject
     #pragma warning restore CS8618
 
     public string Id { get; set; }
-    public GameUser Author { get; init; }
+    public GameUser? Author { get; init; }
     public string Name { get; set; }
     public int Language { get; set; }
     public DateTimeOffset CreationDate { get; set; }

@@ -2,6 +2,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Albums;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 
 namespace SoundShapesServer.Endpoints.Api.Albums;
@@ -41,5 +42,16 @@ public class ApiAlbumEndpoints : EndpointGroup
         };
         
         return new ApiAlbumsWrapper(albums, from, count, order, descending);
+    }
+
+    [ApiEndpoint("albums/{id}/completion")]
+    public ApiAlbumCompletionResponse? GetAlbumCompletion(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    {
+        GameAlbum? album = database.GetAlbumWithId(id);
+        if (album == null) return null;
+        
+        int completedLevels = album.Levels.Count(level => level.UsersWhoHaveCompletedLevel.Contains(user));
+
+        return new ApiAlbumCompletionResponse(completedLevels);
     }
 }

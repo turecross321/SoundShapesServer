@@ -24,7 +24,6 @@ public class GameUser : RealmObject, IUser
 
     [Backlink(nameof(LevelLikeRelation.Liker))] public IQueryable<LevelLikeRelation> LikedLevels { get; }
     [Backlink(nameof(GameLevel.UniquePlays))] public IQueryable<GameLevel> PlayedLevels { get; }
-
     [Backlink(nameof(FollowRelation.Recipient))] public IQueryable<FollowRelation> Followers { get; }
     
     [Backlink(nameof(FollowRelation.Follower))] public IQueryable<FollowRelation> Following { get; }

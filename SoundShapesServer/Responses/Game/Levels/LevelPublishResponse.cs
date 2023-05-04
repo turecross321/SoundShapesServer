@@ -10,8 +10,7 @@ public class LevelPublishResponse
     public LevelPublishResponse(GameLevel level)
     {
         Id = IdFormatter.FormatLevelPublishId(level.Id, level.CreationDate.ToUnixTimeMilliseconds());
-        Type = GameContentType.upload.ToString();
-        Author = new UserResponse(level.Author);
+        Author = new UserResponse(level.Author ?? new GameUser());
         Title = level.Name;
         Dependencies = new List<string>();
         Visibility = "EVERYONE";

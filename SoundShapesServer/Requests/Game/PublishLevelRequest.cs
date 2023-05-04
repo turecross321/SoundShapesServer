@@ -31,7 +31,7 @@ public class PublishLevelRequest
 
     public string Name { get; }
     public int Language { get; }
-    public string Id { get; }
+    public string Id { get; } = "";
     public long FileSize { get; }
     public DateTimeOffset Modified { get; set; }    
 }

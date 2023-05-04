@@ -8,7 +8,7 @@ public class ApiAuthenticationResponse
 {
     public ApiAuthenticationResponse(GameSession session, Punishment? punishment)
     {
-        Id = session.Id ?? "";
+        Id = session.Id;
         ExpiresAtUtc = session.ExpiresAt;
         UserId = session.User?.Id ?? "";
         Username = session.User?.Username ?? "";

@@ -26,7 +26,7 @@ public class ReportEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;
 
-        if (level.Author.Id == user.Id) return HttpStatusCode.BadRequest;
+        if (level.Author?.Id == user.Id) return HttpStatusCode.BadRequest;
         
         database.SubmitReport(user, level.Id, ServerContentType.Level, reportReasonId);
         

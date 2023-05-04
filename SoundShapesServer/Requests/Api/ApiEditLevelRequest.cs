@@ -1,9 +1,9 @@
 namespace SoundShapesServer.Requests.Api;
 
-// ReSharper disable once UnusedType.Global
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiEditLevelRequest
 {
-    public ApiEditLevelRequest(int language, string name, DateTimeOffset modified)
+    public ApiEditLevelRequest(int language, string name)
     {
         Language = language;
         Name = name;

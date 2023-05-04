@@ -8,7 +8,7 @@ public class GameSessionResponse
     public GameSessionResponse(GameSession session)
     {
         ExpirationDate = session.ExpiresAt.ToUnixTimeMilliseconds();
-        Id = session.Id ?? "";
+        Id = session.Id;
         if (session.User != null) User = new SessionUserResponse(session.User);
     }
 

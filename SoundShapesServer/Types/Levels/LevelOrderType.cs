@@ -1,4 +1,4 @@
-namespace SoundShapesServer.Types;
+namespace SoundShapesServer.Types.Levels;
 
 public enum LevelOrderType
 {

@@ -1,5 +1,3 @@
-using Newtonsoft.Json;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Responses.Api.Levels;
@@ -10,8 +8,8 @@ public class ApiLevelSummaryResponse
     {
         Id = level.Id;
         Name = level.Name;
-        AuthorId = level.Author.Id;
-        AuthorName = level.Author.Username;
+        AuthorId = level.Author?.Id ?? "";
+        AuthorName = level.Author?.Username ?? "";
         Created = level.CreationDate;
         Modified = level.ModificationDate;
         TotalPlays = level.Plays;
