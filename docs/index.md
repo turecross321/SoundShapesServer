@@ -714,7 +714,7 @@ o7
 
 ## End-point: Edit Level Metadata
 
-### ⚠️ Administrators can do this on any level. People with default perms can only do this on their own levels.
+### ⚠️ Moderators (or higher) can do this on any level. People with default permissions can only do this on their own levels.
 
 ### Method: POST
 
@@ -756,7 +756,7 @@ o7
 
 ## End-point: Remove Level
 
-### ⚠️ Administrators can do this on any level. Non-administrators can only do this on their own levels.
+### ⚠️ Moderators (or higher) can do this on any level. People with default permissions can only do this on their own levels.
 
 ### Method: POST
 
@@ -1193,7 +1193,7 @@ Should be a PNG
 
 ## End-point: Remove Leaderboard Entry
 
-### ⚠️ This requires administrator permissions.
+### ⚠️ This requires moderator (or higher) permissions.
 
 ### Method: POST
 
@@ -1212,8 +1212,6 @@ Should be a PNG
 # 📁 Daily Levels {#Daily}
 
 ## End-point: Get Daily Level Objects
-
-### ⚠️ This requires administrator permissions.
 
 ### Method: GET
 
@@ -1473,7 +1471,7 @@ Should be a PNG
 
 ## End-point: Get Reports
 
-### ⚠️ This requires administrator permissions.
+### ⚠️ This requires moderator (or higher) permissions.
 
 ### Method: GET
 
@@ -1513,7 +1511,7 @@ Should be a PNG
 
 ## End-point: Get Report Object
 
-### ⚠️ This requires administrator permissions.
+### ⚠️ This requires moderator (or higher) permissions.
 
 ### Method: GET
 
@@ -1574,7 +1572,7 @@ Should be a PNG
 
 ## End-point: Remove Report
 
-### ⚠️ This requires administrator permissions.
+### ⚠️ This requires moderator (or higher) permissions.
 
 ### Method: POST
 
@@ -1594,7 +1592,7 @@ Should be a PNG
 
 ## End-point: Get Punishments
 
-### ⚠️ This requires administrator permissions.
+### ⚠️ This requires moderator (or higher) permissions.
 
 ### Method: GET
 
@@ -1636,7 +1634,7 @@ Should be a PNG
 
 ## End-point: Punish User
 
-### ⚠️ This requires administrator permissions.
+### ⚠️ This requires moderator (or higher) permissions.
 
 | PunishmentType | Punishment  |
 |----------------|-------------|
@@ -1677,7 +1675,7 @@ Should be a PNG
 
 ## End-point: Edit Punishment
 
-### ⚠️ This requires administrator permissions.
+### ⚠️ This requires moderator (or higher) permissions.
 
 ### Method: POST
 
@@ -1714,7 +1712,7 @@ Should be a PNG
 
 ## End-point: Revoke Punishment
 
-### ⚠️ This requires administrator permissions.
+### ⚠️ This requires moderator (or higher) permissions.
 
 ### Method: POST
 

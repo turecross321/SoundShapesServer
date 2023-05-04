@@ -15,7 +15,7 @@ public class ApiLeaderboardManagementEndpoints : EndpointGroup
     [ApiEndpoint("leaderboard/{id}/remove", Method.Post)]
     public Response RemoveEntry(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
     {
-        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
+        if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
 
         LeaderboardEntry? entry = database.GetLeaderboardWithId(id);
         if (entry == null) return HttpStatusCode.NotFound;

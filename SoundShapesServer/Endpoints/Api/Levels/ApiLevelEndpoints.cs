@@ -79,7 +79,7 @@ public class ApiLevelEndpoints: EndpointGroup
 
         if (level.Author?.Id != user.Id)
         {
-            if (PermissionHelper.IsUserAdmin(user) == false)
+            if (PermissionHelper.IsUserModeratorOrMore(user) == false)
                 return HttpStatusCode.Unauthorized;
         }
         
@@ -95,7 +95,7 @@ public class ApiLevelEndpoints: EndpointGroup
 
         if (level.Author?.Id != user.Id)
         {
-            if (PermissionHelper.IsUserAdmin(user) == false)
+            if (PermissionHelper.IsUserModeratorOrMore(user) == false)
                 return HttpStatusCode.Unauthorized;
         }
 

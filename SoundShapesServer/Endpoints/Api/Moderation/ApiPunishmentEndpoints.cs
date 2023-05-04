@@ -17,10 +17,12 @@ public class ApiPunishmentEndpoints : EndpointGroup
     [ApiEndpoint("punishments/create", Method.Post)]
     public Response PunishUser(RequestContext context, RealmDatabaseContext database, GameUser user, ApiPunishRequest body)
     {
-        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
+        if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
 
         GameUser? userToPunish = database.GetUserWithId(body.UserId);
         if (userToPunish == null) return HttpStatusCode.NotFound;
+
+        if (userToPunish.Id == user.Id) return HttpStatusCode.MethodNotAllowed;
         
         Punishment createdPunishment = database.PunishUser(user, body);
         return new Response(new ApiPunishmentResponse(createdPunishment), ContentType.Json, HttpStatusCode.Created);
@@ -30,7 +32,7 @@ public class ApiPunishmentEndpoints : EndpointGroup
     public Response EditPunishment(RequestContext context, RealmDatabaseContext database, GameUser user, string id,
         ApiPunishRequest body)
     {
-        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
+        if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
 
         Punishment? punishment = database.GetPunishmentWithId(id);
         if (punishment == null) return HttpStatusCode.NotFound;
@@ -45,7 +47,7 @@ public class ApiPunishmentEndpoints : EndpointGroup
     [ApiEndpoint("punishments/{id}/revoke", Method.Post)]
     public Response RevokePunishment(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
     {
-        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
+        if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
 
         Punishment? punishment = database.GetPunishmentWithId(id);
         if (punishment == null) return HttpStatusCode.NotFound;

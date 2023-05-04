@@ -17,7 +17,7 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 
 public class ApiLevelManagementEndpoints : EndpointGroup
 {
-    [ApiEndpoint("levelss/create", Method.Post)]
+    [ApiEndpoint("levels/create", Method.Post)]
     public Response PublishLevel(RequestContext context, RealmDatabaseContext database, GameUser user, ApiPublishLevelRequest body)
     {
         if (body == null) throw new ArgumentNullException(nameof(body));
@@ -70,4 +70,6 @@ public class ApiLevelManagementEndpoints : EndpointGroup
 
         return HttpStatusCode.Created;
     }
+    
+    // Remove Levels is in ../Levels/ApiLevelEndpoints
 }

@@ -15,7 +15,7 @@ public class ApiReportEndpoints : EndpointGroup
     [ApiEndpoint("reports/{id}/remove", Method.Post)]
     public Response RemoveReport(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
     {
-        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
+        if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
 
         Report? report = database.GetReportWithId(id);
         if (report == null) return HttpStatusCode.NotFound;
@@ -27,7 +27,7 @@ public class ApiReportEndpoints : EndpointGroup
     [ApiEndpoint("reports/{id}")]
     public Response GetReport(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
     {
-        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
+        if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
 
         Report? report = database.GetReportWithId(id);
         if (report == null) return HttpStatusCode.NotFound;
@@ -39,7 +39,7 @@ public class ApiReportEndpoints : EndpointGroup
     [NullStatusCode(HttpStatusCode.Forbidden)]
     public ApiReportsWrapper? GetReports(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
     {
-        if (PermissionHelper.IsUserAdmin(user) == false) return null;
+        if (PermissionHelper.IsUserModeratorOrMore(user) == false) return null;
         
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
