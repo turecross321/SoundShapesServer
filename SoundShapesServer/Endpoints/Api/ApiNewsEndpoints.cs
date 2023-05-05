@@ -32,6 +32,6 @@ public class ApiNewsEndpoints : EndpointGroup
             _ => NewsOrderType.Date
         };
 
-        return new ApiNewsWrapper(filteredEntries, from, count, order, descending); // test
+        return new ApiNewsWrapper(filteredEntries, from, count, order, descending);
     }
 }
