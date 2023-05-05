@@ -9,6 +9,8 @@ public class ApiNewsResponse
         Id = entry.Id;
         Date = entry.Date;
         Language = entry.Language;
+        AuthorId = entry.Author.Id;
+        AuthorUsername = entry.Author.Username;
         Title = entry.Title;
         Summary = entry.Summary;
         FullText = entry.FullText;
@@ -17,6 +19,8 @@ public class ApiNewsResponse
     
     public string Id { get; set; }
     public DateTimeOffset Date { get; set; }
+    public string AuthorUsername { get; set; }
+    public string AuthorId { get; set; }
     public string Language { get; set; }
     public string Title { get; set; }
     public string Summary { get; set; }

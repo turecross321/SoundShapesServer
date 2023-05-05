@@ -14,13 +14,18 @@ public static class NewsHelper
         };
     }
 
-    public static IQueryable<NewsEntry> FilterNews(IQueryable<NewsEntry> entries, string? language)
+    public static IQueryable<NewsEntry> FilterNews(IQueryable<NewsEntry> entries, string? language, string? byUser)
     {
         IQueryable<NewsEntry> response = entries;
 
         if (language != null)
         {
             response = response.Where(e => e.Language == language);
+        }
+
+        if (byUser != null)
+        {
+            response = response.Where(e => e.Author != null && e.Author.Id == byUser);
         }
 
         return response;

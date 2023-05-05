@@ -15,7 +15,7 @@ public class NewsEndpoints : EndpointGroup
     public NewsResponse GlobalNews(RequestContext context, RealmDatabaseContext database)
     {
         IQueryable<NewsEntry> entries = database.GetNews();
-        IQueryable<NewsEntry> filteredNews = NewsHelper.FilterNews(entries, "global");
+        IQueryable<NewsEntry> filteredNews = NewsHelper.FilterNews(entries, "global", null);
         NewsEntry? entry = filteredNews.LastOrDefault();
 
         return entry == null ? new NewsResponse() : new NewsResponse(entry);
@@ -26,7 +26,7 @@ public class NewsEndpoints : EndpointGroup
     public NewsResponse? TranslatedNews(RequestContext context, GameSession session, RealmDatabaseContext database, string language)
     {
         IQueryable<NewsEntry> entries = database.GetNews();
-        IQueryable<NewsEntry> filteredNews = NewsHelper.FilterNews(entries, language);
+        IQueryable<NewsEntry> filteredNews = NewsHelper.FilterNews(entries, language, null);
         NewsEntry? entry = filteredNews.LastOrDefault();
 
         return entry == null ? null : new NewsResponse(entry);

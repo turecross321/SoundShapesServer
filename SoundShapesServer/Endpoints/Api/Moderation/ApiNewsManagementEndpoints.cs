@@ -21,7 +21,7 @@ public class ApiNewsManagementEndpoints : EndpointGroup
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
-        NewsEntry createdNewsEntry = database.CreateNewsEntry(body);
+        NewsEntry createdNewsEntry = database.CreateNewsEntry(body, user);
         return new Response(new ApiNewsResponse(createdNewsEntry), ContentType.Json, HttpStatusCode.Created);
     }
 

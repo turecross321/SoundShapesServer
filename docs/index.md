@@ -1329,6 +1329,8 @@ Should be a PNG
     {
       "Id": "a2e4cf92-4d1c-4315-b88d-8fdb461eca31",
       "Date": "2023-05-02T22:39:35.303+00:00",
+      "AuthorUsername": "turecross123",
+      "AuthorId": "68c8624a-85d5-457f-b109-9942ade2ee39",
       "Language": "global",
       "Title": "RELATIVELY BREAKING NEWS",
       "Summary": "A man has fallen into the river in Lego City!",
@@ -1338,6 +1340,8 @@ Should be a PNG
     {
       "Id": "e9ecde58-c0c3-4135-ac54-f130a0273757",
       "Date": "2023-05-02T22:38:17.6127246+00:00",
+      "AuthorUsername": "turecross123",
+      "AuthorId": "68c8624a-85d5-457f-b109-9942ade2ee39",
       "Language": "global",
       "Title": "VERY BREAKING NEWS",
       "Summary": "DJ Khaled is stuck in a tree!",
@@ -1379,6 +1383,8 @@ Should be a PNG
 {
   "Id": "e9ecde58-c0c3-4135-ac54-f130a0273757",
   "Date": "2023-05-02T22:24:41.0155527+00:00",
+  "AuthorUsername": "turecross123",
+  "AuthorId": "68c8624a-85d5-457f-b109-9942ade2ee39",
   "Language": "global",
   "Title": "BREAKING NEWS",
   "Summary": "DJ Khaled is stuck in a tree!",
@@ -1417,6 +1423,8 @@ Should be a PNG
 {
   "Id": "e9ecde58-c0c3-4135-ac54-f130a0273757",
   "Date": "2023-05-02T22:24:41.0155527+00:00",
+  "AuthorUsername": "turecross123",
+  "AuthorId": "68c8624a-85d5-457f-b109-9942ade2ee39",
   "Language": "global",
   "Title": "VERY BREAKING NEWS",
   "Summary": "DJ Khaled is stuck in a tree!",

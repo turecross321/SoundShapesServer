@@ -17,12 +17,13 @@ public partial class RealmDatabaseContext
         return _realm.All<NewsEntry>().FirstOrDefault(e => e.Id == id);
     }
 
-    public NewsEntry CreateNewsEntry(ApiCreateNewsEntryRequest request)
+    public NewsEntry CreateNewsEntry(ApiCreateNewsEntryRequest request, GameUser user)
     {
         NewsEntry entry = new ()
         {
             Id = GenerateGuid(),
             Date = DateTimeOffset.UtcNow,
+            Author = user,
             Language = request.Language,
             Title = request.Title,
             Summary = request.Summary,

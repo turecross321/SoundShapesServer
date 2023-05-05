@@ -20,9 +20,10 @@ public class ApiNewsEndpoints : EndpointGroup
         string? orderString = context.QueryString["orderBy"];
 
         string? language = context.QueryString["language"];
+        string? byUser = context.QueryString["byUser"];
         
         IQueryable<NewsEntry> entries = database.GetNews();
-        IQueryable<NewsEntry> filteredEntries = NewsHelper.FilterNews(entries, language);
+        IQueryable<NewsEntry> filteredEntries = NewsHelper.FilterNews(entries, language, byUser);
         
         NewsOrderType order = orderString switch
         {
