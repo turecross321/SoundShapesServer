@@ -498,7 +498,7 @@ o7
 
 ## End-point: Get Levels
 
-### 🔑 This does not require the `Authorization` header, **unless you use the completed param**.
+### 🔑 This does not require the `Authorization` header, **unless you use the `completed` param**.
 
 ### Method: GET
 
