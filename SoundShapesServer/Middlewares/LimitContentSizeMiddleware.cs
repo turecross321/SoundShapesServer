@@ -1,7 +1,6 @@
 using Bunkum.CustomHttpListener.Request;
 using Bunkum.HttpServer.Database;
 using Bunkum.HttpServer.Endpoints.Middlewares;
-using SoundShapesServer.Endpoints;
 
 namespace SoundShapesServer.Middlewares;
 

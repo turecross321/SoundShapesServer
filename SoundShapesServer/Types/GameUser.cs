@@ -1,4 +1,4 @@
-using Bunkum.HttpServer.Authentication;
+using Bunkum.HttpServer.RateLimit;
 using Realms;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Types.Levels;
@@ -6,7 +6,7 @@ using SoundShapesServer.Types.Relations;
 
 namespace SoundShapesServer.Types;
 
-public class GameUser : RealmObject, IUser
+public class GameUser : RealmObject, IRateLimitUser
 {
     public string Id { get; init; } = "";
     public string Username { get; set; } = "";
@@ -34,4 +34,13 @@ public class GameUser : RealmObject, IUser
     [Backlink(nameof(Punishment.User))] public IQueryable<Punishment> Punishments { get; }
     [Backlink(nameof(LeaderboardEntry.User))] public IQueryable<LeaderboardEntry> LeaderboardEntries { get; }
 #pragma warning restore CS8618
+    
+    // Defined in authentication provider. Avoids Realm threading nonsense.
+    public bool RateLimitUserIdIsEqual(object obj)
+    {
+        if (obj is not string id) return false;
+        return Id == id;
+    }
+
+    [Ignored] public object RateLimitUserId { get; internal set; } = null!;
 }

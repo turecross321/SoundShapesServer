@@ -19,9 +19,8 @@ server.UseDatabaseProvider(databaseProvider);
 
 server.AddAuthenticationService(new SessionProvider(), true);
 server.AddStorageService<FileSystemDataStore>();
+server.AddRateLimitService();
 server.AddService<EmailService>();
-
-
 
 server.AddMiddleware<CrossOriginMiddleware>();
 server.AddMiddleware<LimitContentSizeMiddleware>();
