@@ -33,7 +33,7 @@ public class LevelPublishingEndpoints : EndpointGroup
             levelId, 
             parser.Files.First(f => f.Name == "level").Data.Length);
 
-        GameLevel publishedLevel = database.PublishLevel(publishLevelRequest, user);
+        GameLevel publishedLevel = database.CreateLevel(publishLevelRequest, user);
         return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
     

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Bunkum.HttpServer.Storage;
 using Realms;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
@@ -12,7 +13,7 @@ namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public GameLevel PublishLevel(PublishLevelRequest request, GameUser user)
+    public GameLevel CreateLevel(PublishLevelRequest request, GameUser user)
     {
         string levelId = request.Id;
         GameLevel level = new(levelId, user, request.Name, request.Language, request.FileSize, request.Modified);
@@ -147,19 +148,10 @@ public partial class RealmDatabaseContext
     public void SetLevelDifficulty(GameLevel level)
     {
         _realm.Refresh();
-        
-        float difficulty;
-        if (level.Deaths > 0)
-        {
-            // ReSharper disable once PossibleLossOfFraction
-            float rate = level.Deaths / level.Plays;
-            difficulty = Math.Min(rate, 1);
-        }
-        else difficulty = 0;
 
         _realm.Write(() =>
         {
-            level.Difficulty = difficulty;
+            level.Difficulty = LevelHelper.CalculateLevelDifficulty(level);
         });
     }
     public void AddPlayToLevel(GameLevel level)

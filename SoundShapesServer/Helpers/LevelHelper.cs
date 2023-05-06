@@ -112,4 +112,29 @@ public static class LevelHelper
 
         return response;
     }
+
+    public static float CalculateLevelDifficulty(GameLevel level)
+    {
+        // I know this is ugly, but this is authentic to the original servers, while also supporting decimals
+        // which is used for sorting levels by difficulty.
+        
+        float averageAmountOfDeaths = (float)level.Deaths / level.CompletionCount;
+        
+        switch (averageAmountOfDeaths)
+        {
+            case >= 30:
+                return averageAmountOfDeaths / 6;
+            case >= 20:
+                return averageAmountOfDeaths / 5;
+            case >= 10:
+                return averageAmountOfDeaths / 3.3f;
+        }
+
+        if (averageAmountOfDeaths >= 2.5)
+        {
+            return averageAmountOfDeaths / 2.5f;
+        }
+
+        return 0;
+    }
 }

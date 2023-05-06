@@ -10,7 +10,7 @@ public class LevelMetadataResponse
     {
         Name = level.Name;
         UniquePlaysCount = level.UniquePlays.Count.ToString();
-        Difficulty = Math.Clamp(level.Difficulty, 0, 5).ToString(CultureInfo.InvariantCulture);
+        Difficulty = level.Difficulty.ToString(CultureInfo.InvariantCulture);
         Timestamp = level.ModificationDate.ToUnixTimeMilliseconds().ToString();
         TotalPlaysCount = level.Plays.ToString();
         Language = level.Language.ToString();
