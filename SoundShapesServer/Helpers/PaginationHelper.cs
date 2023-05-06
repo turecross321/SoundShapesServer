@@ -1,6 +1,7 @@
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.RecentActivity;
 
 namespace SoundShapesServer.Helpers;
 
@@ -61,5 +62,10 @@ public static class PaginationHelper
     public static NewsEntry[] PaginateNews(IQueryable<NewsEntry> entries, int from, int count)
     {
         return entries.AsEnumerable().Skip(from).Take(Math.Min(count, MaxEntryCount)).ToArray();
+    }
+
+    public static GameEvent[] PaginateEvents(IQueryable<GameEvent> events, int from, int count)
+    {
+        return events.AsEnumerable().Skip(from).Take(Math.Min(count, MaxEntryCount)).ToArray();
     }
 }

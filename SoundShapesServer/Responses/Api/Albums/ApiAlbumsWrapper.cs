@@ -8,13 +8,9 @@ public class ApiAlbumsWrapper
 {
     public ApiAlbumsWrapper(IQueryable<GameAlbum> albums, int from, int count, AlbumOrderType order, bool descending)
     {
-        IQueryable<GameAlbum> orderedAlbums = AlbumHelper.OrderAlbums(albums, order);
-        IQueryable<GameAlbum> fullyOrderedAlbums = descending ? orderedAlbums
-            .AsEnumerable()
-            .Reverse()
-            .AsQueryable() : orderedAlbums;
-        
-        GameAlbum[] paginatedAlbums = PaginationHelper.PaginateAlbums(fullyOrderedAlbums, from, count);
+        IQueryable<GameAlbum> orderedAlbums = AlbumHelper.OrderAlbums(albums, order, true);
+
+        GameAlbum[] paginatedAlbums = PaginationHelper.PaginateAlbums(orderedAlbums, from, count);
 
         Albums = paginatedAlbums.Select(album => new ApiAlbumResponse(album)).ToArray();
         Count = albums.Count();

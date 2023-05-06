@@ -1,6 +1,6 @@
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.RecentActivity;
 
-namespace SoundShapesServer.Responses.Api;
+namespace SoundShapesServer.Responses.Api.RecentActivity;
 
 public class ApiNewsResponse
 {

@@ -10,10 +10,9 @@ public class ApiLeaderboardEntryWrapper
     public ApiLeaderboardEntryWrapper(IQueryable<LeaderboardEntry> entries, int from,
         int count, LeaderboardOrderType order, bool descending, bool onlyBest, bool? completed, string? onLevel, string? byUser)
     {
-        IQueryable<LeaderboardEntry> orderedEntries = OrderEntries(entries, order);
-        IQueryable<LeaderboardEntry> fullyOrderedEntries = descending ? orderedEntries.Reverse() : orderedEntries;
+        IQueryable<LeaderboardEntry> orderedEntries = OrderEntries(entries, order, descending);
         IQueryable<LeaderboardEntry> filteredEntries =
-            FilterEntries(fullyOrderedEntries, onLevel, byUser, completed, onlyBest);
+            FilterEntries(orderedEntries, onLevel, byUser, completed, onlyBest);
 
         LeaderboardEntry[] paginatedEntries = PaginationHelper.PaginateLeaderboardEntries(filteredEntries, from, count);
 

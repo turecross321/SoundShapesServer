@@ -20,7 +20,6 @@ public class ApiLevelManagementEndpoints : EndpointGroup
     [ApiEndpoint("levels/create", Method.Post)]
     public Response PublishLevel(RequestContext context, RealmDatabaseContext database, GameUser user, ApiPublishLevelRequest body)
     {
-        if (body == null) throw new ArgumentNullException(nameof(body));
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
 
         string levelId = LevelHelper.GenerateLevelId();
@@ -47,29 +46,31 @@ public class ApiLevelManagementEndpoints : EndpointGroup
         string id)
         => UploadLevelResources(database, dataStore, user, body, id, FileType.Image);
 
-    private Response UploadLevelResources(RealmDatabaseContext database, IDataStore dataStore, GameUser user, Stream body, string id, FileType fileType)
+    private Response UploadLevelResources(RealmDatabaseContext database, IDataStore dataStore, GameUser user,
+        Stream body, string id, FileType fileType)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
 
         GameLevel? level = database.GetLevelWithId(id);
         if (level == null) return HttpStatusCode.NotFound;
-        
+
         byte[] file;
 
-        using (MemoryStream memoryStream = new ())
+        using (MemoryStream memoryStream = new())
         {
             body.CopyTo(memoryStream);
             file = memoryStream.ToArray();
         }
-        
-        if (fileType == FileType.Image && !IsByteArrayPng(file)) return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
-        
+
+        if (fileType == FileType.Image && !IsByteArrayPng(file))
+            return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
+
         string key = GetLevelResourceKey(id, fileType);
         dataStore.WriteToStore(key, file);
         if (fileType == FileType.Level) database.SetLevelFileSize(level, file.Length);
 
         return HttpStatusCode.Created;
     }
-    
+
     // Remove Levels is in ../Levels/ApiLevelEndpoints
 }

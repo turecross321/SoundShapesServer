@@ -15,6 +15,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 | [/leaderboard](#Leaderboard) |
 | [/daily](#Daily)             |
 | [/news](#News)               |
+| [/activities](#Activities)   |
 | [/reports](#Reports)         |
 | [/punishments](#Punishments) |
 
@@ -22,7 +23,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 ## End-point: Log In
 
-### 🔑 This does not require the `Authorization` header..
+### 🔑 This does not require the `Authorization` header.
 
 ### Method: POST
 
@@ -55,7 +56,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 ## End-point: Send Password Session
 
-### 🔑 This does not require the `Authorization` header..
+### 🔑 This does not require the `Authorization` header.
 
 ### Method: POST
 
@@ -213,7 +214,6 @@ o7
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
-
 # 📁 IP Authorization {#Ip}
 
 ## End-point: Get Unauthorized Ips
@@ -323,7 +323,7 @@ o7
 
 ## End-point: Get Users
 
-### 🔑 This does not require the `Authorization` header..
+### 🔑 This does not require the `Authorization` header.
 
 ### Method: GET
 
@@ -382,7 +382,7 @@ o7
 
 ## End-point: Get User
 
-### 🔑 This does not require the `Authorization` header..
+### 🔑 This does not require the `Authorization` header.
 
 ### Method: GET
 
@@ -517,7 +517,7 @@ o7
 | inAlbum     |
 | inDaily     |
 | search      |
-| completed |
+| completed   |
 | descending  |
 | orderBy     |
 
@@ -593,7 +593,7 @@ o7
 
 ## End-point: Get Level
 
-### 🔑 This does not require the `Authorization` header..
+### 🔑 This does not require the `Authorization` header.
 
 ### Method: GET
 
@@ -644,7 +644,7 @@ o7
 
 ## End-point: Get Level Thumbnail
 
-### 🔑 This does not require the `Authorization` header..
+### 🔑 This does not require the `Authorization` header.
 
 ### Method: GET
 
@@ -881,7 +881,7 @@ Should be a Sound Shapes Sound File
 
 ## End-point: Get Albums
 
-### 🔑 This does not require the `Authorization` header..
+### 🔑 This does not require the `Authorization` header.
 
 ### Method: GET
 
@@ -931,7 +931,7 @@ Should be a Sound Shapes Sound File
 
 ## End-point: Get Album
 
-### 🔑 This does not require the `Authorization` header..
+### 🔑 This does not require the `Authorization` header.
 
 ### Method: GET
 
@@ -957,7 +957,7 @@ Should be a Sound Shapes Sound File
 
 ## End-point: Get Album Thumbnail
 
-### 🔑 This does not require the `Authorization` header..
+### 🔑 This does not require the `Authorization` header.
 
 ### Method: GET
 
@@ -979,7 +979,7 @@ Should be a Sound Shapes Sound File
 
 ## End-point: Get Album Side Panel
 
-### 🔑 This does not require the `Authorization` header..
+### 🔑 This does not require the `Authorization` header.
 
 ### Method: GET
 
@@ -1139,7 +1139,7 @@ Should be a PNG
 
 ## End-point: Get Leaderboard
 
-### 🔑 This does not require the `Authorization` header..
+### 🔑 This does not require the `Authorization` header.
 
 ### Method: GET
 
@@ -1298,7 +1298,7 @@ Should be a PNG
 
 ## End-point: Get News
 
-### 🔑 This does not require the `Authorization` header..
+### 🔑 This does not require the `Authorization` header.
 
 ### Method: GET
 
@@ -1475,6 +1475,125 @@ Should be a PNG
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
+# 📁 Recent Activity {#Activities}
+
+## End-point: Get Activities
+
+### 🔑 This does not require the `Authorization` header.
+
+### Method: GET
+
+> ```
+> {ip}:10061/api/v1/activities
+> ```
+
+### Query Params
+
+| Param      |
+| ---------- |
+| from       |
+| count      |
+| actors     |
+| onUser     |
+| onLevel    |
+| eventTypes |
+| descending |
+| orderBy    |
+
+#
+
+### Note: `actors` consists of User Ids, so it can have multiple values at the same time. The User Ids should be seperated by commas. So an actors query can, for example, be `actors=5503f74b-2620-4103-a892-dcbd99435645,01fb1e88-507c-44a5-a99f-16b6cca2eccd` which would only return events that those two users did.
+
+#
+
+### Note: `eventTypes` can have multiple values at the same time, seperated by commas. So a eventType query can, for example, be `eventTypes=0,1` which would return only `Publish` and `Like` events.
+
+#
+
+| Value | Event Type           |
+| ----- | -------------------- |
+| 0     | Publish              |
+| 1     | Like                 |
+| 2     | Follow               |
+| 3     | Score Submission     |
+| 4     | Account Registration |
+
+| Can be ordered by: |
+| ------------------ |
+| date               |
+
+### Response: 200
+
+```json
+{
+  "Activities": [
+    {
+      "Id": "c05864fa-45e5-4100-b57d-414b718f7c8d",
+      "EventType": 1,
+      "ActorId": "141a3c5e-db64-4e9c-85e0-b987b6e41f9a",
+      "LevelId": "4OVua1mG",
+      "Date": "2023-05-06T18:18:42.3561017+00:00"
+    },
+    {
+      "Id": "ff06e894-486e-4efc-871d-f0df58b4b7cd",
+      "EventType": 3,
+      "ActorId": "141a3c5e-db64-4e9c-85e0-b987b6e41f9a",
+      "LeaderboardEntryId": "cb510bab-d0f8-4353-abe0-e829e31e8b81",
+      "Date": "2023-05-06T18:18:22.6806305+00:00"
+    },
+    {
+      "Id": "d5997959-40c7-401c-a0f8-550c4685141e",
+      "EventType": 0,
+      "ActorId": "141a3c5e-db64-4e9c-85e0-b987b6e41f9a",
+      "LevelId": "4OVua1mG",
+      "Date": "2023-05-06T18:18:22.142422+00:00"
+    },
+    {
+      "Id": "f18247f5-31cd-4355-955e-5f5540c7fa3c",
+      "EventType": 3,
+      "ActorId": "141a3c5e-db64-4e9c-85e0-b987b6e41f9a",
+      "LeaderboardEntryId": "c9ba4ba6-1819-4d20-9376-8f293bd890e6",
+      "Date": "2023-05-06T18:17:58.2713005+00:00"
+    },
+    {
+      "Id": "e7a582b3-de91-41d8-a24f-aa9ded2d56fb",
+      "EventType": 0,
+      "ActorId": "141a3c5e-db64-4e9c-85e0-b987b6e41f9a",
+      "LevelId": "nNNIiS4b",
+      "Date": "2023-05-06T18:17:57.7017357+00:00"
+    },
+    {
+      "Id": "d73d9e6c-fd71-4dfc-a302-9dfdfe613773",
+      "EventType": 4,
+      "ActorId": "141a3c5e-db64-4e9c-85e0-b987b6e41f9a",
+      "UserId": "141a3c5e-db64-4e9c-85e0-b987b6e41f9a",
+      "Date": "2023-05-06T18:17:20.2607727+00:00"
+    }
+  ],
+  "Count": 6
+}
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+## End-point: Remove Activity
+
+### ⚠️ This requires moderator (or higher) permissions.
+
+### Method: POST
+
+> ```
+> {ip}:10061/api/v1/activities/{activityId}/remove
+> ```
+
+### Response: 200
+
+```json
+
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
 # 📁 Reports {#Reports}
 
 ## End-point: Get Reports
@@ -1547,7 +1666,7 @@ Should be a PNG
 ### 💡 Content Id is either a Level Id or a User Id.
 
 | Reason Id | Reason                 |
-|-----------|------------------------|
+| --------- | ---------------------- |
 | 0         | Mature                 |
 | 1         | Offensive              |
 | 2         | Defamation             |
@@ -1610,13 +1729,13 @@ Should be a PNG
 
 ### Query Params
 
-| Param |
-| ---- |
-| from |
-| count |
-| forUser |
-| byUser |
-| revoked |
+| Param      |
+| ---------- |
+| from       |
+| count      |
+| forUser    |
+| byUser     |
+| revoked    |
 | descending |
 
 ### Response: 200
@@ -1644,9 +1763,9 @@ Should be a PNG
 
 ### ⚠️ This requires moderator (or higher) permissions.
 
-| PunishmentType | Punishment  |
-|----------------|-------------|
-| 0              | Ban         |
+| PunishmentType | Punishment |
+| -------------- | ---------- |
+| 0              | Ban        |
 
 ### Method: POST
 

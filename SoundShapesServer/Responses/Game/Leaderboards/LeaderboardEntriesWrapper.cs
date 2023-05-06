@@ -10,9 +10,8 @@ public class LeaderboardEntriesWrapper
 {
     public LeaderboardEntriesWrapper(IQueryable<LeaderboardEntry> entries, int from, int count, LeaderboardOrderType order, string onLevel)
     {
-        IQueryable<LeaderboardEntry> orderedEntries = OrderEntries(entries, order);
-        IQueryable<LeaderboardEntry> fullyOrderedEntries = orderedEntries.AsEnumerable().Reverse().AsQueryable();
-        IQueryable<LeaderboardEntry> filteredEntries = FilterEntries(fullyOrderedEntries, onLevel, null, true, true);
+        IQueryable<LeaderboardEntry> orderedEntries = OrderEntries(entries, order, false);
+        IQueryable<LeaderboardEntry> filteredEntries = FilterEntries(orderedEntries, onLevel, null, true, true);
 
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(entries.Count(), from, count);
         LeaderboardEntry[] paginatedEntries = PaginationHelper.PaginateLeaderboardEntries(filteredEntries, from, count);

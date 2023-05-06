@@ -2,13 +2,14 @@ using Bunkum.HttpServer.RateLimit;
 using Realms;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.RecentActivity;
 using SoundShapesServer.Types.Relations;
 
 namespace SoundShapesServer.Types;
 
 public class GameUser : RealmObject, IRateLimitUser
 {
-    public string Id { get; init; } = "";
+    [PrimaryKey] [Required] public string Id { get; init; } = "";
     public string Username { get; set; } = "";
     public int PermissionsType { get; set; } = (int)Types.PermissionsType.Default;
     public string? Email { get; set; }
@@ -33,6 +34,8 @@ public class GameUser : RealmObject, IRateLimitUser
     [Backlink(nameof(GameLevel.Author))] public IQueryable<GameLevel> Levels { get; }
     [Backlink(nameof(Punishment.User))] public IQueryable<Punishment> Punishments { get; }
     [Backlink(nameof(LeaderboardEntry.User))] public IQueryable<LeaderboardEntry> LeaderboardEntries { get; }
+    [Backlink(nameof(GameEvent.Actor))] public IQueryable<GameEvent> Events { get; }
+    [Backlink(nameof(GameEvent.ContentUser))] public IQueryable<GameEvent> EventsWhereUserIsRecipient { get; }
 #pragma warning restore CS8618
     
     // Defined in authentication provider. Avoids Realm threading nonsense.

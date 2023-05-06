@@ -9,6 +9,7 @@ using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Moderation;
 using SoundShapesServer.Types;
 using static System.Boolean;
+using static SoundShapesServer.Helpers.PunishmentHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
@@ -76,11 +77,10 @@ public class ApiPunishmentEndpoints : EndpointGroup
         bool descending = Parse(context.QueryString["descending"] ?? "true");
 
         IQueryable<Punishment> punishments = database.GetPunishments();
-        IQueryable<Punishment> filteredPunishments =
-            PunishmentHelper.FilterPunishments(punishments, byUser, forUser, revoked);
-        IQueryable<Punishment> orderedPunishments =
-            descending ? filteredPunishments.AsEnumerable().Reverse().AsQueryable() : filteredPunishments;
-        
+        IQueryable<Punishment> filteredPunishments = FilterPunishments(punishments, byUser, forUser, revoked);
+        IQueryable<Punishment> orderedPunishments = OrderPunishments(filteredPunishments, descending);
+
+
         return new ApiPunishmentsWrapper(orderedPunishments, from, count);
     }
 }

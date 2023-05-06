@@ -2,6 +2,7 @@ using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.RecentActivity;
 
 namespace SoundShapesServer.Database;
 

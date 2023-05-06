@@ -43,18 +43,24 @@ public static class UserHelper
         return response;
     }
 
-    public static IQueryable<GameUser> OrderUsers(RealmDatabaseContext database, IQueryable<GameUser> users, UserOrderType order)
+    public static IQueryable<GameUser> OrderUsers(RealmDatabaseContext database, IQueryable<GameUser> users, UserOrderType order, bool descending)
     {
-        return order switch
+        IQueryable<GameUser> response = users;
+
+        response = order switch
         {
-            UserOrderType.FollowerCount => users.OrderBy(u=>u.Followers.Count()),
-            UserOrderType.FollowingCount => users.OrderBy(u=>u.Following.Count()),
-            UserOrderType.LevelCount => users.OrderBy(u=>u.Levels.Count()),
-            UserOrderType.CreationDate => users.OrderBy(u=>u.CreationDate),
-            UserOrderType.PlayedLevelsCount => users.OrderBy(u=>u.PlayedLevels.Count()),
-            UserOrderType.LeaderboardPlacements => users.OrderByDescending(u=> LeaderboardHelper.GetTotalLeaderboardPlacements(database, u)),
-            UserOrderType.DoNotOrder => users,
-            _ => OrderUsers(database, users, UserOrderType.CreationDate)
+            UserOrderType.FollowerCount => response.OrderBy(u=>u.Followers.Count()),
+            UserOrderType.FollowingCount => response.OrderBy(u=>u.Following.Count()),
+            UserOrderType.LevelCount => response.OrderBy(u=>u.Levels.Count()),
+            UserOrderType.CreationDate => response.OrderBy(u=>u.CreationDate),
+            UserOrderType.PlayedLevelsCount => response.OrderBy(u=>u.PlayedLevels.Count()),
+            UserOrderType.LeaderboardPlacements => response.OrderByDescending(u=> LeaderboardHelper.GetTotalLeaderboardPlacements(database, u)),
+            UserOrderType.DoNotOrder => response,
+            _ => OrderUsers(database, response, UserOrderType.CreationDate, descending)
         };
+
+        if (descending) response = response.AsEnumerable().Reverse().AsQueryable();
+
+        return response;
     }
 }

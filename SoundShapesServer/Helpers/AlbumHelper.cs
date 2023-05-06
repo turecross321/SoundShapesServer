@@ -32,18 +32,24 @@ public static class AlbumHelper
         return linerNotes.ToArray();
     }
 
-    public static IQueryable<GameAlbum> OrderAlbums(IEnumerable<GameAlbum> albums, AlbumOrderType orderType)
+    public static IQueryable<GameAlbum> OrderAlbums(IQueryable<GameAlbum> albums, AlbumOrderType orderType, bool descending)
     {
-        return orderType switch
+        IQueryable<GameAlbum> response = albums;
+
+        response = orderType switch
         {
-            AlbumOrderType.CreationDate => albums.OrderBy(a=>a.CreationDate).AsQueryable(),
-            AlbumOrderType.ModificationDate => albums.OrderBy(a=>a.ModificationDate).AsQueryable(),
-            AlbumOrderType.Plays => albums.OrderBy(a=> a.Levels.Select(l=>l.Plays).Sum()).AsQueryable(),
-            AlbumOrderType.UniquePlays => albums.OrderBy(a=> a.Levels.Select(l=> l.UniquePlays.Count).Sum()).AsQueryable(),
-            AlbumOrderType.LevelCount => albums.OrderBy(a=>a.Levels.Count).AsQueryable(),
-            AlbumOrderType.FileSize => albums.OrderBy(a=> a.Levels.Select(l=>l.FileSize).Sum()).AsQueryable(),
-            AlbumOrderType.Difficulty => albums.OrderBy(a=> a.Levels.Select(l=>l.Difficulty).Sum()).AsQueryable(),
-            _ => OrderAlbums(albums, AlbumOrderType.CreationDate)
+            AlbumOrderType.CreationDate => response.OrderBy(a=>a.CreationDate).AsQueryable(),
+            AlbumOrderType.ModificationDate => response.OrderBy(a=>a.ModificationDate).AsQueryable(),
+            AlbumOrderType.Plays => response.OrderBy(a=> a.Levels.Select(l=>l.Plays).Sum()).AsQueryable(),
+            AlbumOrderType.UniquePlays => response.OrderBy(a=> a.Levels.Select(l=> l.UniquePlays.Count).Sum()).AsQueryable(),
+            AlbumOrderType.LevelCount => response.OrderBy(a=>a.Levels.Count).AsQueryable(),
+            AlbumOrderType.FileSize => response.OrderBy(a=> a.Levels.Select(l=>l.FileSize).Sum()).AsQueryable(),
+            AlbumOrderType.Difficulty => response.OrderBy(a=> a.Levels.Select(l=>l.Difficulty).Sum()).AsQueryable(),
+            _ => OrderAlbums(response, AlbumOrderType.CreationDate, descending)
         };
+
+        if (descending) response = response.AsEnumerable().Reverse().AsQueryable();
+
+        return response;
     }
 }

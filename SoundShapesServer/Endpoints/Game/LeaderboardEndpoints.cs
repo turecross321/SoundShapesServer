@@ -42,13 +42,14 @@ public class LeaderboardEndpoints : EndpointGroup
             database.SetLevelDifficulty(level);
         }
 
-        if (!database.SubmitScore(deSerializedRequest, user, levelId)) return HttpStatusCode.InternalServerError;
+        database.SubmitScore(deSerializedRequest, user, levelId);
 
         return HttpStatusCode.OK;
     }
 
-    [GameEndpoint("global/~campaign:{levelId}/~leaderboard.page", ContentType.Json)]
-    [GameEndpoint("~level:{levelId}/~leaderboard.page", ContentType.Json)]
+    [GameEndpoint("global/~campaign:{levelId}/~leaderboard.page", ContentType.Json)] // campaign levels
+    [GameEndpoint("~level:{levelId}/~leaderboard.page", ContentType.Json)] // community levels
+    [GameEndpoint("{levelId}/~leaderboard.page", ContentType.Json)] // recent activity community levels 
     public LeaderboardEntriesWrapper GetLeaderboard(RequestContext context, RealmDatabaseContext database, string levelId)
     {
         int count = int.Parse(context.QueryString["count"] ?? "9");
@@ -58,18 +59,17 @@ public class LeaderboardEndpoints : EndpointGroup
         return new LeaderboardEntriesWrapper(entries, from, count, LeaderboardOrderType.Score, levelId);
     }
 
-    [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near", ContentType.Json)]
-    [GameEndpoint("~level:{levelId}/~leaderboard.near", ContentType.Json)]
-    public LeaderboardEntryResponse[] GetLeaderboardNearPlayer(RequestContext context, RealmDatabaseContext database, GameUser user, string levelId)
+    [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near", ContentType.Json)] // campaign levels
+    [GameEndpoint("~level:{levelId}/~leaderboard.near", ContentType.Json)] // community levels
+    [GameEndpoint("{levelId}/~leaderboard.near", ContentType.Json)] // recent activity community levels 
+    public LeaderboardEntryResponse[]? GetLeaderboardNearPlayer(RequestContext context, RealmDatabaseContext database, GameUser user, string levelId)
     {
-        IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntriesOnLevel(levelId);
+        GameLevel? level = database.GetLevelWithId(levelId);
+        if (level == null) return null;
 
-        LeaderboardEntry? bestEntry = GetBestEntry(entries, user);
-        if (bestEntry == null) return Array.Empty<LeaderboardEntryResponse>();
+        IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntries();
+        IQueryable<LeaderboardEntry> filteredEntries = FilterEntries(entries, levelId, user.Id, true, true);
 
-        LeaderboardEntryResponse[] response = new LeaderboardEntryResponse[1];
-        response[0] = new LeaderboardEntryResponse(bestEntry, GetEntryPlacement(entries, bestEntry) + 1);
-
-        return response;
+        return filteredEntries.Select(e=> new LeaderboardEntryResponse(e, GetEntryPlacement(filteredEntries, e) + 1)).ToArray();
     }
 }

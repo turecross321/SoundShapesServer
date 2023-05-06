@@ -8,15 +8,14 @@ public class LevelsWrapper
 {
     public LevelsWrapper(IQueryable<GameLevel> levels, GameUser user, int from, int count, LevelOrderType order)
     {
-        IQueryable<GameLevel> orderedLevels = LevelHelper.OrderLevels(levels, order);
-
-        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(orderedLevels.Count(), from, count);
+        IQueryable<GameLevel> orderedLevels = LevelHelper.OrderLevels(levels, order, true);
         GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(orderedLevels, from, count);
-
-        List<LevelResponse> levelResponses = paginatedLevels.Select(t => new LevelResponse(t, user)).ToList();
+        LevelResponse[] levelResponses = paginatedLevels.Select(l => new LevelResponse(l, user)).ToArray();
+        
+        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(orderedLevels.Count(), from, count);
 
         Levels = levelResponses.ToArray();
-        LevelCount = levelResponses.Count;
+        LevelCount = levelResponses.Length;
         NextToken = nextToken;
         PreviousToken = previousToken;
     }

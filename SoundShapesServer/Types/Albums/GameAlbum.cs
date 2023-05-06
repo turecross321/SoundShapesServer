@@ -22,7 +22,7 @@ public class GameAlbum : RealmObject
     public GameAlbum() { }
     #pragma warning restore CS8618
 
-    public string Id { get; set; }
+    [PrimaryKey] [Required] public string Id { get; set; }
     public string Name { get; set; }
     public string Artist { get; set; }
     public DateTimeOffset CreationDate { get; set; }

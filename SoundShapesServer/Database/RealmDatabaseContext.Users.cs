@@ -3,6 +3,7 @@ using Realms;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.RecentActivity;
 using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Database;
@@ -43,6 +44,9 @@ public partial class RealmDatabaseContext
             user.PasswordBcrypt = password;
             user.HasFinishedRegistration = true;
         });
+        
+        // Only create the event when the user has finished registration and can actually connect.
+        CreateEvent(user, EventType.AccountRegistration, user);
 
         _realm.Refresh();
     }
@@ -113,6 +117,8 @@ public partial class RealmDatabaseContext
             _realm.RemoveRange(user.IpAddresses);
             _realm.RemoveRange(user.Followers);
             _realm.RemoveRange(user.Following);
+            _realm.RemoveRange(user.Events);
+            _realm.RemoveRange(user.EventsWhereUserIsRecipient);
 
             string id = user.Id;
             string username = user.Username;

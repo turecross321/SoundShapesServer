@@ -43,9 +43,6 @@ public static class LevelHelper
         IQueryable<GameLevel> response = levels;
         if (byUser != null)
         {
-            GameUser? userToGetLevelsFrom = database.GetUserWithId(byUser);
-            if (userToGetLevelsFrom == null) return null;
-
             response = response
                 .AsEnumerable()
                 .Where(l => l.Author?.Id == byUser)
@@ -91,22 +88,28 @@ public static class LevelHelper
         return response;
     }
 
-    public static IQueryable<GameLevel> OrderLevels(IEnumerable<GameLevel> levels, LevelOrderType orderType)
+    public static IQueryable<GameLevel> OrderLevels(IQueryable<GameLevel> levels, LevelOrderType orderType, bool descending)
     {
-        return orderType switch
+        IQueryable<GameLevel> response = levels;
+
+        response = orderType switch
         {
-            LevelOrderType.CreationDate => levels.OrderBy(l => l.CreationDate).AsQueryable(),
-            LevelOrderType.ModificationDate => levels.OrderBy(l => l.ModificationDate).AsQueryable(),
-            LevelOrderType.Plays => levels.OrderBy(l => l.Plays).AsQueryable(),
-            LevelOrderType.UniquePlays => levels.OrderBy(l => l.UniquePlays.Count).AsQueryable(),
-            LevelOrderType.FileSize => levels.OrderBy(l => l.FileSize).AsQueryable(),
-            LevelOrderType.Difficulty => levels.OrderBy(l => l.Difficulty).AsQueryable(),
-            LevelOrderType.Relevance => levels
+            LevelOrderType.CreationDate => response.OrderBy(l => l.CreationDate).AsQueryable(),
+            LevelOrderType.ModificationDate => response.OrderBy(l => l.ModificationDate).AsQueryable(),
+            LevelOrderType.Plays => response.OrderBy(l => l.Plays).AsQueryable(),
+            LevelOrderType.UniquePlays => response.OrderBy(l => l.UniquePlays.Count).AsQueryable(),
+            LevelOrderType.FileSize => response.OrderBy(l => l.FileSize).AsQueryable(),
+            LevelOrderType.Difficulty => response.OrderBy(l => l.Difficulty).AsQueryable(),
+            LevelOrderType.Relevance => response
                 .OrderBy(l=> l.UniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.CreationDate).TotalDays * 0.5)
                 .AsQueryable(),
-            LevelOrderType.Random => RandomizeLevelOrder(levels.AsQueryable()),
-            LevelOrderType.DoNotOrder => levels.AsQueryable(),
-            _ => OrderLevels(levels, LevelOrderType.CreationDate)
+            LevelOrderType.Random => RandomizeLevelOrder(response.AsQueryable()),
+            LevelOrderType.DoNotOrder => response.AsQueryable(),
+            _ => OrderLevels(response, LevelOrderType.CreationDate, descending)
         };
+
+        if (descending) response = response.AsEnumerable().Reverse().AsQueryable();
+
+        return response;
     }
 }

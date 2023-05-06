@@ -7,6 +7,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Moderation;
 using SoundShapesServer.Types;
+using static SoundShapesServer.Helpers.ReportHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
@@ -49,10 +50,9 @@ public class ApiReportEndpoints : EndpointGroup
         string? contentType = context.QueryString["contentType"];
 
         IQueryable<Report> reports = database.GetReports();
-        IQueryable<Report> filteredReports = ReportHelper.FilterReports(reports, contentId, contentType);
-        IQueryable<Report> orderedReports =
-            descending ? filteredReports.AsEnumerable().Reverse().AsQueryable() : filteredReports;
-        
+        IQueryable<Report> filteredReports = FilterReports(reports, contentId, contentType);
+        IQueryable<Report> orderedReports = OrderReports(filteredReports, descending);
+
         return new ApiReportsWrapper(orderedReports, from, count);
     }
 }

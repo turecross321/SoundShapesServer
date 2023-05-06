@@ -15,7 +15,7 @@ public class LevelPublishResponse
         Dependencies = new List<string>();
         Visibility = "EVERYONE";
         ExtraData = new ExtraDataResponse(level.Language);
-        Parent = new LevelParent(level);
+        ParentResponse = new LevelParentResponse(level);
         CreationDate = level.CreationDate.ToUnixTimeMilliseconds();
     }
 
@@ -26,6 +26,6 @@ public class LevelPublishResponse
     [JsonProperty("dependencies")] public IList<string> Dependencies { get; set; }
     [JsonProperty("visibility")] public string Visibility { get; set; }
     [JsonProperty("extraData")] public ExtraDataResponse ExtraData { get; set; }
-    [JsonProperty("parent")] public LevelParent Parent { get; set; }
+    [JsonProperty("parent")] public LevelParentResponse ParentResponse { get; set; }
     [JsonProperty("creationTime")] public long CreationDate { get; set; }
 }

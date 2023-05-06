@@ -5,17 +5,29 @@ namespace SoundShapesServer.Responses.Game.Users;
 
 public class UserResponse
 {
-    public UserResponse(GameUser user)
+    public UserResponse(GameUser? user)
     {
-        Id = IdFormatter.FormatUserId(user.Id);
-        DisplayName = user.Username;
-        Metadata = new UserMetadataResponse(user);
+        if (user == null)
+        {
+            Type = GameContentType.alias.ToString();
+        }
+        
+        Id = IdFormatter.FormatUserId(user?.Id ?? "");
+        DisplayName = user?.Username ?? "";
+        Metadata = user != null ? new UserMetadataResponse(user) : new UserMetadataResponse();
+    }
+
+    public UserResponse()
+    {
+        Id = "";
+        DisplayName = "";
+        Metadata = new UserMetadataResponse();
     }
 
     [JsonProperty("id")] public string Id { get; set; }
-    [JsonProperty("type")] public string Type { get; } = GameContentType.identity.ToString();
+    [JsonProperty("type")] public string Type { get; set; } = GameContentType.identity.ToString();
 
-    [JsonProperty("displayName", NullValueHandling=NullValueHandling.Ignore)] public string DisplayName { get; set; }
+    [JsonProperty("displayName")] public string DisplayName { get; set; }
 
     [JsonProperty("metadata")] public UserMetadataResponse Metadata { get; set; }
 }

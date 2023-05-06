@@ -14,6 +14,11 @@ public class UserMetadataResponse
         LikedLevelsCount = user.LikedLevels.Count();
     }
 
+    public UserMetadataResponse()
+    {
+        DisplayName = "";
+    }
+
     [JsonProperty("displayName")] public string DisplayName { get; set; }
     [JsonProperty("follows_by_ever_count")] public int FollowingCount { get; set; }
     [JsonProperty("follows_of_ever_count")] public int FollowersCount { get; }

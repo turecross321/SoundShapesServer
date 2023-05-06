@@ -1,6 +1,6 @@
 using Realms;
 
-namespace SoundShapesServer.Types;
+namespace SoundShapesServer.Types.RecentActivity;
 
 public class NewsEntry : RealmObject
 {
@@ -14,7 +14,7 @@ public class NewsEntry : RealmObject
     public NewsEntry() {}
     #pragma warning restore CS8618
 
-    public string Id { get; set; } = "";
+    [PrimaryKey] [Required] public string Id { get; set; } = "";
     public DateTimeOffset Date { get; set; }
     public GameUser Author { get; set; }
     public string Language { get; set; } = "global";

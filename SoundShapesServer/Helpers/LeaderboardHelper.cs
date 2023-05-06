@@ -124,15 +124,21 @@ public static class LeaderboardHelper
     }
 
     public static IQueryable<LeaderboardEntry> OrderEntries(IQueryable<LeaderboardEntry> entries,
-        LeaderboardOrderType order)
+        LeaderboardOrderType order, bool descending)
     {
-        return order switch
+        IQueryable<LeaderboardEntry> response = entries;
+
+        response = order switch
         {
-            LeaderboardOrderType.Score => entries.OrderBy(e => e.Score),
-            LeaderboardOrderType.PlayTime => entries.OrderBy(e => e.PlayTime),
-            LeaderboardOrderType.TokenCount => entries.OrderBy(e => e.Tokens),
-            LeaderboardOrderType.Date => entries.OrderBy(e => e.Date),
-            _ => OrderEntries(entries, order)
+            LeaderboardOrderType.Score => response.OrderBy(e => e.Score),
+            LeaderboardOrderType.PlayTime => response.OrderBy(e => e.PlayTime),
+            LeaderboardOrderType.TokenCount => response.OrderBy(e => e.Tokens),
+            LeaderboardOrderType.Date => response.OrderBy(e => e.Date),
+            _ => OrderEntries(response, order, descending)
         };
+
+        if (descending) response = response.AsEnumerable().Reverse().AsQueryable();
+
+        return response;
     }
 }

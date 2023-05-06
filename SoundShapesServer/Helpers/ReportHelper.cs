@@ -20,4 +20,9 @@ public static class ReportHelper
 
         return response;
     }
+
+    public static IQueryable<Report> OrderReports(IQueryable<Report> reports, bool descending)
+    {
+        return descending ? reports.AsEnumerable().Reverse().AsQueryable() : reports;
+    }
 }

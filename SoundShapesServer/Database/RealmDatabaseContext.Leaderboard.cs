@@ -1,12 +1,13 @@
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.RecentActivity;
 
 namespace SoundShapesServer.Database;
 
 public partial class RealmDatabaseContext
 {
-    public bool SubmitScore(LeaderboardSubmissionRequest request, GameUser user, string levelId)
+    public void SubmitScore(LeaderboardSubmissionRequest request, GameUser user, string levelId)
     {
         LeaderboardEntry entry = new (GenerateGuid(), user, levelId, request);
 
@@ -14,8 +15,8 @@ public partial class RealmDatabaseContext
         {
             _realm.Add(entry);
         });
-
-        return true;
+        
+        CreateEvent(user, EventType.ScoreSubmission, null, null, entry);
     }
 
     public IQueryable<LeaderboardEntry> GetLeaderboardEntries()
@@ -24,6 +25,7 @@ public partial class RealmDatabaseContext
     }
 
     public IQueryable<LeaderboardEntry> GetLeaderboardEntriesOnLevel(string levelId)
+    // Leaderboard Entries use ids instead of levels, so they support campaign levels too
     {
         return _realm.All<LeaderboardEntry>()            
             .AsEnumerable()

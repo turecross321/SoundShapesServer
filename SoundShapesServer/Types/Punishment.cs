@@ -21,7 +21,8 @@ public class Punishment : RealmObject
     public Punishment() {}
     #pragma warning restore CS8618
 
-    public string Id { get; init; }
+        [PrimaryKey]
+    [Required] public string Id { get; init; }
     public GameUser User { get; set; }
     public int PunishmentType { get; set; }
     public string Reason { get; set; }

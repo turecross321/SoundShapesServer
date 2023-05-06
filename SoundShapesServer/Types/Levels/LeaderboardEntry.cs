@@ -24,7 +24,8 @@ public class LeaderboardEntry : RealmObject
     public LeaderboardEntry() { }
     #pragma warning restore CS8618
 
-    public string Id { get; set; }
+    [PrimaryKey]
+    [Required] public string Id { get; set; }
     public GameUser User { get; set; }
     public string LevelId { get; set; }
     public long Score { get; set; }

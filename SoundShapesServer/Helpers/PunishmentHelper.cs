@@ -38,4 +38,9 @@ public static class PunishmentHelper
 
         return response;
     }
+
+    public static IQueryable<Punishment> OrderPunishments(IQueryable<Punishment> punishments, bool descending)
+    {
+        return descending ? punishments.AsEnumerable().Reverse().AsQueryable() : punishments;
+    }
 }

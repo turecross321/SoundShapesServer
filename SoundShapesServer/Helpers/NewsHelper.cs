@@ -1,17 +1,24 @@
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.RecentActivity;
 
 namespace SoundShapesServer.Helpers;
 
 public static class NewsHelper
 {
-    public static IQueryable<NewsEntry> OrderNews(IQueryable<NewsEntry> entries, NewsOrderType orderType)
+    public static IQueryable<NewsEntry> OrderNews(IQueryable<NewsEntry> entries, NewsOrderType orderType, bool descending)
     {
-        return orderType switch
+        IQueryable<NewsEntry> response = entries;
+        
+        response = orderType switch
         {
-            NewsOrderType.Date => entries.OrderBy(e=>e.Date),
-            NewsOrderType.Length => entries.OrderBy(e=>e.FullText.Length),
-            _ => OrderNews(entries, NewsOrderType.Date)
+            NewsOrderType.Date => response.OrderBy(e=>e.Date),
+            NewsOrderType.Length => response.OrderBy(e=>e.FullText.Length),
+            _ => OrderNews(response, NewsOrderType.Date, descending)
         };
+
+        if (descending) response = response.AsEnumerable().Reverse().AsQueryable();
+
+        return response;
     }
 
     public static IQueryable<NewsEntry> FilterNews(IQueryable<NewsEntry> entries, string? language, string? byUser)

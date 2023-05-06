@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.RecentActivity;
 
 namespace SoundShapesServer.Responses.Game.RecentActivity;
 

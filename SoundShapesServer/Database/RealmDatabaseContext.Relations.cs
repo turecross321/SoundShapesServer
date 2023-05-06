@@ -1,6 +1,7 @@
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.RecentActivity;
 
 namespace SoundShapesServer.Database;
 
@@ -61,6 +62,8 @@ public partial class RealmDatabaseContext
             _realm.Add(relation);
         });
 
+        CreateEvent(follower, EventType.Follow, recipient);
+        
         return true;
     }
     
@@ -94,6 +97,8 @@ public partial class RealmDatabaseContext
         {
             _realm.Add(relation);
         });
+        
+        CreateEvent(liker, EventType.Like, null, level);
 
         return true;
     }

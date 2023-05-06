@@ -5,6 +5,7 @@ using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.RecentActivity;
 using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Database;
@@ -21,6 +22,8 @@ public partial class RealmDatabaseContext
             _realm.Add(level);
         });
 
+        CreateEvent(user, EventType.Publish, null, level);
+        
         return level;
     }
 
@@ -67,6 +70,7 @@ public partial class RealmDatabaseContext
             _realm.RemoveRange(level.DailyLevels);
             _realm.RemoveRange(level.Likes);
             _realm.RemoveRange(_realm.All<LeaderboardEntry>().Where(e=>e.LevelId == level.Id));
+            _realm.RemoveRange(level.Events);
             _realm.Remove(level);
         });
     }

@@ -1,9 +1,11 @@
 using Bunkum.HttpServer.Database;
 using Realms;
 using SoundShapesServer.Authentication;
+using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.RecentActivity;
 using SoundShapesServer.Types.Relations;
 
 namespace SoundShapesServer.Database;
@@ -24,14 +26,14 @@ public class RealmDatabaseProvider : IDatabaseProvider<RealmDatabaseContext>
                 typeof(GameUser),
                 typeof(IpAuthorization),
                 typeof(GameSession),
-                typeof(LevelParent),
                 typeof(GameLevel),
                 typeof(NewsEntry),
                 typeof(LeaderboardEntry),
                 typeof(DailyLevel),
                 typeof(GameAlbum),
                 typeof(Report),
-                typeof(Punishment)
+                typeof(Punishment),
+                typeof(GameEvent)
             },
             MigrationCallback = (_, _) =>
             {
