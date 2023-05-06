@@ -94,18 +94,19 @@ public static class LevelHelper
 
         response = orderType switch
         {
-            LevelOrderType.CreationDate => response.OrderBy(l => l.CreationDate).AsQueryable(),
-            LevelOrderType.ModificationDate => response.OrderBy(l => l.ModificationDate).AsQueryable(),
-            LevelOrderType.Plays => response.OrderBy(l => l.Plays).AsQueryable(),
-            LevelOrderType.UniquePlays => response.OrderBy(l => l.UniquePlays.Count).AsQueryable(),
-            LevelOrderType.FileSize => response.OrderBy(l => l.FileSize).AsQueryable(),
-            LevelOrderType.Difficulty => response.OrderBy(l => l.Difficulty).AsQueryable(),
+            LevelOrderType.CreationDate => response.AsEnumerable().OrderBy(l => l.CreationDate).AsQueryable(),
+            LevelOrderType.ModificationDate => response.AsEnumerable().OrderBy(l => l.ModificationDate).AsQueryable(),
+            LevelOrderType.Plays => response.AsEnumerable().OrderBy(l => l.Plays).AsQueryable(),
+            LevelOrderType.UniquePlays => response.AsEnumerable().OrderBy(l => l.UniquePlays.Count).AsQueryable(),
+            LevelOrderType.FileSize => response.AsEnumerable().OrderBy(l => l.FileSize).AsQueryable(),
+            LevelOrderType.Difficulty => response.AsEnumerable().OrderBy(l => l.Difficulty).AsQueryable(),
             LevelOrderType.Relevance => response
+                .AsEnumerable()
                 .OrderBy(l=> l.UniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.CreationDate).TotalDays * 0.5)
                 .AsQueryable(),
             LevelOrderType.Random => RandomizeLevelOrder(response.AsQueryable()),
             LevelOrderType.Likes => response.AsEnumerable().OrderBy(l=>l.Likes.Count()).AsQueryable(),
-            LevelOrderType.DoNotOrder => response.AsQueryable(),
+            LevelOrderType.DoNotOrder => response,
             _ => OrderLevels(response, LevelOrderType.CreationDate, descending)
         };
 
