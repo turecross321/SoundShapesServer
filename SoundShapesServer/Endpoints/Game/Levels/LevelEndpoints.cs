@@ -64,6 +64,7 @@ public class LevelEndpoints : EndpointGroup
             "random" => LevelOrderType.Random,
             "fileSize" => LevelOrderType.FileSize,
             "difficulty" => LevelOrderType.Difficulty,
+            "likes" => LevelOrderType.Likes,
             _ => LevelOrderType.CreationDate
         };
 

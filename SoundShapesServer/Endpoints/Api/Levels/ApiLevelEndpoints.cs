@@ -51,6 +51,7 @@ public class ApiLevelEndpoints: EndpointGroup
             "modificationDate" => LevelOrderType.ModificationDate,
             "plays" => LevelOrderType.Plays,
             "uniquePlays" => LevelOrderType.UniquePlays,
+            "likes" => LevelOrderType.Likes,
             "fileSize" => LevelOrderType.FileSize,
             "difficulty" => LevelOrderType.Difficulty,
             "relevance" => LevelOrderType.Relevance,

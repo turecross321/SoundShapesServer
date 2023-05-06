@@ -527,6 +527,7 @@ o7
 | modificationDate   |
 | plays              |
 | uniquePlays        |
+| likes              |
 | fileSize           |
 | difficulty         |
 | relevance          |

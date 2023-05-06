@@ -28,8 +28,11 @@ public class FeaturedEndpoints : EndpointGroup
             panelDescription: "Check here for the hardest levels, sorted by difficulty!", imageUrl: "",
             panelTitle: "Hard Levels"),
         
-        new CommunityTab(buttonLabel: "Top Levels", query: "all&orderBy=uniquePlays",
-            panelDescription: "Check here for the most played levels!", imageUrl: "", panelTitle: "Top Levels")
+        new CommunityTab(buttonLabel: "Most Played", query: "all&orderBy=uniquePlays",
+            panelDescription: "Check here for the most played levels!", imageUrl: "", panelTitle: "Most Played"),
+        
+        new CommunityTab(buttonLabel: "Top Rated", query: "all&orderBy=likes",
+        panelDescription: "Check here for the most liked levels!", imageUrl: "", panelTitle: "Top Rated")
     };
     
     [GameEndpoint("global/featured/~metadata:*.get")]

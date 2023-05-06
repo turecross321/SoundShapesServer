@@ -6,6 +6,7 @@ public enum LevelOrderType
     ModificationDate,
     Plays,
     UniquePlays,
+    Likes,
     FileSize,
     Difficulty,
     Relevance,

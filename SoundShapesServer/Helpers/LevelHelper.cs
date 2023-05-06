@@ -104,6 +104,7 @@ public static class LevelHelper
                 .OrderBy(l=> l.UniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.CreationDate).TotalDays * 0.5)
                 .AsQueryable(),
             LevelOrderType.Random => RandomizeLevelOrder(response.AsQueryable()),
+            LevelOrderType.Likes => response.OrderBy(l=>l.Likes.Count()),
             LevelOrderType.DoNotOrder => response.AsQueryable(),
             _ => OrderLevels(response, LevelOrderType.CreationDate, descending)
         };
