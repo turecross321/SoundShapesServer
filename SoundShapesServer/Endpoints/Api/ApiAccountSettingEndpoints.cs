@@ -107,10 +107,8 @@ public class ApiAccountSettingEndpoints : EndpointGroup
                 ContentType.Plaintext, HttpStatusCode.BadRequest);
 
         string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(body.NewPasswordSha512, ApiAuthenticationEndpoints.WorkFactor);
-        
-        database.SetUserPassword(user, passwordBcrypt, session);
 
-        return HttpStatusCode.Created;
+        return database.SetUserPassword(user, passwordBcrypt, session) ? HttpStatusCode.Created : HttpStatusCode.InternalServerError;
     }
 
     [ApiEndpoint("account/sendRemovalSession", Method.Post)]

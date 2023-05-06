@@ -36,7 +36,7 @@ public partial class RealmDatabaseContext
         });
     }
     
-    public void SetUserPassword(GameUser user, string password, GameSession? session = null)
+    public bool SetUserPassword(GameUser user, string password, GameSession? session = null)
     {
         _realm.Write(() =>
         {
@@ -49,6 +49,7 @@ public partial class RealmDatabaseContext
         CreateEvent(user, EventType.AccountRegistration, user);
 
         _realm.Refresh();
+        return true;
     }
 
     public void SetUsername(GameUser user, string username)
