@@ -23,5 +23,6 @@ server.AddRateLimitService();
 server.AddService<EmailService>();
 
 server.AddMiddleware<CrossOriginMiddleware>();
+server.AddMiddleware<FileSizeMiddleware>();
 
 await server.StartAndBlockAsync();
