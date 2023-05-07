@@ -11,7 +11,7 @@ public class ApiUserEndpoints : EndpointGroup
 {
     [ApiEndpoint("users/{id}")]
     [Authentication(false)]
-    public ApiUserResponse? GetUser(RequestContext context, RealmDatabaseContext database, string id)
+    public ApiUserResponse? GetUser(RequestContext context, GameDatabaseContext database, string id)
     {
         GameUser? userToCheck = database.GetUserWithId(id);
         return userToCheck == null ? null : new ApiUserResponse(userToCheck);
@@ -19,7 +19,7 @@ public class ApiUserEndpoints : EndpointGroup
 
     [ApiEndpoint("users")]
     [Authentication(false)]
-    public ApiUsersWrapper? GetUsers(RequestContext context, RealmDatabaseContext database)
+    public ApiUsersWrapper? GetUsers(RequestContext context, GameDatabaseContext database)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");

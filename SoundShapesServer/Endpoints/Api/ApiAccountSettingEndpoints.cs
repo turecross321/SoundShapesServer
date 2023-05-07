@@ -21,7 +21,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     private const string Sha512Pattern = "^[a-f0-9]{128}$";
 
     [ApiEndpoint("account/setUsername", Method.Post)]
-    public Response SetUsername(RequestContext context, RealmDatabaseContext database, GameUser user, ApiSetUsernameRequest body)
+    public Response SetUsername(RequestContext context, GameDatabaseContext database, GameUser user, ApiSetUsernameRequest body)
     {
         if (!UserHelper.IsUsernameLegal(body.NewUsername)) return new Response("Not a valid username.", ContentType.Plaintext, HttpStatusCode.BadRequest);
         
@@ -37,7 +37,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("account/sendEmailSession", Method.Post)]
-    public Response SendEmailSession(RequestContext context, RealmDatabaseContext database, GameUser user, ApiEmailSessionRequest body)
+    public Response SendEmailSession(RequestContext context, GameDatabaseContext database, GameUser user, ApiEmailSessionRequest body)
     {
         string emailSessionId = GenerateEmailSessionId(database);
         GameSession emailSession = database.CreateSession(context, user, SessionType.SetEmail, 600, emailSessionId); // 10 minutes
@@ -53,7 +53,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     }
     
     [ApiEndpoint("account/setEmail", Method.Post)]
-    public Response SetUserEmail(RequestContext context, RealmDatabaseContext database, ApiSetEmailRequest body, GameSession session)
+    public Response SetUserEmail(RequestContext context, GameDatabaseContext database, ApiSetEmailRequest body, GameSession session)
     {
         if (session.User == null) return HttpStatusCode.NotFound;
         GameUser user = session.User;
@@ -78,7 +78,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
 
     [ApiEndpoint("account/sendPasswordSession", Method.Post)]
     [Authentication(false)]
-    public Response SendPasswordSession(RequestContext context, RealmDatabaseContext database, ApiPasswordSessionRequest body)
+    public Response SendPasswordSession(RequestContext context, GameDatabaseContext database, ApiPasswordSessionRequest body)
     {
         GameUser? user = database.GetUserWithEmail(body.Email);
         if (user == null) return HttpStatusCode.Created; // trol
@@ -97,7 +97,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     }
     
     [ApiEndpoint("account/setPassword", Method.Post)]
-    public Response SetUserPassword(RequestContext context, RealmDatabaseContext database, ApiSetPasswordRequest body, GameSession session)
+    public Response SetUserPassword(RequestContext context, GameDatabaseContext database, ApiSetPasswordRequest body, GameSession session)
     {
         if (session.User == null) return HttpStatusCode.Gone;
         GameUser user = session.User;
@@ -112,7 +112,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("account/sendRemovalSession", Method.Post)]
-    public Response SendUserRemovalSession(RequestContext context, RealmDatabaseContext database, GameUser user, GameSession session)
+    public Response SendUserRemovalSession(RequestContext context, GameDatabaseContext database, GameUser user, GameSession session)
     {
         if (user.Email == null)
             return new Response(
@@ -133,7 +133,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("account/remove", Method.Post)]
-    public Response RemoveAccount(RequestContext context, RealmDatabaseContext database, GameUser user, IDataStore dataStore)
+    public Response RemoveAccount(RequestContext context, GameDatabaseContext database, GameUser user, IDataStore dataStore)
     {
         database.RemoveUser(user, dataStore);
         return new Response("o7", ContentType.Plaintext);

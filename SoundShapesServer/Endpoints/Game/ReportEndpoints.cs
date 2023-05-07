@@ -14,7 +14,7 @@ namespace SoundShapesServer.Endpoints.Game;
 public class ReportEndpoints : EndpointGroup
 {
     [GameEndpoint("~grief:*.post", Method.Post)]
-    public Response ReportLevel(RequestContext context, RealmDatabaseContext database, GameUser user, Stream body)
+    public Response ReportLevel(RequestContext context, GameDatabaseContext database, GameUser user, Stream body)
     {
         MultipartFormDataParser? parser = MultipartFormDataParser.Parse(body);
 

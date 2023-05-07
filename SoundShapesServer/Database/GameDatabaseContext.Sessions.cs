@@ -5,7 +5,7 @@ using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Database;
 
-public partial class RealmDatabaseContext
+public partial class GameDatabaseContext
 {
     private const int DefaultTokenExpirySeconds = 86400; // 1 day
     private const int SessionLimit = 3; // limit of how many sessions with of one SessionType you can have

@@ -5,7 +5,7 @@ using SoundShapesServer.Types.RecentActivity;
 
 namespace SoundShapesServer.Database;
 
-public partial class RealmDatabaseContext
+public partial class GameDatabaseContext
 {
     public void SubmitScore(LeaderboardSubmissionRequest request, GameUser user, string levelId)
     {

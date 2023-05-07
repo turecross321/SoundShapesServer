@@ -103,7 +103,7 @@ public static class LeaderboardHelper
     {
         return entries.ToList().IndexOf(entry);
     }
-    public static int GetTotalLeaderboardPlacements(RealmDatabaseContext database, GameUser user)
+    public static int GetTotalLeaderboardPlacements(GameDatabaseContext database, GameUser user)
     {
         int count = 0;
         

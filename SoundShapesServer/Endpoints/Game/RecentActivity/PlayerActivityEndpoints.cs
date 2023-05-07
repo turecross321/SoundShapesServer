@@ -19,7 +19,7 @@ public class PlayerActivityEndpoints : EndpointGroup
     };
     
     [GameEndpoint("~identity:{id}/~stream:news.page", ContentType.Json)]
-    public ActivitiesWrapper GetPlayerActivity(RequestContext context, RealmDatabaseContext database, GameUser user)
+    public ActivitiesWrapper GetPlayerActivity(RequestContext context, GameDatabaseContext database, GameUser user)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");

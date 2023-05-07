@@ -15,17 +15,17 @@ public class ApiAlbumResourceEndpoints : EndpointGroup
 {
     [ApiEndpoint("albums/{id}/thumbnail")]
     [Authentication(false)]
-    public Response GetAlbumThumbnail(RequestContext context, IDataStore dataStore, RealmDatabaseContext database,
+    public Response GetAlbumThumbnail(RequestContext context, IDataStore dataStore, GameDatabaseContext database,
         string id)
         => GetAlbumResource(dataStore, database, id, AlbumResourceType.Thumbnail);
     
     [ApiEndpoint("albums/{id}/sidePanel")]
     [Authentication(false)]
-    public Response GetAlbumSidePanel(RequestContext context, IDataStore dataStore, RealmDatabaseContext database,
+    public Response GetAlbumSidePanel(RequestContext context, IDataStore dataStore, GameDatabaseContext database,
         string id)
         => GetAlbumResource(dataStore, database, id, AlbumResourceType.SidePanel);
     
-    private Response GetAlbumResource(IDataStore dataStore, RealmDatabaseContext database, string id, AlbumResourceType resourceType)
+    private Response GetAlbumResource(IDataStore dataStore, GameDatabaseContext database, string id, AlbumResourceType resourceType)
     {
         GameAlbum? album = database.GetAlbumWithId(id);
         if (album == null) return HttpStatusCode.NotFound;

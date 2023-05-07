@@ -11,7 +11,7 @@ public class ApiAlbumEndpoints : EndpointGroup
 {
     [ApiEndpoint("albums/{id}")]
     [Authentication(false)]
-    public ApiAlbumResponse? GetAlbum(RequestContext context, RealmDatabaseContext database, string id)
+    public ApiAlbumResponse? GetAlbum(RequestContext context, GameDatabaseContext database, string id)
     {
         GameAlbum? album = database.GetAlbumWithId(id);
         return album == null ? null : new ApiAlbumResponse(album);
@@ -19,7 +19,7 @@ public class ApiAlbumEndpoints : EndpointGroup
 
     [ApiEndpoint("albums")]
     [Authentication(false)]
-    public ApiAlbumsWrapper GetAlbums(RequestContext context, RealmDatabaseContext database)
+    public ApiAlbumsWrapper GetAlbums(RequestContext context, GameDatabaseContext database)
     {
         IQueryable<GameAlbum> albums = database.GetAlbums();
         
@@ -45,7 +45,7 @@ public class ApiAlbumEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("albums/{id}/completed")]
-    public ApiAlbumCompletionResponse? GetAlbumCompletion(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    public ApiAlbumCompletionResponse? GetAlbumCompletion(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameAlbum? album = database.GetAlbumWithId(id);
         if (album == null) return null;

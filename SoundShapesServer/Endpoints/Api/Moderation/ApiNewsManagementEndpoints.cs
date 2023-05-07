@@ -17,7 +17,7 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 public class ApiNewsManagementEndpoints : EndpointGroup
 {
     [ApiEndpoint("news/create", Method.Post)]
-    public Response CreateNewsEntry(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, 
+    public Response CreateNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
         GameUser user, ApiCreateNewsEntryRequest body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
@@ -27,7 +27,7 @@ public class ApiNewsManagementEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("news/{id}/edit", Method.Post)]
-    public Response EditNewsEntry(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, 
+    public Response EditNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
         GameUser user, ApiCreateNewsEntryRequest body, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
@@ -40,7 +40,7 @@ public class ApiNewsManagementEndpoints : EndpointGroup
     }
     
     [ApiEndpoint("news/{id}/setImage", Method.Post)]
-    public Response SetNewsAssets(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, string id, Stream body)
+    public Response SetNewsAssets(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id, Stream body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
@@ -62,7 +62,7 @@ public class ApiNewsManagementEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("news/{id}/remove", Method.Post)]
-    public Response DeleteNewsEntry(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, string id)
+    public Response DeleteNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 

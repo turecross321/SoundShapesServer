@@ -20,7 +20,7 @@ public class FriendsEndpoints : EndpointGroup
 
     [Endpoint("/identity/person/{id}/data/psn/friends-list", ContentType.Json, Method.Post)]
     [AllowEmptyBody]    
-    public Response UploadFriends(RequestContext context, RealmDatabaseContext database, string? body, string id, GameUser user)
+    public Response UploadFriends(RequestContext context, GameDatabaseContext database, string? body, string id, GameUser user)
     {
         return new Response(HttpStatusCode.OK);
     }

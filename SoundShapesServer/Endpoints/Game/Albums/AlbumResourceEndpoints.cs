@@ -25,7 +25,7 @@ public class AlbumResourceEndpoints : EndpointGroup
     [GameEndpoint("~album:{albumId}/~content:{resource}/data.get")]
     [Authentication(false)]
     public Response GetAlbumResource
-        (RequestContext context, IDataStore dataStore, RealmDatabaseContext database, string albumId, string resource)
+        (RequestContext context, IDataStore dataStore, GameDatabaseContext database, string albumId, string resource)
     {
         if (database.GetAlbumWithId(albumId) == null) return HttpStatusCode.NotFound;
 

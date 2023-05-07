@@ -17,7 +17,7 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 public class ApiDailyLevelModificationEndpoint : EndpointGroup
 {
     [ApiEndpoint("daily")]
-    public ApiDailyLevelsWrapper GetDailyLevelObjects(RequestContext context, RealmDatabaseContext database, GameUser user)
+    public ApiDailyLevelsWrapper GetDailyLevelObjects(RequestContext context, GameDatabaseContext database, GameUser user)
     {
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
@@ -38,7 +38,7 @@ public class ApiDailyLevelModificationEndpoint : EndpointGroup
     }
     
     [ApiEndpoint("daily/create", Method.Post)]
-    public Response AddDailyLevel(RequestContext context, RealmDatabaseContext database, GameUser user, ApiAddDailyLevelRequest body)
+    public Response AddDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiAddDailyLevelRequest body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
@@ -50,7 +50,7 @@ public class ApiDailyLevelModificationEndpoint : EndpointGroup
     }
     
     [ApiEndpoint("daily/{id}/remove", Method.Post)]
-    public Response RemoveDailyLevel(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    public Response RemoveDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 

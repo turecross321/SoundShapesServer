@@ -14,7 +14,7 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 public class ApiReportEndpoints : EndpointGroup
 {
     [ApiEndpoint("reports/{id}/remove", Method.Post)]
-    public Response RemoveReport(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    public Response RemoveReport(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
 
@@ -26,7 +26,7 @@ public class ApiReportEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("reports/{id}")]
-    public Response GetReport(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    public Response GetReport(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
 
@@ -38,7 +38,7 @@ public class ApiReportEndpoints : EndpointGroup
 
     [ApiEndpoint("reports")]
     [NullStatusCode(HttpStatusCode.Forbidden)]
-    public ApiReportsWrapper? GetReports(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    public ApiReportsWrapper? GetReports(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         if (PermissionHelper.IsUserModeratorOrMore(user) == false) return null;
         

@@ -11,7 +11,7 @@ namespace SoundShapesServer.Endpoints.Game.Profiles;
 public class ProfileEndpoints : EndpointGroup
 {
     [GameEndpoint("~identity:{id}/~metadata:*.get", ContentType.Json)]
-    public UserMetadataResponse? ViewProfile(RequestContext context, string id, RealmDatabaseContext database)
+    public UserMetadataResponse? ViewProfile(RequestContext context, string id, GameDatabaseContext database)
     {
         GameUser? user = database.GetUserWithId(id);
 
@@ -19,7 +19,7 @@ public class ProfileEndpoints : EndpointGroup
     }
 
     [GameEndpoint("~identity:{id}/~follow:*.page", ContentType.Json)]
-    public FollowingUsersWrapper? ViewFollowingList(RequestContext context, string id, RealmDatabaseContext database)
+    public FollowingUsersWrapper? ViewFollowingList(RequestContext context, string id, GameDatabaseContext database)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
@@ -32,7 +32,7 @@ public class ProfileEndpoints : EndpointGroup
     }
 
     [GameEndpoint("~identity:{id}/~followers.page", ContentType.Json)]
-    public FollowingUsersWrapper? ViewFollowersList(RequestContext context, string id, RealmDatabaseContext database)
+    public FollowingUsersWrapper? ViewFollowersList(RequestContext context, string id, GameDatabaseContext database)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");

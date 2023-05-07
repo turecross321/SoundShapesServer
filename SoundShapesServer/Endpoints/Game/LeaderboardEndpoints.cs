@@ -17,7 +17,7 @@ public class LeaderboardEndpoints : EndpointGroup
 {
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.post", Method.Post)]
     [GameEndpoint("~identity:{userId}/~record:%2F~level%3A{arguments}", Method.Post)]
-    public Response SubmitScore(RequestContext context, RealmDatabaseContext database, GameUser user, string userId, string? arguments, string body, string? levelId)
+    public Response SubmitScore(RequestContext context, GameDatabaseContext database, GameUser user, string userId, string? arguments, string body, string? levelId)
     {
         if (arguments != null)
         {
@@ -50,7 +50,7 @@ public class LeaderboardEndpoints : EndpointGroup
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.page", ContentType.Json)] // campaign levels
     [GameEndpoint("~level:{levelId}/~leaderboard.page", ContentType.Json)] // community levels
     [GameEndpoint("{levelId}/~leaderboard.page", ContentType.Json)] // recent activity community levels 
-    public LeaderboardEntriesWrapper GetLeaderboard(RequestContext context, RealmDatabaseContext database, string levelId)
+    public LeaderboardEntriesWrapper GetLeaderboard(RequestContext context, GameDatabaseContext database, string levelId)
     {
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
@@ -62,7 +62,7 @@ public class LeaderboardEndpoints : EndpointGroup
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near", ContentType.Json)] // campaign levels
     [GameEndpoint("~level:{levelId}/~leaderboard.near", ContentType.Json)] // community levels
     [GameEndpoint("{levelId}/~leaderboard.near", ContentType.Json)] // recent activity community levels 
-    public LeaderboardEntryResponse[]? GetLeaderboardNearPlayer(RequestContext context, RealmDatabaseContext database, GameUser user, string levelId)
+    public LeaderboardEntryResponse[]? GetLeaderboardNearPlayer(RequestContext context, GameDatabaseContext database, GameUser user, string levelId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return null;

@@ -12,7 +12,7 @@ public class ApiLeaderboardEndpoints : EndpointGroup
 {
     [ApiEndpoint("leaderboard")]
     [Authentication(false)]
-    public ApiLeaderboardEntryWrapper GetLeaderboard(RequestContext context, RealmDatabaseContext database, string id)
+    public ApiLeaderboardEntryWrapper GetLeaderboard(RequestContext context, GameDatabaseContext database, string id)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");

@@ -11,7 +11,7 @@ using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Database;
 
-public partial class RealmDatabaseContext
+public partial class GameDatabaseContext
 {
     public GameLevel CreateLevel(PublishLevelRequest request, GameUser user)
     {

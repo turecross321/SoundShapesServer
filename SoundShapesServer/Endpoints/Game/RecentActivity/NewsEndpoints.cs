@@ -13,7 +13,7 @@ namespace SoundShapesServer.Endpoints.Game.RecentActivity;
 public class NewsEndpoints : EndpointGroup
 {
     [GameEndpoint("global/news/~metadata:*.get", ContentType.Json)]
-    public NewsResponse GlobalNews(RequestContext context, RealmDatabaseContext database, GameSession session)
+    public NewsResponse GlobalNews(RequestContext context, GameDatabaseContext database, GameSession session)
     {
         IQueryable<NewsEntry> entries = database.GetNews();
         IQueryable<NewsEntry> filteredNews = NewsHelper.FilterNews(entries, "global", null);
@@ -26,7 +26,7 @@ public class NewsEndpoints : EndpointGroup
 
     
     [GameEndpoint("global/news/{language}/~metadata:*.get", ContentType.Json)]
-    public NewsResponse? TranslatedNews(RequestContext context, GameSession session, RealmDatabaseContext database, string language)
+    public NewsResponse? TranslatedNews(RequestContext context, GameSession session, GameDatabaseContext database, string language)
     {
         IQueryable<NewsEntry> entries = database.GetNews();
         IQueryable<NewsEntry> filteredNews = NewsHelper.FilterNews(entries, language, null);

@@ -12,7 +12,7 @@ namespace SoundShapesServer.Endpoints.Api.Users;
 public class ApiUserInteractionEndpoints : EndpointGroup
 {
     [ApiEndpoint("users/{id}/following")]
-    public ApiIsUserFollowedResponse? CheckIfFollowingUser(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    public ApiIsUserFollowedResponse? CheckIfFollowingUser(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameUser? recipient = database.GetUserWithId(id);
         if (recipient == null) return null;
@@ -24,7 +24,7 @@ public class ApiUserInteractionEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("users/{id}/follow", Method.Post)]
-    public Response FollowUser(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    public Response FollowUser(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameUser? recipient = database.GetUserWithId(id);
         if (recipient == null) return HttpStatusCode.NotFound;
@@ -36,7 +36,7 @@ public class ApiUserInteractionEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("users/{id}/unFollow", Method.Post)]
-    public Response UnFollowUser(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    public Response UnFollowUser(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameUser? recipient = database.GetUserWithId(id);
         if (recipient == null) return HttpStatusCode.NotFound;

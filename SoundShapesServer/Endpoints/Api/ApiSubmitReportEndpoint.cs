@@ -13,7 +13,7 @@ namespace SoundShapesServer.Endpoints.Api;
 public class ApiSubmitReportEndpoint : EndpointGroup
 {
     [ApiEndpoint("reports/create", Method.Post)]
-    public Response ReportContent(RequestContext context, RealmDatabaseContext database, GameUser user, ApiReportRequest body)
+    public Response ReportContent(RequestContext context, GameDatabaseContext database, GameUser user, ApiReportRequest body)
     {
         GameLevel? level = database.GetLevelWithId(body.ContentId);
         GameUser? userToReport = database.GetUserWithId(body.ContentId);

@@ -11,7 +11,7 @@ public class ApiNewsEndpoints : EndpointGroup
 {
     [ApiEndpoint("news")]
     [Authentication(false)]
-    public ApiNewsWrapper News(RequestContext context, RealmDatabaseContext database)
+    public ApiNewsWrapper News(RequestContext context, GameDatabaseContext database)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");

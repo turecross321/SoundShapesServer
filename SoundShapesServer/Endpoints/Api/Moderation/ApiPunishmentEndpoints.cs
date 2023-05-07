@@ -16,7 +16,7 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 public class ApiPunishmentEndpoints : EndpointGroup
 {
     [ApiEndpoint("punishments/create", Method.Post)]
-    public Response PunishUser(RequestContext context, RealmDatabaseContext database, GameUser user, ApiPunishRequest body)
+    public Response PunishUser(RequestContext context, GameDatabaseContext database, GameUser user, ApiPunishRequest body)
     {
         if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
 
@@ -30,7 +30,7 @@ public class ApiPunishmentEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("punishments/{id}/edit", Method.Post)]
-    public Response EditPunishment(RequestContext context, RealmDatabaseContext database, GameUser user, string id,
+    public Response EditPunishment(RequestContext context, GameDatabaseContext database, GameUser user, string id,
         ApiPunishRequest body)
     {
         if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
@@ -48,7 +48,7 @@ public class ApiPunishmentEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("punishments/{id}/revoke", Method.Post)]
-    public Response RevokePunishment(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    public Response RevokePunishment(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
 
@@ -61,7 +61,7 @@ public class ApiPunishmentEndpoints : EndpointGroup
     
     [ApiEndpoint("punishments")]
     [NullStatusCode(HttpStatusCode.Forbidden)]
-    public ApiPunishmentsWrapper? GetPunishments(RequestContext context, RealmDatabaseContext database, GameUser user)
+    public ApiPunishmentsWrapper? GetPunishments(RequestContext context, GameDatabaseContext database, GameUser user)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return null;
         

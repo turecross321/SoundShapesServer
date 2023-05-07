@@ -14,7 +14,7 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 public class ApiManageUserEndpoints : EndpointGroup
 {
     [ApiEndpoint("users/{id}/remove", Method.Post)]
-    public Response RemoveUser(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, string id)
+    public Response RemoveUser(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
@@ -28,7 +28,7 @@ public class ApiManageUserEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("users/{id}/setPermissions", Method.Post)]
-    public Response SetUserPermissions(RequestContext context, RealmDatabaseContext database, GameUser user, string id, ApiSetUserPermissionsRequest body)
+    public Response SetUserPermissions(RequestContext context, GameDatabaseContext database, GameUser user, string id, ApiSetUserPermissionsRequest body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 

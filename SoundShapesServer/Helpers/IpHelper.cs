@@ -7,7 +7,7 @@ namespace SoundShapesServer.Helpers;
 
 public static class IpHelper
 {
-    public static IpAuthorization GetIpAuthorizationFromRequestContext(RequestContext context, RealmDatabaseContext database, GameUser user, SessionType sessionType)
+    public static IpAuthorization GetIpAuthorizationFromRequestContext(RequestContext context, GameDatabaseContext database, GameUser user, SessionType sessionType)
     {
         string ipAddress = ((IPEndPoint)context.RemoteEndpoint).Address.ToString();
         IpAuthorization ip = database.GetIpFromAddress(user, ipAddress, sessionType);

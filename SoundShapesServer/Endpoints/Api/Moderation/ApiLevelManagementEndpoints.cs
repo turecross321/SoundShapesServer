@@ -18,7 +18,7 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 public class ApiLevelManagementEndpoints : EndpointGroup
 {
     [ApiEndpoint("levels/create", Method.Post)]
-    public Response PublishLevel(RequestContext context, RealmDatabaseContext database, GameUser user, ApiPublishLevelRequest body)
+    public Response PublishLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiPublishLevelRequest body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
 
@@ -30,23 +30,23 @@ public class ApiLevelManagementEndpoints : EndpointGroup
 
     [ApiEndpoint("levels/{id}/setLevel", Method.Post)]
     public Response UploadLevelFile
-    (RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, Stream body,
+    (RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, Stream body,
         string id)
         => UploadLevelResources(database, dataStore, user, body, id, FileType.Level);
     
     [ApiEndpoint("levels/{id}/setSound", Method.Post)]
     public Response UploadSoundFile
-    (RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, Stream body,
+    (RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, Stream body,
         string id)
         => UploadLevelResources(database, dataStore, user, body, id, FileType.Sound);
     
     [ApiEndpoint("levels/{id}/setThumbnail", Method.Post)]
     public Response UploadThumbnail
-    (RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, Stream body,
+    (RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, Stream body,
         string id)
         => UploadLevelResources(database, dataStore, user, body, id, FileType.Image);
 
-    private Response UploadLevelResources(RealmDatabaseContext database, IDataStore dataStore, GameUser user,
+    private Response UploadLevelResources(GameDatabaseContext database, IDataStore dataStore, GameUser user,
         Stream body, string id, FileType fileType)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;

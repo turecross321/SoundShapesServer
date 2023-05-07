@@ -13,7 +13,7 @@ namespace SoundShapesServer.Endpoints.Api;
 public class ApiIpAuthorization : EndpointGroup
 {
     [ApiEndpoint("ip/authorize", Method.Post)]
-    public Response AuthorizeIpAddress(RequestContext context, RealmDatabaseContext database, ApiAuthorizeIpRequest body, GameUser user)
+    public Response AuthorizeIpAddress(RequestContext context, GameDatabaseContext database, ApiAuthorizeIpRequest body, GameUser user)
     {
         IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress, (int)SessionType.Game);
 
@@ -23,7 +23,7 @@ public class ApiIpAuthorization : EndpointGroup
         return HttpStatusCode.Conflict;
     }
     [ApiEndpoint("ip/unAuthorize", Method.Post)]
-    public Response UnAuthorizeIpAddress(RequestContext context, RealmDatabaseContext database, ApiUnAuthorizeIpRequest body, GameUser user)
+    public Response UnAuthorizeIpAddress(RequestContext context, GameDatabaseContext database, ApiUnAuthorizeIpRequest body, GameUser user)
     {
         IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress, (int)SessionType.Game);
 
@@ -32,7 +32,7 @@ public class ApiIpAuthorization : EndpointGroup
     }
 
     [ApiEndpoint("ip/unAuthorized")]
-    public ApiUnAuthorizedIpResponseWrapper UnAuthorizedIps(RequestContext context, RealmDatabaseContext database, GameUser user)
+    public ApiUnAuthorizedIpResponseWrapper UnAuthorizedIps(RequestContext context, GameDatabaseContext database, GameUser user)
     {
         ApiUnAuthorizedIpResponse[] addresses = database.GetUnAuthorizedIps(user, SessionType.Game);
 
@@ -40,7 +40,7 @@ public class ApiIpAuthorization : EndpointGroup
     }
 
     [ApiEndpoint("ip/authorized")]
-    public ApiAuthorizedIpResponseWrapper AuthorizedIps(RequestContext context, RealmDatabaseContext database, GameUser user)
+    public ApiAuthorizedIpResponseWrapper AuthorizedIps(RequestContext context, GameDatabaseContext database, GameUser user)
     {
         ApiAuthorizedIpResponse[] addresses = database.GetAuthorizedIps(user, SessionType.Game);
 

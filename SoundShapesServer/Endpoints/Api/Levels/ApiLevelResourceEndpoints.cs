@@ -16,7 +16,7 @@ public class ApiLevelResourceEndpoints : EndpointGroup
 {
     [ApiEndpoint("levels/{levelId}/thumbnail")]
     [Authentication(false)]
-    public Response LevelThumbnail(RequestContext context, IDataStore dataStore, RealmDatabaseContext database, string levelId)
+    public Response LevelThumbnail(RequestContext context, IDataStore dataStore, GameDatabaseContext database, string levelId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;

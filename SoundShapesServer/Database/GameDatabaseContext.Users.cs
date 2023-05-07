@@ -8,7 +8,7 @@ using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Database;
 
-public partial class RealmDatabaseContext
+public partial class GameDatabaseContext
 {
     public GameUser CreateUser(string username)
     {
