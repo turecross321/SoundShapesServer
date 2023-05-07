@@ -1,13 +1,14 @@
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
+    // TODO: Implement same ordering system as levels
     public IQueryable<NewsEntry> GetNews()
     {
         return _realm.All<NewsEntry>();

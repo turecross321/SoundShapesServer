@@ -6,11 +6,11 @@ using Bunkum.HttpServer.Storage;
 using HttpMultipartParser;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
@@ -19,21 +19,20 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class LevelPublishingEndpoints : EndpointGroup
 {
     // Gets called by Endpoints.cs
-    public static Response PublishLevel(GameServerConfig config, IDataStore dataStore, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user)
+    public static Response CreateLevel(GameServerConfig config, IDataStore dataStore, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user)
     {
         if (user.Levels.Count() >= config.LevelPublishLimit) return HttpStatusCode.Forbidden;
-        
-        string levelId = LevelHelper.GenerateLevelId();
-        Response? uploadedResources = UploadLevelResources(dataStore, parser, levelId);
-        if (uploadedResources != null) return (Response)uploadedResources;
-        
+
         PublishLevelRequest publishLevelRequest = new (
             parser.GetParameterValue("title"), 
-            int.Parse(parser.GetParameterValue("sce_np_language")), 
-            levelId, 
+            int.Parse(parser.GetParameterValue("sce_np_language")),
             parser.Files.First(f => f.Name == "level").Data.Length);
 
         GameLevel publishedLevel = database.CreateLevel(publishLevelRequest, user);
+        
+        Response? uploadedResources = UploadLevelResources(dataStore, parser, publishedLevel.Id);
+        if (uploadedResources != null) return (Response)uploadedResources;
+        
         return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
     
@@ -46,17 +45,17 @@ public class LevelPublishingEndpoints : EndpointGroup
         if (level.Author?.Id != user.Id) return new Response(HttpStatusCode.Forbidden);
         
         if (user.Id  != level.Author.Id) return HttpStatusCode.Unauthorized;
-        
-        Response? uploadedResources = UploadLevelResources(dataStore, parser, levelId);
-        if (uploadedResources != null) return (Response)uploadedResources;
 
         PublishLevelRequest publishLevelRequest = new (
             parser.GetParameterValue("title"), 
-            int.Parse(parser.GetParameterValue("sce_np_language")), 
-            levelId, 
+            int.Parse(parser.GetParameterValue("sce_np_language")),
             parser.Files.First(f => f.Name == "level").Data.Length);
         
         GameLevel publishedLevel = database.EditLevel(publishLevelRequest, level);
+        
+        Response? uploadedResources = UploadLevelResources(dataStore, parser, levelId);
+        if (uploadedResources != null) return (Response)uploadedResources;
+        
         return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
 
@@ -65,8 +64,8 @@ public class LevelPublishingEndpoints : EndpointGroup
     {
         if (parser.GetParameterValue("title").Length > 26) return HttpStatusCode.BadRequest;
 
-        byte[]? image = null;
         byte[]? level = null;
+        byte[]? image = null;
         byte[]? sound = null;
         
         foreach (FilePart? file in parser.Files)
@@ -76,11 +75,11 @@ public class LevelPublishingEndpoints : EndpointGroup
 
             switch (fileType)
             {
-                case FileType.Image:
-                    image = bytes;
-                    break;
                 case FileType.Level:
                     level = bytes;
+                    break;
+                case FileType.Image:
+                    image = bytes;
                     break;
                 case FileType.Sound:
                     sound = bytes;
@@ -92,18 +91,18 @@ public class LevelPublishingEndpoints : EndpointGroup
             }
         }
 
-        if (image == null || level == null || sound == null)
+        if (level == null || image == null || sound == null)
         {
             Console.WriteLine("User did not upload all the required files.");
             return HttpStatusCode.BadRequest;
         }
 
-        string imageKey = GetLevelResourceKey(levelId, FileType.Image);
         string levelKey = GetLevelResourceKey(levelId, FileType.Level);
+        string imageKey = GetLevelResourceKey(levelId, FileType.Image);
         string soundKey = GetLevelResourceKey(levelId, FileType.Sound);
 
-        dataStore.WriteToStore(imageKey, image);
         dataStore.WriteToStore(levelKey, level);
+        dataStore.WriteToStore(imageKey, image);
         dataStore.WriteToStore(soundKey, sound);
 
         return null;

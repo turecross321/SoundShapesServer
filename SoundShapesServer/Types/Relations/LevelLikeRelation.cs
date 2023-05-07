@@ -1,5 +1,6 @@
 using Realms;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Types.Relations;
 

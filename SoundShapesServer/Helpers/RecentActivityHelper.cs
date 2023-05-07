@@ -1,5 +1,5 @@
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Helpers;
 

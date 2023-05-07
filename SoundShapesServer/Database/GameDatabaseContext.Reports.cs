@@ -1,9 +1,11 @@
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
+    // TODO: Implement same ordering system as levels
     public IQueryable<Report> GetReports()
     {
         return _realm.All<Report>();

@@ -1,7 +1,9 @@
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
+using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Helpers;
 

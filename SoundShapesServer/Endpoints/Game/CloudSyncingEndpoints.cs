@@ -9,7 +9,7 @@ using HttpMultipartParser;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game;
 

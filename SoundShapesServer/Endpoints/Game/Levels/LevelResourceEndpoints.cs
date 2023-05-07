@@ -8,6 +8,7 @@ using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Database;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;

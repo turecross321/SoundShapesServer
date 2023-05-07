@@ -8,8 +8,8 @@ using HttpMultipartParser;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Levels;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
 
@@ -46,7 +46,7 @@ public class Endpoints : EndpointGroup
         
         MultipartFormDataParser? parser = MultipartFormDataParser.Parse(body);
 
-        if (action == "create") return LevelPublishingEndpoints.PublishLevel(config, dataStore, parser, database, user);
+        if (action == "create") return LevelPublishingEndpoints.CreateLevel(config, dataStore, parser, database, user);
         
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return new Response(HttpStatusCode.NotFound);

@@ -1,33 +1,27 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Levels;
 public class LevelsWrapper
 {
-    public LevelsWrapper(IQueryable<GameLevel> levels, GameUser user, int from, int count, LevelOrderType order)
+    public LevelsWrapper(GameLevel[] levels, GameUser user, int totalLevels, int from, int count)
     {
-        IQueryable<GameLevel> orderedLevels = LevelHelper.OrderLevels(levels, order, true);
-        GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(orderedLevels, from, count);
-        LevelResponse[] levelResponses = paginatedLevels.Select(l => new LevelResponse(l, user)).ToArray();
+        Levels = levels.Select(l => new LevelResponse(l, user)).ToArray();
+        TotalLevels = totalLevels;
         
-        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(orderedLevels.Count(), from, count);
-
-        Levels = levelResponses.ToArray();
-        LevelCount = levelResponses.Length;
-        NextToken = nextToken;
-        PreviousToken = previousToken;
+        (PreviousToken, NextToken) = PaginationHelper.GetPageTokens(totalLevels, from, count);
     }
 
     public LevelsWrapper()
     {
         Levels = Array.Empty<LevelResponse>();
-        LevelCount = 0;
+        TotalLevels = 0;
     }
 
     [JsonProperty("items")] public LevelResponse[] Levels { get;}
-    [JsonProperty("count")] public int LevelCount { get; }
+    [JsonProperty("count")] public int TotalLevels { get; }
     
     [JsonProperty("previousToken", NullValueHandling=NullValueHandling.Ignore)] 
     public int? PreviousToken { get; set; }

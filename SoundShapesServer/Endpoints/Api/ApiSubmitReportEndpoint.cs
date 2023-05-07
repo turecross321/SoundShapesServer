@@ -7,6 +7,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api;
 

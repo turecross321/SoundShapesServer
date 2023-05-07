@@ -1,19 +1,15 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Following;
 
 public class FollowingUsersWrapper
 {
-    public FollowingUsersWrapper(GameUser user, IQueryable<GameUser> users, int from, int count)
+    public FollowingUsersWrapper(GameUser user, GameUser[] users, int totalUsers, int from, int count)
     {
-        IQueryable<GameUser> paginatedUsers = PaginationHelper.PaginateUsers(users, from, count).AsQueryable();
-        (int? nextToken, int? previousToken) = PaginationHelper.GetPageTokens(users.Count(), from, count);
-
-        Users = paginatedUsers.Select(t => new FollowingUserResponse(user, t)).ToArray();
-        NextToken = nextToken;
-        PreviousToken = previousToken;
+        Users = users.Select(t => new FollowingUserResponse(user, t)).ToArray();
+        (PreviousToken, NextToken) = PaginationHelper.GetPageTokens(totalUsers, from, count);
     }
 
     [JsonProperty("items")] public FollowingUserResponse[] Users { get; set; }

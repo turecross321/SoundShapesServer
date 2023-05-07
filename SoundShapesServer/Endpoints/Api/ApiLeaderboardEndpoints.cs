@@ -2,8 +2,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Levels;
-using SoundShapesServer.Types;
-using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Leaderboard;
 using static System.Boolean;
 
 namespace SoundShapesServer.Endpoints.Api;

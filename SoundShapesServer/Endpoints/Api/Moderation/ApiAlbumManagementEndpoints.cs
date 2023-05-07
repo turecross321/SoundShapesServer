@@ -8,8 +8,8 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Albums;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
+using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;

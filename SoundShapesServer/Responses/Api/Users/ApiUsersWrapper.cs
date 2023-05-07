@@ -1,20 +1,13 @@
-using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
-using SoundShapesServer.Types;
-using static SoundShapesServer.Helpers.UserHelper;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Api.Users;
 
 public class ApiUsersWrapper
 {
-    public ApiUsersWrapper(GameDatabaseContext database, IQueryable<GameUser> users, int from, int count, UserOrderType order, bool descending)
+    public ApiUsersWrapper(GameUser[] users, int count)
     {
-        IQueryable<GameUser> orderedUsers = OrderUsers(database, users, order, descending);
-
-        GameUser[] paginatedUsers = PaginationHelper.PaginateUsers(orderedUsers, from, count);
-        
-        Users = paginatedUsers.Select(u => new ApiUserResponse(u)).ToArray();
-        Count = users.Count();
+        Users = users.Select(u => new ApiUserResponse(u)).ToArray();
+        Count = count;
     }
 
     public ApiUserResponse[] Users { get; set; }

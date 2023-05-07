@@ -1,5 +1,6 @@
 using Realms;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Types.RecentActivity;
 

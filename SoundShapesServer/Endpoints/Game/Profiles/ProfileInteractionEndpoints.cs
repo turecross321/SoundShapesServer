@@ -5,7 +5,7 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Following;
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Profiles;
 

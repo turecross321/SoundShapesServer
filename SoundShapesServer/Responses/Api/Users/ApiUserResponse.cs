@@ -1,4 +1,4 @@
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Api.Users;
 

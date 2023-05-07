@@ -2,8 +2,8 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Levels;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
@@ -23,9 +23,9 @@ public class LevelEndpoints : EndpointGroup
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
         string categoryString = context.QueryString["search"] ?? "all";
-
-        IQueryable<GameLevel>? levels = null;
+        
         LevelOrderType? order = null;
+        LevelFilters filters = new ();
 
         if (query != null && query.Contains("author.id:"))
         {
@@ -34,20 +34,20 @@ public class LevelEndpoints : EndpointGroup
             GameUser? usersToGetLevelsFrom = database.GetUserWithId(id);
             if (usersToGetLevelsFrom == null) return null;
 
-            levels = usersToGetLevelsFrom.Levels;
+            filters = new LevelFilters(usersToGetLevelsFrom);
             order = LevelOrderType.CreationDate;
         }
 
         else if (query != null && query.Contains("metadata.displayName:"))
         {
-            levels = database.SearchForLevels(query.Split(":")[1]);
+            filters = new LevelFilters(search: query.Split(":")[1]);
             order = LevelOrderType.Relevance;
         }
         
         else switch (categoryString)
         {
             case "tagged3":
-                levels = database.GetDailyLevels(DateTimeOffset.UtcNow, true);
+                filters = new LevelFilters(inDaily: DateTimeOffset.UtcNow);
                 order = LevelOrderType.UniquePlays;
                 break;
             // ReSharper disable once StringLiteralTypo
@@ -55,8 +55,7 @@ public class LevelEndpoints : EndpointGroup
                 order = LevelOrderType.Relevance;
                 break;
         }
-
-        levels ??= database.GetLevels();
+        
         order ??= orderString switch
         {
             "creationDate" => LevelOrderType.CreationDate,
@@ -68,7 +67,9 @@ public class LevelEndpoints : EndpointGroup
             _ => LevelOrderType.CreationDate
         };
 
-        return new LevelsWrapper(levels, user, from, count, (LevelOrderType)order);
+        (GameLevel[] levels, int totalLevels) = database.GetLevels(user, (LevelOrderType)order, true, filters, from, count);
+
+        return new LevelsWrapper(levels, user, totalLevels, from, count);
     }
     
     [GameEndpoint("~identity:{userId}/~queued:*.page", ContentType.Json)]
@@ -80,11 +81,10 @@ public class LevelEndpoints : EndpointGroup
         int from = int.Parse(context.QueryString["from"] ?? "0");
 
         GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
-
         if (userToGetLevelsFrom == null) return null;
 
-        IQueryable<GameLevel> levels = database.GetUsersLikedLevels(userToGetLevelsFrom);
-        
-        return new LevelsWrapper(levels, user, from, count, LevelOrderType.DoNotOrder);
+        (GameLevel[] levels, int totalLevels) = database.GetLevels(user, LevelOrderType.DoNotOrder, true, new LevelFilters(likedByUser: userToGetLevelsFrom), from, count);
+
+        return new LevelsWrapper(levels, user, totalLevels, from, count);
     }
 }

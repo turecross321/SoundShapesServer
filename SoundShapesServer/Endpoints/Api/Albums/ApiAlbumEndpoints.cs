@@ -2,8 +2,8 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Albums;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api.Albums;
 
@@ -35,7 +35,7 @@ public class ApiAlbumEndpoints : EndpointGroup
             "modificationDate" => AlbumOrderType.ModificationDate,
             "plays" => AlbumOrderType.Plays,
             "uniquePlays" => AlbumOrderType.UniquePlays,
-            "levelCount" => AlbumOrderType.LevelCount,
+            "levelsCount" => AlbumOrderType.LevelsCount,
             "fileSize" => AlbumOrderType.FileSize,
             "difficulty" => AlbumOrderType.Difficulty,
             _ => AlbumOrderType.CreationDate
@@ -50,7 +50,7 @@ public class ApiAlbumEndpoints : EndpointGroup
         GameAlbum? album = database.GetAlbumWithId(id);
         if (album == null) return null;
         
-        int completedLevels = album.Levels.Count(level => level.UsersWhoHaveCompletedLevel.Contains(user));
+        int completedLevels = album.Levels.Count(level => level.UniqueCompletions.Contains(user));
 
         return new ApiAlbumCompletionResponse(completedLevels, album.Levels.Count);
     }

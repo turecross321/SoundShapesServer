@@ -51,6 +51,7 @@ public partial class GameDatabaseContext
 
         return album;
     }
+    // TODO: Implement same ordering system as levels
     public IQueryable<GameAlbum> GetAlbums()
     {
         IQueryable<GameAlbum> entries = _realm.All<GameAlbum>();

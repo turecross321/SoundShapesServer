@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Albums.LevelInfo;
 
@@ -11,7 +12,7 @@ public class AlbumLevelInfoTarget
     {
         Id = IdFormatter.FormatLevelId(level.Id);
         Type = GameContentType.level.ToString();
-        Completed = level.UsersWhoHaveCompletedLevel.Contains(user);
+        Completed = level.UniqueCompletions.Contains(user);
     }
 
     [JsonProperty("id")] public string Id { get; set; }

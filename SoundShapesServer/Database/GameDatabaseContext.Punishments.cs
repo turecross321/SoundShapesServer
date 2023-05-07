@@ -1,10 +1,12 @@
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
+    // TODO: Implement same ordering system as levels
     public IQueryable<Punishment> GetPunishments()
     {
         return _realm.All<Punishment>();

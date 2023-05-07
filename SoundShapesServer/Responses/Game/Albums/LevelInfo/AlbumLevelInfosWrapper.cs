@@ -1,17 +1,14 @@
 using Newtonsoft.Json;
-using SoundShapesServer.Helpers;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Albums.LevelInfo;
 
 public class AlbumLevelInfosWrapper
 {
-    public AlbumLevelInfosWrapper(GameUser user, GameAlbum album, IQueryable<GameLevel> levels, int from, int count)
+    public AlbumLevelInfosWrapper(GameUser user, GameAlbum album, GameLevel[] levels, int? previousToken, int? nextToken)
     {
-        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(levels.Count(), from, count);
-        
         Items = levels.Select(level => new AlbumLevelInfoResponse(user, album, level)).ToArray();
         PreviousToken = previousToken;
         NextToken = nextToken;

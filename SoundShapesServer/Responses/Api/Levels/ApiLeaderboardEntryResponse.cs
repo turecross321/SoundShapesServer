@@ -1,4 +1,4 @@
-using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Leaderboard;
 
 namespace SoundShapesServer.Responses.Api.Levels;
 

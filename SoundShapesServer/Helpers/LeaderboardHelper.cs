@@ -1,7 +1,7 @@
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Game;
-using SoundShapesServer.Types;
-using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Leaderboard;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Helpers;
 
@@ -108,7 +108,7 @@ public static class LeaderboardHelper
         int count = 0;
         
         // Get all the unique LevelIds for the user's LeaderboardEntries
-        string[] levelIds = user.LeaderboardEntries.Select(entry => entry.LevelId).Distinct().ToArray();
+        string[] levelIds = user.LeaderboardEntries.AsEnumerable().Select(entry => entry.LevelId).Distinct().ToArray();
 
         foreach (string levelId in levelIds)
         {

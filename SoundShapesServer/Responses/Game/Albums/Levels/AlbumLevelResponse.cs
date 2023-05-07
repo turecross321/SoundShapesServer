@@ -3,6 +3,7 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Albums.Levels;
 

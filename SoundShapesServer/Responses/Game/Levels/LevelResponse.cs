@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.IdFormatter;
 
 namespace SoundShapesServer.Responses.Game.Levels;
@@ -16,7 +17,7 @@ public class LevelResponse
         Author = new UserResponse(level.Author ?? new GameUser());
         LatestVersion = FormatLevelIdAndVersion(level.Id, level.ModificationDate.ToUnixTimeMilliseconds());
         Title = level.Name;
-        Completed = level.UsersWhoHaveCompletedLevel.Contains(user);
+        Completed = level.UniqueCompletions.Contains(user);
         Metadata = new LevelMetadataResponse(level);
     }
 

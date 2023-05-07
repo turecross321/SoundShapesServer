@@ -1,7 +1,7 @@
 using SoundShapesServer.Requests.Game;
-using SoundShapesServer.Types;
-using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Database;
 
@@ -19,13 +19,14 @@ public partial class GameDatabaseContext
         CreateEvent(user, EventType.ScoreSubmission, null, null, entry);
     }
 
+    // TODO: Implement same ordering system as levels
     public IQueryable<LeaderboardEntry> GetLeaderboardEntries()
     {
         return _realm.All<LeaderboardEntry>();
     }
 
     public IQueryable<LeaderboardEntry> GetLeaderboardEntriesOnLevel(string levelId)
-    // Leaderboard Entries use ids instead of levels, so they support campaign levels too
+    // Leaderboard Entries use ids instead of level objects, so they support campaign levels too
     {
         return _realm.All<LeaderboardEntry>()            
             .AsEnumerable()

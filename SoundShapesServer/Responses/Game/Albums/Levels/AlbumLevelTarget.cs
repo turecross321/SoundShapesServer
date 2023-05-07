@@ -4,6 +4,7 @@ using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Albums.Levels;
 
@@ -12,7 +13,7 @@ public class AlbumLevelTarget
     public AlbumLevelTarget(GameLevel level, GameUser user)
     {
         Id = IdFormatter.FormatLevelId(level.Id);
-        Completed = level.UsersWhoHaveCompletedLevel.Contains(user);
+        Completed = level.UniqueCompletions.Contains(user);
         LatestVersion = new LevelVersionResponse(level);
         Author = new UserResponse(level.Author ?? new GameUser());
         Metadata = new LevelMetadataResponse(level);

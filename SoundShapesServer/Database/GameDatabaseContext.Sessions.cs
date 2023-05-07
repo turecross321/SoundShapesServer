@@ -2,6 +2,7 @@ using Bunkum.HttpServer;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Database;
 
@@ -42,24 +43,19 @@ public partial class GameDatabaseContext
             _realm.Add(session);
         });
 
+        _realm.Refresh();
+        
         return session;
     }
 
     public GameSession? GetSessionWithSessionId(string sessionId)
     {
-        _realm.Refresh();
-        
         _realm.All<GameSession>();
         GameSession? session = _realm.All<GameSession>()
             .AsEnumerable()
             .FirstOrDefault(s => s.Id == sessionId);
         
         return session;
-    }
-
-    public bool IsSessionInvalid(string id)
-    {
-        return _realm.All<GameSession>().FirstOrDefault(s => s.Id == id) == null;
     }
 
     public GameSession[] GetSessionsWithIp(IpAuthorization ip)

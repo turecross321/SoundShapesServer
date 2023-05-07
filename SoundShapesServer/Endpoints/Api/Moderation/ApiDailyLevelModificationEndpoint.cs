@@ -7,8 +7,8 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Levels;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 using static System.Boolean;
 using static SoundShapesServer.Helpers.DailyLevelHelper;
 

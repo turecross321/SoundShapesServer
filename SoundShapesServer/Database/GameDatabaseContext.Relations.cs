@@ -1,7 +1,7 @@
 using SoundShapesServer.Types.Relations;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Database;
 

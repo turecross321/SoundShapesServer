@@ -1,16 +1,20 @@
 using Bunkum.HttpServer.Storage;
 using Realms;
 using SoundShapesServer.Authentication;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.Users;
+using static SoundShapesServer.Helpers.PaginationHelper;
 using static SoundShapesServer.Helpers.ResourceHelper;
+using static SoundShapesServer.Helpers.UserHelper;
 
 namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public GameUser CreateUser(string username)
+    public GameUser CreateUser(string username, bool skipRegistration = false)
     {
         GameUser user = new ()
         {
@@ -62,9 +66,92 @@ public partial class GameDatabaseContext
         });
     }
 
-    public IQueryable<GameUser> GetUsers()
+    public (GameUser[], int) GetUsers(UserOrderType order, bool descending, UserFilters filters, int from, int count)
     {
-        return _realm.All<GameUser>();
+        IQueryable<GameUser> orderedUsers = order switch
+        {
+            UserOrderType.FollowersCount => UsersOrderedByFollowersCount(descending),
+            UserOrderType.FollowingCount => UsersOrderedByFollowingCount(descending),
+            UserOrderType.LevelsCount => UsersOrderedByLevelsCount(descending),
+            UserOrderType.LikedLevelsCount => UsersOrderedByLikedLevelsCount(descending),
+            UserOrderType.CreationDate => UsersOrderedByCreationDate(descending),
+            UserOrderType.PlayedLevelsCount => UsersOrderedByPlayedLevelsCount(descending),
+            UserOrderType.CompletedLevelsCount => UsersOrderedByCompletedLevelsCount(descending),
+            UserOrderType.Deaths => UsersOrderedByDeaths(descending),
+            UserOrderType.LeaderboardPlacements => UsersOrderedByLeaderboardPlacements(this, descending),
+            _ => UsersOrderedByCreationDate(descending)
+        };
+
+        IQueryable<GameUser> filteredUsers = FilterUsers(orderedUsers, filters);
+        GameUser[] paginatedUsers = PaginateUsers(filteredUsers, from, count);
+
+        return (paginatedUsers, filteredUsers.Count());
+    }
+
+    private IQueryable<GameUser> UsersOrderedByFollowersCount(bool descending)
+    {
+        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.FollowersCount);
+        return _realm.All<GameUser>().OrderBy(u => u.FollowersCount);
+    }
+    
+    private IQueryable<GameUser> UsersOrderedByFollowingCount(bool descending)
+    {
+        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.FollowingCount);
+        return _realm.All<GameUser>().OrderBy(u => u.FollowingCount);
+    } 
+    
+    private IQueryable<GameUser> UsersOrderedByLevelsCount(bool descending)
+    {
+        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.LevelsCount);
+        return _realm.All<GameUser>().OrderBy(u => u.LevelsCount);
+    } 
+    
+    private IQueryable<GameUser> UsersOrderedByLikedLevelsCount(bool descending)
+    {
+        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.LikedLevelsCount);
+        return _realm.All<GameUser>().OrderBy(u => u.LikedLevelsCount);
+    } 
+    
+    private IQueryable<GameUser> UsersOrderedByCreationDate(bool descending)
+    {
+        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.CreationDate);
+        return _realm.All<GameUser>().OrderBy(u => u.CreationDate);
+    } 
+    
+    private IQueryable<GameUser> UsersOrderedByPlayedLevelsCount(bool descending)
+    {
+        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.PlayedLevelsCount);
+        return _realm.All<GameUser>().OrderBy(u => u.PlayedLevelsCount);
+    } 
+    
+    private IQueryable<GameUser> UsersOrderedByCompletedLevelsCount(bool descending)
+    {
+        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.CompletedLevelsCount);
+        return _realm.All<GameUser>().OrderBy(u => u.CompletedLevelsCount);
+    } 
+    
+    private IQueryable<GameUser> UsersOrderedByDeaths(bool descending)
+    {
+        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.Deaths);
+        return _realm.All<GameUser>().OrderBy(u => u.Deaths);
+    } 
+    
+    private IQueryable<GameUser> UsersOrderedByLeaderboardPlacements(GameDatabaseContext database, bool descending)
+    {
+        if (descending) return _realm.All<GameUser>()
+            .AsEnumerable()
+            .OrderByDescending(u => LeaderboardHelper.GetTotalLeaderboardPlacements(database, u))
+            .AsQueryable();
+        return _realm.All<GameUser>()            
+            .AsEnumerable()
+            .OrderBy(u => LeaderboardHelper.GetTotalLeaderboardPlacements(database, u))
+            .AsQueryable();
+    } 
+
+    public GameUser GetServerUser()
+    {
+        GameUser? user = GetUserWithUsername("Server");
+        return user ?? CreateUser("Server", true);
     }
 
     public GameUser? GetUserWithUsername(string username)

@@ -40,7 +40,7 @@ public static class ResourceHelper
 
     public static FileType GetFileTypeFromName(string name)
     {
-        if (name == "image") return FileType.Image;
+        if (name is "image" or "thumbnail") return FileType.Image;
         if (name == "level") return FileType.Level;
         if (name == "sound") return FileType.Sound;
 
@@ -50,9 +50,9 @@ public static class ResourceHelper
     private const string LevelsPath = "levels";
     public static string GetLevelResourceKey(string levelId, FileType fileType)
     {
-        if (fileType == FileType.Image) return $"{LevelsPath}/{levelId}_thumbnail.png";
-        if (fileType == FileType.Level) return $"{LevelsPath}/{levelId}_level.level";
-        if (fileType == FileType.Sound) return $"{LevelsPath}/{levelId}_sound.sound";
+        if (fileType == FileType.Image) return $"{LevelsPath}/{levelId}-thumbnail";
+        if (fileType == FileType.Level) return $"{LevelsPath}/{levelId}-level";
+        if (fileType == FileType.Sound) return $"{LevelsPath}/{levelId}-sound";
 
         return "";
     }
@@ -62,8 +62,8 @@ public static class ResourceHelper
     {
         return resourceType switch
         {
-            AlbumResourceType.Thumbnail => $"{AlbumsPath}/{albumId}_thumbnail.png",
-            AlbumResourceType.SidePanel => $"{AlbumsPath}/{albumId}_sidePanel.png",
+            AlbumResourceType.Thumbnail => $"{AlbumsPath}/{albumId}-thumbnail",
+            AlbumResourceType.SidePanel => $"{AlbumsPath}/{albumId}-sidePanel",
             _ => ""
         };
     }
@@ -77,13 +77,13 @@ public static class ResourceHelper
 
     public static string GetSaveResourceKey(string userId)
     {
-        return $"{SavesPath}/{userId}_save.json";
+        return $"{SavesPath}/{userId}-save";
     }
 
     private const string NewsPath = "news";
 
     public static string GetNewsResourceKey(string id)
     {
-        return $"{NewsPath}/{id}_thumbnail.png";
+        return $"{NewsPath}/{id}-thumbnail";
     }
 }

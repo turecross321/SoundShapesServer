@@ -9,8 +9,9 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Api.Levels;
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 using static System.Boolean;
 
 namespace SoundShapesServer.Endpoints.Api.Levels;
@@ -19,7 +20,7 @@ public class ApiLevelEndpoints: EndpointGroup
 {
     [ApiEndpoint("levels")]
     [Authentication(false)]
-    public ApiLevelResponseWrapper? GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user)
+    public ApiLevelResponseWrapper GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
@@ -27,23 +28,27 @@ public class ApiLevelEndpoints: EndpointGroup
         bool descending = Parse(context.QueryString["descending"] ?? "true");
         string? orderString = context.QueryString["orderBy"];
 
-        string? byUser = context.QueryString["byUser"];
-        string? likedByUser = context.QueryString["likedByUser"];
-        string? inAlbum = context.QueryString["inAlbum"];
-        string? inDaily = context.QueryString["inDaily"];
+        string? byUserId = context.QueryString["byUser"];
+        string? likedByUserId = context.QueryString["likedByUser"];
+        string? inAlbumId = context.QueryString["inAlbum"];
+        string? inDailyString = context.QueryString["inDaily"];
 
-        string? search = context.QueryString["search"];
+        string? searchQuery = context.QueryString["search"];
         
         bool? completed = null;
-        if (TryParse(context.QueryString["revoked"], out bool revokedTemp)) completed = revokedTemp;
+        if (TryParse(context.QueryString["completed"], out bool completedTemp)) completed = completedTemp;
 
-        IQueryable<GameLevel>? levels = null;
+        GameUser? byUser = null;
+        GameUser? likedByUser = null;
+        GameAlbum? inAlbum = null; 
+        DateTimeOffset? inDaily = null;
 
-        if (search != null) levels = database.SearchForLevels(search);
-        levels ??= database.GetLevels();
-        
-        levels = LevelHelper.FilterLevels(database, user, levels, byUser, likedByUser, inAlbum, inDaily, completed);
-        if (levels == null) return null;
+        if (byUserId != null) byUser = database.GetUserWithId(byUserId);
+        if (likedByUserId != null) likedByUser = database.GetUserWithId(likedByUserId);
+        if (inAlbumId != null) inAlbum = database.GetAlbumWithId(inAlbumId);
+        if (inDailyString != null) inDaily = DateTimeOffset.Parse(inDailyString);
+
+        LevelFilters filters = new (byUser, likedByUser, inAlbum, inDaily, searchQuery, completed);
 
         LevelOrderType order = orderString switch
         {
@@ -55,10 +60,14 @@ public class ApiLevelEndpoints: EndpointGroup
             "fileSize" => LevelOrderType.FileSize,
             "difficulty" => LevelOrderType.Difficulty,
             "relevance" => LevelOrderType.Relevance,
-            _ => LevelOrderType.CreationDate
+            "random" => LevelOrderType.Random,
+            "deaths" => LevelOrderType.Deaths,
+            _ => LevelOrderType.DoNotOrder
         };
+
+        (GameLevel[] levels, int levelCount) = database.GetLevels(user, order, descending, filters, from, count);
         
-        return new ApiLevelResponseWrapper(levels, from, count, order, descending);
+        return new ApiLevelResponseWrapper(levels, levelCount);
     }
 
     [ApiEndpoint("levels/{levelId}")]
@@ -110,7 +119,7 @@ public class ApiLevelEndpoints: EndpointGroup
         GameLevel? level = database.GetLevelWithId(id);
         if (level == null) return HttpStatusCode.NotFound;
         
-        bool completed = level.UsersWhoHaveCompletedLevel.Contains(user);
+        bool completed = level.UniqueCompletions.Contains(user);
 
         return new Response(new ApiHasUserCompletedLevelResponse(completed), ContentType.Json);
     }

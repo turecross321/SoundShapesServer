@@ -8,6 +8,7 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Moderation;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 using static System.Boolean;
 using static SoundShapesServer.Helpers.PunishmentHelper;
 

@@ -1,29 +1,32 @@
-using System.Diagnostics;
+using System.Security.Cryptography;
 using Bunkum.HttpServer.Storage;
-using Realms;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
+using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.Users;
+using static SoundShapesServer.Helpers.LevelHelper;
+using static SoundShapesServer.Helpers.PaginationHelper;
 using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public GameLevel CreateLevel(PublishLevelRequest request, GameUser user)
+    public GameLevel CreateLevel(PublishLevelRequest request, GameUser user, bool createEvent = true)
     {
-        string levelId = request.Id;
-        GameLevel level = new(levelId, user, request.Name, request.Language, request.FileSize, request.Modified);
+        string levelId = GenerateLevelId();
+        GameLevel level = new(levelId, user, request.Name, request.Language, request.FileSize, request.Created);
 
         _realm.Write(() =>
         {
             _realm.Add(level);
+            user.LevelsCount = user.Levels.Count();
         });
 
-        CreateEvent(user, EventType.Publish, null, level);
+        if (createEvent) CreateEvent(user, EventType.Publish, null, level);
         
         return level;
     }
@@ -90,50 +93,123 @@ public partial class GameDatabaseContext
         return levels.AsQueryable();
     }
 
-    public IQueryable<GameLevel> SearchForLevels(string query)
+    public (GameLevel[], int) GetLevels(GameUser? user, LevelOrderType order, bool descending, LevelFilters filters, int from, int count)
     {
-        string[] keywords = query.Split(' ');
-        if (keywords.Length == 0) return Enumerable.Empty<GameLevel>().AsQueryable();
-        
-        IQueryable<GameLevel>? entries = _realm.All<GameLevel>();
-        
-        foreach (string keyword in keywords)
+        IQueryable<GameLevel> orderedLevels = order switch
         {
-            if (string.IsNullOrWhiteSpace(keyword)) continue;
+            LevelOrderType.CreationDate => LevelsOrderedByCreationDate(descending),
+            LevelOrderType.ModificationDate => LevelsOrderedByModificationDate(descending),
+            LevelOrderType.Plays => LevelsOrderedByPlays(descending),
+            LevelOrderType.UniquePlays => LevelsOrderedByUniquePlays(descending),
+            LevelOrderType.Likes => LevelsOrderedByLikes(descending),
+            LevelOrderType.FileSize => LevelsOrderedByFileSize(descending),
+            LevelOrderType.Difficulty => LevelsOrderedByDifficulty(descending),
+            LevelOrderType.Relevance => LevelsOrderedByRelevance(descending),
+            LevelOrderType.Random => LevelsOrderedByRandom(descending),
+            LevelOrderType.Deaths => LevelsOrderedByDeaths(descending),
+            _ => LevelsOrderedByCreationDate(descending)
+        };
 
-            entries = entries.Where(l =>
-                l.Author != null && (l.Name.Like(keyword, false) || l.Author.Username.Like(keyword, false))
-            );
-        }
+        IQueryable<GameLevel> filteredLevels = FilterLevels(user, orderedLevels, filters);
+        GameLevel[] paginatedLevels = PaginateLevels(filteredLevels, from, count);
 
-        return entries;
+        return (paginatedLevels, filteredLevels.Count());
     }
 
-    public IQueryable<GameLevel> GetDailyLevels(DateTimeOffset date, bool getOldLevelsIfThereAreNone = false)
+    private IQueryable<GameLevel> LevelsOrderedByCreationDate(bool descending)
     {
-        List<DailyLevel> entries = GetDailyLevelObjects(date, getOldLevelsIfThereAreNone).ToList();
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.CreationDate);
+        return _realm.All<GameLevel>().OrderBy(l => l.CreationDate);
+    } 
+    
+    private IQueryable<GameLevel> LevelsOrderedByModificationDate(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.ModificationDate);
+        return _realm.All<GameLevel>().OrderBy(l => l.ModificationDate);
+    } 
+    
+    private IQueryable<GameLevel> LevelsOrderedByPlays(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.Plays);
+        return _realm.All<GameLevel>().OrderBy(l => l.Plays);
+    } 
+    
+    private IQueryable<GameLevel> LevelsOrderedByUniquePlays(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.UniquePlaysCount);
+        return _realm.All<GameLevel>().OrderBy(l => l.UniquePlaysCount);
+    } 
+    
+    private IQueryable<GameLevel> LevelsOrderedByLikes(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.LikesCount);
+        return _realm.All<GameLevel>().OrderBy(l => l.LikesCount);
+    } 
+    
+    private IQueryable<GameLevel> LevelsOrderedByFileSize(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.FileSize);
+        return _realm.All<GameLevel>().OrderBy(l => l.FileSize);
+    } 
+    
+    private IQueryable<GameLevel> LevelsOrderedByDifficulty(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.Difficulty);
+        return _realm.All<GameLevel>().OrderBy(l => l.Difficulty);
+    } 
+    
+    private IQueryable<GameLevel> LevelsOrderedByRelevance(bool descending)
+    {
+        if (descending)
+            return _realm.All<GameLevel>()
+                .AsEnumerable()
+                .OrderByDescending(l =>
+                    l.UniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.CreationDate).TotalDays * 0.5)
+                .AsQueryable();
         
-        List<GameLevel> levels = entries.Select(l =>
-        {
-            Debug.Assert(l.Level != null, "l.Level != null");
-            return l.Level;
-        }).ToList();
-
-        return levels.AsQueryable();
-    }
-
-    public IQueryable<GameLevel> GetLevels()
+        return _realm.All<GameLevel>()
+            .AsEnumerable()
+            .OrderBy(l =>
+                l.UniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.CreationDate).TotalDays * 0.5)
+            .AsQueryable();
+    } 
+    
+    // TODO: Cache this every 24 hours
+    private IQueryable<GameLevel> LevelsOrderedByRandom(bool descending)
     {
-        return _realm.All<GameLevel>();
-    }
+        DateTime seedDateTime = DateTime.Today;
+        byte[] seedBytes = BitConverter.GetBytes(seedDateTime.Ticks);
+        byte[] hashBytes = MD5.HashData(seedBytes);
+        int seed = BitConverter.ToInt32(hashBytes, 0);
 
-    public void AddUserToLevelCompletions(GameLevel level, GameUser user)
+        Random rng = new(seed);
+        
+        if (descending) return _realm.All<GameLevel>()
+            .AsEnumerable()
+            .OrderByDescending(_ => rng.Next())
+            .AsQueryable();
+        
+        return _realm.All<GameLevel>()
+            .AsEnumerable()
+            .OrderBy(_ => rng.Next())
+            .AsQueryable();
+    }
+    
+    private IQueryable<GameLevel> LevelsOrderedByDeaths(bool descending)
     {
-        if (level.UsersWhoHaveCompletedLevel.Contains(user)) return;
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.Deaths);
+        return _realm.All<GameLevel>().OrderBy(l => l.Deaths);
+    } 
+
+    public void AddUniqueCompletion(GameLevel level, GameUser user)
+    {
+        if (level.UniqueCompletions.Contains(user)) return;
 
         _realm.Write(() =>
         {
-            level.UsersWhoHaveCompletedLevel.Add(user);
+            level.UniqueCompletions.Add(user);
+            level.UniqueCompletionsCount = level.UniqueCompletions.Count;
+            user.CompletedLevelsCount = user.CompletedLevels.Count();
         });
     }
     public void AddCompletionToLevel(GameLevel level)
@@ -150,7 +226,7 @@ public partial class GameDatabaseContext
 
         _realm.Write(() =>
         {
-            level.Difficulty = LevelHelper.CalculateLevelDifficulty(level);
+            level.Difficulty = CalculateLevelDifficulty(level);
         });
     }
     public void AddPlayToLevel(GameLevel level)
@@ -167,14 +243,17 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             level.UniquePlays.Add(user);
+            level.UniquePlaysCount = level.UniquePlays.Count;
+            user.PlayedLevelsCount = user.PlayedLevels.Count();
         });
     }
 
-    public void AddDeathsToLevel(GameLevel level, int deaths)
+    public void AddDeathsToLevel(GameUser user, GameLevel level, int deaths)
     {
         _realm.Write(() =>
         {
             level.Deaths += deaths;
+            user.Deaths += deaths;
         });
     }
 }

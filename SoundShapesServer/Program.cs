@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Bunkum.HttpServer;
+using Bunkum.HttpServer.RateLimit;
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Configuration;
@@ -19,7 +20,7 @@ server.UseDatabaseProvider(databaseProvider);
 
 server.AddAuthenticationService(new SessionProvider(), true);
 server.AddStorageService<FileSystemDataStore>();
-server.AddRateLimitService();
+server.AddRateLimitService(new RateLimitSettings(60, 400, 60)); // Todo: figure out a good balance here between security and usability
 server.AddService<EmailService>();
 
 server.AddMiddleware<CrossOriginMiddleware>();

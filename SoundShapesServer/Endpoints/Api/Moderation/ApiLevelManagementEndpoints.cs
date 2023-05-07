@@ -11,20 +11,29 @@ using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
 public class ApiLevelManagementEndpoints : EndpointGroup
 {
-    [ApiEndpoint("levels/create", Method.Post)]
-    public Response PublishLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiPublishLevelRequest body)
+    // TODO: THIS SHOULD NOT BE AN ENDPOINT. GET IT OUT OF HERE AND MAKE IT RUN ONLY ON BOOT
+    [ApiEndpoint("levels/import", Method.Post)]
+    public Response RefreshImportFolder(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
 
-        string levelId = LevelHelper.GenerateLevelId();
-        
-        GameLevel publishedLevel = database.CreateLevel(new PublishLevelRequest(body, levelId), user);
+        LevelImporting.ImportLevels(database, dataStore);
+        return HttpStatusCode.Created;
+    }
+    
+    [ApiEndpoint("levels/create", Method.Post)]
+    public Response CreateLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiPublishLevelRequest body)
+    {
+        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
+
+        GameLevel publishedLevel = database.CreateLevel(new PublishLevelRequest(body), user);
         return new Response(new ApiLevelFullResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
 

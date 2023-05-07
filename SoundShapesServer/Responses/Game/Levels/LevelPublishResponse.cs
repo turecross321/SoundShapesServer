@@ -3,6 +3,7 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Levels;
 public class LevelPublishResponse

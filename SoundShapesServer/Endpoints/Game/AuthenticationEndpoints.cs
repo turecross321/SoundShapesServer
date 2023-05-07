@@ -13,6 +13,7 @@ using static SoundShapesServer.Helpers.SessionHelper;
 using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.IpHelper;
 using static SoundShapesServer.Helpers.PunishmentHelper;
 

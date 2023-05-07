@@ -12,6 +12,7 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api.Account;
 using SoundShapesServer.Services;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.SessionHelper;
 
 namespace SoundShapesServer.Endpoints.Api;

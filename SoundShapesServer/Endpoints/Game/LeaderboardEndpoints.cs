@@ -7,8 +7,9 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Endpoints.Game.Levels;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Game.Leaderboards;
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.LeaderboardHelper;
 
 namespace SoundShapesServer.Endpoints.Game;
@@ -38,7 +39,7 @@ public class LeaderboardEndpoints : EndpointGroup
             if (deSerializedRequest.Completed) LevelInteractionEndpoints.AddCompletion(database, level, user);
             LevelInteractionEndpoints.AddPlay(database, level);
             LevelInteractionEndpoints.AddUniquePlay(database, level, user);
-            LevelInteractionEndpoints.AddDeathsToLevel(database, level, deSerializedRequest.Deaths);
+            LevelInteractionEndpoints.AddDeathsToLevel(database, level, user, deSerializedRequest.Deaths);
             database.SetLevelDifficulty(level);
         }
 

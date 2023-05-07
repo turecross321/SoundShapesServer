@@ -333,21 +333,26 @@ o7
 
 ### Query Params
 
-| Param      |
-| ---------- |
-| from       |
-| count      |
-| search     |
-| descending |
-| orderBy    |
+| Param       |
+| ----------- |
+| from        |
+| count       |
+| search      |
+| followedBy  |
+| isFollowing |
+| descending  |
+| orderBy     |
 
 | Can be ordered by:    |
 | --------------------- |
-| followerCount         |
+| followersCount        |
 | followingCount        |
-| levelCount            |
+| levelsCount           |
+| likedLevelsCount      |
 | creationDate          |
 | playedLevelsCount     |
+| completedLevelsCount  |
+| deaths                |
 | leaderboardPlacements |
 
 ### Response: 200
@@ -531,6 +536,8 @@ o7
 | fileSize           |
 | difficulty         |
 | relevance          |
+| random             |
+| deaths             |
 
 ### Response: 200
 
@@ -905,7 +912,7 @@ Should be a Sound Shapes Sound File
 | modificationDate   |
 | plays              |
 | uniquePlays        |
-| levelCount         |
+| levelsCount        |
 | fileSize           |
 | difficulty         |
 

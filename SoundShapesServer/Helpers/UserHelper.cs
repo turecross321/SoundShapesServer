@@ -1,5 +1,4 @@
-using SoundShapesServer.Database;
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 using static System.Text.RegularExpressions.Regex;
 
 namespace SoundShapesServer.Helpers;
@@ -12,54 +11,35 @@ public static class UserHelper
         return IsMatch(username, UsernameRegex);
     }
 
-    public static IQueryable<GameUser>? FilterUsers(GameDatabaseContext database, IQueryable<GameUser> users, string? following, string? followedBy)
+    public static IQueryable<GameUser> FilterUsers(IQueryable<GameUser> users, UserFilters filters)
     {
         IQueryable<GameUser> response = users.Where(u=>u.HasFinishedRegistration);
         
-        if (following != null)
+        if (filters.IsFollowing != null)
         {
-            GameUser? userToGetUsersFrom = database.GetUserWithId(following);
-            if (userToGetUsersFrom == null) return null;
-
             response = response
                 .AsEnumerable()
-                .Where(u => userToGetUsersFrom.Followers
+                .Where(u => filters.IsFollowing.Followers
                     .Select(r => r.Follower.Id).Contains(u.Id))
                 .AsQueryable();
         }
         
-        if (followedBy != null)
+        if (filters.FollowedBy != null)
         {
-            GameUser? userToGetUsersFrom = database.GetUserWithId(following);
-            if (userToGetUsersFrom == null) return null;
-
             response = response
                 .AsEnumerable()
-                .Where(u => userToGetUsersFrom.Following
+                .Where(u => filters.FollowedBy.Following
                     .Select(r => r.Recipient.Id).Contains(u.Id))
                 .AsQueryable();
         }
-
-        return response;
-    }
-
-    public static IQueryable<GameUser> OrderUsers(GameDatabaseContext database, IQueryable<GameUser> users, UserOrderType order, bool descending)
-    {
-        IQueryable<GameUser> response = users;
-
-        response = order switch
+        
+        if (filters.Search != null)
         {
-            UserOrderType.FollowerCount => response.OrderBy(u=>u.Followers.Count()),
-            UserOrderType.FollowingCount => response.OrderBy(u=>u.Following.Count()),
-            UserOrderType.LevelCount => response.OrderBy(u=>u.Levels.Count()),
-            UserOrderType.CreationDate => response.OrderBy(u=>u.CreationDate),
-            UserOrderType.PlayedLevelsCount => response.OrderBy(u=>u.PlayedLevels.Count()),
-            UserOrderType.LeaderboardPlacements => response.OrderByDescending(u=> LeaderboardHelper.GetTotalLeaderboardPlacements(database, u)),
-            UserOrderType.DoNotOrder => response,
-            _ => OrderUsers(database, response, UserOrderType.CreationDate, descending)
-        };
-
-        if (descending) response = response.AsEnumerable().Reverse().AsQueryable();
+            response = response
+                .AsEnumerable()
+                .Where(l => l.Username.Contains(filters.Search, StringComparison.OrdinalIgnoreCase))
+                .AsQueryable();
+        }
 
         return response;
     }

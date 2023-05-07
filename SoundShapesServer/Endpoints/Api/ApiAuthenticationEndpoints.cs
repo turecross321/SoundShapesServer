@@ -8,6 +8,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api.Account;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.PunishmentHelper;
 
 namespace SoundShapesServer.Endpoints.Api;

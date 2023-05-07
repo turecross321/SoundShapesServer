@@ -1,9 +1,8 @@
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Users;
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api.Users;
 
@@ -27,30 +26,34 @@ public class ApiUserEndpoints : EndpointGroup
         bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
         string? orderString = context.QueryString["orderBy"];
 
-        string? following = context.QueryString["following"]; 
-        string? followedBy = context.QueryString["followedBy"];
+        string? isFollowingId = context.QueryString["isFollowing"]; 
+        string? followedById = context.QueryString["followedBy"];
 
-        string? search = context.QueryString["search"];
-
-        IQueryable<GameUser>? users = null;
-
-        if (search != null) users = database.SearchForUsers(search);
-        users ??= database.GetUsers();
+        string? searchQuery = context.QueryString["search"];
         
-        users = UserHelper.FilterUsers(database, users, following, followedBy);
-        if (users == null) return null;
+        GameUser? isFollowing = null;
+        GameUser? followedBy = null;
+        
+        if (isFollowingId != null) isFollowing = database.GetUserWithId(isFollowingId);
+        if (followedById != null) followedBy = database.GetUserWithId(followedById);
+
+        UserFilters filters = new (isFollowing, followedBy, searchQuery);
 
         UserOrderType order = orderString switch
         {
-            "followerCount" => UserOrderType.FollowerCount,
+            "followersCount" => UserOrderType.FollowersCount,
             "followingCount" => UserOrderType.FollowingCount,
-            "levelCount" => UserOrderType.LevelCount,
+            "levelsCount" => UserOrderType.LevelsCount,
+            "likedLevelsCount" => UserOrderType.LikedLevelsCount,
             "creationDate" => UserOrderType.CreationDate,
             "playedLevelsCount" => UserOrderType.PlayedLevelsCount,
+            "completedLevelsCount" => UserOrderType.CompletedLevelsCount,
+            "deaths" => UserOrderType.Deaths,
             "leaderboardPlacements" => UserOrderType.LeaderboardPlacements,
             _ => UserOrderType.CreationDate
         };
 
-        return new ApiUsersWrapper(database, users, from, count, order, descending);
+        (GameUser[] users, int totalUsers) = database.GetUsers(order, descending, filters, from, count);
+        return new ApiUsersWrapper(users, totalUsers);
     }
 }

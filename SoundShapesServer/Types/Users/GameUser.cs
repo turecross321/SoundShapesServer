@@ -1,11 +1,12 @@
 using Bunkum.HttpServer.RateLimit;
 using Realms;
 using SoundShapesServer.Authentication;
+using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.RecentActivity;
 using SoundShapesServer.Types.Relations;
 
-namespace SoundShapesServer.Types;
+namespace SoundShapesServer.Types.Users;
 
 public class GameUser : RealmObject, IRateLimitUser
 {
@@ -25,19 +26,25 @@ public class GameUser : RealmObject, IRateLimitUser
     public IQueryable<IpAuthorization> IpAddresses { get; }
 
     [Backlink(nameof(LevelLikeRelation.Liker))] public IQueryable<LevelLikeRelation> LikedLevels { get; }
+    public int LikedLevelsCount { get; set; }
     [Backlink(nameof(GameLevel.UniquePlays))] public IQueryable<GameLevel> PlayedLevels { get; }
+    public int PlayedLevelsCount { get; set; }
+    [Backlink(nameof(GameLevel.UniqueCompletions))] public IQueryable<GameLevel> CompletedLevels { get; }
+    public int CompletedLevelsCount { get; set; }
     [Backlink(nameof(FollowRelation.Recipient))] public IQueryable<FollowRelation> Followers { get; }
-    
+    public int FollowersCount { get; set; }
     [Backlink(nameof(FollowRelation.Follower))] public IQueryable<FollowRelation> Following { get; }
+    public int FollowingCount { get; set; }
     [Backlink(nameof(GameSession.User))] public IQueryable<GameSession> Sessions { get; }
-    
     [Backlink(nameof(GameLevel.Author))] public IQueryable<GameLevel> Levels { get; }
+    public int LevelsCount { get; set; }
     [Backlink(nameof(Punishment.User))] public IQueryable<Punishment> Punishments { get; }
     [Backlink(nameof(LeaderboardEntry.User))] public IQueryable<LeaderboardEntry> LeaderboardEntries { get; }
     [Backlink(nameof(GameEvent.Actor))] public IQueryable<GameEvent> Events { get; }
     [Backlink(nameof(GameEvent.ContentUser))] public IQueryable<GameEvent> EventsWhereUserIsRecipient { get; }
 #pragma warning restore CS8618
-    
+    public int Deaths { get; set; }
+
     // Defined in authentication provider. Avoids Realm threading nonsense.
     public bool RateLimitUserIdIsEqual(object obj)
     {

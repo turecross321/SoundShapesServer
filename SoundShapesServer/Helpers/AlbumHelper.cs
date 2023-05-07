@@ -42,7 +42,7 @@ public static class AlbumHelper
             AlbumOrderType.ModificationDate => response.OrderBy(a=>a.ModificationDate).AsQueryable(),
             AlbumOrderType.Plays => response.OrderBy(a=> a.Levels.Select(l=>l.Plays).Sum()).AsQueryable(),
             AlbumOrderType.UniquePlays => response.OrderBy(a=> a.Levels.Select(l=> l.UniquePlays.Count).Sum()).AsQueryable(),
-            AlbumOrderType.LevelCount => response.OrderBy(a=>a.Levels.Count).AsQueryable(),
+            AlbumOrderType.LevelsCount => response.OrderBy(a=>a.Levels.Count).AsQueryable(),
             AlbumOrderType.FileSize => response.OrderBy(a=> a.Levels.Select(l=>l.FileSize).Sum()).AsQueryable(),
             AlbumOrderType.Difficulty => response.OrderBy(a=> a.Levels.Select(l=>l.Difficulty).Sum()).AsQueryable(),
             _ => OrderAlbums(response, AlbumOrderType.CreationDate, descending)

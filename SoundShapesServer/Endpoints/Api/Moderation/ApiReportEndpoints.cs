@@ -7,6 +7,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Moderation;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.ReportHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;

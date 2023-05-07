@@ -2,6 +2,7 @@ using Realms;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.RecentActivity;
 using SoundShapesServer.Types.Relations;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Types.Levels;
 
@@ -16,7 +17,7 @@ public class GameLevel : RealmObject
         CreationDate = creationDate;
         ModificationDate = creationDate;
         UniquePlays = Enumerable.Empty<GameUser>().ToList();
-        UsersWhoHaveCompletedLevel = Enumerable.Empty<GameUser>().ToList();
+        UniqueCompletions = Enumerable.Empty<GameUser>().ToList();
         Likes = Enumerable.Empty<LevelLikeRelation>().AsQueryable();
         Albums = Enumerable.Empty<GameAlbum>().AsQueryable();
         DailyLevels = Enumerable.Empty<DailyLevel>().AsQueryable();
@@ -38,9 +39,12 @@ public class GameLevel : RealmObject
     public int Plays { get; set; }
     public int Deaths { get; set; }
     public IList<GameUser> UniquePlays { get; }
+    public int UniquePlaysCount { get; set; }
     public int CompletionCount { get; set; }
-    public IList<GameUser> UsersWhoHaveCompletedLevel { get; }
+    public IList<GameUser> UniqueCompletions { get; }
+    public int UniqueCompletionsCount { get; set; }
     [Backlink(nameof(LevelLikeRelation.Level))] public IQueryable<LevelLikeRelation> Likes { get; }
+    public int LikesCount { get; set; }
     [Backlink(nameof(GameAlbum.Levels))] public IQueryable<GameAlbum> Albums { get; }
     [Backlink(nameof(DailyLevel.Level))] public IQueryable<DailyLevel> DailyLevels { get; }
     [Backlink(nameof(GameEvent.ContentLevel))] public IQueryable<GameEvent> Events { get; }

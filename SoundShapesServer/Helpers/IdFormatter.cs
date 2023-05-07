@@ -25,9 +25,9 @@ public static class IdFormatter
         return $"/~identity:{id}";
     }
 
-    public static string FormatFollowId(string followerId, string followedId)
+    public static string FormatFollowId(string followerId, string recipientId)
     {
-        return $"/~identity:{followerId}/~follow:/~identity:{followedId}";
+        return $"/~identity:{followerId}/~follow:/~identity:{recipientId}";
     }
 
     public static string FormatAlbumId(string albumId)

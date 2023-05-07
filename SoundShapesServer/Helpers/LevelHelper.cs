@@ -1,8 +1,5 @@
-using System.Security.Cryptography;
-using SoundShapesServer.Database;
-using SoundShapesServer.Types;
-using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Helpers;
 
@@ -23,94 +20,57 @@ public static class LevelHelper
         return levelId;
     }
 
-    private static IQueryable<GameLevel> RandomizeLevelOrder(IQueryable<GameLevel> levels)
-    {
-        if (levels == null) throw new ArgumentNullException(nameof(levels));
-        DateTime seedDateTime = DateTime.Today;
-        byte[] seedBytes = BitConverter.GetBytes(seedDateTime.Ticks);
-        byte[] hashBytes = MD5.HashData(seedBytes);
-        int seed = BitConverter.ToInt32(hashBytes, 0);
-
-        Random rng = new(seed);
-
-        return levels.AsEnumerable()
-            .OrderBy(_ => rng.Next())
-            .AsQueryable();
-    }
-
-    public static IQueryable<GameLevel>? FilterLevels(GameDatabaseContext database, GameUser? user, IQueryable<GameLevel> levels, string? byUser, string? likedByUser, string? inAlbum, string? inDaily, bool? completed)
+    public static IQueryable<GameLevel> FilterLevels(GameUser? user, IQueryable<GameLevel> levels, LevelFilters filters)
     {
         IQueryable<GameLevel> response = levels;
-        if (byUser != null)
+        if (filters.ByUser != null)
         {
             response = response
                 .AsEnumerable()
-                .Where(l => l.Author?.Id == byUser)
+                .Where(l => Equals(l.Author, filters.ByUser))
                 .AsQueryable();
         }
-        if (likedByUser != null)
+        if (filters.LikedByUser != null)
         {
-            GameUser? userToGetLevelsFrom = database.GetUserWithId(likedByUser);
-            if (userToGetLevelsFrom == null) return null;
-
             response = response
                 .AsEnumerable()
-                .Where(l => userToGetLevelsFrom.LikedLevels
+                .Where(l => filters.LikedByUser.LikedLevels
+                    .AsEnumerable()
                     .Select(relation => relation.Level.Id)
                     .Contains(l.Id))
                 .AsQueryable();
         }
 
-        if (inAlbum != null)
+        if (filters.InAlbum != null)
         {
-            GameAlbum? albumToGetLevelsFrom = database.GetAlbumWithId(inAlbum);
-            if (albumToGetLevelsFrom == null) return null;
-
             response = response
                 .AsEnumerable()
-                .Where(l => albumToGetLevelsFrom.Levels.Contains(l))
+                .Where(l => filters.InAlbum.Levels.Contains(l))
                 .AsQueryable();
         }
 
-        if (inDaily != null)
+        if (filters.InDaily != null)
         {
-            DateTimeOffset date = DateTimeOffset.Parse(inDaily);
-            IQueryable<DailyLevel> dailyLevelObjects = database.GetDailyLevelObjects(date);
-
-            response = response.AsEnumerable().Where(l => dailyLevelObjects.Select(d => d.Level).Contains(l)).AsQueryable();
-        }
-
-        if (user != null && completed != null)
-        {
-            response = response.Where(l => l.UsersWhoHaveCompletedLevel.Contains(user));
-        }
-
-        return response;
-    }
-
-    public static IQueryable<GameLevel> OrderLevels(IQueryable<GameLevel> levels, LevelOrderType orderType, bool descending)
-    {
-        IQueryable<GameLevel> response = levels;
-
-        response = orderType switch
-        {
-            LevelOrderType.CreationDate => response.AsEnumerable().OrderBy(l => l.CreationDate).AsQueryable(),
-            LevelOrderType.ModificationDate => response.AsEnumerable().OrderBy(l => l.ModificationDate).AsQueryable(),
-            LevelOrderType.Plays => response.AsEnumerable().OrderBy(l => l.Plays).AsQueryable(),
-            LevelOrderType.UniquePlays => response.AsEnumerable().OrderBy(l => l.UniquePlays.Count).AsQueryable(),
-            LevelOrderType.FileSize => response.AsEnumerable().OrderBy(l => l.FileSize).AsQueryable(),
-            LevelOrderType.Difficulty => response.AsEnumerable().OrderBy(l => l.Difficulty).AsQueryable(),
-            LevelOrderType.Relevance => response
+            response = response
                 .AsEnumerable()
-                .OrderBy(l=> l.UniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.CreationDate).TotalDays * 0.5)
-                .AsQueryable(),
-            LevelOrderType.Random => RandomizeLevelOrder(response.AsQueryable()),
-            LevelOrderType.Likes => response.AsEnumerable().OrderBy(l=>l.Likes.Count()).AsQueryable(),
-            LevelOrderType.DoNotOrder => response,
-            _ => OrderLevels(response, LevelOrderType.CreationDate, descending)
-        };
+                .Where(l => l.DailyLevels.Any(dl => dl.Date == filters.InDaily.Value.Date))
+                .AsQueryable();
+        }
 
-        if (descending) response = response.AsEnumerable().Reverse().AsQueryable();
+        if (filters.Search != null)
+        {
+            response = response
+                .AsEnumerable()
+                .Where(l => l.Name.Contains(filters.Search, StringComparison.OrdinalIgnoreCase)
+                            || (l.Author?.Username ?? "").Contains(filters.Search, StringComparison.OrdinalIgnoreCase)
+                )
+                .AsQueryable();
+        }
+
+        if (user != null && filters.Completed != null)
+        {
+            response = response.Where(l => l.UniqueCompletions.Contains(user));
+        }
 
         return response;
     }

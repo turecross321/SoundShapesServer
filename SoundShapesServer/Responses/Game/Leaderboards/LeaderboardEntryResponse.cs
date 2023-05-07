@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Responses.Game.Users;
-using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Leaderboard;
 
 namespace SoundShapesServer.Responses.Game.Leaderboards;
 

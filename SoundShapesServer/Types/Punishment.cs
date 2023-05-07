@@ -1,4 +1,5 @@
 using Realms;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Types;
 

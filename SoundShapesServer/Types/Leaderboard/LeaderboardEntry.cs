@@ -1,7 +1,8 @@
 using Realms;
 using SoundShapesServer.Requests.Game;
+using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Types.Levels;
+namespace SoundShapesServer.Types.Leaderboard;
 
 public class LeaderboardEntry : RealmObject
 {

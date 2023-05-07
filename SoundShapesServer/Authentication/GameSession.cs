@@ -1,6 +1,7 @@
 using Bunkum.HttpServer.Authentication;
 using Realms;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Authentication;
 

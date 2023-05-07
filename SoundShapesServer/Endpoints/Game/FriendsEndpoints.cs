@@ -4,7 +4,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
 
 namespace SoundShapesServer.Endpoints.Game;

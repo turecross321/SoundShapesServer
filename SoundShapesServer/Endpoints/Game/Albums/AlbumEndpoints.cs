@@ -8,9 +8,9 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Albums;
 using SoundShapesServer.Responses.Game.Albums.LevelInfo;
 using SoundShapesServer.Responses.Game.Levels;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Albums;
 
@@ -39,10 +39,10 @@ public class AlbumEndpoints : EndpointGroup
 
         if (album == null) return HttpStatusCode.NotFound;
 
-        IQueryable<GameLevel> levels = album.Levels.AsQueryable();
-        
+        (GameLevel[] levels, int totalLevels) = database.GetLevels(user, LevelOrderType.Difficulty, true, new LevelFilters(inAlbum: album), from, count);
+
         if (order == "time:ascn")
-            return new Response(new LevelsWrapper(levels, user, from, count, LevelOrderType.DoNotOrder), ContentType.Json);
+            return new Response(new LevelsWrapper(levels, user, totalLevels, from, count), ContentType.Json);
 
         return new Response(new AlbumLevelInfosWrapper(user, album, levels, from, count), ContentType.Json);
     }

@@ -4,7 +4,7 @@ using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Following;
 using SoundShapesServer.Responses.Game.Users;
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Profiles;
 
@@ -14,7 +14,6 @@ public class ProfileEndpoints : EndpointGroup
     public UserMetadataResponse? ViewProfile(RequestContext context, string id, GameDatabaseContext database)
     {
         GameUser? user = database.GetUserWithId(id);
-
         return user == null ? null : new UserMetadataResponse(user);
     }
 
@@ -27,8 +26,8 @@ public class ProfileEndpoints : EndpointGroup
         GameUser? follower = database.GetUserWithId(id);
         if (follower == null) return null;
 
-        IQueryable<GameUser> users = database.GetFollowedUsers(follower);
-        return new FollowingUsersWrapper(follower, users, from, count);
+        (GameUser[] users, int totalUsers) = database.GetUsers(UserOrderType.DoNotOrder, true, new UserFilters(followedBy:follower), from, count);
+        return new FollowingUsersWrapper(follower, users, totalUsers, from, count);
     }
 
     [GameEndpoint("~identity:{id}/~followers.page", ContentType.Json)]
@@ -37,10 +36,10 @@ public class ProfileEndpoints : EndpointGroup
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
 
-        GameUser? follower = database.GetUserWithId(id);
-        if (follower == null) return null;
+        GameUser? recipient = database.GetUserWithId(id);
+        if (recipient == null) return null;
         
-        IQueryable<GameUser> users = database.GetFollowers(follower);
-        return new FollowingUsersWrapper(follower, users, from, count);
+        (GameUser[] users, int totalUsers) = database.GetUsers(UserOrderType.DoNotOrder, true, new UserFilters(isFollowing:recipient), from, count);
+        return new FollowingUsersWrapper(recipient, users, totalUsers, from, count);
     }
 }

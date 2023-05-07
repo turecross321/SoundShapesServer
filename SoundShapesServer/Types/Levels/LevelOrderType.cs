@@ -11,5 +11,6 @@ public enum LevelOrderType
     Difficulty,
     Relevance,
     Random,
+    Deaths,
     DoNotOrder
 }

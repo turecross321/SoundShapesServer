@@ -5,8 +5,8 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Levels;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
 
@@ -15,7 +15,7 @@ public class LevelInteractionEndpoints : EndpointGroup
     // Called from LeaderboardEndpoints
     public static void AddCompletion(GameDatabaseContext database, GameLevel level, GameUser user)
     {
-        database.AddUserToLevelCompletions(level, user);
+        database.AddUniqueCompletion(level, user);
         database.AddCompletionToLevel(level);
     }
     // Called from LeaderboardEndpoints
@@ -30,9 +30,9 @@ public class LevelInteractionEndpoints : EndpointGroup
         database.AddUniquePlayToLevel(level, user);
     }
     // Called from LeaderboardEndpoints
-    public static void AddDeathsToLevel(GameDatabaseContext database, GameLevel level, int deaths)
+    public static void AddDeathsToLevel(GameDatabaseContext database, GameLevel level, GameUser user, int deaths)
     {
-        database.AddDeathsToLevel(level, deaths);
+        database.AddDeathsToLevel(user, level, deaths);
     }
     
     [GameEndpoint("~identity:{userId}/~like:%2F~level%3A{arguments}", ContentType.Json)]

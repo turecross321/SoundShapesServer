@@ -1,6 +1,8 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Users;
+
 namespace SoundShapesServer.Responses.Game.Users;
 
 public class UserResponse
