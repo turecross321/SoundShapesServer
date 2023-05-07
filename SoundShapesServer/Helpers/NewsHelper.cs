@@ -1,4 +1,3 @@
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.RecentActivity;
 
 namespace SoundShapesServer.Helpers;
@@ -11,7 +10,7 @@ public static class NewsHelper
         
         response = orderType switch
         {
-            NewsOrderType.Date => response.OrderBy(e=>e.Date),
+            NewsOrderType.Date => response.OrderBy(e=>e.CreationDate),
             NewsOrderType.Length => response.OrderBy(e=>e.FullText.Length),
             _ => OrderNews(response, NewsOrderType.Date, descending)
         };
@@ -32,7 +31,7 @@ public static class NewsHelper
 
         if (byUser != null)
         {
-            response = response.Where(e => e.Author != null && e.Author.Id == byUser);
+            response = response.Where(e => e.Author.Id == byUser);
         }
 
         return response;

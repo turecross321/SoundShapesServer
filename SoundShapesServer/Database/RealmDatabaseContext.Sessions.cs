@@ -8,9 +8,9 @@ namespace SoundShapesServer.Database;
 public partial class RealmDatabaseContext
 {
     private const int DefaultTokenExpirySeconds = 86400; // 1 day
-    private const int SessionLimit = 3; // limit of how many sessions with one TypeOfSession you can have
+    private const int SessionLimit = 3; // limit of how many sessions with of one SessionType you can have
 
-    public GameSession GenerateSessionForUser(RequestContext context, GameUser user, SessionType sessionType, int? expirationSeconds = null, string? id = null)
+    public GameSession CreateSession(RequestContext context, GameUser user, SessionType sessionType, int? expirationSeconds = null, string? id = null, PlatformType? platformType = null)
     {
         IpAuthorization ip = IpHelper.GetIpAuthorizationFromRequestContext(context, this, user, sessionType);
 
@@ -22,6 +22,7 @@ public partial class RealmDatabaseContext
             Id = id,
             User = user,
             SessionType = (int)sessionType,
+            PlatformType = (int?)platformType,
             Ip = ip,
             ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(sessionExpirationSeconds)
         };

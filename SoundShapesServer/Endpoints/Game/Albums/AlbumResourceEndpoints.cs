@@ -22,12 +22,11 @@ public class AlbumResourceEndpoints : EndpointGroup
         return new Response(data, ContentType.BinaryData);
     }
 
-    [GameEndpoint("~album:{albumId}/~content:{resource}/data.get/{sessionId}")]
-    [Authentication(false)] // Vita doesn't include the session id in the headers here, hence the session id being in the url
+    [GameEndpoint("~album:{albumId}/~content:{resource}/data.get")]
+    [Authentication(false)]
     public Response GetAlbumResource
-        (RequestContext context, IDataStore dataStore, RealmDatabaseContext database, string albumId, string resource, string sessionId)
+        (RequestContext context, IDataStore dataStore, RealmDatabaseContext database, string albumId, string resource)
     {
-        if (database.IsSessionInvalid(sessionId)) return HttpStatusCode.Forbidden;
         if (database.GetAlbumWithId(albumId) == null) return HttpStatusCode.NotFound;
 
         if (!Enum.TryParse(resource, out AlbumResourceType resourceType)) return HttpStatusCode.NotFound;

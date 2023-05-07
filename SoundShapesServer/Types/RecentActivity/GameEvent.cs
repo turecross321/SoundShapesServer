@@ -25,11 +25,11 @@ public class GameEvent : RealmObject
 
     [PrimaryKey] [Required] public string Id { get; set; }
     public int EventType { get; set; }
-    public GameUser Actor { get; set; }
+    public GameUser Actor { get; init; }
     
     // This is not very clean, but I can't think of any other way to do it.
-    public GameUser? ContentUser { get; set; }
-    public GameLevel? ContentLevel { get; set; }
+    public GameUser? ContentUser { get; init; }
+    public GameLevel? ContentLevel { get; init; }
     
     public LeaderboardEntry? ContentLeaderboardEntry { get; set; }
     public DateTimeOffset Date { get; set; }

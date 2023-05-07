@@ -1329,7 +1329,8 @@ Should be a PNG
   "Entries": [
     {
       "Id": "a2e4cf92-4d1c-4315-b88d-8fdb461eca31",
-      "Date": "2023-05-02T22:39:35.303+00:00",
+      "CreationDate": "2023-05-02T22:39:35.303+00:00",
+      "ModificationDate": "2023-05-02T22:39:35.303+00:00",
       "AuthorUsername": "turecross123",
       "AuthorId": "68c8624a-85d5-457f-b109-9942ade2ee39",
       "Language": "global",
@@ -1340,7 +1341,8 @@ Should be a PNG
     }
     {
       "Id": "e9ecde58-c0c3-4135-ac54-f130a0273757",
-      "Date": "2023-05-02T22:38:17.6127246+00:00",
+      "CreationDate": "2023-05-02T22:38:17.6127246+00:00",
+      "ModificationDate": "2023-05-02T22:38:17.6127246+00:00",
       "AuthorUsername": "turecross123",
       "AuthorId": "68c8624a-85d5-457f-b109-9942ade2ee39",
       "Language": "global",
@@ -1383,7 +1385,8 @@ Should be a PNG
 ```json
 {
   "Id": "e9ecde58-c0c3-4135-ac54-f130a0273757",
-  "Date": "2023-05-02T22:24:41.0155527+00:00",
+  "CreationDate": "2023-05-02T22:24:41.0155527+00:00",
+  "ModificationDate": "2023-05-02T22:24:41.0155527+00:00",
   "AuthorUsername": "turecross123",
   "AuthorId": "68c8624a-85d5-457f-b109-9942ade2ee39",
   "Language": "global",
@@ -1423,7 +1426,8 @@ Should be a PNG
 ```json
 {
   "Id": "e9ecde58-c0c3-4135-ac54-f130a0273757",
-  "Date": "2023-05-02T22:24:41.0155527+00:00",
+  "CreationDate": "2023-05-02T22:24:41.0155527+00:00",
+  "ModificationDate": "2023-05-03T22:24:41.0155527+00:00",
   "AuthorUsername": "turecross123",
   "AuthorId": "68c8624a-85d5-457f-b109-9942ade2ee39",
   "Language": "global",

@@ -1,7 +1,6 @@
 using Bunkum.HttpServer.Database;
 using Realms;
 using SoundShapesServer.Authentication;
-using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;

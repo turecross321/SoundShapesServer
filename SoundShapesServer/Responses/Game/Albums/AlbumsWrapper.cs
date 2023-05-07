@@ -1,5 +1,4 @@
 using Newtonsoft.Json;
-using SoundShapesServer.Authentication;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Albums;
 
@@ -7,12 +6,12 @@ namespace SoundShapesServer.Responses.Game.Albums;
 
 public class AlbumsWrapper
 {
-    public AlbumsWrapper(GameSession session, IQueryable<GameAlbum> albums, int from, int count)
+    public AlbumsWrapper(IQueryable<GameAlbum> albums, int from, int count)
     {
         (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(albums.Count(), from, count);
         GameAlbum[] paginatedAlbums = PaginationHelper.PaginateAlbums(albums, from, count);
 
-        Albums = paginatedAlbums.Select(t => new AlbumResponse(t, session)).ToArray();
+        Albums = paginatedAlbums.Select(t => new AlbumResponse(t)).ToArray();
         PreviousToken = previousToken;
         NextToken = nextToken;
     }

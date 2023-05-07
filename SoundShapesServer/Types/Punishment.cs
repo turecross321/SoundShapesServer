@@ -27,7 +27,7 @@ public class Punishment : RealmObject
     public int PunishmentType { get; set; }
     public string Reason { get; set; }
     public bool Revoked { get; set; }
-    public GameUser Issuer { get; set; }
-    public DateTimeOffset IssuedAt { get; set; }
+    public GameUser Issuer { get; init; }
+    public DateTimeOffset IssuedAt { get; init; }
     public DateTimeOffset ExpiresAt { get; set; }
 }

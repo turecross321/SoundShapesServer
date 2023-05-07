@@ -15,8 +15,8 @@ public class GameUser : RealmObject, IRateLimitUser
     public string? Email { get; set; }
     public string? PasswordBcrypt { get; set; }
     public bool HasFinishedRegistration { get; set; }
-    public bool Deleted { get; set; }
-    public DateTimeOffset CreationDate { get; set; }
+    public bool Deleted { get; init; }
+    public DateTimeOffset CreationDate { get; init; }
 
     #pragma warning disable CS8618
     // ReSharper disable all UnassignedGetOnlyAutoProperty

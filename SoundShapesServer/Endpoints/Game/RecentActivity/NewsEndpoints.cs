@@ -13,13 +13,15 @@ namespace SoundShapesServer.Endpoints.Game.RecentActivity;
 public class NewsEndpoints : EndpointGroup
 {
     [GameEndpoint("global/news/~metadata:*.get", ContentType.Json)]
-    public NewsResponse GlobalNews(RequestContext context, RealmDatabaseContext database)
+    public NewsResponse GlobalNews(RequestContext context, RealmDatabaseContext database, GameSession session)
     {
         IQueryable<NewsEntry> entries = database.GetNews();
         IQueryable<NewsEntry> filteredNews = NewsHelper.FilterNews(entries, "global", null);
         NewsEntry? entry = filteredNews.LastOrDefault();
 
-        return entry == null ? new NewsResponse() : new NewsResponse(entry);
+        // News images make the vita version crash, so this is a workaround that only lets non-vita view them
+        bool isUserOnVita = session.PlatformType == (int)PlatformType.PsVita;
+        return entry == null ? new NewsResponse() : new NewsResponse(entry, !isUserOnVita);
     }
 
     
@@ -30,6 +32,8 @@ public class NewsEndpoints : EndpointGroup
         IQueryable<NewsEntry> filteredNews = NewsHelper.FilterNews(entries, language, null);
         NewsEntry? entry = filteredNews.LastOrDefault();
 
-        return entry == null ? null : new NewsResponse(entry);
+        // News images make the vita version crash, so this is a workaround that only lets non-vita view them
+        bool isUserOnVita = session.PlatformType == (int)PlatformType.PsVita;
+        return entry == null ? null : new NewsResponse(entry, !isUserOnVita);
     }
 }

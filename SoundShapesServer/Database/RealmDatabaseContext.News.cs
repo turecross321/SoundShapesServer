@@ -20,17 +20,7 @@ public partial class RealmDatabaseContext
 
     public NewsEntry CreateNewsEntry(ApiCreateNewsEntryRequest request, GameUser user)
     {
-        NewsEntry entry = new ()
-        {
-            Id = GenerateGuid(),
-            Date = DateTimeOffset.UtcNow,
-            Author = user,
-            Language = request.Language,
-            Title = request.Title,
-            Summary = request.Summary,
-            FullText = request.FullText,
-            Url = request.Url
-        };
+        NewsEntry entry = new (user, request);
         
         _realm.Write(() =>
         {
@@ -49,6 +39,7 @@ public partial class RealmDatabaseContext
             entry.Summary = request.Summary;
             entry.FullText = request.FullText;
             entry.Url = request.Url;
+            entry.ModificationDate = DateTimeOffset.UtcNow;
         });
 
         return entry;

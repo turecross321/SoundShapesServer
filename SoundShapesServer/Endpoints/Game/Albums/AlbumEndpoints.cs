@@ -24,7 +24,7 @@ public class AlbumEndpoints : EndpointGroup
 
         IQueryable<GameAlbum> albums = database.GetAlbums();
 
-        return new AlbumsWrapper(session, albums, from, count);
+        return new AlbumsWrapper(albums, from, count);
     }
 
     [GameEndpoint("~album:{albumId}/~link:*.page", ContentType.Json)]

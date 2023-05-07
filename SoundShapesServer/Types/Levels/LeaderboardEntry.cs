@@ -26,7 +26,7 @@ public class LeaderboardEntry : RealmObject
 
     [PrimaryKey]
     [Required] public string Id { get; set; }
-    public GameUser User { get; set; }
+    public GameUser User { get; init; }
     public string LevelId { get; set; }
     public long Score { get; set; }
     public long PlayTime { get; set; }

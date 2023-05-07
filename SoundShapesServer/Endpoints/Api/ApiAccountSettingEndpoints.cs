@@ -40,7 +40,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     public Response SendEmailSession(RequestContext context, RealmDatabaseContext database, GameUser user, ApiEmailSessionRequest body)
     {
         string emailSessionId = GenerateEmailSessionId(database);
-        GameSession emailSession = database.GenerateSessionForUser(context, user, SessionType.SetEmail, 600, emailSessionId); // 10 minutes
+        GameSession emailSession = database.CreateSession(context, user, SessionType.SetEmail, 600, emailSessionId); // 10 minutes
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your new email code: " + emailSession.Id + "\n" +
@@ -84,7 +84,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
         if (user == null) return HttpStatusCode.Created; // trol
 
         string passwordSessionId = GeneratePasswordSessionId(database);
-        GameSession passwordSession = database.GenerateSessionForUser(context, user, SessionType.SetPassword, 600, passwordSessionId); // 10 minutes
+        GameSession passwordSession = database.CreateSession(context, user, SessionType.SetPassword, 600, passwordSessionId); // 10 minutes
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your password code: " + passwordSession.Id + "\n" +
@@ -120,7 +120,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
                 ContentType.Plaintext, HttpStatusCode.Forbidden);
         
         string removalSessionId = GenerateAccountRemovalSessionId(database);
-        GameSession removalSession = database.GenerateSessionForUser(context, user, SessionType.RemoveAccount, 600, removalSessionId); // 10 minutes
+        GameSession removalSession = database.CreateSession(context, user, SessionType.RemoveAccount, 600, removalSessionId); // 10 minutes
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your account removal code: " + removalSession.Id + "\n" +

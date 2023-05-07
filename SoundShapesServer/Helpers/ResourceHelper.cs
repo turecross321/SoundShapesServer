@@ -68,9 +68,9 @@ public static class ResourceHelper
         };
     }
     
-    public static string GenerateAlbumResourceUrl(string albumId, AlbumResourceType type, string? sessionId)
+    public static string GenerateAlbumResourceUrl(string albumId, AlbumResourceType type)
     {
-        return $"otg/~album:{albumId}/~content:{type.ToString()}/data.get/{sessionId}";
+        return $"otg/~album:{albumId}/~content:{type.ToString()}/data.get";
     }
     
     private const string SavesPath = "saves";

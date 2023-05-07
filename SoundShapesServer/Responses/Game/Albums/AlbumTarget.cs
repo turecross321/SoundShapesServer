@@ -1,5 +1,4 @@
 using Newtonsoft.Json;
-using SoundShapesServer.Authentication;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
@@ -8,10 +7,10 @@ namespace SoundShapesServer.Responses.Game.Albums;
 
 public class AlbumTarget
 {
-    public AlbumTarget(GameAlbum album, GameSession session)
+    public AlbumTarget(GameAlbum album)
     {
         Id = IdFormatter.FormatAlbumId(album.Id);
-        Metadata = new AlbumMetadata(album, session);
+        Metadata = new AlbumMetadata(album);
     }
 
     [JsonProperty("id")] public string Id { get; set; }

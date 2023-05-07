@@ -29,7 +29,7 @@ public class ReportEndpoints : EndpointGroup
         if (level.Author?.Id == user.Id) return HttpStatusCode.BadRequest;
         
         database.SubmitReport(user, level.Id, ServerContentType.Level, reportReasonId);
-        
+
         return HttpStatusCode.OK;
     }
 }
