@@ -71,7 +71,6 @@ public partial class RealmDatabaseContext
             _realm.RemoveRange(level.DailyLevels);
             _realm.RemoveRange(level.Likes);
             _realm.RemoveRange(_realm.All<LeaderboardEntry>().Where(e=>e.LevelId == level.Id));
-            _realm.RemoveRange(level.Events);
             _realm.Remove(level);
         });
     }
