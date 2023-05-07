@@ -44,7 +44,7 @@ public class ApiAlbumEndpoints : EndpointGroup
         return new ApiAlbumsWrapper(albums, from, count, order, descending);
     }
 
-    [ApiEndpoint("albums/{id}/completion")]
+    [ApiEndpoint("albums/{id}/completed")]
     public ApiAlbumCompletionResponse? GetAlbumCompletion(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
     {
         GameAlbum? album = database.GetAlbumWithId(id);
@@ -52,6 +52,6 @@ public class ApiAlbumEndpoints : EndpointGroup
         
         int completedLevels = album.Levels.Count(level => level.UsersWhoHaveCompletedLevel.Contains(user));
 
-        return new ApiAlbumCompletionResponse(completedLevels);
+        return new ApiAlbumCompletionResponse(completedLevels, album.Levels.Count);
     }
 }
