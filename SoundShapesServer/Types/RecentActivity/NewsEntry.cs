@@ -11,11 +11,11 @@ public class NewsEntry : RealmObject
         CreationDate = DateTimeOffset.UtcNow;
         ModificationDate = DateTimeOffset.UtcNow;
         Author = author;
-        Language = request.Language;
-        Title = request.Language;
-        Summary = request.Language;
-        FullText = request.Language;
-        Url = request.Url;
+        Language = request.Language ?? "global";
+        Title = request.Title ?? "";
+        Summary = request.Summary ?? "";
+        FullText = request.FullText ?? "";
+        Url = request.Url ?? "0.0.0.0";
     }
     
     // Realm cries of this doesn't exist

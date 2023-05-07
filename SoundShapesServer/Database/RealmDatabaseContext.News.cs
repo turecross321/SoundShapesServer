@@ -34,11 +34,11 @@ public partial class RealmDatabaseContext
     {
         _realm.Write(() =>
         {
-            entry.Language = request.Language;
-            entry.Title = request.Title;
-            entry.Summary = request.Summary;
-            entry.FullText = request.FullText;
-            entry.Url = request.Url;
+            entry.Language = request.Language ?? "global";
+            entry.Title = request.Title ?? "";
+            entry.Summary = request.Summary ?? "";
+            entry.FullText = request.FullText ?? "";
+            entry.Url = request.Url ?? "";
             entry.ModificationDate = DateTimeOffset.UtcNow;
         });
 

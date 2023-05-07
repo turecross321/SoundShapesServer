@@ -10,7 +10,7 @@ public class NewsResponse
         Title = entry.Title;
         Summary = entry.Summary;
         FullText = entry.FullText;
-        Url = entry.Url;
+        Url = string.IsNullOrEmpty(Url) ? "0.0.0.0" : entry.Url; // An url crashes the Vita version
         if (includeImageUrl) ImageUrl = $"otg/~news:{entry.Id}/~content:thumbnail/data.get";
     }
 
