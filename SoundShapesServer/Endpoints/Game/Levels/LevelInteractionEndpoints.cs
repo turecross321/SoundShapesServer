@@ -13,30 +13,30 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class LevelInteractionEndpoints : EndpointGroup
 {
     // Called from LeaderboardEndpoints
-    public static void AddCompletion(RealmDatabaseContext database, GameLevel level, GameUser user)
+    public static void AddCompletion(GameDatabaseContext database, GameLevel level, GameUser user)
     {
         database.AddUserToLevelCompletions(level, user);
         database.AddCompletionToLevel(level);
     }
     // Called from LeaderboardEndpoints
-    public static void AddPlay(RealmDatabaseContext database, GameLevel level)
+    public static void AddPlay(GameDatabaseContext database, GameLevel level)
     {
         database.AddPlayToLevel(level);
     }
 
     // Called from LeaderboardEndpoints
-    public static void AddUniquePlay(RealmDatabaseContext database, GameLevel level, GameUser user)
+    public static void AddUniquePlay(GameDatabaseContext database, GameLevel level, GameUser user)
     {
         database.AddUniquePlayToLevel(level, user);
     }
     // Called from LeaderboardEndpoints
-    public static void AddDeathsToLevel(RealmDatabaseContext database, GameLevel level, int deaths)
+    public static void AddDeathsToLevel(GameDatabaseContext database, GameLevel level, int deaths)
     {
         database.AddDeathsToLevel(level, deaths);
     }
     
     [GameEndpoint("~identity:{userId}/~like:%2F~level%3A{arguments}", ContentType.Json)]
-    public Response LevelLikeRequests(RequestContext context, RealmDatabaseContext database, GameUser user, string userId, string arguments)
+    public Response LevelLikeRequests(RequestContext context, GameDatabaseContext database, GameUser user, string userId, string arguments)
     {
         string[] argumentArray = arguments.Split("."); // This is to seperate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
         string levelId = argumentArray[0];
@@ -52,7 +52,7 @@ public class LevelInteractionEndpoints : EndpointGroup
         return new Response(HttpStatusCode.NotFound);
     }
 
-    private Response CheckIfUserHasLikedLevel(GameUser user, GameLevel level, RealmDatabaseContext database)
+    private Response CheckIfUserHasLikedLevel(GameUser user, GameLevel level, GameDatabaseContext database)
     {
         if (database.IsUserLikingLevel(user, level))
         {
@@ -64,13 +64,13 @@ public class LevelInteractionEndpoints : EndpointGroup
 
         return new Response(HttpStatusCode.NotFound);
     }
-    private Response LikeLevel(GameUser user, GameLevel level, RealmDatabaseContext database)
+    private Response LikeLevel(GameUser user, GameLevel level, GameDatabaseContext database)
     {
         if (database.LikeLevel(user, level)) return new Response(HttpStatusCode.OK);
         return new Response(HttpStatusCode.BadRequest);
     }
 
-    private Response UnLikeLevel(GameUser user, GameLevel level, RealmDatabaseContext database)
+    private Response UnLikeLevel(GameUser user, GameLevel level, GameDatabaseContext database)
     {
         if (database.UnLikeLevel(user, level)) return new Response(HttpStatusCode.OK);
         return new Response(HttpStatusCode.BadRequest);

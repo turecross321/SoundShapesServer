@@ -18,7 +18,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 
     [ApiEndpoint("account/login", Method.Post)]
     [Authentication(false)]
-    public Response Login(RequestContext context, RealmDatabaseContext database, ApiLoginRequest body)
+    public Response Login(RequestContext context, GameDatabaseContext database, ApiLoginRequest body)
     {
         GameUser? user = database.GetUserWithEmail(body.Email);
         if (user == null)
@@ -43,7 +43,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("account/logout", Method.Post)]
-    public Response Logout(RequestContext context, RealmDatabaseContext database, GameSession session)
+    public Response Logout(RequestContext context, GameDatabaseContext database, GameSession session)
     {
         database.RemoveSession(session);
         return HttpStatusCode.OK;

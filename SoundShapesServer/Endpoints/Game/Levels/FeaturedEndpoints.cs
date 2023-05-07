@@ -37,7 +37,7 @@ public class FeaturedEndpoints : EndpointGroup
     
     [GameEndpoint("global/featured/~metadata:*.get")]
     [GameEndpoint("global/featured/{language}/~metadata:*.get", ContentType.Plaintext)]
-    public string GlobalFeatured(RequestContext context, RealmDatabaseContext database, string? language)
+    public string GlobalFeatured(RequestContext context, GameDatabaseContext database, string? language)
     {
         return FeaturedHelper.SerializeCommunityTabs(_communityTabs);
     }

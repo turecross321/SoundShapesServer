@@ -22,7 +22,7 @@ public class AuthenticationEndpoints : EndpointGroup
 {
     [Endpoint("/identity/login/token/psn", ContentType.Json, Method.Post)]
     [Authentication(false)]
-    public Response? Login(RequestContext context, RealmDatabaseContext database, Stream body, GameServerConfig config)
+    public Response? Login(RequestContext context, GameDatabaseContext database, Stream body, GameServerConfig config)
     {
         Ticket ticket;
         try
@@ -87,7 +87,7 @@ public class AuthenticationEndpoints : EndpointGroup
     }
     
     [GameEndpoint("{platform}/{publisher}/{language}/~eula.get", ContentType.Json)]
-    public string? Eula(RequestContext context, GameServerConfig config, RealmDatabaseContext database, string platform, string publisher, string language, GameSession session, GameUser user)
+    public string? Eula(RequestContext context, GameServerConfig config, GameDatabaseContext database, string platform, string publisher, string language, GameSession session, GameUser user)
     {
         if (session.SessionType == (int)SessionType.Game)
             return EulaEndpoint.NormalEula(config);

@@ -2,7 +2,7 @@ using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Database;
 
-public partial class RealmDatabaseContext
+public partial class GameDatabaseContext
 {
     public IQueryable<Report> GetReports()
     {

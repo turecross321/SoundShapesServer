@@ -17,7 +17,7 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 public class ApiAlbumManagementEndpoints : EndpointGroup
 {
     [ApiEndpoint("albums/create", Method.Post)]
-    public Response CreateAlbum(RequestContext context, RealmDatabaseContext database, GameUser user, ApiCreateAlbumRequest body)
+    public Response CreateAlbum(RequestContext context, GameDatabaseContext database, GameUser user, ApiCreateAlbumRequest body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
 
@@ -26,7 +26,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("albums/{id}/edit", Method.Post)]
-    public Response EditAlbum(RequestContext context, RealmDatabaseContext database, GameUser user, ApiCreateAlbumRequest body, string id)
+    public Response EditAlbum(RequestContext context, GameDatabaseContext database, GameUser user, ApiCreateAlbumRequest body, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
 
@@ -38,7 +38,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("albums/{id}/setThumbnail", Method.Post)]
-    public Response SetAlbumThumbnail(RequestContext context, RealmDatabaseContext database, IDataStore dataStore,
+    public Response SetAlbumThumbnail(RequestContext context, GameDatabaseContext database, IDataStore dataStore,
         GameUser user, Stream body, string id) 
         => SetAlbumAssets(
             database,
@@ -50,7 +50,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     );
     
     [ApiEndpoint("albums/{id}/setSidePanel", Method.Post)]
-    public Response SetAlbumSidePanel(RequestContext context, RealmDatabaseContext database, IDataStore dataStore,
+    public Response SetAlbumSidePanel(RequestContext context, GameDatabaseContext database, IDataStore dataStore,
         GameUser user, Stream body, string id) 
         => SetAlbumAssets(
             database,
@@ -61,7 +61,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
             AlbumResourceType.SidePanel
         );
     
-    private Response SetAlbumAssets(RealmDatabaseContext database, IDataStore dataStore, GameUser user, Stream body, string id, AlbumResourceType resourceType)
+    private Response SetAlbumAssets(GameDatabaseContext database, IDataStore dataStore, GameUser user, Stream body, string id, AlbumResourceType resourceType)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
         GameAlbum? album = database.GetAlbumWithId(id);
@@ -82,7 +82,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("albums/{id}/remove", Method.Post)]
-    public Response RemoveAlbum(RequestContext context, RealmDatabaseContext database, IDataStore dataStore, GameUser user, string id)
+    public Response RemoveAlbum(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
 

@@ -12,7 +12,7 @@ public class ApiPlayerActivityEndpoint : EndpointGroup
 {
     [ApiEndpoint("activities")]
     [Authentication(false)]
-    public ApiPlayerActivitiesWrapper GetActivities(RequestContext context, RealmDatabaseContext database)
+    public ApiPlayerActivitiesWrapper GetActivities(RequestContext context, GameDatabaseContext database)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");

@@ -13,7 +13,7 @@ public class ProfileInteractionEndpoints : EndpointGroup
 {
 
     [GameEndpoint("~identity:{followerId}/~follow:%2F~identity%3A{arguments}", ContentType.Json)]
-    public Response FollowRequests(RequestContext context, RealmDatabaseContext database, GameUser user, string followerId, string arguments)
+    public Response FollowRequests(RequestContext context, GameDatabaseContext database, GameUser user, string followerId, string arguments)
     {
         string[] argumentArray = arguments.Split("."); // This is to separate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
         string userId = argumentArray[0];
@@ -31,7 +31,7 @@ public class ProfileInteractionEndpoints : EndpointGroup
         };
     }
     
-    private FollowResponse? CheckIfUserIsFollowed(GameUser follower, GameUser recipient, RealmDatabaseContext database)
+    private FollowResponse? CheckIfUserIsFollowed(GameUser follower, GameUser recipient, GameDatabaseContext database)
     {
         if (database.IsUserFollowingOtherUser(follower, recipient))
         {
@@ -40,12 +40,12 @@ public class ProfileInteractionEndpoints : EndpointGroup
 
         return null;
     }
-    private Response FollowUser(GameUser follower, GameUser recipient, RealmDatabaseContext database)
+    private Response FollowUser(GameUser follower, GameUser recipient, GameDatabaseContext database)
     {
         return database.FollowUser(follower, recipient) ? new Response(HttpStatusCode.Created) : new Response(HttpStatusCode.BadRequest);
     }
 
-    private Response UnFollowUser(GameUser user, GameUser recipient, RealmDatabaseContext database)
+    private Response UnFollowUser(GameUser user, GameUser recipient, GameDatabaseContext database)
     {
         return database.UnFollowUser(user, recipient) ? new Response(HttpStatusCode.OK) : new Response(HttpStatusCode.BadRequest);
     }

@@ -8,13 +8,13 @@ namespace SoundShapesServer.Helpers;
 
 public static class SessionHelper
 {
-    public static string GenerateEmailSessionId(RealmDatabaseContext database) =>
+    public static string GenerateEmailSessionId(GameDatabaseContext database) =>
         GenerateSimpleSessionId(database, "123456789", 8);
-    public static string GeneratePasswordSessionId(RealmDatabaseContext database) =>
+    public static string GeneratePasswordSessionId(GameDatabaseContext database) =>
         GenerateSimpleSessionId(database, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 8);
-    public static string GenerateAccountRemovalSessionId(RealmDatabaseContext database) => GenerateSimpleSessionId(database,
+    public static string GenerateAccountRemovalSessionId(GameDatabaseContext database) => GenerateSimpleSessionId(database,
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789", 8);
-    private static string GenerateSimpleSessionId(RealmDatabaseContext database, string idCharacters, int idLength)
+    private static string GenerateSimpleSessionId(GameDatabaseContext database, string idCharacters, int idLength)
     {
         Random r = new();
         string id = "";

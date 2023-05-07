@@ -12,7 +12,7 @@ public static class UserHelper
         return IsMatch(username, UsernameRegex);
     }
 
-    public static IQueryable<GameUser>? FilterUsers(RealmDatabaseContext database, IQueryable<GameUser> users, string? following, string? followedBy)
+    public static IQueryable<GameUser>? FilterUsers(GameDatabaseContext database, IQueryable<GameUser> users, string? following, string? followedBy)
     {
         IQueryable<GameUser> response = users.Where(u=>u.HasFinishedRegistration);
         
@@ -43,7 +43,7 @@ public static class UserHelper
         return response;
     }
 
-    public static IQueryable<GameUser> OrderUsers(RealmDatabaseContext database, IQueryable<GameUser> users, UserOrderType order, bool descending)
+    public static IQueryable<GameUser> OrderUsers(GameDatabaseContext database, IQueryable<GameUser> users, UserOrderType order, bool descending)
     {
         IQueryable<GameUser> response = users;
 

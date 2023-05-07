@@ -35,7 +35,7 @@ public class SessionProvider : IAuthenticationProvider<GameUser, GameSession>
         // we dont have a session if null, so bail 
         if (sessionId == null) return null;
 
-        RealmDatabaseContext database = (RealmDatabaseContext)db.Value;
+        GameDatabaseContext database = (GameDatabaseContext)db.Value;
         Debug.Assert(database != null);
 
         GameSession? session = database.GetSessionWithSessionId(sessionId);

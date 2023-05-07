@@ -17,7 +17,7 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class Endpoints : EndpointGroup
 {
     [GameEndpoint("~level:{args}")]
-    public Response GetEndpoints(RequestContext context, IDataStore dataStore, RealmDatabaseContext database, GameUser user, string args)
+    public Response GetEndpoints(RequestContext context, IDataStore dataStore, GameDatabaseContext database, GameUser user, string args)
     {
         string[] arguments = args.Split('.');
 
@@ -37,7 +37,7 @@ public class Endpoints : EndpointGroup
     }
 
     [GameEndpoint("~level:{args}", Method.Post)]
-    public Response PostEndpoints(RequestContext context, IDataStore dataStore, Stream body, RealmDatabaseContext database, GameServerConfig config, GameUser user, string args)
+    public Response PostEndpoints(RequestContext context, IDataStore dataStore, Stream body, GameDatabaseContext database, GameServerConfig config, GameUser user, string args)
     {
         string[] arguments = args.Split('.');
 

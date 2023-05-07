@@ -28,7 +28,7 @@ public class LevelResourceEndpoints : EndpointGroup
 
     [GameEndpoint("~level:{levelId}/~version:{versionId}/~content:{file}/data.get")]
     public Response GetLevelResource
-        (RequestContext context, IDataStore dataStore, RealmDatabaseContext database, GameUser user, string levelId, string versionId, string file)
+        (RequestContext context, IDataStore dataStore, GameDatabaseContext database, GameUser user, string levelId, string versionId, string file)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;

@@ -4,7 +4,7 @@ using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Database;
 
-public partial class RealmDatabaseContext
+public partial class GameDatabaseContext
 {
     private IpAuthorization AddUserIp(GameUser user, string ipAddress, SessionType sessionType)
     {

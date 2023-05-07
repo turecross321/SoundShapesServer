@@ -19,7 +19,7 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class LevelPublishingEndpoints : EndpointGroup
 {
     // Gets called by Endpoints.cs
-    public static Response PublishLevel(GameServerConfig config, IDataStore dataStore, MultipartFormDataParser parser, RealmDatabaseContext database, GameUser user)
+    public static Response PublishLevel(GameServerConfig config, IDataStore dataStore, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user)
     {
         if (user.Levels.Count() >= config.LevelPublishLimit) return HttpStatusCode.Forbidden;
         
@@ -38,7 +38,7 @@ public class LevelPublishingEndpoints : EndpointGroup
     }
     
     // Gets called by Endpoints.cs
-    public static Response UpdateLevel(IDataStore dataStore, MultipartFormDataParser parser, RealmDatabaseContext database, GameUser user, string levelId)
+    public static Response UpdateLevel(IDataStore dataStore, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user, string levelId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
 
@@ -110,7 +110,7 @@ public class LevelPublishingEndpoints : EndpointGroup
     }
     
     // Gets called by Endpoints.cs
-    public static Response UnPublishLevel(IDataStore dataStore, RealmDatabaseContext database, GameUser user, GameLevel level)
+    public static Response UnPublishLevel(IDataStore dataStore, GameDatabaseContext database, GameUser user, GameLevel level)
     {
         if (level.Author?.Id != user.Id) return new Response(HttpStatusCode.Forbidden);
         

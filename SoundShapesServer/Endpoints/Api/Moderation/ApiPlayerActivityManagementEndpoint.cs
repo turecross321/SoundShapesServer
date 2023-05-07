@@ -13,7 +13,7 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 public class ApiPlayerActivityManagementEndpoint : EndpointGroup
 {
     [ApiEndpoint("activities/{id}/remove", Method.Post)]
-    public Response RemoveActivity(RequestContext context, RealmDatabaseContext database, GameUser user, string id)
+    public Response RemoveActivity(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
 

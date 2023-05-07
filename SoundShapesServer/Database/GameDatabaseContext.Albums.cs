@@ -6,7 +6,7 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Database;
 
-public partial class RealmDatabaseContext
+public partial class GameDatabaseContext
 {
     public GameAlbum CreateAlbum(ApiCreateAlbumRequest request)
     {

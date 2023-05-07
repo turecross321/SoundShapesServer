@@ -38,7 +38,7 @@ public static class LevelHelper
             .AsQueryable();
     }
 
-    public static IQueryable<GameLevel>? FilterLevels(RealmDatabaseContext database, GameUser? user, IQueryable<GameLevel> levels, string? byUser, string? likedByUser, string? inAlbum, string? inDaily, bool? completed)
+    public static IQueryable<GameLevel>? FilterLevels(GameDatabaseContext database, GameUser? user, IQueryable<GameLevel> levels, string? byUser, string? likedByUser, string? inAlbum, string? inDaily, bool? completed)
     {
         IQueryable<GameLevel> response = levels;
         if (byUser != null)

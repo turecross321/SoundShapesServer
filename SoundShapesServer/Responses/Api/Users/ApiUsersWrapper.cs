@@ -7,7 +7,7 @@ namespace SoundShapesServer.Responses.Api.Users;
 
 public class ApiUsersWrapper
 {
-    public ApiUsersWrapper(RealmDatabaseContext database, IQueryable<GameUser> users, int from, int count, UserOrderType order, bool descending)
+    public ApiUsersWrapper(GameDatabaseContext database, IQueryable<GameUser> users, int from, int count, UserOrderType order, bool descending)
     {
         IQueryable<GameUser> orderedUsers = OrderUsers(database, users, order, descending);
 

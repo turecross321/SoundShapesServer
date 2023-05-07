@@ -6,7 +6,7 @@ using SoundShapesServer.Types.RecentActivity;
 
 namespace SoundShapesServer.Database;
 
-public partial class RealmDatabaseContext
+public partial class GameDatabaseContext
 {
     public IQueryable<NewsEntry> GetNews()
     {

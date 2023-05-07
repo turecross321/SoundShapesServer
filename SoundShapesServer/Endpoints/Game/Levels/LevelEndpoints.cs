@@ -13,7 +13,7 @@ public class LevelEndpoints : EndpointGroup
     [GameEndpoint("~index:*.page", ContentType.Json)]
     [GameEndpoint("~index:level.page", ContentType.Json)]
     [Authentication(false)]
-    public LevelsWrapper? LevelsEndpoint(RequestContext context, RealmDatabaseContext database, GameUser? user)
+    public LevelsWrapper? LevelsEndpoint(RequestContext context, GameDatabaseContext database, GameUser? user)
     {
         // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
         if (user == null) return new LevelsWrapper(); 
@@ -73,7 +73,7 @@ public class LevelEndpoints : EndpointGroup
     
     [GameEndpoint("~identity:{userId}/~queued:*.page", ContentType.Json)]
     [GameEndpoint("~identity:{userId}/~like:*.page", ContentType.Json)]
-    public LevelsWrapper? QueuedAndLiked(RequestContext context, RealmDatabaseContext database, GameUser user, string userId)
+    public LevelsWrapper? QueuedAndLiked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
     {
         // Queued levels and Liked levels should be two different categories, but there aren't any buttons seperating them, so i'm just not going to implement them as one for now
         int count = int.Parse(context.QueryString["count"] ?? "9");
