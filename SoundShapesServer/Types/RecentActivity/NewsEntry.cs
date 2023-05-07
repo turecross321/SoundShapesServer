@@ -15,7 +15,7 @@ public class NewsEntry : RealmObject
         Title = request.Title ?? "";
         Summary = request.Summary ?? "";
         FullText = request.FullText ?? "";
-        Url = request.Url ?? "0.0.0.0";
+        Url = string.IsNullOrEmpty(request.Url) ? "0.0.0.0" : request.Url; // An url crashes the Vita version
     }
     
     // Realm cries of this doesn't exist
