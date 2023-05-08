@@ -20,5 +20,5 @@ public class LevelFilters
     public GameUser? CompletedBy;
     public GameAlbum? InAlbum;
     public DateTimeOffset? InDailyDate;
-    public string? Search;
+    public string? Search; // todo: readonly
 }

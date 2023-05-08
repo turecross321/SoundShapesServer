@@ -56,8 +56,8 @@ public class LeaderboardEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
 
-        IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntries();
-        return new LeaderboardEntriesWrapper(entries, from, count, LeaderboardOrderType.Score, levelId);
+        (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, new LeaderboardFilters(levelId), from, count);
+        return new LeaderboardEntriesWrapper(allEntries, paginatedEntries, from, count);
     }
 
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near", ContentType.Json)] // campaign levels
@@ -65,12 +65,9 @@ public class LeaderboardEndpoints : EndpointGroup
     [GameEndpoint("{levelId}/~leaderboard.near", ContentType.Json)] // recent activity community levels 
     public LeaderboardEntryResponse[]? GetLeaderboardNearPlayer(RequestContext context, GameDatabaseContext database, GameUser user, string levelId)
     {
-        GameLevel? level = database.GetLevelWithId(levelId);
-        if (level == null) return null;
+        LeaderboardFilters filters = new (levelId, user, true, true);
+        (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 1);
 
-        IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntries();
-        IQueryable<LeaderboardEntry> filteredEntries = FilterEntries(entries, levelId, user.Id, true, true);
-
-        return filteredEntries.Select(e=> new LeaderboardEntryResponse(e, GetEntryPlacement(filteredEntries, e) + 1)).ToArray();
+        return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e, GetEntryPlacement(allEntries, e) + 1)).ToArray();
     }
 }

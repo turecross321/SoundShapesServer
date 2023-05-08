@@ -3,6 +3,7 @@ using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Leaderboard;
+using SoundShapesServer.Types.Users;
 using static System.Boolean;
 
 namespace SoundShapesServer.Endpoints.Api;
@@ -17,18 +18,17 @@ public class ApiLeaderboardEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
         
         bool descending = Parse(context.QueryString["descending"] ?? "false");
-
-        bool onlyBest = Parse(context.QueryString["onlyBest"] ?? "false");
         
+        string? onLevel = context.QueryString["onLevel"];        
+        string? byUserString = context.QueryString["byUser"];
+        bool onlyBest = Parse(context.QueryString["onlyBest"] ?? "false");
         bool? completed = null;
         if (TryParse(context.QueryString["completed"], out bool completedTemp)) completed = completedTemp;
 
-        string? onLevel = context.QueryString["onLevel"];
-        string? byUser = context.QueryString["byUser"];
+        GameUser? byUser = null;
+        if (byUserString != null) byUser = database.GetUserWithId(byUserString);
         
         string? orderString = context.QueryString["orderBy"];
-
-        IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntries();
 
         LeaderboardOrderType order = orderString switch
         {
@@ -39,6 +39,10 @@ public class ApiLeaderboardEndpoints : EndpointGroup
             _ => LeaderboardOrderType.Score
         };
 
-        return new ApiLeaderboardEntryWrapper(entries, from, count, order, descending, onlyBest, completed, onLevel, byUser);
+        LeaderboardFilters filters = new (onLevel, byUser, completed, onlyBest);
+        (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) =
+            database.GetLeaderboardEntries(order, descending, filters, from, count);
+
+        return new ApiLeaderboardEntryWrapper(allEntries, paginatedEntries);
     }
 }

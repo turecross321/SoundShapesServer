@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using Bunkum.HttpServer.Storage;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
@@ -111,7 +112,7 @@ public partial class GameDatabaseContext
         };
 
         IQueryable<GameLevel> filteredLevels = FilterLevels(orderedLevels, filters);
-        GameLevel[] paginatedLevels = filteredLevels.AsEnumerable().Skip(from).Take(Math.Min(count, 100)).ToArray();
+        GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(filteredLevels, from, count);
 
         return (paginatedLevels, orderedLevels.Count());
     }

@@ -60,45 +60,6 @@ public static class LeaderboardHelper
         return entry;
     }
 
-    public static IQueryable<LeaderboardEntry> FilterEntries(IQueryable<LeaderboardEntry> entries, string? onLevel, string? byUser, bool? completed, bool onlyBest)
-    {
-        IQueryable<LeaderboardEntry> response = entries;
-        
-        if (onLevel != null)
-        {
-            response = response
-                .AsEnumerable()
-                .Where(e => e.LevelId == onLevel)
-                .AsQueryable();
-        }
-
-        if (byUser != null)
-        {
-            response = response
-                .AsEnumerable()
-                .Where(e => e.User.Id == byUser)
-                .AsQueryable();
-        }
-
-        if (completed != null)
-        {
-            response = response
-                .AsEnumerable()
-                .Where(e => e.Completed == completed)
-                .AsQueryable();   
-        }
-
-
-        if (onlyBest)
-        {
-            response = response.AsEnumerable()
-                .GroupBy(e => e.User.Id)
-                .Select(g => g.First()).AsQueryable();
-        }
-        
-        return response;
-    }
-
     public static int GetEntryPlacement(IQueryable<LeaderboardEntry> entries, LeaderboardEntry entry)
     {
         return entries.ToList().IndexOf(entry);
@@ -121,24 +82,5 @@ public static class LeaderboardHelper
         }
 
         return count;
-    }
-
-    public static IQueryable<LeaderboardEntry> OrderEntries(IQueryable<LeaderboardEntry> entries,
-        LeaderboardOrderType order, bool descending)
-    {
-        IQueryable<LeaderboardEntry> response = entries;
-
-        response = order switch
-        {
-            LeaderboardOrderType.Score => response.OrderBy(e => e.Score),
-            LeaderboardOrderType.PlayTime => response.OrderBy(e => e.PlayTime),
-            LeaderboardOrderType.TokenCount => response.OrderBy(e => e.Tokens),
-            LeaderboardOrderType.Date => response.OrderBy(e => e.Date),
-            _ => OrderEntries(response, order, descending)
-        };
-
-        if (descending) response = response.AsEnumerable().Reverse().AsQueryable();
-
-        return response;
     }
 }
