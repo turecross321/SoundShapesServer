@@ -1,8 +1,4 @@
-using Realms;
-using SoundShapesServer.Database;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Relations;
-using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Helpers;
 
@@ -21,76 +17,6 @@ public static class LevelHelper
         }
 
         return levelId;
-    }
-
-    public static IQueryable<GameLevel> FilterLevels(GameDatabaseContext database, IQueryable<GameLevel> levels, LevelFilters filters)
-    {
-        IQueryable<GameLevel> response = levels;
-        if (filters.ByUser != null)
-        {
-            response = response.Where(l => l.Author == filters.ByUser);
-        }
-        if (filters.LikedByUser != null)
-        {
-            IQueryable<LevelLikeRelation> relations = filters.LikedByUser.LikedLevels;
-
-            List<GameLevel> tempResponse = new ();
-
-            foreach (LevelLikeRelation relation in relations)
-            {
-                GameLevel? responseLevel = response.FirstOrDefault(l => l == relation.Level);
-                if (responseLevel != null) tempResponse.Add(responseLevel);
-            }
-
-            response = tempResponse.AsQueryable();
-        }
-        if (filters.InAlbum != null)
-        {
-            List<GameLevel> tempResponse = new ();
-
-            foreach (GameLevel level in filters.InAlbum.Levels)
-            {
-                GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == level.Id);
-                if (responseLevel != null) tempResponse.Add(responseLevel);
-            }
-
-            response = tempResponse.AsQueryable();
-        }
-        if (filters.InDailyDate != null)
-        {
-            IQueryable<DailyLevel> dailyLevelObjects = database.GetDailyLevelObjects(filters.InDailyDate);
-
-            List<GameLevel> tempResponse = new ();
-
-            foreach (DailyLevel dailyLevel in dailyLevelObjects)
-            {
-                GameLevel? responseLevel = response.FirstOrDefault(l => l == dailyLevel.Level);
-                if (responseLevel != null) tempResponse.Add(responseLevel);
-            }
-
-            response = tempResponse.AsQueryable();
-        }
-
-        if (filters.Search != null)
-        {
-            GameUser? userWithSearchName = database.GetUserWithUsername(filters.Search);
-            response = response.Where(l => l.Name.Contains(filters.Search, StringComparison.OrdinalIgnoreCase) || l.Author == userWithSearchName);
-        }
-
-        if (filters.CompletedBy != null)
-        {            
-            List<GameLevel> tempResponse = new ();
-            
-            foreach (GameLevel level in filters.CompletedBy.CompletedLevels)
-            {
-                GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == level.Id);
-                if (responseLevel != null) tempResponse.Add(responseLevel);
-            }
-
-            response = tempResponse.AsQueryable();
-        }
-
-        return response;
     }
 
     public static float CalculateLevelDifficulty(GameLevel level)

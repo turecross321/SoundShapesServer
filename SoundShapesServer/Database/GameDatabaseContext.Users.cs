@@ -5,10 +5,10 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.PaginationHelper;
 using static SoundShapesServer.Helpers.ResourceHelper;
-using static SoundShapesServer.Helpers.UserHelper;
 
 namespace SoundShapesServer.Database;
 
@@ -87,6 +87,50 @@ public partial class GameDatabaseContext
         GameUser[] paginatedUsers = PaginateUsers(filteredUsers, from, count);
 
         return (paginatedUsers, filteredUsers.Count());
+    }
+    
+    private IQueryable<GameUser> FilterUsers(IQueryable<GameUser> users, UserFilters filters)
+    {
+        IQueryable<GameUser> response = users.Where(u=>u.HasFinishedRegistration);
+        
+        if (filters.IsFollowingUser != null)
+        {
+            IQueryable<FollowRelation> relations = filters.IsFollowingUser.Followers;
+
+            List<GameUser> tempResponse = new ();
+
+            foreach (FollowRelation relation in relations)
+            {
+                GameUser follower = relation.Follower;
+                GameUser? responseUser = response.FirstOrDefault(u => u.Id == follower.Id);
+                if (responseUser != null) tempResponse.Add(responseUser);
+            }
+
+            response = tempResponse.AsQueryable();
+        }
+        
+        if (filters.FollowedByUser != null)
+        {
+            IQueryable<FollowRelation> relations = filters.FollowedByUser.Following;
+
+            List<GameUser> tempResponse = new ();
+
+            foreach (FollowRelation relation in relations)
+            {
+                GameUser recipient = relation.Recipient;
+                GameUser? responseUser = response.FirstOrDefault(u => u.Id == recipient.Id);
+                if (responseUser != null) tempResponse.Add(responseUser);
+            }
+
+            response = tempResponse.AsQueryable();
+        }
+        
+        if (filters.Search != null)
+        {
+            response = response.Where(l => l.Username.Contains(filters.Search, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return response;
     }
 
     private IQueryable<GameUser> UsersOrderedByFollowersCount(bool descending)

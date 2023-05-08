@@ -6,9 +6,9 @@ using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.LevelHelper;
-using static SoundShapesServer.Helpers.PaginationHelper;
 using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Database;
@@ -110,10 +110,80 @@ public partial class GameDatabaseContext
             _ => LevelsOrderedByCreationDate(descending)
         };
 
-        IQueryable<GameLevel> filteredLevels = FilterLevels(this, orderedLevels, filters);
+        IQueryable<GameLevel> filteredLevels = FilterLevels(orderedLevels, filters);
         GameLevel[] paginatedLevels = filteredLevels.AsEnumerable().Skip(from).Take(Math.Min(count, 100)).ToArray();
 
         return (paginatedLevels, orderedLevels.Count());
+    }
+    
+        private IQueryable<GameLevel> FilterLevels(IQueryable<GameLevel> levels, LevelFilters filters)
+    {
+        IQueryable<GameLevel> response = levels;
+        if (filters.ByUser != null)
+        {
+            response = response.Where(l => l.Author == filters.ByUser);
+        }
+        if (filters.LikedByUser != null)
+        {
+            IQueryable<LevelLikeRelation> relations = filters.LikedByUser.LikedLevels;
+
+            List<GameLevel> tempResponse = new ();
+
+            foreach (LevelLikeRelation relation in relations)
+            {
+                GameLevel? responseLevel = response.FirstOrDefault(l => l == relation.Level);
+                if (responseLevel != null) tempResponse.Add(responseLevel);
+            }
+
+            response = tempResponse.AsQueryable();
+        }
+        if (filters.InAlbum != null)
+        {
+            List<GameLevel> tempResponse = new ();
+
+            foreach (GameLevel level in filters.InAlbum.Levels)
+            {
+                GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == level.Id);
+                if (responseLevel != null) tempResponse.Add(responseLevel);
+            }
+
+            response = tempResponse.AsQueryable();
+        }
+        if (filters.InDailyDate != null)
+        {
+            IQueryable<DailyLevel> dailyLevelObjects = GetDailyLevelObjects(filters.InDailyDate);
+
+            List<GameLevel> tempResponse = new ();
+
+            foreach (DailyLevel dailyLevel in dailyLevelObjects)
+            {
+                GameLevel? responseLevel = response.FirstOrDefault(l => l == dailyLevel.Level);
+                if (responseLevel != null) tempResponse.Add(responseLevel);
+            }
+
+            response = tempResponse.AsQueryable();
+        }
+
+        if (filters.Search != null)
+        {
+            GameUser? userWithSearchName = GetUserWithUsername(filters.Search);
+            response = response.Where(l => l.Name.Contains(filters.Search, StringComparison.OrdinalIgnoreCase) || l.Author == userWithSearchName);
+        }
+
+        if (filters.CompletedBy != null)
+        {            
+            List<GameLevel> tempResponse = new ();
+            
+            foreach (GameLevel level in filters.CompletedBy.CompletedLevels)
+            {
+                GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == level.Id);
+                if (responseLevel != null) tempResponse.Add(responseLevel);
+            }
+
+            response = tempResponse.AsQueryable();
+        }
+
+        return response;
     }
 
     private IQueryable<GameLevel> LevelsOrderedByCreationDate(bool descending)
