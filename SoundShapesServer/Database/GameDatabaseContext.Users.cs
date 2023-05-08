@@ -79,7 +79,6 @@ public partial class GameDatabaseContext
             UserOrderType.PlayedLevelsCount => UsersOrderedByPlayedLevelsCount(descending),
             UserOrderType.CompletedLevelsCount => UsersOrderedByCompletedLevelsCount(descending),
             UserOrderType.Deaths => UsersOrderedByDeaths(descending),
-            UserOrderType.LeaderboardPlacements => UsersOrderedByLeaderboardPlacements(this, descending),
             _ => UsersOrderedByCreationDate(descending)
         };
 
@@ -179,19 +178,7 @@ public partial class GameDatabaseContext
     {
         if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.Deaths);
         return _realm.All<GameUser>().OrderBy(u => u.Deaths);
-    } 
-    
-    private IQueryable<GameUser> UsersOrderedByLeaderboardPlacements(GameDatabaseContext database, bool descending)
-    {
-        if (descending) return _realm.All<GameUser>()
-            .AsEnumerable()
-            .OrderByDescending(u => LeaderboardHelper.GetTotalLeaderboardPlacements(database, u))
-            .AsQueryable();
-        return _realm.All<GameUser>()            
-            .AsEnumerable()
-            .OrderBy(u => LeaderboardHelper.GetTotalLeaderboardPlacements(database, u))
-            .AsQueryable();
-    } 
+    }
 
     public GameUser GetServerUser()
     {

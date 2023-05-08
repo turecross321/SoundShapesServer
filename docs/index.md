@@ -343,17 +343,16 @@ o7
 | descending  |
 | orderBy     |
 
-| Can be ordered by:    |
-| --------------------- |
-| followersCount        |
-| followingCount        |
-| levelsCount           |
-| likedLevelsCount      |
-| creationDate          |
-| playedLevelsCount     |
-| completedLevelsCount  |
-| deaths                |
-| leaderboardPlacements |
+| Can be ordered by:   |
+| -------------------- |
+| followersCount       |
+| followingCount       |
+| levelsCount          |
+| likedLevelsCount     |
+| creationDate         |
+| playedLevelsCount    |
+| completedLevelsCount |
+| deaths               |
 
 ### Response: 200
 

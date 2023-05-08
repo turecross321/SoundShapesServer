@@ -64,23 +64,11 @@ public static class LeaderboardHelper
     {
         return entries.ToList().IndexOf(entry);
     }
-    public static int GetTotalLeaderboardPlacements(GameDatabaseContext database, GameUser user)
+
+    public static int CalculateEntryPlacement(int totalEntries, int from, int index, bool descending, bool startFromZero)
     {
-        int count = 0;
-        
-        // Get all the unique LevelIds for the user's LeaderboardEntries
-        string[] levelIds = user.LeaderboardEntries.AsEnumerable().Select(entry => entry.LevelId).Distinct().ToArray();
-
-        foreach (string levelId in levelIds)
-        {
-            IQueryable<LeaderboardEntry> entries = database.GetLeaderboardEntriesOnLevel(levelId);
-
-            LeaderboardEntry? bestEntry = GetBestEntry(entries, user);
-            if (bestEntry == null) continue;
-            
-            count += GetEntryPlacement(entries, bestEntry) - entries.Count();
-        }
-
-        return count;
+        return descending ? 
+            totalEntries - (from + index) - (startFromZero ? 0 : 1) : 
+            from + index + (startFromZero ? 1 : 0);
     }
 }

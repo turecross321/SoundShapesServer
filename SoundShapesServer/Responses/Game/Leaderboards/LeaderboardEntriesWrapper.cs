@@ -7,14 +7,13 @@ namespace SoundShapesServer.Responses.Game.Leaderboards;
 
 public class LeaderboardEntriesWrapper
 {
-    public LeaderboardEntriesWrapper(IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries, int from, int count, bool areEntriesDescending)
+    public LeaderboardEntriesWrapper(IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries, int from, int count, bool descending)
     {
         Entries = new LeaderboardEntryResponse[paginatedEntries.Length];
         
         for (int i = 0; i < paginatedEntries.Length; i++)
         {
-            int position = areEntriesDescending ? allEntries.Count() - (from + i) : from + i;
-            Entries[i] = new LeaderboardEntryResponse(paginatedEntries[i], position);
+            Entries[i] = new LeaderboardEntryResponse(paginatedEntries[i], CalculateEntryPlacement(allEntries.Count(), from, i, descending, true));
         }
         
         (PreviousToken, NextToken) = PaginationHelper.GetPageTokens(allEntries.Count(), from, count);

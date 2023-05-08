@@ -10,6 +10,5 @@ public enum UserOrderType
     PlayedLevelsCount,
     CompletedLevelsCount,
     Deaths,
-    LeaderboardPlacements,
     DoNotOrder
 }
