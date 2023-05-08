@@ -2,9 +2,9 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Responses.Api.Levels;
 
-public class ApiLevelResponseWrapper
+public class ApiLevelsWrapper
 {
-    public ApiLevelResponseWrapper(GameLevel[] levels, int count)
+    public ApiLevelsWrapper(GameLevel[] levels, int count)
     {
         Levels = levels.Select(l=> new ApiLevelSummaryResponse(l)).ToArray();
         Count = count;

@@ -9,7 +9,7 @@ public class UserFilters
         Search = search;
     }
 
-    public GameUser? IsFollowingUser;
-    public GameUser? FollowedByUser;
-    public string? Search;
+    public readonly GameUser? IsFollowingUser;
+    public readonly GameUser? FollowedByUser;
+    public readonly string? Search;
 }

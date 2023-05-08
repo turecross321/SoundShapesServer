@@ -15,10 +15,10 @@ public class LevelFilters
         Search = search;
     }
     
-    public GameUser? ByUser;
-    public GameUser? LikedByUser;
-    public GameUser? CompletedBy;
-    public GameAlbum? InAlbum;
+    public readonly GameUser? ByUser;
+    public readonly GameUser? LikedByUser;
+    public readonly GameUser? CompletedBy;
+    public readonly GameAlbum? InAlbum;
     public DateTimeOffset? InDailyDate;
-    public string? Search; // todo: readonly
+    public readonly string? Search;
 }

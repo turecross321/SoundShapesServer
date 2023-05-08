@@ -114,7 +114,7 @@ public partial class GameDatabaseContext
         IQueryable<GameLevel> filteredLevels = FilterLevels(orderedLevels, filters);
         GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(filteredLevels, from, count);
 
-        return (paginatedLevels, orderedLevels.Count());
+        return (paginatedLevels, filteredLevels.Count());
     }
     
         private IQueryable<GameLevel> FilterLevels(IQueryable<GameLevel> levels, LevelFilters filters)

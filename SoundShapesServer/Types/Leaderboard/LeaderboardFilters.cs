@@ -20,8 +20,8 @@ public class LeaderboardFilters
         OnlyBest = true;
     }
     
-    public string? OnLevel;
-    public GameUser? ByUser;
+    public readonly string? OnLevel;
+    public readonly GameUser? ByUser;
     public bool? Completed;
-    public bool OnlyBest;
+    public readonly bool OnlyBest;
 }
