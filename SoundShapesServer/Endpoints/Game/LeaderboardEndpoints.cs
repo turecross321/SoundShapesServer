@@ -43,7 +43,7 @@ public class LeaderboardEndpoints : EndpointGroup
             database.SetLevelDifficulty(level);
         }
 
-        database.SubmitScore(deSerializedRequest, user, levelId);
+        database.CreateLeaderboardEntry(deSerializedRequest, user, levelId);
 
         return HttpStatusCode.OK;
     }
@@ -55,19 +55,22 @@ public class LeaderboardEndpoints : EndpointGroup
     {
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
-
-        (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, new LeaderboardFilters(levelId), from, count);
-        return new LeaderboardEntriesWrapper(allEntries, paginatedEntries, from, count);
+        
+        const bool descending = false;
+        (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, descending, new LeaderboardFilters(levelId), from, count);
+        return new LeaderboardEntriesWrapper(allEntries, paginatedEntries, from, count, descending);
     }
 
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near", ContentType.Json)] // campaign levels
     [GameEndpoint("~level:{levelId}/~leaderboard.near", ContentType.Json)] // community levels
     [GameEndpoint("{levelId}/~leaderboard.near", ContentType.Json)] // recent activity community levels 
-    public LeaderboardEntryResponse[]? GetLeaderboardNearPlayer(RequestContext context, GameDatabaseContext database, GameUser user, string levelId)
+    public LeaderboardEntryResponse[] GetLeaderboardNearPlayer(RequestContext context, GameDatabaseContext database, GameUser user, string levelId)
     {
         LeaderboardFilters filters = new (levelId, user, true, true);
-        (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 1);
-
+        
+        const bool descending = false;
+        (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, 0, 1);
+        
         return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e, GetEntryPlacement(allEntries, e) + 1)).ToArray();
     }
 }

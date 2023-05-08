@@ -117,7 +117,7 @@ public partial class GameDatabaseContext
         return (paginatedLevels, filteredLevels.Count());
     }
     
-        private IQueryable<GameLevel> FilterLevels(IQueryable<GameLevel> levels, LevelFilters filters)
+    private IQueryable<GameLevel> FilterLevels(IQueryable<GameLevel> levels, LevelFilters filters)
     {
         IQueryable<GameLevel> response = levels;
         if (filters.ByUser != null)

@@ -8,7 +8,7 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public void SubmitScore(LeaderboardSubmissionRequest request, GameUser user, string levelId)
+    public void CreateLeaderboardEntry(LeaderboardSubmissionRequest request, GameUser user, string levelId)
     {
         LeaderboardEntry entry = new (GenerateGuid(), user, levelId, request);
 

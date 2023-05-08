@@ -43,6 +43,6 @@ public class ApiLeaderboardEndpoints : EndpointGroup
         (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) =
             database.GetLeaderboardEntries(order, descending, filters, from, count);
 
-        return new ApiLeaderboardEntryWrapper(allEntries, paginatedEntries);
+        return new ApiLeaderboardEntryWrapper(paginatedEntries, allEntries.Count(), from, descending);
     }
 }
