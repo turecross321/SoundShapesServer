@@ -1,4 +1,7 @@
+using Realms;
+using SoundShapesServer.Database;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Helpers;
@@ -20,56 +23,71 @@ public static class LevelHelper
         return levelId;
     }
 
-    public static IQueryable<GameLevel> FilterLevels(GameUser? user, IQueryable<GameLevel> levels, LevelFilters filters)
+    public static IQueryable<GameLevel> FilterLevels(GameDatabaseContext database, GameUser? user, IQueryable<GameLevel> levels, LevelFilters filters)
     {
         IQueryable<GameLevel> response = levels;
         if (filters.ByUser != null)
         {
-            response = response
-                .AsEnumerable()
-                .Where(l => Equals(l.Author, filters.ByUser))
-                .AsQueryable();
+            response = response.Where(l => l.Author == filters.ByUser);
         }
         if (filters.LikedByUser != null)
         {
-            response = response
-                .AsEnumerable()
-                .Where(l => filters.LikedByUser.LikedLevels
-                    .AsEnumerable()
-                    .Select(relation => relation.Level.Id)
-                    .Contains(l.Id))
-                .AsQueryable();
-        }
+            IQueryable<LevelLikeRelation> relations = filters.LikedByUser.LikedLevels;
 
+            List<GameLevel> tempResponse = new ();
+
+            foreach (LevelLikeRelation relation in relations)
+            {
+                GameLevel? responseLevel = response.FirstOrDefault(l => l == relation.Level);
+                if (responseLevel != null) tempResponse.Add(responseLevel);
+            }
+
+            response = tempResponse.AsQueryable();
+        }
         if (filters.InAlbum != null)
         {
-            response = response
-                .AsEnumerable()
-                .Where(l => filters.InAlbum.Levels.Contains(l))
-                .AsQueryable();
-        }
+            List<GameLevel> tempResponse = new ();
 
-        if (filters.InDaily != null)
+            foreach (GameLevel level in filters.InAlbum.Levels)
+            {
+                GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == level.Id);
+                if (responseLevel != null) tempResponse.Add(responseLevel);
+            }
+
+            response = tempResponse.AsQueryable();
+        }
+        if (filters.InDailyDate != null)
         {
-            response = response
-                .AsEnumerable()
-                .Where(l => l.DailyLevels.Any(dl => dl.Date == filters.InDaily.Value.Date))
-                .AsQueryable();
+            IQueryable<DailyLevel> dailyLevelObjects = database.GetDailyLevelObjects(filters.InDailyDate);
+
+            List<GameLevel> tempResponse = new ();
+
+            foreach (DailyLevel dailyLevel in dailyLevelObjects)
+            {
+                GameLevel? responseLevel = response.FirstOrDefault(l => l == dailyLevel.Level);
+                if (responseLevel != null) tempResponse.Add(responseLevel);
+            }
+
+            response = tempResponse.AsQueryable();
         }
 
         if (filters.Search != null)
         {
-            response = response
-                .AsEnumerable()
-                .Where(l => l.Name.Contains(filters.Search, StringComparison.OrdinalIgnoreCase)
-                            || (l.Author?.Username ?? "").Contains(filters.Search, StringComparison.OrdinalIgnoreCase)
-                )
-                .AsQueryable();
+            GameUser? userWithSearchName = database.GetUserWithUsername(filters.Search);
+            response = response.Where(l => l.Name.Contains(filters.Search, StringComparison.OrdinalIgnoreCase) || l.Author == userWithSearchName);
         }
 
-        if (user != null && filters.Completed != null)
-        {
-            response = response.Where(l => l.UniqueCompletions.Contains(user));
+        if (filters.CompletedBy != null)
+        {            
+            List<GameLevel> tempResponse = new ();
+            
+            foreach (GameLevel level in filters.CompletedBy.CompletedLevels)
+            {
+                GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == level.Id);
+                if (responseLevel != null) tempResponse.Add(responseLevel);
+            }
+
+            response = tempResponse.AsQueryable();
         }
 
         return response;

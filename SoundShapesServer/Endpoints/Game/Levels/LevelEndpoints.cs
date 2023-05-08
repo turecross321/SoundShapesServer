@@ -47,7 +47,7 @@ public class LevelEndpoints : EndpointGroup
         else switch (categoryString)
         {
             case "tagged3":
-                filters = new LevelFilters(inDaily: DateTimeOffset.UtcNow);
+                filters = new LevelFilters(inDailyDate: DateTimeOffset.UtcNow);
                 order = LevelOrderType.UniquePlays;
                 break;
             // ReSharper disable once StringLiteralTypo

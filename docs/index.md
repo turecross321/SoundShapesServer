@@ -503,7 +503,7 @@ o7
 
 ## End-point: Get Levels
 
-### 🔑 This does not require the `Authorization` header, **unless you use the `completed` param**.
+### 🔑 This does not require the `Authorization` header.
 
 ### Method: GET
 
@@ -519,10 +519,10 @@ o7
 | count       |
 | byUser      |
 | likedByUser |
+| completedBy |
 | inAlbum     |
 | inDaily     |
 | search      |
-| completed   |
 | descending  |
 | orderBy     |
 

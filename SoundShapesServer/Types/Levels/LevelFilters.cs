@@ -5,20 +5,20 @@ namespace SoundShapesServer.Types.Levels;
 
 public class LevelFilters
 {
-    public LevelFilters(GameUser? byUser = null, GameUser? likedByUser = null, GameAlbum? inAlbum = null, DateTimeOffset? inDaily = null, string? search = null, bool? completed = null)
+    public LevelFilters(GameUser? byUser = null, GameUser? likedByUser = null, GameAlbum? inAlbum = null, DateTimeOffset? inDailyDate = null, string? search = null, GameUser? completedBy = null)
     {
         ByUser = byUser;
         LikedByUser = likedByUser;
+        CompletedBy = completedBy;
         InAlbum = inAlbum;
-        InDaily = inDaily;
+        InDailyDate = inDailyDate;
         Search = search;
-        Completed = completed;
     }
     
     public GameUser? ByUser;
     public GameUser? LikedByUser;
+    public GameUser? CompletedBy;
     public GameAlbum? InAlbum;
-    public DateTimeOffset? InDaily;
+    public DateTimeOffset? InDailyDate;
     public string? Search;
-    public bool? Completed;
 }
