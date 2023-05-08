@@ -23,7 +23,7 @@ public static class LevelHelper
         return levelId;
     }
 
-    public static IQueryable<GameLevel> FilterLevels(GameDatabaseContext database, GameUser? user, IQueryable<GameLevel> levels, LevelFilters filters)
+    public static IQueryable<GameLevel> FilterLevels(GameDatabaseContext database, IQueryable<GameLevel> levels, LevelFilters filters)
     {
         IQueryable<GameLevel> response = levels;
         if (filters.ByUser != null)

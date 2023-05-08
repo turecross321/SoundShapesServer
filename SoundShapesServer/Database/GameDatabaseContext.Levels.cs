@@ -93,7 +93,7 @@ public partial class GameDatabaseContext
         return levels.AsQueryable();
     }
 
-    public (GameLevel[], int) GetLevels(GameUser? user, LevelOrderType order, bool descending, LevelFilters filters, int from, int count)
+    public (GameLevel[], int) GetLevels(LevelOrderType order, bool descending, LevelFilters filters, int from, int count)
     {
         IQueryable<GameLevel> orderedLevels = order switch
         {
@@ -110,7 +110,7 @@ public partial class GameDatabaseContext
             _ => LevelsOrderedByCreationDate(descending)
         };
 
-        IQueryable<GameLevel> filteredLevels = FilterLevels(this, user, orderedLevels, filters);
+        IQueryable<GameLevel> filteredLevels = FilterLevels(this, orderedLevels, filters);
         GameLevel[] paginatedLevels = filteredLevels.AsEnumerable().Skip(from).Take(Math.Min(count, 100)).ToArray();
 
         return (paginatedLevels, orderedLevels.Count());

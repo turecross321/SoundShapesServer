@@ -67,7 +67,7 @@ public class LevelEndpoints : EndpointGroup
             _ => LevelOrderType.CreationDate
         };
 
-        (GameLevel[] levels, int totalLevels) = database.GetLevels(user, (LevelOrderType)order, true, filters, from, count);
+        (GameLevel[] levels, int totalLevels) = database.GetLevels((LevelOrderType)order, true, filters, from, count);
 
         return new LevelsWrapper(levels, user, totalLevels, from, count);
     }
@@ -83,7 +83,7 @@ public class LevelEndpoints : EndpointGroup
         GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
         if (userToGetLevelsFrom == null) return null;
 
-        (GameLevel[] levels, int totalLevels) = database.GetLevels(user, LevelOrderType.DoNotOrder, true, new LevelFilters(likedByUser: userToGetLevelsFrom), from, count);
+        (GameLevel[] levels, int totalLevels) = database.GetLevels(LevelOrderType.DoNotOrder, true, new LevelFilters(likedByUser: userToGetLevelsFrom), from, count);
 
         return new LevelsWrapper(levels, user, totalLevels, from, count);
     }

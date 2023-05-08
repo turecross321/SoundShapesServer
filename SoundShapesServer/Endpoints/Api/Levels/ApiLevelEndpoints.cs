@@ -65,7 +65,7 @@ public class ApiLevelEndpoints: EndpointGroup
             _ => LevelOrderType.DoNotOrder
         };
 
-        (GameLevel[] levels, int levelCount) = database.GetLevels(user, order, descending, filters, from, count);
+        (GameLevel[] levels, int levelCount) = database.GetLevels(order, descending, filters, from, count);
         
         return new ApiLevelResponseWrapper(levels, levelCount);
     }
