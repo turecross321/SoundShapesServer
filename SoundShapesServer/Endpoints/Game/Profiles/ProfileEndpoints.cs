@@ -26,7 +26,7 @@ public class ProfileEndpoints : EndpointGroup
         GameUser? follower = database.GetUserWithId(id);
         if (follower == null) return null;
 
-        (GameUser[] users, int totalUsers) = database.GetUsers(UserOrderType.DoNotOrder, true, new UserFilters(followedBy:follower), from, count);
+        (GameUser[] users, int totalUsers) = database.GetUsers(UserOrderType.DoNotOrder, true, new UserFilters(followedByUser:follower), from, count);
         return new FollowingUsersWrapper(follower, users, totalUsers, from, count);
     }
 
@@ -39,7 +39,7 @@ public class ProfileEndpoints : EndpointGroup
         GameUser? recipient = database.GetUserWithId(id);
         if (recipient == null) return null;
         
-        (GameUser[] users, int totalUsers) = database.GetUsers(UserOrderType.DoNotOrder, true, new UserFilters(isFollowing:recipient), from, count);
+        (GameUser[] users, int totalUsers) = database.GetUsers(UserOrderType.DoNotOrder, true, new UserFilters(isFollowingUser:recipient), from, count);
         return new FollowingUsersWrapper(recipient, users, totalUsers, from, count);
     }
 }

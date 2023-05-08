@@ -20,7 +20,8 @@ public partial class GameDatabaseContext
         {
             Id = GenerateGuid(),
             Username = username,
-            CreationDate = DateTimeOffset.UtcNow
+            CreationDate = DateTimeOffset.UtcNow,
+            HasFinishedRegistration = !skipRegistration
         };
 
         _realm.Write(() =>

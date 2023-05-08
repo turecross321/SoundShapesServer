@@ -1,3 +1,4 @@
+using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
 using static System.Text.RegularExpressions.Regex;
 
@@ -15,30 +16,41 @@ public static class UserHelper
     {
         IQueryable<GameUser> response = users.Where(u=>u.HasFinishedRegistration);
         
-        if (filters.IsFollowing != null)
+        if (filters.IsFollowingUser != null)
         {
-            response = response
-                .AsEnumerable()
-                .Where(u => filters.IsFollowing.Followers
-                    .Select(r => r.Follower.Id).Contains(u.Id))
-                .AsQueryable();
+            IQueryable<FollowRelation> relations = filters.IsFollowingUser.Followers;
+
+            List<GameUser> tempResponse = new ();
+
+            foreach (FollowRelation relation in relations)
+            {
+                GameUser follower = relation.Follower;
+                GameUser? responseUser = response.FirstOrDefault(u => u.Id == follower.Id);
+                if (responseUser != null) tempResponse.Add(responseUser);
+            }
+
+            response = tempResponse.AsQueryable();
         }
         
-        if (filters.FollowedBy != null)
+        if (filters.FollowedByUser != null)
         {
-            response = response
-                .AsEnumerable()
-                .Where(u => filters.FollowedBy.Following
-                    .Select(r => r.Recipient.Id).Contains(u.Id))
-                .AsQueryable();
+            IQueryable<FollowRelation> relations = filters.FollowedByUser.Following;
+
+            List<GameUser> tempResponse = new ();
+
+            foreach (FollowRelation relation in relations)
+            {
+                GameUser recipient = relation.Recipient;
+                GameUser? responseUser = response.FirstOrDefault(u => u.Id == recipient.Id);
+                if (responseUser != null) tempResponse.Add(responseUser);
+            }
+
+            response = tempResponse.AsQueryable();
         }
         
         if (filters.Search != null)
         {
-            response = response
-                .AsEnumerable()
-                .Where(l => l.Username.Contains(filters.Search, StringComparison.OrdinalIgnoreCase))
-                .AsQueryable();
+            response = response.Where(l => l.Username.Contains(filters.Search, StringComparison.OrdinalIgnoreCase));
         }
 
         return response;
