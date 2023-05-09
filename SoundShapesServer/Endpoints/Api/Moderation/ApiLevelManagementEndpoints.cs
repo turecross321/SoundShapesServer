@@ -18,16 +18,6 @@ namespace SoundShapesServer.Endpoints.Api.Moderation;
 
 public class ApiLevelManagementEndpoints : EndpointGroup
 {
-    // TODO: THIS SHOULD NOT BE AN ENDPOINT. GET IT OUT OF HERE AND MAKE IT RUN ONLY ON BOOT
-    [ApiEndpoint("levels/import", Method.Post)]
-    public Response RefreshImportFolder(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user)
-    {
-        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
-
-        LevelImporting.ImportLevels(database, dataStore);
-        return HttpStatusCode.Created;
-    }
-    
     [ApiEndpoint("levels/create", Method.Post)]
     public Response CreateLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiPublishLevelRequest body)
     {
