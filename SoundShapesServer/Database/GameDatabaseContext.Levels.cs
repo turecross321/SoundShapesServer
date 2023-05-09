@@ -132,7 +132,8 @@ public partial class GameDatabaseContext
 
             foreach (LevelLikeRelation relation in relations)
             {
-                GameLevel? responseLevel = response.FirstOrDefault(l => l == relation.Level);
+                GameLevel likedLevel = relation.Level;
+                GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == likedLevel.Id);
                 if (responseLevel != null) tempResponse.Add(responseLevel);
             }
 
