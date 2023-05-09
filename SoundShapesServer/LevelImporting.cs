@@ -15,7 +15,6 @@ public static class LevelImporting
 
     public static void ImportLevels(GameDatabaseContext database, IDataStore dataStore)
     {
-        // Todo: This shouldn't be called from an endpoint. This should only be called on boot.
         GameUser serverUser = database.GetServerUser();
         
         if (Directory.Exists(ImportPath))
@@ -138,7 +137,6 @@ public static class LevelImporting
     }
     
     private static void RemoveEmptyDirectories(string directoryPath) {
-        // TODO: Remove bug where the server will delete the levelImport folder if everything got imported
         string[] subDirectories = Directory.GetDirectories(directoryPath);
 
         foreach (string subDirectory in subDirectories) {
@@ -147,6 +145,8 @@ public static class LevelImporting
 
         if (Directory.GetFiles(directoryPath).Length != 0 ||
             Directory.GetDirectories(directoryPath).Length != 0) return;
+
+        if (directoryPath == ImportPath) return;
         
         Directory.Delete(directoryPath, false);
         Console.WriteLine("Deleted empty directory: {0}", directoryPath);
