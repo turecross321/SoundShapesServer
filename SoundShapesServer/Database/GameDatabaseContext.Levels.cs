@@ -157,9 +157,10 @@ public partial class GameDatabaseContext
 
             List<GameLevel> tempResponse = new ();
 
-            foreach (DailyLevel dailyLevel in dailyLevelObjects)
+            foreach (DailyLevel dailyLevelObject in dailyLevelObjects)
             {
-                GameLevel? responseLevel = response.FirstOrDefault(l => l == dailyLevel.Level);
+                GameLevel dailyLevel = dailyLevelObject.Level;
+                GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == dailyLevel.Id);
                 if (responseLevel != null) tempResponse.Add(responseLevel);
             }
 
