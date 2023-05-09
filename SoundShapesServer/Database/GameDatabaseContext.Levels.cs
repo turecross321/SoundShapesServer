@@ -233,18 +233,16 @@ public partial class GameDatabaseContext
     
     private IQueryable<GameLevel> LevelsOrderedByRelevance(bool descending)
     {
+        DateTimeOffset oneWeekAgo = DateTimeOffset.UtcNow.AddDays(-7);
+
         if (descending)
             return _realm.All<GameLevel>()
-                .AsEnumerable()
-                .OrderByDescending(l =>
-                    l.UniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.CreationDate).TotalDays * 0.5)
-                .AsQueryable();
-        
+                .Where(l => l.CreationDate > oneWeekAgo)
+                .OrderByDescending(l => l.UniquePlaysCount);
+
         return _realm.All<GameLevel>()
-            .AsEnumerable()
-            .OrderBy(l =>
-                l.UniquePlays.Count * 0.5 + (DateTimeOffset.UtcNow - l.CreationDate).TotalDays * 0.5)
-            .AsQueryable();
+            .Where(l => l.CreationDate > oneWeekAgo)
+            .OrderBy(l => l.UniquePlaysCount);
     } 
     
     // TODO: Cache this every 24 hours
