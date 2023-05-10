@@ -15,7 +15,7 @@ public static class LevelImporting
 
     public static void ImportLevels(GameDatabaseContext database, IDataStore dataStore)
     {
-        GameUser serverUser = database.GetServerUser();
+        GameUser serverUser = database.GetAdminUser();
         
         if (Directory.Exists(ImportPath))
         {

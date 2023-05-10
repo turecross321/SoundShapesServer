@@ -1,7 +1,6 @@
 using Bunkum.HttpServer.Storage;
 using Realms;
 using SoundShapesServer.Authentication;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.RecentActivity;
@@ -14,14 +13,13 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public GameUser CreateUser(string username, bool skipRegistration = false)
+    public GameUser CreateUser(string username)
     {
         GameUser user = new ()
         {
             Id = GenerateGuid(),
             Username = username,
             CreationDate = DateTimeOffset.UtcNow,
-            HasFinishedRegistration = !skipRegistration
         };
 
         _realm.Write(() =>
@@ -180,10 +178,24 @@ public partial class GameDatabaseContext
         return _realm.All<GameUser>().OrderBy(u => u.Deaths);
     }
 
-    public GameUser GetServerUser()
+    private const string AdminUsername = "admin";
+    public GameUser GetAdminUser()
     {
-        GameUser? user = GetUserWithUsername("Server");
-        return user ?? CreateUser("Server", true);
+        GameUser? user = GetUserWithUsername(AdminUsername);
+        if (user != null) return user;
+
+        user ??= new GameUser()
+        {
+            Username = AdminUsername,
+            HasFinishedRegistration = true
+        };
+        
+        _realm.Write(() =>
+        {
+            _realm.Add(user);
+        });
+
+        return user;
     }
 
     public GameUser? GetUserWithUsername(string username)
