@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
@@ -114,8 +115,9 @@ public static class LevelImporting
             
             byte[] soundBytes = File.ReadAllBytes(sound.FilePath);
 
-            PublishLevelRequest request = new ("Imported Level", 0, levelBytes.LongLength, levelCreationDate);
-            GameLevel publishedLevel = database.CreateLevel(request, serverUser, false);
+            string levelId = LevelHelper.GenerateLevelId();
+            PublishLevelRequest request = new ($"Imported Level ({levelId})", 0, levelBytes.LongLength, levelCreationDate);
+            GameLevel publishedLevel = database.CreateLevel(request, serverUser, false, levelId);
 
             string levelKey = GetLevelResourceKey(publishedLevel.Id, FileType.Level);
             string thumbnailKey = GetLevelResourceKey(publishedLevel.Id, FileType.Image);
