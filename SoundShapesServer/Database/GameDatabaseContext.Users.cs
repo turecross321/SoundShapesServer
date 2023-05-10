@@ -186,7 +186,9 @@ public partial class GameDatabaseContext
 
         user ??= new GameUser()
         {
+            Id = new Guid().ToString(), // 00000000-0000-0000-0000-000000000000
             Username = AdminUsername,
+            PermissionsType = (int)PermissionsType.Administrator,
             HasFinishedRegistration = true
         };
         
