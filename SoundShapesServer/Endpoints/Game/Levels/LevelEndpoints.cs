@@ -1,7 +1,11 @@
+using System.Net;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
+using Bunkum.HttpServer.Responses;
+using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Levels;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
@@ -13,11 +17,13 @@ public class LevelEndpoints : EndpointGroup
     [GameEndpoint("~index:*.page", ContentType.Json)]
     [GameEndpoint("~index:level.page", ContentType.Json)]
     [Authentication(false)]
-    public LevelsWrapper? LevelsEndpoint(RequestContext context, GameDatabaseContext database, GameUser? user)
+    public Response LevelsEndpoint(RequestContext context, GameDatabaseContext database, GameUser? user, GameSession? session)
     {
         // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
-        if (user == null) return new LevelsWrapper(); 
+        if (session == null) return HttpStatusCode.Forbidden;
         
+        if (session.SessionType != (int)SessionType.Game || user == null) return new Response(new LevelsWrapper(), ContentType.Json);
+
         string? orderString = context.QueryString["orderBy"];
         string? query = context.QueryString["query"];
         int from = int.Parse(context.QueryString["from"] ?? "0");
@@ -32,7 +38,7 @@ public class LevelEndpoints : EndpointGroup
             string id = query.Split(":")[2];
 
             GameUser? usersToGetLevelsFrom = database.GetUserWithId(id);
-            if (usersToGetLevelsFrom == null) return null;
+            if (usersToGetLevelsFrom == null) return HttpStatusCode.NotFound;
 
             filters = new LevelFilters(usersToGetLevelsFrom);
             order = LevelOrderType.CreationDate;
@@ -69,7 +75,7 @@ public class LevelEndpoints : EndpointGroup
 
         (GameLevel[] levels, int totalLevels) = database.GetLevels((LevelOrderType)order, true, filters, from, count);
 
-        return new LevelsWrapper(levels, user, totalLevels, from, count);
+        return new Response(new LevelsWrapper(levels, user, totalLevels, from, count), ContentType.Json);
     }
     
     [GameEndpoint("~identity:{userId}/~queued:*.page", ContentType.Json)]
