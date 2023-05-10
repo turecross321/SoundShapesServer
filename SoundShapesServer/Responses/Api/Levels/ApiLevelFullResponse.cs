@@ -12,8 +12,8 @@ public class ApiLevelFullResponse
         AuthorName = level.Author?.Username ?? "";
         Created = level.CreationDate;
         Modified = level.ModificationDate;
-        TotalPlays = level.Plays;
-        UniquePlays = level.UniquePlays.Count;
+        TotalPlays = level.PlaysCount;
+        UniquePlays = level.UniquePlaysCount;
         Likes = level.Likes.Count();
         Deaths = level.Deaths;
         Language = level.Language;

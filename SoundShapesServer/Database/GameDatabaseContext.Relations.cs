@@ -1,3 +1,4 @@
+using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.RecentActivity;
@@ -85,14 +86,9 @@ public partial class GameDatabaseContext
 
     public bool LikeLevel(GameUser liker, GameLevel level)
     {
-        if (IsUserLikingLevel(liker, level)) return false; 
+        if (IsUserLikingLevel(liker, level)) return false;
+        LevelLikeRelation relation = new(DateTimeOffset.UtcNow, liker, level);
         
-        LevelLikeRelation relation = new()
-        {
-            Date = DateTimeOffset.UtcNow,
-            Liker = liker,
-            Level = level
-        };
         _realm.Write(() =>
         {
             _realm.Add(relation);
@@ -121,13 +117,31 @@ public partial class GameDatabaseContext
 
     public bool IsUserLikingLevel(GameUser liker, GameLevel level)
     {
-        int count = _realm.All<LevelLikeRelation>().Count(l => l.Liker == liker && l.Level == level);
-        return count > 0;
+        LevelLikeRelation? relation = _realm.All<LevelLikeRelation>().FirstOrDefault(l => l.Liker == liker && l.Level == level);
+        return relation != null;
     }
     
     public bool IsUserFollowingOtherUser(GameUser follower, GameUser userBeingFollowed)
     {
         int count = _realm.All<FollowRelation>().Count(f => f.Follower == follower && f.Recipient == userBeingFollowed);
         return count > 0;
+    }
+    
+    public void AddPlayToLevel(GameUser user, GameLevel level)
+    {
+        LevelPlayRelation relation = new (user, level, DateTimeOffset.UtcNow);
+        LevelUniquePlayRelation? uniqueRelation = _realm.All<LevelUniquePlayRelation>()
+            .FirstOrDefault(r => r.Level == level && r.User == user);
+
+        _realm.Write(() =>
+        {
+            _realm.Add(relation);
+            level.PlaysCount = level.Plays.Count();
+            if (uniqueRelation != null) return;
+            
+            uniqueRelation = new LevelUniquePlayRelation(user, level, DateTimeOffset.UtcNow); 
+            _realm.Add(uniqueRelation);
+            level.UniquePlaysCount = level.UniquePlays.Count();
+        });
     }
 }

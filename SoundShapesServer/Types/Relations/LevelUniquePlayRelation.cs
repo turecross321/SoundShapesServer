@@ -4,21 +4,21 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Types.Relations;
 
-public class LevelLikeRelation : RealmObject
+public class LevelUniquePlayRelation : RealmObject
 {
-    public LevelLikeRelation(DateTimeOffset date, GameUser liker, GameLevel level)
+    public LevelUniquePlayRelation(GameUser user, GameLevel level, DateTimeOffset date)
     {
-        Date = date;
-        Liker = liker;
+        User = user;
         Level = level;
+        Date = date;
     }
-    
+
     // Realm cries if this doesn't exist
     #pragma warning disable CS8618
-    public LevelLikeRelation() {}
+    public LevelUniquePlayRelation() {}
     #pragma warning restore CS8618
-
+    
+    public GameUser User { get; set; }
+    public GameLevel Level { get; set; }
     public DateTimeOffset Date { get; set; }
-    public GameUser Liker { get; init; }
-    public GameLevel Level { get; init; }
 }

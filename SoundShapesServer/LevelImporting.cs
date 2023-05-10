@@ -25,7 +25,7 @@ public static class LevelImporting
         {
             Console.WriteLine("No import folder found. Creating one...");
             Directory.CreateDirectory(ImportPath);
-            Console.WriteLine("Created import folder.");
+            Console.WriteLine($"Created import folder at {ImportPath}");
             return;
         }
 

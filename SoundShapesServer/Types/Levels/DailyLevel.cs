@@ -4,8 +4,19 @@ namespace SoundShapesServer.Types.Levels;
 
 public class DailyLevel : RealmObject
 {
-        [PrimaryKey]
-    [Required] public string Id { get; init; } = "";
-    public GameLevel Level { get; init; } = new();
+    public DailyLevel(string id, GameLevel level, DateTimeOffset date)
+    {
+        Id = id;
+        Level = level;
+        Date = date;
+    }
+    
+    // Realm cries if this doesn't exist
+    #pragma warning disable CS8618
+    public DailyLevel() {}
+    #pragma warning restore CS8618
+
+    [PrimaryKey] [Required] public string Id { get; init; }
+    public GameLevel Level { get; init; }
     public DateTimeOffset Date { get; init; }
 }

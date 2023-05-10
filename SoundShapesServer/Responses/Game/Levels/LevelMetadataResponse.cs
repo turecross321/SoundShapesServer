@@ -9,10 +9,10 @@ public class LevelMetadataResponse
     public LevelMetadataResponse(GameLevel level)
     {
         Name = level.Name;
-        UniquePlaysCount = level.UniquePlays.Count.ToString();
+        UniquePlaysCount = level.UniquePlaysCount.ToString();
         Difficulty = level.Difficulty.ToString(CultureInfo.InvariantCulture);
         Timestamp = level.ModificationDate.ToUnixTimeMilliseconds().ToString();
-        TotalPlaysCount = level.Plays.ToString();
+        TotalPlaysCount = level.PlaysCount.ToString();
         Language = level.Language.ToString();
         LikesCount = level.Likes.Count().ToString();
     }

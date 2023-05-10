@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Security.Cryptography;
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Helpers;
@@ -234,15 +235,18 @@ public partial class GameDatabaseContext
     private IQueryable<GameLevel> LevelsOrderedByRelevance(bool descending)
     {
         DateTimeOffset oneWeekAgo = DateTimeOffset.UtcNow.AddDays(-7);
+        IQueryable<LevelUniquePlayRelation> relations = _realm.All<LevelUniquePlayRelation>().Where(r=>r.Date > oneWeekAgo);
 
-        if (descending)
-            return _realm.All<GameLevel>()
-                .Where(l => l.CreationDate > oneWeekAgo)
-                .OrderByDescending(l => l.UniquePlaysCount);
+        var groupedRelations = relations
+            .AsEnumerable()
+            .GroupBy(r => r.Level)
+            .Select(g => new {
+                Level = g.Key,
+                Count = g.Count()
+            });
 
-        return _realm.All<GameLevel>()
-            .Where(l => l.CreationDate > oneWeekAgo)
-            .OrderBy(l => l.UniquePlaysCount);
+        if (descending) return groupedRelations.OrderByDescending(r => r.Count).Select(r => r.Level).AsQueryable();
+        return groupedRelations.OrderBy(r => r.Count).Select(r => r.Level).AsQueryable();
     } 
     
     // TODO: Cache this every 24 hours
@@ -300,25 +304,6 @@ public partial class GameDatabaseContext
             level.Difficulty = CalculateLevelDifficulty(level);
         });
     }
-    public void AddPlayToLevel(GameLevel level)
-    {
-        _realm.Write(() =>
-        {
-            level.Plays++;
-        });
-    }
-    public void AddUniquePlayToLevel(GameLevel level, GameUser user)
-    {
-        if (level.UniquePlays.Contains(user)) return;
-        
-        _realm.Write(() =>
-        {
-            level.UniquePlays.Add(user);
-            level.UniquePlaysCount = level.UniquePlays.Count;
-            user.PlayedLevelsCount = user.PlayedLevels.Count();
-        });
-    }
-
     public void AddDeathsToLevel(GameUser user, GameLevel level, int deaths)
     {
         _realm.Write(() =>

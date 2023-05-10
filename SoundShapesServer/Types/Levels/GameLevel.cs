@@ -16,7 +16,8 @@ public class GameLevel : RealmObject
         Language = language;
         CreationDate = creationDate;
         ModificationDate = creationDate;
-        UniquePlays = Enumerable.Empty<GameUser>().ToList();
+        Plays = Enumerable.Empty<LevelPlayRelation>().AsQueryable();
+        UniquePlays = Enumerable.Empty<LevelUniquePlayRelation>().AsQueryable();
         UniqueCompletions = Enumerable.Empty<GameUser>().ToList();
         Likes = Enumerable.Empty<LevelLikeRelation>().AsQueryable();
         Albums = Enumerable.Empty<GameAlbum>().AsQueryable();
@@ -36,12 +37,13 @@ public class GameLevel : RealmObject
     public int Language { get; set; }
     public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset ModificationDate { get; set; }
-    public int Plays { get; set; }
+    [Backlink(nameof(LevelPlayRelation.Level))] public IQueryable<LevelPlayRelation> Plays { get; }
+    public int PlaysCount { get; set; }
     public int Deaths { get; set; }
-    public IList<GameUser> UniquePlays { get; }
+    [Backlink(nameof(LevelUniquePlayRelation.Level))] public IQueryable<LevelUniquePlayRelation> UniquePlays { get; }
     public int UniquePlaysCount { get; set; }
-    public int CompletionCount { get; set; }
     public IList<GameUser> UniqueCompletions { get; }
+    public int CompletionCount { get; set; }
     public int UniqueCompletionsCount { get; set; }
     [Backlink(nameof(LevelLikeRelation.Level))] public IQueryable<LevelLikeRelation> Likes { get; }
     public int LikesCount { get; set; }

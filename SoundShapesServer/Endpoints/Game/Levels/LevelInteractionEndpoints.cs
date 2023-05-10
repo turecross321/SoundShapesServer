@@ -19,15 +19,9 @@ public class LevelInteractionEndpoints : EndpointGroup
         database.AddCompletionToLevel(level);
     }
     // Called from LeaderboardEndpoints
-    public static void AddPlay(GameDatabaseContext database, GameLevel level)
+    public static void AddPlay(GameDatabaseContext database, GameUser user, GameLevel level)
     {
-        database.AddPlayToLevel(level);
-    }
-
-    // Called from LeaderboardEndpoints
-    public static void AddUniquePlay(GameDatabaseContext database, GameLevel level, GameUser user)
-    {
-        database.AddUniquePlayToLevel(level, user);
+        database.AddPlayToLevel(user, level);
     }
     // Called from LeaderboardEndpoints
     public static void AddDeathsToLevel(GameDatabaseContext database, GameLevel level, GameUser user, int deaths)

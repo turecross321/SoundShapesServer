@@ -27,7 +27,7 @@ public class GameUser : RealmObject, IRateLimitUser
 
     [Backlink(nameof(LevelLikeRelation.Liker))] public IQueryable<LevelLikeRelation> LikedLevels { get; }
     public int LikedLevelsCount { get; set; }
-    [Backlink(nameof(GameLevel.UniquePlays))] public IQueryable<GameLevel> PlayedLevels { get; }
+    [Backlink(nameof(LevelUniquePlayRelation.User))] public IQueryable<LevelUniquePlayRelation> PlayedLevels { get; }
     public int PlayedLevelsCount { get; set; }
     [Backlink(nameof(GameLevel.UniqueCompletions))] public IQueryable<GameLevel> CompletedLevels { get; }
     public int CompletedLevelsCount { get; set; }
