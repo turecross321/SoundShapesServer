@@ -19,9 +19,9 @@ public class LevelEndpoints : EndpointGroup
     [Authentication(false)]
     public Response LevelsEndpoint(RequestContext context, GameDatabaseContext database, GameUser? user, GameSession? session)
     {
-        // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
         if (session == null) return HttpStatusCode.Forbidden;
-        
+     
+        // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
         if (session.SessionType != (int)SessionType.Game || user == null) return new Response(new LevelsWrapper(), ContentType.Json);
 
         string? orderString = context.QueryString["orderBy"];
