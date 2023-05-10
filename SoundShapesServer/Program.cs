@@ -15,7 +15,6 @@ using GameDatabaseProvider databaseProvider = new();
 FileSystemDataStore dataStore = new ();
 databaseProvider.Initialize();
 LevelImporting.ImportLevels(databaseProvider.GetContext(), dataStore);
-databaseProvider.Dispose();
 
 BunkumHttpServer server = new();
 
