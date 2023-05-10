@@ -1,4 +1,3 @@
-using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.RecentActivity;

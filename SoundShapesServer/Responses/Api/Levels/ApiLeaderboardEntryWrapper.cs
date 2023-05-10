@@ -1,4 +1,3 @@
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Leaderboard;
 using static SoundShapesServer.Helpers.LeaderboardHelper;
 
