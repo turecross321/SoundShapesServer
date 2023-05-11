@@ -23,11 +23,11 @@ public class ProfileEndpoints : EndpointGroup
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
 
-        GameUser? follower = database.GetUserWithId(id);
-        if (follower == null) return null;
+        GameUser? user = database.GetUserWithId(id);
+        if (user == null) return null;
 
-        (GameUser[] users, int totalUsers) = database.GetUsers(UserOrderType.DoNotOrder, true, new UserFilters(followedByUser:follower), from, count);
-        return new FollowingUsersWrapper(follower, users, totalUsers, from, count);
+        (GameUser[] users, int totalUsers) = database.GetUsers(UserOrderType.DoNotOrder, true, new UserFilters(followedByUser:user), from, count);
+        return new FollowingUsersWrapper(user, users, totalUsers, from, count);
     }
 
     [GameEndpoint("~identity:{id}/~followers.page", ContentType.Json)]

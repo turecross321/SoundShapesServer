@@ -18,7 +18,7 @@ public class ApiUserEndpoints : EndpointGroup
 
     [ApiEndpoint("users")]
     [Authentication(false)]
-    public ApiUsersWrapper? GetUsers(RequestContext context, GameDatabaseContext database)
+    public ApiUsersWrapper GetUsers(RequestContext context, GameDatabaseContext database)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
