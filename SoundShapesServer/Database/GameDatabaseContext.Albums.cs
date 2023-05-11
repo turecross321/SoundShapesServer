@@ -52,11 +52,73 @@ public partial class GameDatabaseContext
         return album;
     }
     // TODO: Implement same ordering system as levels
-    public IQueryable<GameAlbum> GetAlbums()
+    public (GameAlbum[], int) GetAlbums(AlbumOrderType order, bool descending, int from, int count)
     {
-        IQueryable<GameAlbum> entries = _realm.All<GameAlbum>();
+        IQueryable<GameAlbum> orderedAlbums = order switch
+        {
+            AlbumOrderType.CreationDate => AlbumsOrderedByCreationDate(descending),
+            AlbumOrderType.ModificationDate => AlbumsOrderedByModificationDate(descending),
+            AlbumOrderType.Plays => AlbumsOrderedByPlays(descending),
+            AlbumOrderType.UniquePlays => AlbumsOrderedByUniquePlays(descending),
+            AlbumOrderType.LevelsCount => AlbumsOrderedByLevelsCount(descending),
+            AlbumOrderType.FileSize => AlbumsOrderedByFileSize(descending),
+            AlbumOrderType.Difficulty => AlbumsOrderedByDifficulty(descending),
+            _ => AlbumsOrderedByCreationDate(descending)
+        };
 
-        return entries;
+        // There are no Album Filters
+        GameAlbum[] paginatedAlbums = PaginationHelper.PaginateAlbums(orderedAlbums, from, count);
+        return (paginatedAlbums, orderedAlbums.Count());
+    }
+
+    private IQueryable<GameAlbum> AlbumsOrderedByCreationDate(bool descending)
+    {
+        if (descending) return _realm.All<GameAlbum>().OrderByDescending(a => a.CreationDate);
+        return _realm.All<GameAlbum>().OrderBy(a => a.CreationDate);
+    }
+    private IQueryable<GameAlbum> AlbumsOrderedByModificationDate(bool descending)
+    {
+        if (descending) return _realm.All<GameAlbum>().OrderByDescending(a => a.ModificationDate);
+        return _realm.All<GameAlbum>().OrderBy(a => a.ModificationDate);
+    }
+    private IQueryable<GameAlbum> AlbumsOrderedByPlays(bool descending)
+    {
+        if (descending) return _realm.All<GameAlbum>()
+            .AsEnumerable()
+            .OrderByDescending(a=> a.Levels.Sum(l=>l.PlaysCount)).AsQueryable();
+        return _realm.All<GameAlbum>().OrderBy(a=> a.Levels.Sum(l=>l.PlaysCount)).AsQueryable();
+    }
+    private IQueryable<GameAlbum> AlbumsOrderedByUniquePlays(bool descending)
+    {
+        if (descending) return _realm.All<GameAlbum>()
+            .AsEnumerable()
+            .OrderByDescending(a=> a.Levels.Sum(l=>l.UniquePlaysCount)).AsQueryable();
+        return _realm.All<GameAlbum>().OrderBy(a=> a.Levels.Sum(l=>l.UniquePlaysCount)).AsQueryable();
+    }
+    private IQueryable<GameAlbum> AlbumsOrderedByLevelsCount(bool descending)
+    {
+        if (descending) return _realm.All<GameAlbum>()
+            .AsEnumerable()
+            .OrderByDescending(a => a.Levels.Count)
+            .AsQueryable();
+        return _realm.All<GameAlbum>()
+            .AsEnumerable()
+            .OrderBy(a => a.Levels.Count)
+            .AsQueryable();
+    }
+    private IQueryable<GameAlbum> AlbumsOrderedByFileSize(bool descending)
+    {
+        if (descending) return _realm.All<GameAlbum>()
+            .AsEnumerable()
+            .OrderByDescending(a=> a.Levels.Sum(l=>l.FileSize)).AsQueryable();
+        return _realm.All<GameAlbum>().OrderBy(a=> a.Levels.Sum(l=>l.FileSize)).AsQueryable();
+    }
+    private IQueryable<GameAlbum> AlbumsOrderedByDifficulty(bool descending)
+    {
+        if (descending) return _realm.All<GameAlbum>()
+            .AsEnumerable()
+            .OrderByDescending(a=> a.Levels.Sum(l=>l.Difficulty)).AsQueryable();
+        return _realm.All<GameAlbum>().OrderBy(a=> a.Levels.Sum(l=>l.Difficulty)).AsQueryable();
     }
 
     public GameAlbum? GetAlbumWithId(string id)

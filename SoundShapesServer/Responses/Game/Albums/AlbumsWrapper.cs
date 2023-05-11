@@ -6,14 +6,10 @@ namespace SoundShapesServer.Responses.Game.Albums;
 
 public class AlbumsWrapper
 {
-    public AlbumsWrapper(IQueryable<GameAlbum> albums, int from, int count)
+    public AlbumsWrapper(GameAlbum[] albums, int totalAlbums, int from, int count)
     {
-        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(albums.Count(), from, count);
-        GameAlbum[] paginatedAlbums = PaginationHelper.PaginateAlbums(albums, from, count);
-
-        Albums = paginatedAlbums.Select(t => new AlbumResponse(t)).ToArray();
-        PreviousToken = previousToken;
-        NextToken = nextToken;
+        (PreviousToken, NextToken) = PaginationHelper.GetPageTokens(totalAlbums, from, count);
+        Albums = albums.Select(t => new AlbumResponse(t)).ToArray();
     }
 
     [JsonProperty("items")] public AlbumResponse[] Albums { get; set; }

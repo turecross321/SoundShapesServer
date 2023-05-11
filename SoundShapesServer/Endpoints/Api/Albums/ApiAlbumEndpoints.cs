@@ -21,8 +21,6 @@ public class ApiAlbumEndpoints : EndpointGroup
     [Authentication(false)]
     public ApiAlbumsWrapper GetAlbums(RequestContext context, GameDatabaseContext database)
     {
-        IQueryable<GameAlbum> albums = database.GetAlbums();
-        
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
         
@@ -40,8 +38,10 @@ public class ApiAlbumEndpoints : EndpointGroup
             "difficulty" => AlbumOrderType.Difficulty,
             _ => AlbumOrderType.CreationDate
         };
+
+        (GameAlbum[] albums, int totalAlbums) = database.GetAlbums(order, descending, from, count);
         
-        return new ApiAlbumsWrapper(albums, from, count, order, descending);
+        return new ApiAlbumsWrapper(albums, totalAlbums);
     }
 
     [ApiEndpoint("albums/{id}/completed")]

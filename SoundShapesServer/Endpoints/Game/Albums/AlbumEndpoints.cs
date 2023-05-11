@@ -22,9 +22,9 @@ public class AlbumEndpoints : EndpointGroup
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
 
-        IQueryable<GameAlbum> albums = database.GetAlbums();
+        (GameAlbum[] albums, int totalAlbums) = database.GetAlbums(AlbumOrderType.CreationDate, true, from, count);
 
-        return new AlbumsWrapper(albums, from, count);
+        return new AlbumsWrapper(albums, totalAlbums, from, count);
     }
 
     [GameEndpoint("~album:{albumId}/~link:*.page", ContentType.Json)]

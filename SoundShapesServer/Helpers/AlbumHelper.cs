@@ -31,25 +31,4 @@ public static class AlbumHelper
 
         return linerNotes.ToArray();
     }
-
-    public static IQueryable<GameAlbum> OrderAlbums(IQueryable<GameAlbum> albums, AlbumOrderType orderType, bool descending)
-    {
-        IQueryable<GameAlbum> response = albums;
-
-        response = orderType switch
-        {
-            AlbumOrderType.CreationDate => response.OrderBy(a=>a.CreationDate).AsQueryable(),
-            AlbumOrderType.ModificationDate => response.OrderBy(a=>a.ModificationDate).AsQueryable(),
-            AlbumOrderType.Plays => response.OrderBy(a=> a.Levels.Select(l=>l.PlaysCount)).AsQueryable(),
-            AlbumOrderType.UniquePlays => response.OrderBy(a=> a.Levels.Select(l=> l.UniquePlaysCount)).AsQueryable(),
-            AlbumOrderType.LevelsCount => response.OrderBy(a=>a.Levels.Count).AsQueryable(),
-            AlbumOrderType.FileSize => response.OrderBy(a=> a.Levels.Select(l=>l.FileSize).Sum()).AsQueryable(),
-            AlbumOrderType.Difficulty => response.OrderBy(a=> a.Levels.Select(l=>l.Difficulty).Sum()).AsQueryable(),
-            _ => OrderAlbums(response, AlbumOrderType.CreationDate, descending)
-        };
-
-        if (descending) response = response.AsEnumerable().Reverse().AsQueryable();
-
-        return response;
-    }
 }
