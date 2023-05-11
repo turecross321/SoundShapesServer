@@ -1,6 +1,4 @@
 using SoundShapesServer.Types.RecentActivity;
-using static SoundShapesServer.Helpers.PaginationHelper;
-using static SoundShapesServer.Helpers.RecentActivityHelper;
 
 namespace SoundShapesServer.Responses.Api.RecentActivity;
 

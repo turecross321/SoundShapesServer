@@ -1342,12 +1342,16 @@ Should be a PNG
 | count      |
 | descending |
 | language   |
+| authors    |
 | orderBy    |
+
+### Note: `authors` can have multiple User Ids, seperated by commas. So an actors query can, for example, be `actors=5503f74b-2620-4103-a892-dcbd99435645,01fb1e88-507c-44a5-a99f-16b6cca2eccd` which would only return news written by those two users.
 
 | Can be ordered by: |
 | ------------------ |
-| date               |
-| length             |
+| creationDate       |
+| modificationDate   |
+| characterCount     |
 
 ### Response: 200
 

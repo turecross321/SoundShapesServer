@@ -1,4 +1,3 @@
-using System.Collections;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;

@@ -5,10 +5,10 @@ namespace SoundShapesServer.Types.RecentActivity;
 
 public class EventFilters
 {
-    public GameUser[]? Actors;
-    public GameUser? OnUser;
-    public GameLevel? OnLevel;
-    public EventType[]? EventTypes;
+    public GameUser[]? Actors { get; set; }
+    public GameUser? OnUser { get; set; }
+    public GameLevel? OnLevel { get; set; }
+    public EventType[]? EventTypes { get; set; }
 
     public EventFilters(GameUser[]? actors = null, GameUser? onUser = null, GameLevel? onLevel = null, EventType[]? eventTypes = null)
     {

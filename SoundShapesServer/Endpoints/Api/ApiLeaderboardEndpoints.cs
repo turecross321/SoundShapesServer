@@ -20,13 +20,13 @@ public class ApiLeaderboardEndpoints : EndpointGroup
         bool descending = Parse(context.QueryString["descending"] ?? "false");
         
         string? onLevel = context.QueryString["onLevel"];        
-        string? byUserString = context.QueryString["byUser"];
+        string? byUserId = context.QueryString["byUser"];
         bool onlyBest = Parse(context.QueryString["onlyBest"] ?? "false");
         bool? completed = null;
         if (TryParse(context.QueryString["completed"], out bool completedTemp)) completed = completedTemp;
 
         GameUser? byUser = null;
-        if (byUserString != null) byUser = database.GetUserWithId(byUserString);
+        if (byUserId != null) byUser = database.GetUserWithId(byUserId);
         
         string? orderString = context.QueryString["orderBy"];
 

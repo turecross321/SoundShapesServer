@@ -1,9 +1,9 @@
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.RecentActivity;
 using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api;
 
@@ -20,18 +20,32 @@ public class ApiNewsEndpoints : EndpointGroup
         string? orderString = context.QueryString["orderBy"];
 
         string? language = context.QueryString["language"];
-        string? byUser = context.QueryString["byUser"];
-        
-        IQueryable<NewsEntry> entries = database.GetNews();
-        IQueryable<NewsEntry> filteredEntries = NewsHelper.FilterNews(entries, language, byUser);
-        
+        string? authorIds = context.QueryString["authors"];
+        List<GameUser>? authors = null;
+
+        if (authorIds != null)
+        {
+            authors = new List<GameUser>();
+
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (string authorId in authorIds.Split(","))
+            {
+                GameUser? author = database.GetUserWithId(authorId);
+                if (author != null) authors.Add(author);
+            }
+        }
+
+        NewsFilters filters = new (language, authors?.ToArray());
+
         NewsOrderType order = orderString switch
         {
-            "date" => NewsOrderType.Date,
-            "length" => NewsOrderType.Length,
-            _ => NewsOrderType.Date
+            "creationDate" => NewsOrderType.CreationDate,
+            "modificationDate" => NewsOrderType.ModificationDate,
+            "characterCount" => NewsOrderType.CharacterCount,
+            _ => NewsOrderType.CreationDate
         };
 
-        return new ApiNewsWrapper(filteredEntries, from, count, order, descending);
+        (NewsEntry[] entries, int totalEntries) = database.GetNews(order, descending, filters, from, count);
+        return new ApiNewsWrapper(entries, totalEntries);
     }
 }

@@ -5,7 +5,6 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.RecentActivity;
 using SoundShapesServer.Types.RecentActivity;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.RecentActivityHelper;
 
 namespace SoundShapesServer.Endpoints.Game.RecentActivity;
 

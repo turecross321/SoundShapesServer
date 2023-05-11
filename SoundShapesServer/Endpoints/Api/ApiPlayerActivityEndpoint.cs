@@ -5,7 +5,6 @@ using SoundShapesServer.Responses.Api.RecentActivity;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.RecentActivity;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.RecentActivityHelper;
 
 namespace SoundShapesServer.Endpoints.Api;
 
@@ -21,34 +20,34 @@ public class ApiPlayerActivityEndpoint : EndpointGroup
         bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
         string? orderString = context.QueryString["orderBy"];
         
-        string? actorsString = context.QueryString["actors"];
-        string? onUserString = context.QueryString["onUser"];
-        string? onLevelString = context.QueryString["onLevel"];
+        string? actorIds = context.QueryString["actors"];
+        string? onUserId = context.QueryString["onUser"];
+        string? levelIds = context.QueryString["onLevel"];
         
         List<GameUser>? actors = null;
 
-        if (actorsString != null)
+        if (actorIds != null)
         {
             actors = new List<GameUser>();
 
             // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (string actorString in actorsString.Split(","))
+            foreach (string actorId in actorIds.Split(","))
             {
-                GameUser? actor = database.GetUserWithId(actorString);
+                GameUser? actor = database.GetUserWithId(actorId);
                 if (actor != null) actors.Add(actor);
             }
         }
 
         GameUser? onUser = null;
-        if (onUserString != null)
+        if (onUserId != null)
         {
-            onUser = database.GetUserWithId(onUserString);
+            onUser = database.GetUserWithId(onUserId);
         }
         
         GameLevel? onLevel = null;
-        if (onLevelString != null)
+        if (levelIds != null)
         {
-            onLevel = database.GetLevelWithId(onLevelString);
+            onLevel = database.GetLevelWithId(levelIds);
         }
 
         string? eventTypesString = context.QueryString["eventTypes"];

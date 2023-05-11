@@ -60,6 +60,8 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             _realm.Add(relation);
+            follower.FollowingCount = follower.Following.Count();
+            recipient.FollowersCount = recipient.Followers.Count();
         });
 
         CreateEvent(follower, EventType.Follow, recipient);
@@ -91,6 +93,7 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             _realm.Add(relation);
+            liker.LikedLevelsCount = liker.LikedLevels.Count();
         });
         
         CreateEvent(liker, EventType.Like, null, level);
@@ -141,6 +144,7 @@ public partial class GameDatabaseContext
             uniqueRelation = new LevelUniquePlayRelation(user, level, DateTimeOffset.UtcNow); 
             _realm.Add(uniqueRelation);
             level.UniquePlaysCount = level.UniquePlays.Count();
+            user.PlayedLevelsCount = user.PlayedLevels.Count();
         });
     }
 }

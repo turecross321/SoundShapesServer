@@ -31,7 +31,7 @@ public partial class GameDatabaseContext
             _ => LeaderboardOrderedByScore(descending),
         };
 
-        IQueryable<LeaderboardEntry> filteredEntries = FilterEntries(orderedEntries, filters);
+        IQueryable<LeaderboardEntry> filteredEntries = FilterLeaderboard(orderedEntries, filters);
         LeaderboardEntry[] paginatedEntries = PaginateLeaderboardEntries(filteredEntries, from, count);
 
         return (filteredEntries, paginatedEntries);
@@ -61,7 +61,7 @@ public partial class GameDatabaseContext
         return _realm.All<LeaderboardEntry>().OrderBy(e => e.Date);
     }
 
-    public static IQueryable<LeaderboardEntry> FilterEntries(IQueryable<LeaderboardEntry> entries, LeaderboardFilters filters)
+    public static IQueryable<LeaderboardEntry> FilterLeaderboard(IQueryable<LeaderboardEntry> entries, LeaderboardFilters filters)
     {
         IQueryable<LeaderboardEntry> response = entries;
         

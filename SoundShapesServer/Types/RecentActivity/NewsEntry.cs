@@ -17,6 +17,7 @@ public class NewsEntry : RealmObject
         Summary = request.Summary ?? "";
         FullText = request.FullText ?? "";
         Url = string.IsNullOrEmpty(request.Url) ? "0.0.0.0" : request.Url; // An url crashes the Vita version
+        CharacterCount = FullText.Length;
     }
     
     // Realm cries of this doesn't exist
@@ -39,4 +40,5 @@ public class NewsEntry : RealmObject
     public string Summary { get; set; }
     public string FullText { get; set; }
     public string Url { get; set; }
+    public int CharacterCount { get; set; }
 }

@@ -13,7 +13,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 4;
+    protected override ulong SchemaVersion => 5;
 
     protected override List<Type> SchemaTypes => new()
     {
