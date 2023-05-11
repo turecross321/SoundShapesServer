@@ -23,7 +23,7 @@ public partial class GameDatabaseContext
         return (paginatedEvents, filteredEvents.Count());
     }
     
-    private IQueryable<GameEvent> FilterEvents(IQueryable<GameEvent> events, EventFilters? filters)
+    private IQueryable<GameEvent> FilterEvents(IQueryable<GameEvent> events, EventFilters filters)
     {
         IQueryable<GameEvent> response = events;
 
@@ -66,7 +66,7 @@ public partial class GameDatabaseContext
         return response;
     }
 
-    public IQueryable<GameEvent> EventsOrderedByDate(bool descending)
+    private IQueryable<GameEvent> EventsOrderedByDate(bool descending)
     {
         if (descending) return _realm.All<GameEvent>().OrderByDescending(e => e.Date);
         return _realm.All<GameEvent>().OrderBy(e => e.Date);
