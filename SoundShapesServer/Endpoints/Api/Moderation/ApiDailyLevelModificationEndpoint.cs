@@ -10,31 +10,41 @@ using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 using static System.Boolean;
-using static SoundShapesServer.Helpers.DailyLevelHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
 public class ApiDailyLevelModificationEndpoint : EndpointGroup
 {
     [ApiEndpoint("daily")]
-    public ApiDailyLevelsWrapper GetDailyLevelObjects(RequestContext context, GameDatabaseContext database, GameUser user)
+    public Response GetDailyLevelObjects(RequestContext context, GameDatabaseContext database, GameUser user)
     {
+        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
+        
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
         
-        string? date = context.QueryString["date"];
         bool descending = Parse(context.QueryString["descending"] ?? "true");
         
-        IQueryable<DailyLevel> dailyLevels = database.GetDailyLevelObjects();
-        IQueryable<DailyLevel> filteredDailyLevels = FilterDailyLevels(dailyLevels, date);
-        IQueryable<DailyLevel> orderedDailyLevels =
-            descending ? filteredDailyLevels.AsEnumerable().Reverse().AsQueryable() : filteredDailyLevels;
+        string? dateString = context.QueryString["date"];
+        DateTimeOffset? date = null;
+        if (dateString != null) date = DateTimeOffset.Parse(dateString).Date;
+        
+        bool? lastDate = null;
+        if (TryParse(context.QueryString["lastDate"], out bool lastDateTemp)) lastDate = lastDateTemp;
 
-        DailyLevel[] paginatedDailyLevels = PaginationHelper.PaginateDailyLevels(orderedDailyLevels, from, count);
+        DailyLevelFilters filters = new (date, lastDate);
+        
+        string? orderString = context.QueryString["orderBy"];
+        DailyLevelOrderType order = orderString switch
+        {
+            "date" => DailyLevelOrderType.Date,
+            _ => DailyLevelOrderType.Date
+        };
 
-        return new ApiDailyLevelsWrapper(
-            dailyLevels: paginatedDailyLevels.Select(t => new ApiDailyLevelResponse(t)).ToArray(),
-            count: dailyLevels.Count());
+        IQueryable<DailyLevel> dailyLevels = database.GetDailyLevelObjects(order, descending, filters);
+        DailyLevel[] paginatedDailyLevels = PaginationHelper.PaginateDailyLevels(dailyLevels, from, count);
+        
+        return new Response(new ApiDailyLevelsWrapper(paginatedDailyLevels, dailyLevels.Count()), ContentType.Json);
     }
     
     [ApiEndpoint("daily/create", Method.Post)]
@@ -45,7 +55,7 @@ public class ApiDailyLevelModificationEndpoint : EndpointGroup
         GameLevel? level = database.GetLevelWithId(body.LevelId);
         if (level == null) return HttpStatusCode.NotFound;
 
-        DailyLevel createdDailyLevel = database.AddDailyLevel(level, body.DateUtc);
+        DailyLevel createdDailyLevel = database.CreateDailyLevel(level, body.DateUtc);
         return new Response(new ApiDailyLevelResponse(createdDailyLevel), ContentType.Json, HttpStatusCode.Created);
     }
     

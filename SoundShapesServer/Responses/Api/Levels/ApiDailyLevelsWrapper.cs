@@ -1,11 +1,13 @@
+using SoundShapesServer.Types.Levels;
+
 namespace SoundShapesServer.Responses.Api.Levels;
 
 public class ApiDailyLevelsWrapper
 {
-    public ApiDailyLevelsWrapper(ApiDailyLevelResponse[] dailyLevels, int count)
+    public ApiDailyLevelsWrapper(DailyLevel[] dailyLevels, int totalLevels)
     {
-        DailyLevels = dailyLevels;
-        Count = count;
+        DailyLevels = dailyLevels.Select(t => new ApiDailyLevelResponse(t)).ToArray();
+        Count = totalLevels;
     }
 
     public ApiDailyLevelResponse[] DailyLevels { get; }

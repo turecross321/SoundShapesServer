@@ -521,6 +521,8 @@ o7
 | completedBy |
 | inAlbum     |
 | inDaily     |
+| inDailyDate |
+| inLastDaily |
 | search      |
 | descending  |
 | orderBy     |
@@ -1254,6 +1256,7 @@ Should be a PNG
 | from       |
 | count      |
 | date       |
+| lastDate   |
 | descending |
 
 ### Response: 200
@@ -1262,9 +1265,20 @@ Should be a PNG
 {
   "DailyLevels": [
     {
-      "Id": "f7b43f8a-acb3-45e6-82c6-403ce5c0e0a9",
-      "LevelId": "1zyrrn7g",
-      "DateUtc": "2023-05-02T09:58:43.5485486+00:00"
+      "Id": "2676b5ce-fb5e-44f0-86a5-b4ddaf441673",
+      "Level": {
+        "Id": "2kM0HrBQ",
+        "Name": "Imported Level",
+        "AuthorId": "7e751482-8228-4e90-97f4-2b61e80687f5",
+        "AuthorName": "Server",
+        "Created": "2023-05-07T23:02:58.9952097+00:00",
+        "Modified": "2023-05-07T23:02:58.9952097+00:00",
+        "TotalPlays": 3,
+        "UniquePlays": 1,
+        "Likes": 1,
+        "Difficulty": 1.6
+      },
+      "DateUtc": "2023-05-10T22:00:00+00:00"
     }
   ],
   "Count": 1
@@ -1288,7 +1302,7 @@ Should be a PNG
 ```json
 {
   "LevelId": "{levelId}",
-  "DateUtc": "2023-05-02T09:58:43.5485486+00:00"
+  "DateUtc": "2023-05-02"
 }
 ```
 

@@ -7,11 +7,11 @@ public class ApiDailyLevelResponse
     public ApiDailyLevelResponse(DailyLevel dailyLevel)
     {
         Id = dailyLevel.Id;
-        LevelId = dailyLevel.Level.Id;
+        Level = new ApiLevelSummaryResponse(dailyLevel.Level);
         DateUtc = dailyLevel.Date;
     }
 
     public string Id { get; }
-    public string LevelId { get; }
+    public ApiLevelSummaryResponse Level { get; }
     public DateTimeOffset DateUtc { get; }
 }

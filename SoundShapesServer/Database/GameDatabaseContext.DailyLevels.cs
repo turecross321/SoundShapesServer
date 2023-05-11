@@ -4,34 +4,60 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public IQueryable<DailyLevel> GetDailyLevelObjects(DateTimeOffset? date = null, bool getOldLevelsIfThereAreNone = false)
+    public IQueryable<DailyLevel> GetDailyLevelObjects(DailyLevelOrderType order, bool descending, DailyLevelFilters filters)
     {
-        List<DailyLevel> dailyLevels = _realm.All<DailyLevel>()
-            .OrderByDescending(l => l.Date)
-            .ToList();
-
-        if (date == null)
+        IQueryable<DailyLevel> orderedDailyLevels = order switch
         {
-            return getOldLevelsIfThereAreNone ? dailyLevels.AsQueryable() : Enumerable.Empty<DailyLevel>().AsQueryable();
+            DailyLevelOrderType.Date => DailyLevelObjectsOrderedByDate(descending),
+            _ => DailyLevelObjectsOrderedByDate(descending)
+        };
+        
+        IQueryable<DailyLevel> filteredDailyLevels = FilterDailyLevels(orderedDailyLevels, filters);
+        return filteredDailyLevels;
+    }
+
+    private static IQueryable<DailyLevel> FilterDailyLevels(IQueryable<DailyLevel> dailyLevels, DailyLevelFilters filters)
+    {
+        IQueryable<DailyLevel> response = dailyLevels;
+
+        if (filters.LastDate == true)
+        {
+            response = response
+                .AsEnumerable()
+                .GroupBy(d => d.Date)
+                .OrderBy(g => g.Key.Date)
+                .Last()
+                .AsQueryable();
         }
         
-        IQueryable<DailyLevel> levelsToday = dailyLevels.Where(d => d.Date.Date == date.Value.Date).AsQueryable();
-        return levelsToday.Any()
-            ? levelsToday
-            : getOldLevelsIfThereAreNone ? dailyLevels.AsQueryable() : Enumerable.Empty<DailyLevel>().AsQueryable();
+        if (filters.Date != null)
+        {
+            response = response
+                .AsEnumerable()
+                .Where(d => d.Date.Date == filters.Date?.Date)
+                .AsQueryable();
+        }
+
+        return response;
+    }
+    
+    private IQueryable<DailyLevel> DailyLevelObjectsOrderedByDate(bool descending)
+    {
+        if (descending) return _realm.All<DailyLevel>().OrderByDescending(d => d.Date);
+        return _realm.All<DailyLevel>().OrderBy(d => d.Date);
     }
 
     public DailyLevel? GetDailyLevelWithId(string id)
     {
         return _realm.All<DailyLevel>().FirstOrDefault(d => d.Id == id);
     }
-    public DailyLevel AddDailyLevel(GameLevel level, DateTimeOffset date)
+    public DailyLevel CreateDailyLevel(GameLevel level, DateTimeOffset date)
     {
         DailyLevel dailyLevel = new()
         {
             Id = GenerateGuid(), 
             Level = level, 
-            Date = date
+            Date = date.Date
         };
 
         _realm.Write(() =>
@@ -42,6 +68,7 @@ public partial class GameDatabaseContext
         return dailyLevel;
     }
 
+    // TODO: EDIT DAILY LEVEL
     public void RemoveDailyLevel(DailyLevel dailyLevel)
     {
         _realm.Write(() =>

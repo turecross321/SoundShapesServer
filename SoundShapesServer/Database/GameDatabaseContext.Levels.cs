@@ -120,10 +120,12 @@ public partial class GameDatabaseContext
     private IQueryable<GameLevel> FilterLevels(IQueryable<GameLevel> levels, LevelFilters filters)
     {
         IQueryable<GameLevel> response = levels;
+        
         if (filters.ByUser != null)
         {
             response = response.Where(l => l.Author == filters.ByUser);
         }
+        
         if (filters.LikedByUser != null)
         {
             IQueryable<LevelLikeRelation> relations = filters.LikedByUser.LikedLevels;
@@ -139,6 +141,7 @@ public partial class GameDatabaseContext
 
             response = tempResponse.AsQueryable();
         }
+        
         if (filters.InAlbum != null)
         {
             List<GameLevel> tempResponse = new ();
@@ -151,9 +154,52 @@ public partial class GameDatabaseContext
 
             response = tempResponse.AsQueryable();
         }
-        if (filters.InDailyDate != null)
+        
+        if (filters.InDaily == true)
         {
-            IQueryable<DailyLevel> dailyLevelObjects = GetDailyLevelObjects(filters.InDailyDate);
+            IQueryable<DailyLevel> dailyLevelObjects =
+                GetDailyLevelObjects(DailyLevelOrderType.Date, true, new DailyLevelFilters());
+
+            IEnumerable<GameLevel> filteredLevels = new List<GameLevel>();
+            
+            if (!dailyLevelObjects.Any() && filters.InDaily == false)
+            {
+                filteredLevels = levels;
+            }
+            
+            foreach (DailyLevel dailyLevel in dailyLevelObjects)
+            {
+                string levelId = dailyLevel.Level.Id;
+                filteredLevels = filteredLevels.Concat(levels.Where(l=> l .Id == levelId));
+            }
+
+            response = filteredLevels.AsQueryable();
+        }
+        
+        if (filters.InDaily == false)
+        {
+            IQueryable<DailyLevel> dailyLevelObjects =
+                GetDailyLevelObjects(DailyLevelOrderType.Date, true, new DailyLevelFilters());
+
+            IEnumerable<GameLevel> filteredLevels = new List<GameLevel>();
+            
+            if (!dailyLevelObjects.Any())
+            {
+                filteredLevels = levels;
+            }
+            
+            foreach (DailyLevel dailyLevel in dailyLevelObjects)
+            {
+                string levelId = dailyLevel.Level.Id;
+                filteredLevels = filteredLevels.Concat(levels.Where(l=> l .Id != levelId));
+            }
+
+            response = filteredLevels.AsQueryable();
+        }
+        
+        if (filters.InDailyDate != null || filters.InLatestDaily == true)
+        {
+            IQueryable<DailyLevel> dailyLevelObjects = GetDailyLevelObjects(DailyLevelOrderType.Date, true, new DailyLevelFilters(filters.InDailyDate, filters.InLatestDaily));
 
             List<GameLevel> tempResponse = new ();
 

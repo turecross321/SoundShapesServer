@@ -32,23 +32,29 @@ public class ApiLevelEndpoints: EndpointGroup
         string? likedByUserId = context.QueryString["likedBy"];
         string? completedByString = context.QueryString["completedBy"];
         string? inAlbumId = context.QueryString["inAlbum"];
-        string? inDailyString = context.QueryString["inDaily"];
+        
+        bool? inDaily = null;
+        if (TryParse(context.QueryString["inDaily"], out bool inDailyTemp)) inDaily = inDailyTemp;
+        string? inDailyDateString = context.QueryString["inDailyDate"];
+
+        bool? lastDate = null;
+        if (TryParse(context.QueryString["inLastDaily"], out bool lastDateTemp)) lastDate = lastDateTemp;
 
         string? searchQuery = context.QueryString["search"];
 
         GameUser? byUser = null;
         GameUser? likedBy = null;
         GameUser? completedBy = null;
-        GameAlbum? inAlbum = null; 
-        DateTimeOffset? inDaily = null;
+        GameAlbum? inAlbum = null;
+        DateTimeOffset? inDailyDate = null;
 
         if (byUserId != null) byUser = database.GetUserWithId(byUserId);
         if (likedByUserId != null) likedBy = database.GetUserWithId(likedByUserId);
         if (completedByString != null) completedBy = database.GetUserWithId(completedByString);
         if (inAlbumId != null) inAlbum = database.GetAlbumWithId(inAlbumId);
-        if (inDailyString != null) inDaily = DateTimeOffset.Parse(inDailyString);
+        if (inDailyDateString != null) inDailyDate = DateTimeOffset.Parse(inDailyDateString);
 
-        LevelFilters filters = new (byUser, likedBy, inAlbum, inDaily, searchQuery, completedBy);
+        LevelFilters filters = new (byUser, likedBy, inAlbum, inDaily, inDailyDate, lastDate, searchQuery, completedBy);
 
         LevelOrderType order = orderString switch
         {
