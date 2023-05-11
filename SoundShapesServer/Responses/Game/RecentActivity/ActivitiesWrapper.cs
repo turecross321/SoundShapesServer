@@ -6,16 +6,11 @@ namespace SoundShapesServer.Responses.Game.RecentActivity;
 
 public class ActivitiesWrapper
 {
-    public ActivitiesWrapper(IQueryable<GameEvent> events, int from, int count)
+    public ActivitiesWrapper(GameEvent[] events, int totalEvents, int from, int count)
     {
-        GameEvent[] paginatedEvents = PaginationHelper.PaginateEvents(events, from, count);
-        ActivityResponse[] activityResponses = paginatedEvents.Select(e => new ActivityResponse(e)).ToArray();
-
-        (int? previousToken, int? nextToken) = PaginationHelper.GetPageTokens(events.Count(), from, count);
+        (PreviousToken, NextToken) = PaginationHelper.GetPageTokens(totalEvents, from, count);
         
-        Events = activityResponses;
-        PreviousToken = previousToken;
-        NextToken = nextToken;
+        Events = events.Select(e=>new ActivityResponse(e)).ToArray();
     }
 
     [JsonProperty("items")] public ActivityResponse[] Events { get; set; }

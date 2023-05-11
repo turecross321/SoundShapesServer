@@ -1534,7 +1534,7 @@ Should be a PNG
 
 #
 
-### Note: `actors` consists of User Ids, so it can have multiple values at the same time. The User Ids should be seperated by commas. So an actors query can, for example, be `actors=5503f74b-2620-4103-a892-dcbd99435645,01fb1e88-507c-44a5-a99f-16b6cca2eccd` which would only return events that those two users did.
+### Note: `actors` can have multiple User Ids, seperated by commas. So an actors query can, for example, be `actors=5503f74b-2620-4103-a892-dcbd99435645,01fb1e88-507c-44a5-a99f-16b6cca2eccd` which would only return events that those two users did.
 
 #
 

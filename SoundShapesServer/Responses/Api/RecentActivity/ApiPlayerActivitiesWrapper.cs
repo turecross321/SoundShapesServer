@@ -6,13 +6,10 @@ namespace SoundShapesServer.Responses.Api.RecentActivity;
 
 public class ApiPlayerActivitiesWrapper
 {
-    public ApiPlayerActivitiesWrapper(IQueryable<GameEvent> events, int from, int count, EventOrderType orderType, bool descending)
+    public ApiPlayerActivitiesWrapper(GameEvent[] events, int totalEvents)
     {
-        IQueryable<GameEvent> orderedEvents = OrderEvents(events, orderType, descending);
-        GameEvent[] paginatedEvents = PaginateEvents(orderedEvents, from, count);
-        
-        Activities = paginatedEvents.Select(e=> new ApiPlayerActivityResponse(e)).ToArray();
-        Count = orderedEvents.Count();
+        Activities = events.Select(e=> new ApiPlayerActivityResponse(e)).ToArray();
+        Count = totalEvents;
     }
 
     public ApiPlayerActivityResponse[] Activities { get; set; }

@@ -24,10 +24,9 @@ public class PlayerActivityEndpoints : EndpointGroup
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
 
-        IQueryable<GameEvent> events = database.GetEvents();
-        IQueryable<GameEvent> filteredEvents = FilterEvents(events, null, null, null, _gameEventTypes);
-        IQueryable<GameEvent> orderedEvents = OrderEvents(filteredEvents, EventOrderType.Date, true);
-
-        return new ActivitiesWrapper(orderedEvents, from, count);
+        EventFilters filters = new (eventTypes:_gameEventTypes);
+        
+        (GameEvent[] events, int totalEvents) = database.GetEvents(EventOrderType.Date, true, filters, from, count);
+        return new ActivitiesWrapper(events, totalEvents, from, count);
     }
 }

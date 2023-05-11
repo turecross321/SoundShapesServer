@@ -1,3 +1,5 @@
+using System.Collections;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.RecentActivity;
@@ -7,10 +9,67 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    // TODO: Implement same ordering system as levels
-    public IQueryable<GameEvent> GetEvents()
+    public (GameEvent[], int) GetEvents(EventOrderType order, bool descending,  EventFilters filters, int from, int count)
     {
-        return _realm.All<GameEvent>();
+        IQueryable<GameEvent> orderedEvents = order switch
+        {
+            EventOrderType.Date => EventsOrderedByDate(descending),
+            _ => EventsOrderedByDate(descending)
+        };
+
+        IQueryable<GameEvent> filteredEvents = FilterEvents(orderedEvents, filters);
+        GameEvent[] paginatedEvents = PaginationHelper.PaginateEvents(filteredEvents, from, count);
+
+        return (paginatedEvents, filteredEvents.Count());
+    }
+    
+    private IQueryable<GameEvent> FilterEvents(IQueryable<GameEvent> events, EventFilters? filters)
+    {
+        IQueryable<GameEvent> response = events;
+
+        if (filters.Actors != null)
+        {
+            IEnumerable<GameEvent> tempResponse = new List<GameEvent>();
+
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (GameUser actor in filters.Actors)
+            {
+                tempResponse = tempResponse.Concat(response.Where(e=> e.Actor == actor));
+            }
+
+            response = tempResponse.AsQueryable();
+        }
+        
+        if (filters.OnUser != null)
+        {
+            response = response.Where(e => e.ContentUser == filters.OnUser);
+        }
+        
+        if (filters.OnLevel != null)
+        {
+            response = response.Where(e => e.ContentLevel == filters.OnLevel);
+        }
+
+        if (filters.EventTypes != null)
+        {
+            IEnumerable<GameEvent> tempResponse = new List<GameEvent>();
+
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (EventType eventType in filters.EventTypes)
+            {
+                tempResponse = tempResponse.Concat(response.Where(e=> e.EventType == (int)eventType));
+            }
+
+            response = tempResponse.AsQueryable();
+        }
+
+        return response;
+    }
+
+    public IQueryable<GameEvent> EventsOrderedByDate(bool descending)
+    {
+        if (descending) return _realm.All<GameEvent>().OrderByDescending(e => e.Date);
+        return _realm.All<GameEvent>().OrderBy(e => e.Date);
     }
 
     private void CreateEvent(GameUser actor, EventType eventType, GameUser? user = null, GameLevel? level = null, LeaderboardEntry? leaderboardEntry = null)

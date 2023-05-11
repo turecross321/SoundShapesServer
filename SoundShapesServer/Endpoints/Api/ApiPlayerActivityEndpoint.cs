@@ -2,6 +2,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.RecentActivity;
+using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.RecentActivity;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.RecentActivityHelper;
@@ -21,19 +22,9 @@ public class ApiPlayerActivityEndpoint : EndpointGroup
         string? orderString = context.QueryString["orderBy"];
         
         string? actorsString = context.QueryString["actors"];
-        string? onUser = context.QueryString["onUser"];
-        string? onLevel = context.QueryString["onLevel"];
-
-        string? eventTypesString = context.QueryString["eventTypes"];
-
-        List<EventType>? eventTypes = null;
-
-        if (eventTypesString != null)
-        {
-            eventTypes = new List<EventType>();
-            eventTypes.AddRange(eventTypesString.Split(",").Select(Enum.Parse<EventType>));
-        }
-
+        string? onUserString = context.QueryString["onUser"];
+        string? onLevelString = context.QueryString["onLevel"];
+        
         List<GameUser>? actors = null;
 
         if (actorsString != null)
@@ -48,17 +39,38 @@ public class ApiPlayerActivityEndpoint : EndpointGroup
             }
         }
 
-        IQueryable<GameEvent> events = database.GetEvents();
-        IQueryable<GameEvent> filteredEvents = FilterEvents(events, actors?.ToArray(), onUser, onLevel, eventTypes?.ToArray());
+        GameUser? onUser = null;
+        if (onUserString != null)
+        {
+            onUser = database.GetUserWithId(onUserString);
+        }
+        
+        GameLevel? onLevel = null;
+        if (onLevelString != null)
+        {
+            onLevel = database.GetLevelWithId(onLevelString);
+        }
+
+        string? eventTypesString = context.QueryString["eventTypes"];
+
+        List<EventType>? eventTypes = null;
+
+        if (eventTypesString != null)
+        {
+            eventTypes = new List<EventType>();
+            eventTypes.AddRange(eventTypesString.Split(",").Select(Enum.Parse<EventType>));
+        }
 
         // I know this is utterly pointless, but I want to stay consistent with the rest of the server.
-        
         EventOrderType orderType = orderString switch
         {
             "date" => EventOrderType.Date,
             _ => EventOrderType.Date
         };
+
+        EventFilters filters = new (actors?.ToArray(), onUser, onLevel, eventTypes?.ToArray());
+        (GameEvent[] events, int totalEvents) = database.GetEvents(orderType, descending, filters, from, count);
         
-        return new ApiPlayerActivitiesWrapper(filteredEvents, from, count, orderType, descending);
+        return new ApiPlayerActivitiesWrapper(events, totalEvents);
     }
 }
