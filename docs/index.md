@@ -1318,6 +1318,37 @@ Should be a PNG
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
+## End-point: Edit Daily Level
+
+### ⚠️ This requires administrator permissions.
+
+### Method: POST
+
+> ```
+> {ip}:10061/api/v1/daily/{id}/edit
+> ```
+
+### Body (**raw**)
+
+```json
+{
+  "LevelId": "{levelId}",
+  "DateUtc": "2023-05-12"
+}
+```
+
+### Response: 201
+
+```json
+{
+  "Id": "f7b43f8a-acb3-45e6-82c6-403ce5c0e0a9",
+  "LevelId": "1zyrrn7g",
+  "DateUtc": "2023-05-12T09:58:43.5485486+00:00"
+}
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
 ## End-point: Remove Daily Level
 
 ### ⚠️ This requires administrator permissions.

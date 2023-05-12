@@ -68,7 +68,16 @@ public partial class GameDatabaseContext
         return dailyLevel;
     }
 
-    // TODO: EDIT DAILY LEVEL
+    public DailyLevel EditDailyLevel(DailyLevel daily, GameLevel level, DateTimeOffset date)
+    {
+        _realm.Write(() =>
+        {
+            daily.Date = date;
+            daily.Level = level;
+        });
+
+        return daily;
+    }
     public void RemoveDailyLevel(DailyLevel dailyLevel)
     {
         _realm.Write(() =>

@@ -13,7 +13,7 @@ using static System.Boolean;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
-public class ApiDailyLevelModificationEndpoint : EndpointGroup
+public class ApiDailyLevelManagementEndpoints : EndpointGroup
 {
     [ApiEndpoint("daily")]
     public Response GetDailyLevelObjects(RequestContext context, GameDatabaseContext database, GameUser user)
@@ -56,6 +56,21 @@ public class ApiDailyLevelModificationEndpoint : EndpointGroup
         if (level == null) return HttpStatusCode.NotFound;
 
         DailyLevel createdDailyLevel = database.CreateDailyLevel(level, body.DateUtc);
+        return new Response(new ApiDailyLevelResponse(createdDailyLevel), ContentType.Json, HttpStatusCode.Created);
+    }
+    
+    [ApiEndpoint("daily/{id}/edit", Method.Post)]
+    public Response EditDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id, ApiAddDailyLevelRequest body)
+    {
+        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
+
+        DailyLevel? dailyLevel = database.GetDailyLevelWithId(id);
+        if (dailyLevel == null) return HttpStatusCode.NotFound;
+        
+        GameLevel? level = database.GetLevelWithId(body.LevelId);
+        if (level == null) return HttpStatusCode.NotFound;
+
+        DailyLevel createdDailyLevel = database.EditDailyLevel(dailyLevel, level, body.DateUtc);
         return new Response(new ApiDailyLevelResponse(createdDailyLevel), ContentType.Json, HttpStatusCode.Created);
     }
     

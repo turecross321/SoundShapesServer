@@ -17,6 +17,6 @@ public class DailyLevel : RealmObject
     #pragma warning restore CS8618
 
     [PrimaryKey] [Required] public string Id { get; init; }
-    public GameLevel Level { get; init; }
-    public DateTimeOffset Date { get; init; }
+    public GameLevel Level { get; set; }
+    public DateTimeOffset Date { get; set; }
 }
