@@ -23,11 +23,23 @@ public partial class GameDatabaseContext
         if (filters.LastDate == true)
         {
             response = response
-                .AsEnumerable()
-                .GroupBy(d => d.Date)
-                .OrderBy(g => g.Key.Date)
-                .Last()
-                .AsQueryable();
+                .OrderByDescending(d => d.Date);
+
+            IList<DailyLevel> dailiesOnLastDate = new List<DailyLevel>();
+
+            if (response.Any())
+            {
+                DateTimeOffset lastDate = response.ToArray()[0].Date.Date;
+
+                foreach (DailyLevel dailyLevel in response)
+                {
+                    if (dailyLevel.Date < lastDate) break;
+                    
+                    dailiesOnLastDate.Add(dailyLevel);
+                }
+            }
+
+            response = dailiesOnLastDate.AsQueryable();
         }
         
         if (filters.Date != null)
