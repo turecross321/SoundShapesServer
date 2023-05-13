@@ -38,9 +38,9 @@ public partial class GameDatabaseContext
             ip.Authorized = true;
             ip.OneTimeUse = oneTime;
         });
-        
-        _realm.Refresh();
 
+        _realm.Refresh();
+        
         return true;
     }
 
