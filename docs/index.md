@@ -1609,49 +1609,49 @@ Should be a PNG
 {
   "Activities": [
     {
-      "Id": "c05864fa-45e5-4100-b57d-414b718f7c8d",
+      "Id": "35aefbdc-e3d8-4f08-8bb4-16583d010d36",
+      "EventType": 3,
+      "ActorId": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+      "ActorUsername": "turecross321",
+      "ContentLeaderboardEntryId": "e3ebcc4b-4a17-4cb2-8518-62890d77771b",
+      "Date": "2023-05-13T08:17:27.0391331+00:00"
+    },
+    {
+      "Id": "364713da-610c-45da-8a64-9d00a75d335a",
+      "EventType": 0,
+      "ActorId": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+      "ActorUsername": "turecross321",
+      "ContentLevelId": "GIlJ9rMi",
+      "ContentLevelName": "Titled",
+      "Date": "2023-05-13T08:17:25.0874232+00:00"
+    },
+    {
+      "Id": "75597e41-c187-4500-8198-ca7f80a2ea76",
+      "EventType": 3,
+      "ActorId": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+      "ActorUsername": "turecross321",
+      "ContentLeaderboardEntryId": "ae8ac9ff-f1db-4519-91a0-840b99f19d91",
+      "Date": "2023-05-13T08:11:50.2730079+00:00"
+    },
+    {
+      "Id": "2f1328ba-56cf-4398-87f5-273542935adf",
       "EventType": 1,
-      "ActorId": "141a3c5e-db64-4e9c-85e0-b987b6e41f9a",
-      "LevelId": "4OVua1mG",
-      "Date": "2023-05-06T18:18:42.3561017+00:00"
+      "ActorId": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+      "ActorUsername": "turecross321",
+      "ContentLevelId": "9LxNV8Jk",
+      "ContentLevelName": "Imported Level (9LxNV8Jk)",
+      "Date": "2023-05-13T08:06:46.9773965+00:00"
     },
     {
-      "Id": "ff06e894-486e-4efc-871d-f0df58b4b7cd",
+      "Id": "8c7cead5-1bd6-4b61-97fc-a602e12a4a03",
       "EventType": 3,
-      "ActorId": "141a3c5e-db64-4e9c-85e0-b987b6e41f9a",
-      "LeaderboardEntryId": "cb510bab-d0f8-4353-abe0-e829e31e8b81",
-      "Date": "2023-05-06T18:18:22.6806305+00:00"
-    },
-    {
-      "Id": "d5997959-40c7-401c-a0f8-550c4685141e",
-      "EventType": 0,
-      "ActorId": "141a3c5e-db64-4e9c-85e0-b987b6e41f9a",
-      "LevelId": "4OVua1mG",
-      "Date": "2023-05-06T18:18:22.142422+00:00"
-    },
-    {
-      "Id": "f18247f5-31cd-4355-955e-5f5540c7fa3c",
-      "EventType": 3,
-      "ActorId": "141a3c5e-db64-4e9c-85e0-b987b6e41f9a",
-      "LeaderboardEntryId": "c9ba4ba6-1819-4d20-9376-8f293bd890e6",
-      "Date": "2023-05-06T18:17:58.2713005+00:00"
-    },
-    {
-      "Id": "e7a582b3-de91-41d8-a24f-aa9ded2d56fb",
-      "EventType": 0,
-      "ActorId": "141a3c5e-db64-4e9c-85e0-b987b6e41f9a",
-      "LevelId": "nNNIiS4b",
-      "Date": "2023-05-06T18:17:57.7017357+00:00"
-    },
-    {
-      "Id": "d73d9e6c-fd71-4dfc-a302-9dfdfe613773",
-      "EventType": 4,
-      "ActorId": "141a3c5e-db64-4e9c-85e0-b987b6e41f9a",
-      "UserId": "141a3c5e-db64-4e9c-85e0-b987b6e41f9a",
-      "Date": "2023-05-06T18:17:20.2607727+00:00"
+      "ActorId": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+      "ActorUsername": "turecross321",
+      "ContentLeaderboardEntryId": "ae0f0fd7-8743-461e-8d4a-56dacc402873",
+      "Date": "2023-05-13T08:06:37.2582467+00:00"
     }
   ],
-  "Count": 6
+  "Count": 5
 }
 ```
 
