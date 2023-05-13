@@ -49,11 +49,11 @@ public class AuthenticationEndpoints : EndpointGroup
             // If user hasn't finished registration, or if their IP isn't authorized, give them an unauthorized Session
             if (user.HasFinishedRegistration == false || ip.Authorized == false)
             {
-                session = database.CreateSession(context, user, SessionType.Unauthorized, 30);
+                session = database.CreateSession(context, user, SessionType.Unauthorized, 10);
             }
         }
         
-        if (IsUserBanned(user) != null) session = database.CreateSession(context, user, SessionType.Unauthorized, 30);
+        if (IsUserBanned(user) != null) session = database.CreateSession(context, user, SessionType.Unauthorized, 10);
 
         PlatformType? platformType = PlatformHelper.GetPlatformType(ticket);
         if (platformType == null) return HttpStatusCode.BadRequest;
