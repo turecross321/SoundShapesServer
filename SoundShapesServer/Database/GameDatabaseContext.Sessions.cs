@@ -71,7 +71,7 @@ public partial class GameDatabaseContext
         });
     }
 
-    public void RemoveAllSessionsWithUser(GameUser user)
+    private void RemoveAllSessionsWithUser(GameUser user)
     {
         GameSession[] sessions = user.Sessions.ToArray();
         for (int i = 0; i < sessions.Length; i++)
