@@ -41,7 +41,7 @@ public partial class GameDatabaseContext
 
             response = dailiesOnLastDate.AsQueryable();
         }
-        
+
         if (filters.Date != null)
         {
             response = response
