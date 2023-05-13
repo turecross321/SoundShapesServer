@@ -8,6 +8,7 @@ using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.IP_Authorization;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Users;
+using static System.Boolean;
 
 namespace SoundShapesServer.Endpoints.Api;
 
@@ -32,19 +33,18 @@ public class ApiIpAuthorization : EndpointGroup
         return HttpStatusCode.OK;
     }
 
-    [ApiEndpoint("ip/unAuthorized")]
-    public ApiUnAuthorizedIpResponseWrapper UnAuthorizedIps(RequestContext context, GameDatabaseContext database, GameUser user)
+    [ApiEndpoint("ip/addresses")]
+    public ApiIpAddressesWrapper GetAddresses(RequestContext context, GameDatabaseContext database, GameUser user)
     {
-        ApiUnAuthorizedIpResponse[] addresses = database.GetUnAuthorizedIps(user, SessionType.Game);
+        int from = int.Parse(context.QueryString["from"] ?? "0");
+        int count = int.Parse(context.QueryString["count"] ?? "9");
+        
+        bool? authorized = null;
+        if (TryParse(context.QueryString["authorized"], out bool authorizedTemp)) authorized = authorizedTemp;
+        
+        (IpAuthorization[] addresses, int totalAddresses) =
+            database.GetIpAddresses(user, from, count,  SessionType.Game, authorized);
 
-        return new ApiUnAuthorizedIpResponseWrapper(addresses);
-    }
-
-    [ApiEndpoint("ip/authorized")]
-    public ApiAuthorizedIpResponseWrapper AuthorizedIps(RequestContext context, GameDatabaseContext database, GameUser user)
-    {
-        ApiAuthorizedIpResponse[] addresses = database.GetAuthorizedIps(user, SessionType.Game);
-
-        return new ApiAuthorizedIpResponseWrapper(addresses);
+        return new ApiIpAddressesWrapper(addresses, totalAddresses);
     }
 }

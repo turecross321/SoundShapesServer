@@ -82,6 +82,7 @@ public class AuthenticationEndpoints : EndpointGroup
 
     
     [GameEndpoint("~identity:*.hello", ContentType.Json)]
+    [Authentication(false)]
     public Response Hello(RequestContext context)
     {
         return HttpStatusCode.OK;

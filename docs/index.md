@@ -216,19 +216,21 @@ o7
 
 # 📁 IP Authorization {#Ip}
 
-## End-point: Get Unauthorized Ips
+## End-point: Get Ip Addresses
 
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/ip/unAuthorized
+> {ip}:10061/api/v1/ip/addresses
 > ```
 
-### Body (**raw**)
+### Query Params
 
-```json
-
-```
+| Param      |
+| ---------- |
+| from       |
+| count      |
+| authorized |
 
 ### Response: 200
 
@@ -236,12 +238,12 @@ o7
 {
   "IpAddresses": [
     {
-      "IpAddress": "192.168.1.134"
-    },
-    {
-      "IpAddress": "192.168.1.223"
+      "IpAddress": "192.168.1.134",
+      "Authorized": false,
+      "OneTimeUse": false
     }
-  ]
+  ],
+  "Count": 1
 }
 ```
 
@@ -268,29 +270,6 @@ o7
 
 ```json
 
-```
-
-⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
-
-## End-point: Get Authorized Ips
-
-### Method: GET
-
-> ```
-> {ip}:10061/api/v1/ip/authorized
-> ```
-
-### Response: 200
-
-```json
-{
-  "IpAddresses": [
-    {
-      "IpAddress": "192.168.1.223",
-      "OneTimeUse": false
-    }
-  ]
-}
 ```
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃

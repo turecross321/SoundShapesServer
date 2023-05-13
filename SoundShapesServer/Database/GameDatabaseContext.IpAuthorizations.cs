@@ -1,4 +1,5 @@
 using SoundShapesServer.Authentication;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.IP_Authorization;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Users;
@@ -70,34 +71,26 @@ public partial class GameDatabaseContext
         });
     }
 
-    public ApiUnAuthorizedIpResponse[] GetUnAuthorizedIps(GameUser user, SessionType sessionType)
+    public (IpAuthorization[], int) GetIpAddresses(GameUser user, int from, int count, SessionType sessionType, bool? authorized)
     {
-        IpAuthorization[] unAuthorizedIps = user.IpAddresses.AsEnumerable().Where(i=>i.Authorized == false && i.SessionType == (int)sessionType).ToArray();
+        IQueryable<IpAuthorization> addresses = _realm.All<IpAuthorization>().Where(i => i.User == user);
 
-        // Convert list to response array
+        IQueryable<IpAuthorization> filteredAddresses = FilterIpAddresses(addresses, sessionType, authorized);
+        IpAuthorization[] paginatedAddresses = PaginationHelper.PaginateIpAddresses(filteredAddresses, from, count);
 
-        ApiUnAuthorizedIpResponse[] response = new ApiUnAuthorizedIpResponse[unAuthorizedIps.Length];
-        
-        for (int i = 0; i < response.Length; i++)
-        {
-            response[i] = new ApiUnAuthorizedIpResponse(unAuthorizedIps[i]);
-        }
-
-        return response;
+        return (paginatedAddresses, filteredAddresses.Count());
     }
 
-    public ApiAuthorizedIpResponse[] GetAuthorizedIps(GameUser user, SessionType sessionType)
+    private IQueryable<IpAuthorization> FilterIpAddresses(IQueryable<IpAuthorization> addresses,
+        SessionType sessionType, bool? authorized)
     {
-        // Get currently authorized IPs
-        List<IpAuthorization> authorizedIps = user.IpAddresses.AsEnumerable().Where(i=>i.Authorized && i.SessionType == (int)sessionType).ToList();
+        IQueryable<IpAuthorization> response = addresses;
 
-        // Convert list to response array
+        response = response.Where(i => i.SessionType == (int)sessionType);
 
-        ApiAuthorizedIpResponse[] response = new ApiAuthorizedIpResponse[authorizedIps.Count];
-        
-        for (int i = 0; i < response.Length; i++)
+        if (authorized != null)
         {
-            response[i] = new ApiAuthorizedIpResponse(authorizedIps[i]);
+            response = response.Where(i => i.Authorized == authorized);
         }
 
         return response;

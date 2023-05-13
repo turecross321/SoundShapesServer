@@ -2,14 +2,17 @@ using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Responses.Api.IP_Authorization;
 
-public class ApiAuthorizedIpResponse
+// ReSharper disable once ClassNeverInstantiated.Global
+public class ApiIpAddressResponse
 {
-    public ApiAuthorizedIpResponse(IpAuthorization ip)
+    public ApiIpAddressResponse(IpAuthorization ip)
     {
         IpAddress = ip.IpAddress;
+        Authorized = ip.Authorized;
         OneTimeUse = ip.OneTimeUse;
     }
 
     public string IpAddress { get; set; }
+    public bool Authorized { get; set; }
     public bool OneTimeUse { get; set; }
 }

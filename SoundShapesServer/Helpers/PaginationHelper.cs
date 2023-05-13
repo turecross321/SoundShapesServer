@@ -40,6 +40,11 @@ public static class PaginationHelper
         return albums.AsEnumerable().Skip(from).Take(Math.Min(count, MaxEntryCount)).ToArray();
     }
 
+    public static IpAuthorization[] PaginateIpAddresses(IQueryable<IpAuthorization> addresses, int from, int count)
+    {
+        return addresses.AsEnumerable().Skip(from).Take(Math.Min(count, MaxEntryCount)).ToArray();
+    }
+
     public static LeaderboardEntry[] PaginateLeaderboardEntries(IQueryable<LeaderboardEntry> entries, int from,
         int count)
     {
