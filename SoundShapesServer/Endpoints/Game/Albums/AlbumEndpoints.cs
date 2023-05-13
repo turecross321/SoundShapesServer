@@ -46,4 +46,11 @@ public class AlbumEndpoints : EndpointGroup
 
         return new Response(new AlbumLevelInfosWrapper(user, album, levels, from, count), ContentType.Json);
     }
+    
+    [GameEndpoint("{platform}/{publisher}/{language}/~translation.get")]
+    public Response GetTranslatedLinerNotes(RequestContext context, string platform, string publisher, string language)
+    {
+        // This is for Album Translations
+        return new Response(HttpStatusCode.OK);
+    }
 }
