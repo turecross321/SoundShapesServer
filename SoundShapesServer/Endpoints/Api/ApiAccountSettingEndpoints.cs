@@ -69,7 +69,8 @@ public class ApiAccountSettingEndpoints : EndpointGroup
         GameUser? userWithEmail = database.GetUserWithEmail(body.NewEmail);
         if (userWithEmail != null && userWithEmail.Id != user.Id) return new Response("Email is already in use.", ContentType.Json, HttpStatusCode.Forbidden);
 
-        database.SetUserEmail(user, body.NewEmail, session);
+        database.SetUserEmail(user, body.NewEmail);
+        database.RemoveSession(session);
         
         if (!user.HasFinishedRegistration)
             return SendPasswordSession(context, database, new ApiPasswordSessionRequest(body.NewEmail));
@@ -107,9 +108,10 @@ public class ApiAccountSettingEndpoints : EndpointGroup
             return new Response("Password is definitely not SHA512. Please hash the password.",
                 ContentType.Plaintext, HttpStatusCode.BadRequest);
 
-        string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(body.NewPasswordSha512, ApiAuthenticationEndpoints.WorkFactor);
+        if (!database.SetUserPassword(user, body.NewPasswordSha512)) return HttpStatusCode.InternalServerError;
+        database.RemoveSession(session);
 
-        return database.SetUserPassword(user, passwordBcrypt, session) ? HttpStatusCode.Created : HttpStatusCode.InternalServerError;
+        return HttpStatusCode.Created;
     }
 
     [ApiEndpoint("account/sendRemovalSession", Method.Post)]

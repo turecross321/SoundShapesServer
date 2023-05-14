@@ -16,8 +16,6 @@ public static class LevelImporting
 
     public static void ImportLevels(GameDatabaseContext database, IDataStore dataStore)
     {
-        GameUser serverUser = database.GetAdminUser();
-        
         if (Directory.Exists(ImportPath))
         {
             Console.WriteLine("Import folder found.");
@@ -34,11 +32,12 @@ public static class LevelImporting
         stopwatch.Start();
         
         Dictionary<string, List<ImportedLevelDependency>> levels = GetLevelsInDirectory();
+        
+        GameUser serverUser = database.GetAdminUser();
         UploadLevels(levels, database, dataStore, serverUser);
+        
         RemoveEmptyDirectories(ImportPath);
-        
         stopwatch.Stop();
-        
         Console.WriteLine($"Finished importing levels. ({stopwatch.Elapsed})");
     }
 

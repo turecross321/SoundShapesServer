@@ -30,21 +30,23 @@ public partial class GameDatabaseContext
         return user;
     }
 
-    public void SetUserEmail(GameUser user, string email, GameSession session)
+    private const int WorkFactor = 10;
+    public bool ValidatePassword(GameUser user, string hash)
     {
-        _realm.Write(() =>
+        if (BCrypt.Net.BCrypt.PasswordNeedsRehash(user.PasswordBcrypt, WorkFactor))
         {
-            _realm.Remove(session);
-            user.Email = email;
-        });
+            SetUserPassword(user, BCrypt.Net.BCrypt.HashPassword(hash, WorkFactor));
+        }
+
+        return BCrypt.Net.BCrypt.Verify(hash, user.PasswordBcrypt);
     }
-    
-    public bool SetUserPassword(GameUser user, string password, GameSession? session = null)
+    public bool SetUserPassword(GameUser user, string hash)
     {
+        string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(hash, WorkFactor);
+        
         _realm.Write(() =>
         {
-            if (session != null) _realm.Remove(session);
-            user.PasswordBcrypt = password;
+            user.PasswordBcrypt = passwordBcrypt;
             user.HasFinishedRegistration = true;
         });
         
@@ -53,6 +55,14 @@ public partial class GameDatabaseContext
 
         _realm.Refresh();
         return true;
+    }
+    
+    public void SetUserEmail(GameUser user, string email)
+    {
+        _realm.Write(() =>
+        {
+            user.Email = email;
+        });
     }
 
     public void SetUsername(GameUser user, string username)
