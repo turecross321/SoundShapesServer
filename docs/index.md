@@ -1047,7 +1047,7 @@ Should be a PNG
   "Albums": [
     {
       "Id": "a603d25f-4324-41df-b573-c143679bb7f2",
-      "Artist": "DJ Khaled the Second",
+      "Author": "DJ Khaled the Second",
       "Name": "We Not The Best",
       "LinerNotes": "<html><h1>This is still a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
       "TotalLevels": 2,
@@ -1076,7 +1076,7 @@ Should be a PNG
 ```json
 {
   "Id": "a603d25f-4324-41df-b573-c143679bb7f2",
-  "Artist": "DJ Khaled the Second",
+  "Author": "DJ Khaled the Second",
   "Name": "We Not The Best",
   "LinerNotes": "<html><h1>This is still a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
   "TotalLevels": 2,
@@ -1167,7 +1167,7 @@ Should be a PNG
 ```json
 {
   "Name": "We The Best",
-  "Artist": "DJ Khaled",
+  "Author": "DJ Khaled",
   "LinerNotes": "<html><h1>This is a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
   "LevelIds": ["{levelId}"]
 }
@@ -1178,7 +1178,7 @@ Should be a PNG
 ```json
 {
   "Id": "a603d25f-4324-41df-b573-c143679bb7f2",
-  "Artist": "DJ Khaled",
+  "Author": "DJ Khaled",
   "Name": "We The Best",
   "LinerNotes": "<html><h1>This is a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
   "TotalLevels": 1,
@@ -1204,7 +1204,7 @@ Should be a PNG
 ```json
 {
   "Name": "We Not The Best",
-  "Artist": "DJ Khaled the Second",
+  "Author": "DJ Khaled the Second",
   "LinerNotes": "<html><h1>This is still a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
   "LevelIds": ["{levelId}", "{levelId2}"]
 }
@@ -1215,7 +1215,7 @@ Should be a PNG
 ```json
 {
   "Id": "a603d25f-4324-41df-b573-c143679bb7f2",
-  "Artist": "DJ Khaled the Second",
+  "Author": "DJ Khaled the Second",
   "Name": "We Not The Best",
   "LinerNotes": "<html><h1>This is still a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
   "TotalLevels": 2,
@@ -1454,7 +1454,7 @@ Should be a PNG
         "Difficulty": 0
       },
       "Date": "2023-05-15T22:00:00+00:00",
-      "Artist": {
+      "Author": {
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
@@ -1486,7 +1486,7 @@ Should be a PNG
         "Difficulty": 0
       },
       "Date": "2023-05-13T22:00:00+00:00",
-      "Artist": {
+      "Author": {
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
@@ -1547,7 +1547,7 @@ Should be a PNG
     "Difficulty": 0
   },
   "Date": "2023-05-14T22:00:00+00:00",
-  "Artist": {
+  "Author": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
@@ -1605,7 +1605,7 @@ Should be a PNG
     "Difficulty": 0
   },
   "Date": "2023-05-15T22:00:00+00:00",
-  "Artist": {
+  "Author": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,

@@ -11,7 +11,7 @@ public class AlbumMetadata
         LinerNotesWrapper linerNoteWrapper = new (AlbumHelper.HtmlToLinerNotes(album.LinerNotes));
         string linerNotesString = JsonConvert.SerializeObject(linerNoteWrapper);
         
-        Artist = album.Artist;
+        Author = album.Author;
         LinerNotes = linerNotesString;
         SidePanelUrl = ResourceHelper.GenerateAlbumResourceUrl(album.Id, AlbumResourceType.SidePanel);
         CreationDate = album.CreationDate.ToString();
@@ -19,7 +19,7 @@ public class AlbumMetadata
         ThumbnailUrl = ResourceHelper.GenerateAlbumResourceUrl(album.Id, AlbumResourceType.Thumbnail);
     }
 
-    [JsonProperty("albumArtist")] public string Artist { get; set; }
+    [JsonProperty("albumArtist")] public string Author { get; set; }
     [JsonProperty("linerNotes")] public string LinerNotes { get; set; }
     [JsonProperty("sidePanelURL")] public string SidePanelUrl { get; set; }
     [JsonProperty("date")] public string CreationDate { get; set; }

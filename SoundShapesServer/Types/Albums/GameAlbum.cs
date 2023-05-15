@@ -10,7 +10,7 @@ public class GameAlbum : RealmObject
     {
         Id = id;
         Name = request.Name;
-        Artist = request.Artist;
+        Author = request.Author;
         CreationDate = date;
         ModificationDate = date;
         LinerNotes = request.LinerNotes;
@@ -24,7 +24,7 @@ public class GameAlbum : RealmObject
 
     [PrimaryKey] [Required] public string Id { get; set; }
     public string Name { get; set; }
-    public string Artist { get; set; }
+    public string Author { get; set; }
     public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset ModificationDate { get; set; }
     public string LinerNotes { get; set; }

@@ -7,7 +7,7 @@ public class ApiAlbumResponse
     public ApiAlbumResponse(GameAlbum album)
     {
         Id = album.Id;
-        Artist = album.Artist;
+        Author = album.Author;
         Name = album.Name;
         LinerNotes = album.LinerNotes;
         TotalLevels = album.Levels.Count;
@@ -16,7 +16,7 @@ public class ApiAlbumResponse
     }
 
     public string Id { get; set; }
-    public string Artist { get; set; }
+    public string Author { get; set; }
     public string Name { get; set; }
     public string LinerNotes { get; set; }
     public int TotalLevels { get; set; }

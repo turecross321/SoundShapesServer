@@ -71,7 +71,7 @@ public partial class GameDatabaseContext
             Id = GenerateGuid(), 
             Level = level, 
             Date = date.Date,
-            Artist = user
+            Author = user
         };
 
         _realm.Write(() =>

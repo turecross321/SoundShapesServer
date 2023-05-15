@@ -37,7 +37,7 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             album.Name = request.Name;
-            album.Artist = request.Artist;
+            album.Author = request.Author;
             album.ModificationDate = DateTimeOffset.UtcNow;
             album.LinerNotes = request.LinerNotes;
             

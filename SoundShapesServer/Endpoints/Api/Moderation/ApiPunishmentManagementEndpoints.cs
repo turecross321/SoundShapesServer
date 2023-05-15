@@ -10,7 +10,6 @@ using SoundShapesServer.Responses.Api.Moderation;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Users;
 using static System.Boolean;
-using static SoundShapesServer.Helpers.PunishmentHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
