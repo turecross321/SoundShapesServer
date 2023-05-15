@@ -5,13 +5,10 @@ namespace SoundShapesServer.Responses.Api.Moderation;
 
 public class ApiPunishmentsWrapper
 {
-    public ApiPunishmentsWrapper(IQueryable<Punishment> punishments, int from, int count)
+    public ApiPunishmentsWrapper(IEnumerable<Punishment> punishments, int totalPunishments)
     {
-        // todo: fix trhis SHIT
-        Punishment[] paginatedPunishments = PaginationHelper.PaginatePunishments(punishments, from, count);
-
-        Punishments = paginatedPunishments.Select(p => new ApiPunishmentResponse(p)).ToArray();
-        Count = punishments.Count();
+        Punishments = punishments.Select(p => new ApiPunishmentResponse(p)).ToArray();
+        Count = totalPunishments;
     }
 
     public ApiPunishmentResponse[] Punishments { get; }

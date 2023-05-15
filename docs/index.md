@@ -2338,8 +2338,8 @@ Should be a PNG
 | ---------- |
 | from       |
 | count      |
-| forUser    |
-| byUser     |
+| author     |
+| recipient  |
 | revoked    |
 | descending |
 
@@ -2349,8 +2349,8 @@ Should be a PNG
 {
   "Punishments": [
     {
-      "Id": "4e5bb644-55f4-46b6-a4ec-bfd5c5eb0cd1",
-      "User": {
+      "Id": "ed43c3e6-a4d6-4d26-ab1e-8c43fcfe2030",
+      "Recipient": {
         "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
         "Username": "turecross123",
         "PermissionsType": 0,
@@ -2360,9 +2360,9 @@ Should be a PNG
         "PublishedLevelsCount": 0
       },
       "PunishmentType": 0,
-      "Reason": "Not Good...",
+      "Reason": "Still Not Good...",
       "Revoked": false,
-      "Issuer": {
+      "Author": {
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
@@ -2371,8 +2371,8 @@ Should be a PNG
         "LikedLevelsCount": 0,
         "PublishedLevelsCount": 72960
       },
-      "IssuedAt": "2023-05-15T17:04:10.9497972+00:00",
-      "ExpiresAt": "2023-06-02T09:58:43.5485486+00:00"
+      "IssuedAt": "2023-05-15T19:13:01.052509+00:00",
+      "ExpiresAt": "2030-06-02T09:58:43.5485486+00:00"
     }
   ],
   "Count": 1
@@ -2410,8 +2410,8 @@ Should be a PNG
 
 ```json
 {
-  "Id": "4e5bb644-55f4-46b6-a4ec-bfd5c5eb0cd1",
-  "User": {
+  "Id": "ed43c3e6-a4d6-4d26-ab1e-8c43fcfe2030",
+  "Recipient": {
     "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
     "Username": "turecross123",
     "PermissionsType": 0,
@@ -2423,7 +2423,7 @@ Should be a PNG
   "PunishmentType": 0,
   "Reason": "Not Good...",
   "Revoked": false,
-  "Issuer": {
+  "Author": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
@@ -2432,7 +2432,7 @@ Should be a PNG
     "LikedLevelsCount": 0,
     "PublishedLevelsCount": 72960
   },
-  "IssuedAt": "2023-05-15T17:04:10.9497972+00:00",
+  "IssuedAt": "2023-05-15T19:13:01.052509+00:00",
   "ExpiresAt": "2023-06-02T09:58:43.5485486+00:00"
 }
 ```
@@ -2459,7 +2459,7 @@ Should be a PNG
 {
   "UserId": "{userId}",
   "PunishmentType": 0,
-  "Reason": "Even Worse...",
+  "Reason": "Still Not Good...",
   "ExpiresAt": "2030-06-02T09:58:43.5485486+00:00"
 }
 ```
@@ -2468,8 +2468,8 @@ Should be a PNG
 
 ```json
 {
-  "Id": "4e5bb644-55f4-46b6-a4ec-bfd5c5eb0cd1",
-  "User": {
+  "Id": "ed43c3e6-a4d6-4d26-ab1e-8c43fcfe2030",
+  "Recipient": {
     "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
     "Username": "turecross123",
     "PermissionsType": 0,
@@ -2479,9 +2479,9 @@ Should be a PNG
     "PublishedLevelsCount": 0
   },
   "PunishmentType": 0,
-  "Reason": "Even Worse...",
+  "Reason": "Still Not Good...",
   "Revoked": false,
-  "Issuer": {
+  "Author": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
@@ -2490,7 +2490,7 @@ Should be a PNG
     "LikedLevelsCount": 0,
     "PublishedLevelsCount": 72960
   },
-  "IssuedAt": "2023-05-15T17:04:10.9497972+00:00",
+  "IssuedAt": "2023-05-15T19:13:01.052509+00:00",
   "ExpiresAt": "2030-06-02T09:58:43.5485486+00:00"
 }
 ```

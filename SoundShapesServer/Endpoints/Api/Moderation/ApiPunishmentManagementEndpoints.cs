@@ -69,19 +69,24 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
 
-        string? byUser = context.QueryString["byUser"];
-        string? forUser = context.QueryString["forUser"];
+        string? authorString = context.QueryString["author"];
+        GameUser? author = null;
+        if (authorString != null)
+            author = database.GetUserWithId(authorString);
+        
+        string? recipientString = context.QueryString["recipient"];
+        GameUser? recipient = null;
+        if (recipientString != null)
+            recipient = database.GetUserWithId(recipientString);
 
         bool? revoked = null;
         if (TryParse(context.QueryString["revoked"], out bool revokedTemp)) revoked = revokedTemp;
         
         bool descending = Parse(context.QueryString["descending"] ?? "true");
 
-        IQueryable<Punishment> punishments = database.GetPunishments();
-        IQueryable<Punishment> filteredPunishments = FilterPunishments(punishments, byUser, forUser, revoked);
-        IQueryable<Punishment> orderedPunishments = OrderPunishments(filteredPunishments, descending);
+        PunishmentFilters filters = new (author, recipient, revoked);
+        (Punishment[] punishments, int totalPunishments) = database.GetPunishments(descending, filters, from, count);
 
-
-        return new ApiPunishmentsWrapper(orderedPunishments, from, count);
+        return new ApiPunishmentsWrapper(punishments, totalPunishments);
     }
 }

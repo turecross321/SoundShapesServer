@@ -5,14 +5,14 @@ namespace SoundShapesServer.Types.Punishments;
 
 public class Punishment : RealmObject 
 {
-    public Punishment(string id, GameUser user, int punishmentType, string reason, bool revoked, GameUser issuer, DateTimeOffset issuedAt, DateTimeOffset expiresAt)
+    public Punishment(string id, GameUser recipient, int punishmentType, string reason, bool revoked, GameUser author, DateTimeOffset issuedAt, DateTimeOffset expiresAt)
     {
         Id = id;
-        User = user;
+        Recipient = recipient;
         PunishmentType = punishmentType;
         Reason = reason;
         Revoked = revoked;
-        Issuer = issuer;
+        Author = author;
         IssuedAt = issuedAt;
         ExpiresAt = expiresAt;
     }
@@ -22,13 +22,12 @@ public class Punishment : RealmObject
     public Punishment() {}
     #pragma warning restore CS8618
 
-        [PrimaryKey]
-    [Required] public string Id { get; init; }
-    public GameUser User { get; set; }
+    [PrimaryKey] [Required] public string Id { get; init; }
+    public GameUser Recipient { get; set; }
     public int PunishmentType { get; set; }
     public string Reason { get; set; }
     public bool Revoked { get; set; }
-    public GameUser Issuer { get; init; }
+    public GameUser Author { get; init; }
     public DateTimeOffset IssuedAt { get; init; }
     public DateTimeOffset ExpiresAt { get; set; }
 }

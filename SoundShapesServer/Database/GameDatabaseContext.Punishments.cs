@@ -1,3 +1,4 @@
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Users;
@@ -6,10 +7,41 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    // TODO: Implement same ordering system as levels
-    public IQueryable<Punishment> GetPunishments()
+    public (Punishment[], int) GetPunishments(bool descending, PunishmentFilters filters, int from, int count)
     {
-        return _realm.All<Punishment>();
+        IQueryable<Punishment> orderedPunishments = PunishmentsOrderedByDate(descending);
+        IQueryable<Punishment> filteredPunishments = FilterPunishments(orderedPunishments, filters);
+
+        Punishment[] paginatedPunishments = PaginationHelper.PaginatePunishments(filteredPunishments, from, count);
+        return (paginatedPunishments, filteredPunishments.Count());
+    }
+    
+    private IQueryable<Punishment> FilterPunishments(IQueryable<Punishment> punishments, PunishmentFilters filters)
+    {
+        IQueryable<Punishment> response = punishments;
+
+        if (filters.Author != null)
+        {
+            response = response.Where(p => p.Author == filters.Author);
+        }
+
+        if (filters.Recipient != null)
+        {
+            response = response.Where(p => p.Recipient == filters.Recipient);
+        }
+
+        if (filters.Revoked != null)
+        {
+            response = response.Where(p => p.Revoked == filters.Revoked);
+        }
+
+        return response;
+    }
+
+    private IQueryable<Punishment> PunishmentsOrderedByDate(bool descending)
+    {
+        if (descending) return _realm.All<Punishment>().OrderByDescending(p => p.IssuedAt);
+        return _realm.All<Punishment>().OrderBy(p => p.IssuedAt);
     }
 
     public Punishment? GetPunishmentWithId(string id)
@@ -28,11 +60,11 @@ public partial class GameDatabaseContext
         {
             Id = GenerateGuid(),
             PunishmentType = request.PunishmentType,
-            User = recipient,
+            Recipient = recipient,
             Reason = request.Reason,
             ExpiresAt = request.ExpiresAt,
             IssuedAt = DateTimeOffset.UtcNow,
-            Issuer = issuer
+            Author = issuer
         };
         
         _realm.Write(() =>
@@ -47,7 +79,7 @@ public partial class GameDatabaseContext
     {
         _realm.Write(() =>
         {
-            punishment.User = recipient;
+            punishment.Recipient = recipient;
             punishment.PunishmentType = request.PunishmentType;
             punishment.Reason = request.Reason;
             punishment.ExpiresAt = request.ExpiresAt;
