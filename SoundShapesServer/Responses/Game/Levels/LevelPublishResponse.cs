@@ -3,7 +3,6 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Levels;
 public class LevelPublishResponse
@@ -11,7 +10,7 @@ public class LevelPublishResponse
     public LevelPublishResponse(GameLevel level)
     {
         Id = IdFormatter.FormatLevelPublishId(level.Id, level.CreationDate.ToUnixTimeMilliseconds());
-        Author = new UserResponse(level.Author ?? new GameUser());
+        Author = new UserResponse(level.Author);
         Title = level.Name;
         Dependencies = new List<string>();
         Visibility = "EVERYONE";

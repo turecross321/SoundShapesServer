@@ -9,7 +9,7 @@ public class GameSessionResponse
     {
         ExpirationDate = session.ExpiresAt.ToUnixTimeMilliseconds();
         Id = session.Id;
-        if (session.User != null) User = new SessionUserResponse(session.User);
+        User = new SessionUserResponse(session.User);
     }
 
     [JsonProperty("id")] public string Id { get; set; }

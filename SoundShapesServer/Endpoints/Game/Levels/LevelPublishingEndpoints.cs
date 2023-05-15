@@ -42,7 +42,7 @@ public class LevelPublishingEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
 
         if (level == null) return new Response(HttpStatusCode.NotFound);
-        if (level.Author?.Id != user.Id) return new Response(HttpStatusCode.Forbidden);
+        if (level.Author.Id != user.Id) return new Response(HttpStatusCode.Forbidden);
         
         if (user.Id  != level.Author.Id) return HttpStatusCode.Unauthorized;
 
@@ -111,7 +111,7 @@ public class LevelPublishingEndpoints : EndpointGroup
     // Gets called by Endpoints.cs
     public static Response UnPublishLevel(IDataStore dataStore, GameDatabaseContext database, GameUser user, GameLevel level)
     {
-        if (level.Author?.Id != user.Id) return new Response(HttpStatusCode.Forbidden);
+        if (level.Author.Id != user.Id) return new Response(HttpStatusCode.Forbidden);
         
         database.RemoveLevel(level, dataStore);
 

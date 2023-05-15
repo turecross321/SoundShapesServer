@@ -14,7 +14,7 @@ public class LevelResponse
         string formattedLevelId = FormatLevelId(level.Id);
 
         Id = formattedLevelId;
-        Author = new UserResponse(level.Author ?? new GameUser());
+        Author = new UserResponse(level.Author);
         LatestVersion = FormatLevelIdAndVersion(level.Id, level.ModificationDate.ToUnixTimeMilliseconds());
         Title = level.Name;
         Completed = level.UniqueCompletions.Contains(user);

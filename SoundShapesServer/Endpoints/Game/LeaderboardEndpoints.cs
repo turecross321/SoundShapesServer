@@ -65,10 +65,10 @@ public class LeaderboardEndpoints : EndpointGroup
     [GameEndpoint("{levelId}/~leaderboard.near", ContentType.Json)] // recent activity community levels 
     public LeaderboardEntryResponse[] GetLeaderboardNearPlayer(RequestContext context, GameDatabaseContext database, GameUser user, string levelId)
     {
-        LeaderboardFilters filters = new (levelId, user, true, true);
+        LeaderboardFilters filters = new (levelId, user, true);
         
         const bool descending = false;
-        (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, 0, 1);
+        (IQueryable<LeaderboardEntry> _, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, 0, 1);
         
         return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e, database.GetEntryPlacement(e) + 1)).ToArray();
     }

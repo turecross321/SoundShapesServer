@@ -1,7 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.PlayerActivity;

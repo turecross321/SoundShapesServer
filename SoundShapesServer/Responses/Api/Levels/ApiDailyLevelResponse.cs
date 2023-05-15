@@ -1,6 +1,5 @@
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Api.Levels;
 

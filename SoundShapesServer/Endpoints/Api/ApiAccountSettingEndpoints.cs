@@ -55,7 +55,6 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     [ApiEndpoint("account/setEmail", Method.Post)]
     public Response SetUserEmail(RequestContext context, GameDatabaseContext database, ApiSetEmailRequest body, GameSession session)
     {
-        if (session.User == null) return HttpStatusCode.NotFound;
         GameUser user = session.User;
 
         // Check if user has sent a valid mail address
@@ -100,7 +99,6 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     [ApiEndpoint("account/setPassword", Method.Post)]
     public Response SetUserPassword(RequestContext context, GameDatabaseContext database, ApiSetPasswordRequest body, GameSession session)
     {
-        if (session.User == null) return HttpStatusCode.Gone;
         GameUser user = session.User;
 
         if (body.NewPasswordSha512.Length != 128 || !Regex.IsMatch(body.NewPasswordSha512, Sha512Pattern))

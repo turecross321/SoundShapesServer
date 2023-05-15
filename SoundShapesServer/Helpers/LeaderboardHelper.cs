@@ -1,6 +1,4 @@
 using SoundShapesServer.Requests.Game;
-using SoundShapesServer.Types.Leaderboard;
-using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Helpers;
 

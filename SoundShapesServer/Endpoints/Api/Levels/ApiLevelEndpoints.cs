@@ -93,7 +93,7 @@ public class ApiLevelEndpoints: EndpointGroup
         GameLevel? level = database.GetLevelWithId(id);
         if (level == null) return HttpStatusCode.NotFound;
 
-        if (level.Author?.Id != user.Id)
+        if (level.Author.Id != user.Id)
         {
             if (PermissionHelper.IsUserModeratorOrMore(user) == false)
                 return HttpStatusCode.Unauthorized;
@@ -109,7 +109,7 @@ public class ApiLevelEndpoints: EndpointGroup
         GameLevel? level = database.GetLevelWithId(id);
         if (level == null) return HttpStatusCode.NotFound;
 
-        if (level.Author?.Id != user.Id)
+        if (level.Author.Id != user.Id)
         {
             if (PermissionHelper.IsUserModeratorOrMore(user) == false)
                 return HttpStatusCode.Unauthorized;

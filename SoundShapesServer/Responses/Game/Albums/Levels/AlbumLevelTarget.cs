@@ -15,7 +15,7 @@ public class AlbumLevelTarget
         Id = IdFormatter.FormatLevelId(level.Id);
         Completed = level.UniqueCompletions.Contains(user);
         LatestVersion = new LevelVersionResponse(level);
-        Author = new UserResponse(level.Author ?? new GameUser());
+        Author = new UserResponse(level.Author);
         Metadata = new LevelMetadataResponse(level);
     }
 

@@ -1,5 +1,4 @@
 using SoundShapesServer.Responses.Api.Users;
-using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types.Punishments;
 
 namespace SoundShapesServer.Responses.Api.Moderation;
