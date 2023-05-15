@@ -5,6 +5,8 @@
 Every endpoint, unless specified otherwise, requires an `Authorization` header.
 The value of `Authorization` should always be your **Session Id**, unless specified otherwise. Your Session Id is the Id which is provided when logging in.
 
+Date is always UTC, and is always formatted like `YYYY-MM-DD`.
+
 | Endpoints                    |
 | ---------------------------- |
 | [/account](#Account)         |
@@ -45,7 +47,7 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 ```json
 {
   "Id": "60148db7-8fac-4790-a2fe-937dff5190a3",
-  "ExpiresAtUtc": "2023-05-16T16:41:37.4393945+00:00",
+  "ExpiresAt": "2023-05-16T16:41:37.4393945+00:00",
   "User": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
@@ -1431,23 +1433,71 @@ Should be a PNG
 {
   "DailyLevels": [
     {
-      "Id": "2676b5ce-fb5e-44f0-86a5-b4ddaf441673",
+      "Id": "43b2ab00-12ca-4ae4-9326-562e697f3fb7",
       "Level": {
-        "Id": "2kM0HrBQ",
-        "Name": "Imported Level",
-        "AuthorId": "7e751482-8228-4e90-97f4-2b61e80687f5",
-        "AuthorName": "Server",
-        "Created": "2023-05-07T23:02:58.9952097+00:00",
-        "Modified": "2023-05-07T23:02:58.9952097+00:00",
-        "TotalPlays": 3,
-        "UniquePlays": 1,
-        "Likes": 1,
-        "Difficulty": 1.6
+        "Id": "26vQPIlM",
+        "Name": "Imported Level (26vQPIlM)",
+        "Author": {
+          "Id": "00000000-0000-0000-0000-000000000000",
+          "Username": "admin",
+          "PermissionsType": 2,
+          "FollowerCount": 0,
+          "FollowingCount": 0,
+          "LikedLevelsCount": 0,
+          "PublishedLevelsCount": 72960
+        },
+        "Created": "2019-01-30T03:37:58+00:00",
+        "Modified": "2019-01-30T03:37:58+00:00",
+        "TotalPlays": 0,
+        "UniquePlays": 0,
+        "Likes": 0,
+        "Difficulty": 0
       },
-      "DateUtc": "2023-05-10T22:00:00+00:00"
+      "Date": "2023-05-15T22:00:00+00:00",
+      "Artist": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72960
+      }
+    },
+    {
+      "Id": "c3008f5b-efb6-4403-993f-32ac7008f72c",
+      "Level": {
+        "Id": "26vQPIlM",
+        "Name": "Imported Level (26vQPIlM)",
+        "Author": {
+          "Id": "00000000-0000-0000-0000-000000000000",
+          "Username": "admin",
+          "PermissionsType": 2,
+          "FollowerCount": 0,
+          "FollowingCount": 0,
+          "LikedLevelsCount": 0,
+          "PublishedLevelsCount": 72960
+        },
+        "Created": "2019-01-30T03:37:58+00:00",
+        "Modified": "2019-01-30T03:37:58+00:00",
+        "TotalPlays": 0,
+        "UniquePlays": 0,
+        "Likes": 0,
+        "Difficulty": 0
+      },
+      "Date": "2023-05-13T22:00:00+00:00",
+      "Artist": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72960
+      }
     }
   ],
-  "Count": 1
+  "Count": 2
 }
 ```
 
@@ -1468,7 +1518,7 @@ Should be a PNG
 ```json
 {
   "LevelId": "{levelId}",
-  "DateUtc": "2023-05-02"
+  "Date": "2023-05-02"
 }
 ```
 
@@ -1496,7 +1546,7 @@ Should be a PNG
     "Likes": 0,
     "Difficulty": 0
   },
-  "DateUtc": "2023-05-14T22:00:00+00:00",
+  "Date": "2023-05-14T22:00:00+00:00",
   "Artist": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
@@ -1526,7 +1576,7 @@ Should be a PNG
 ```json
 {
   "LevelId": "{levelId}",
-  "DateUtc": "2023-05-15"
+  "Date": "2023-05-15"
 }
 ```
 
@@ -1554,7 +1604,7 @@ Should be a PNG
     "Likes": 0,
     "Difficulty": 0
   },
-  "DateUtc": "2023-05-15T22:00:00+00:00",
+  "Date": "2023-05-15T22:00:00+00:00",
   "Artist": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
@@ -2321,8 +2371,8 @@ Should be a PNG
         "LikedLevelsCount": 0,
         "PublishedLevelsCount": 72960
       },
-      "IssuedAtUtc": "2023-05-15T17:04:10.9497972+00:00",
-      "ExpiresAtUtc": "2023-06-02T09:58:43.5485486+00:00"
+      "IssuedAt": "2023-05-15T17:04:10.9497972+00:00",
+      "ExpiresAt": "2023-06-02T09:58:43.5485486+00:00"
     }
   ],
   "Count": 1
@@ -2352,7 +2402,7 @@ Should be a PNG
   "UserId": "{userId}",
   "PunishmentType": 0,
   "Reason": "Not Good...",
-  "ExpiresAtUtc": "2023-06-02T09:58:43.5485486+00:00"
+  "ExpiresAt": "2023-06-02T09:58:43.5485486+00:00"
 }
 ```
 
@@ -2382,8 +2432,8 @@ Should be a PNG
     "LikedLevelsCount": 0,
     "PublishedLevelsCount": 72960
   },
-  "IssuedAtUtc": "2023-05-15T17:04:10.9497972+00:00",
-  "ExpiresAtUtc": "2023-06-02T09:58:43.5485486+00:00"
+  "IssuedAt": "2023-05-15T17:04:10.9497972+00:00",
+  "ExpiresAt": "2023-06-02T09:58:43.5485486+00:00"
 }
 ```
 
@@ -2410,7 +2460,7 @@ Should be a PNG
   "UserId": "{userId}",
   "PunishmentType": 0,
   "Reason": "Even Worse...",
-  "ExpiresAtUtc": "2030-06-02T09:58:43.5485486+00:00"
+  "ExpiresAt": "2030-06-02T09:58:43.5485486+00:00"
 }
 ```
 
@@ -2440,8 +2490,8 @@ Should be a PNG
     "LikedLevelsCount": 0,
     "PublishedLevelsCount": 72960
   },
-  "IssuedAtUtc": "2023-05-15T17:04:10.9497972+00:00",
-  "ExpiresAtUtc": "2030-06-02T09:58:43.5485486+00:00"
+  "IssuedAt": "2023-05-15T17:04:10.9497972+00:00",
+  "ExpiresAt": "2030-06-02T09:58:43.5485486+00:00"
 }
 ```
 

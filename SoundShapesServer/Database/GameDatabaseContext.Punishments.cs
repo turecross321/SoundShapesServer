@@ -30,7 +30,7 @@ public partial class GameDatabaseContext
             PunishmentType = request.PunishmentType,
             User = recipient,
             Reason = request.Reason,
-            ExpiresAt = request.ExpiresAtUtc,
+            ExpiresAt = request.ExpiresAt,
             IssuedAt = DateTimeOffset.UtcNow,
             Issuer = issuer
         };
@@ -50,7 +50,7 @@ public partial class GameDatabaseContext
             punishment.User = recipient;
             punishment.PunishmentType = request.PunishmentType;
             punishment.Reason = request.Reason;
-            punishment.ExpiresAt = request.ExpiresAtUtc;
+            punishment.ExpiresAt = request.ExpiresAt;
         });
 
         return punishment;

@@ -10,12 +10,12 @@ public class ApiDailyLevelResponse
     {
         Id = dailyLevel.Id;
         Level = new ApiLevelSummaryResponse(dailyLevel.Level);
-        DateUtc = dailyLevel.Date;
+        Date = dailyLevel.Date;
         Artist = new ApiUserResponse(dailyLevel.Artist);
     }
 
     public string Id { get; }
     public ApiLevelSummaryResponse Level { get; }
-    public DateTimeOffset DateUtc { get; }
+    public DateTimeOffset Date { get; }
     public ApiUserResponse Artist { get; set; }
 }

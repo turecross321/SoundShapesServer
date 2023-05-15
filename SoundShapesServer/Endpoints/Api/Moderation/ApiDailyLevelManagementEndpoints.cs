@@ -55,7 +55,7 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(body.LevelId);
         if (level == null) return HttpStatusCode.NotFound;
 
-        DailyLevel createdDailyLevel = database.CreateDailyLevel(user, level, body.DateUtc);
+        DailyLevel createdDailyLevel = database.CreateDailyLevel(user, level, body.Date);
         return new Response(new ApiDailyLevelResponse(createdDailyLevel), ContentType.Json, HttpStatusCode.Created);
     }
     
@@ -70,7 +70,7 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(body.LevelId);
         if (level == null) return HttpStatusCode.NotFound;
 
-        DailyLevel createdDailyLevel = database.EditDailyLevel(dailyLevel, level, body.DateUtc);
+        DailyLevel createdDailyLevel = database.EditDailyLevel(dailyLevel, level, body.Date);
         return new Response(new ApiDailyLevelResponse(createdDailyLevel), ContentType.Json, HttpStatusCode.Created);
     }
     
