@@ -44,25 +44,6 @@ public static class LeaderboardHelper
 
         return response;
     }
-    
-    public static LeaderboardEntry? GetBestEntry(IQueryable<LeaderboardEntry> entries,
-        GameUser user)
-    {
-        if (entries == null) throw new ArgumentNullException(nameof(entries));
-        
-        LeaderboardEntry? entry =
-            entries
-                .AsEnumerable()
-                .OrderByDescending(e=>e.Score)
-                .FirstOrDefault(e => e.Completed && e.User.Id == user.Id);
-
-        return entry;
-    }
-
-    public static int GetEntryPlacement(IQueryable<LeaderboardEntry> entries, LeaderboardEntry entry)
-    {
-        return entries.ToList().IndexOf(entry);
-    }
 
     public static int CalculateEntryPlacement(int totalEntries, int from, int index, bool descending, bool startFromZero)
     {

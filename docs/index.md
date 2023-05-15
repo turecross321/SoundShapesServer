@@ -44,11 +44,19 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 ```json
 {
-  "Id": "ced589a1-2890-4715-a456-e4e2ac58e132",
-  "ExpiresAtUtc": "2023-05-03T19:56:49.5955676+00:00",
-  "UserId": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c",
-  "Username": "turecross321",
-  "PermissionsType": 2
+  "Id": "60148db7-8fac-4790-a2fe-937dff5190a3",
+  "ExpiresAtUtc": "2023-05-16T16:41:37.4393945+00:00",
+  "User": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "FollowerCount": 0,
+    "FollowingCount": 0,
+    "LikedLevelsCount": 0,
+    "PublishedLevelsCount": 72959
+  },
+  "PermissionsType": 2,
+  "IsBanned": false
 }
 ```
 
@@ -339,22 +347,22 @@ o7
 {
   "Users": [
     {
-      "Id": "02354eaf-f805-4ce4-afe4-cf98d9ca3d0c",
-      "Username": "OtherRegisteredUser",
-      "PermissionsType": 2,
+      "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+      "Username": "turecross123",
+      "PermissionsType": 0,
       "FollowerCount": 0,
       "FollowingCount": 0,
       "LikedLevelsCount": 0,
-      "PublishedLevelsCount": 1
+      "PublishedLevelsCount": 0
     },
     {
-      "Id": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c",
-      "Username": "turecross321",
+      "Id": "00000000-0000-0000-0000-000000000000",
+      "Username": "admin",
       "PermissionsType": 2,
       "FollowerCount": 0,
       "FollowingCount": 0,
       "LikedLevelsCount": 0,
-      "PublishedLevelsCount": 3
+      "PublishedLevelsCount": 72959
     }
   ],
   "Count": 2
@@ -363,27 +371,53 @@ o7
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
-## End-point: Get User
+## End-point: Get User with Id
 
 ### 🔑 This does not require the `Authorization` header.
 
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/users/{userId}
+> {ip}:10061/api/v1/users/id/{userId}
 > ```
 
 ### Response: 200
 
 ```json
 {
-  "Id": "02354eaf-f805-4ce4-afe4-cf98d9ca3d0c",
-  "Username": "OtherRegisteredUser",
-  "PermissionsType": 2,
+  "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+  "Username": "turecross123",
+  "PermissionsType": 0,
   "FollowerCount": 0,
   "FollowingCount": 0,
   "LikedLevelsCount": 0,
-  "PublishedLevelsCount": 1
+  "PublishedLevelsCount": 0
+}
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+## End-point: Get User with Username
+
+### 🔑 This does not require the `Authorization` header.
+
+### Method: GET
+
+> ```
+> {ip}:10061/api/v1/users/username/{username}
+> ```
+
+### Response: 200
+
+```json
+{
+  "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+  "Username": "turecross123",
+  "PermissionsType": 0,
+  "FollowerCount": 0,
+  "FollowingCount": 0,
+  "LikedLevelsCount": 0,
+  "PublishedLevelsCount": 0
 }
 ```
 
@@ -525,88 +559,178 @@ o7
 {
   "Levels": [
     {
-      "Id": "1kO92jIEm",
-      "Name": "Realy God Level...",
-      "AuthorId": "02354eaf-f805-4ce4-afe4-cf98d9ca3d0c",
-      "AuthorName": "OtherRegisteredUser",
-      "Created": "2023-05-02T20:41:24.956+00:00",
-      "Modified": "2023-05-02T20:41:24.956+00:00",
+      "Id": "GIlJ9rMi",
+      "Name": "Titled",
+      "Author": {
+        "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+        "Username": "turecross321",
+        "PermissionsType": 0,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 1,
+        "PublishedLevelsCount": 1
+      },
+      "Created": "2023-05-13T08:17:25.080862+00:00",
+      "Modified": "2023-05-13T08:17:25.080862+00:00",
+      "TotalPlays": 1,
+      "UniquePlays": 1,
+      "Likes": 0,
+      "Difficulty": 0
+    },
+    {
+      "Id": "zmCmfsRx",
+      "Name": "Imported Level (zmCmfsRx)",
+      "Author": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72959
+      },
+      "Created": "2019-01-30T20:59:00+00:00",
+      "Modified": "2019-01-30T20:59:00+00:00",
       "TotalPlays": 0,
       "UniquePlays": 0,
       "Likes": 0,
       "Difficulty": 0
     },
     {
-      "Id": "mXjC41dW",
-      "Name": "Titled",
-      "AuthorId": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c",
-      "AuthorName": "turecross321",
-      "Created": "2023-05-02T20:04:56.3725701+00:00",
-      "Modified": "2023-05-02T20:04:56.3725701+00:00",
-      "TotalPlays": 1,
-      "UniquePlays": 1,
+      "Id": "iAX0VzD6",
+      "Name": "Imported Level (iAX0VzD6)",
+      "Author": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72959
+      },
+      "Created": "2019-01-30T12:08:31+00:00",
+      "Modified": "2019-01-30T12:08:31+00:00",
+      "TotalPlays": 0,
+      "UniquePlays": 0,
       "Likes": 0,
       "Difficulty": 0
     },
     {
-      "Id": "NqwU4AYF",
-      "Name": "Untitled",
-      "AuthorId": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c",
-      "AuthorName": "turecross321",
-      "Created": "2023-05-02T20:02:49.9351882+00:00",
-      "Modified": "2023-05-02T20:02:49.9351882+00:00",
-      "TotalPlays": 1,
-      "UniquePlays": 1,
+      "Id": "FHpIWamE",
+      "Name": "Imported Level (FHpIWamE)",
+      "Author": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72959
+      },
+      "Created": "2019-01-30T06:52:57+00:00",
+      "Modified": "2019-01-30T06:52:57+00:00",
+      "TotalPlays": 0,
+      "UniquePlays": 0,
       "Likes": 0,
       "Difficulty": 0
     },
     {
-      "Id": "1zyrrn7g",
-      "Name": "This is an updated level name",
-      "AuthorId": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c",
-      "AuthorName": "turecross321",
-      "Created": "2023-05-02T09:58:43.5485486+00:00",
-      "Modified": "2023-05-02T20:22:07.936802+00:00",
-      "TotalPlays": 1,
-      "UniquePlays": 1,
+      "Id": "26vQPIlM",
+      "Name": "Imported Level (26vQPIlM)",
+      "Author": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72959
+      },
+      "Created": "2019-01-30T03:37:58+00:00",
+      "Modified": "2019-01-30T03:37:58+00:00",
+      "TotalPlays": 0,
+      "UniquePlays": 0,
+      "Likes": 0,
+      "Difficulty": 0
+    },
+    {
+      "Id": "7PwbqWkF",
+      "Name": "Imported Level (7PwbqWkF)",
+      "Author": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72959
+      },
+      "Created": "2019-01-30T00:02:27+00:00",
+      "Modified": "2019-01-30T00:02:27+00:00",
+      "TotalPlays": 0,
+      "UniquePlays": 0,
+      "Likes": 0,
+      "Difficulty": 0
+    },
+    {
+      "Id": "C6xTppiy",
+      "Name": "Imported Level (C6xTppiy)",
+      "Author": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72959
+      },
+      "Created": "2019-01-29T23:20:03+00:00",
+      "Modified": "2019-01-29T23:20:03+00:00",
+      "TotalPlays": 0,
+      "UniquePlays": 0,
+      "Likes": 0,
+      "Difficulty": 0
+    },
+    {
+      "Id": "s0OGnpd2",
+      "Name": "Imported Level (s0OGnpd2)",
+      "Author": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72959
+      },
+      "Created": "2019-01-29T22:23:10+00:00",
+      "Modified": "2019-01-29T22:23:10+00:00",
+      "TotalPlays": 0,
+      "UniquePlays": 0,
+      "Likes": 0,
+      "Difficulty": 0
+    },
+    {
+      "Id": "Prb9KzRE",
+      "Name": "Imported Level (Prb9KzRE)",
+      "Author": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72959
+      },
+      "Created": "2019-01-29T19:42:07+00:00",
+      "Modified": "2019-01-29T19:42:07+00:00",
+      "TotalPlays": 0,
+      "UniquePlays": 0,
       "Likes": 0,
       "Difficulty": 0
     }
   ],
-  "Count": 4
-}
-```
-
-⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
-
-## End-point: Get Level
-
-### 🔑 This does not require the `Authorization` header.
-
-### Method: GET
-
-> ```
-> {ip}:10061/api/v1/levels/{levelId}
-> ```
-
-### Response: 200
-
-```json
-{
-  "Id": "1zyrrn7g",
-  "Name": "This is an updated level name",
-  "AuthorId": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c",
-  "AuthorName": "turecross321",
-  "Created": "2023-05-02T09:58:43.5485486+00:00",
-  "Modified": "2023-05-02T20:22:07.936802+00:00",
-  "TotalPlays": 1,
-  "UniquePlays": 1,
-  "Likes": 0,
-  "Deaths": 0,
-  "Language": 4,
-  "Difficulty": 0,
-  "AlbumIds": ["a603d25f-4324-41df-b573-c143679bb7f2"],
-  "DailyLevelIds": ["f7b43f8a-acb3-45e6-82c6-403ce5c0e0a9"]
+  "Count": 72960
 }
 ```
 
@@ -723,12 +847,19 @@ o7
 
 ```json
 {
-  "Id": "1zyrrn7g",
+  "Id": "s0OGnpd2",
   "Name": "This is an updated level name",
-  "AuthorId": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c",
-  "AuthorName": "turecross321",
-  "Created": "2023-05-02T09:58:43.5485486+00:00",
-  "Modified": "2023-05-02T20:22:07.936802+00:00",
+  "Author": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "FollowerCount": 0,
+    "FollowingCount": 0,
+    "LikedLevelsCount": 0,
+    "PublishedLevelsCount": 72959
+  },
+  "Created": "2019-01-29T22:23:10+00:00",
+  "Modified": "2023-05-15T16:45:22.6611146+00:00",
   "TotalPlays": 0,
   "UniquePlays": 0,
   "Likes": 0,
@@ -784,10 +915,17 @@ o7
 
 ```json
 {
-  "Id": "1zyrrn7g",
+  "Id": "5eLRLJuN",
   "Name": "This is a level name",
-  "AuthorId": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c",
-  "AuthorName": "turecross321",
+  "Author": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "FollowerCount": 0,
+    "FollowingCount": 0,
+    "LikedLevelsCount": 0,
+    "PublishedLevelsCount": 72960
+  },
   "Created": "2023-05-02T09:58:43.5485486+00:00",
   "Modified": "2023-05-02T09:58:43.5485486+00:00",
   "TotalPlays": 0,
@@ -856,6 +994,10 @@ Should be a Sound Shapes Sound File
 > ```
 > {ip}:10061/api/v1/levels/{levelId}/setThumbnail
 > ```
+
+### Body (**binary**)
+
+Should be a PNG
 
 ### Response: 201
 
@@ -1182,19 +1324,64 @@ Should be a PNG
 {
   "Entries": [
     {
-      "Id": "36ad7aee-99b4-4b97-b418-e3738cde488c",
-      "LevelId": "1zyrrn7g",
+      "Id": "ae8ac9ff-f1db-4519-91a0-840b99f19d91",
+      "LevelId": "DkVflCl2",
       "Position": 0,
-      "UserId": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c",
-      "Username": "turecross321",
-      "PlayTime": 6599,
-      "Tokens": 0,
+      "User": {
+        "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+        "Username": "turecross321",
+        "PermissionsType": 0,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 1,
+        "PublishedLevelsCount": 1
+      },
+      "PlayTime": 255397,
+      "Tokens": 53,
+      "Deaths": 3,
+      "Completed": false,
+      "Date": "2023-05-13T08:11:50.2710058+00:00"
+    },
+    {
+      "Id": "ae0f0fd7-8743-461e-8d4a-56dacc402873",
+      "LevelId": "9LxNV8Jk",
+      "Position": 1,
+      "User": {
+        "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+        "Username": "turecross321",
+        "PermissionsType": 0,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 1,
+        "PublishedLevelsCount": 1
+      },
+      "PlayTime": 93431,
+      "Tokens": 41,
       "Deaths": 0,
       "Completed": true,
-      "Date": "2023-05-02T20:44:55.3545193+00:00"
+      "Date": "2023-05-13T08:06:37.2545837+00:00"
+    },
+    {
+      "Id": "e3ebcc4b-4a17-4cb2-8518-62890d77771b",
+      "LevelId": "GIlJ9rMi",
+      "Position": 2,
+      "User": {
+        "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+        "Username": "turecross321",
+        "PermissionsType": 0,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 1,
+        "PublishedLevelsCount": 1
+      },
+      "PlayTime": 8149,
+      "Tokens": 1,
+      "Deaths": 0,
+      "Completed": true,
+      "Date": "2023-05-13T08:17:27.037232+00:00"
     }
   ],
-  "Count": 1
+  "Count": 3
 }
 ```
 
@@ -1225,7 +1412,7 @@ Should be a PNG
 ### Method: GET
 
 > ```
-> {url}:10061/api/v1/daily?date=2023-05-02
+> {url}:10061/api/v1/daily?date=2023-05-14
 > ```
 
 ### Query Params
@@ -1289,9 +1476,36 @@ Should be a PNG
 
 ```json
 {
-  "Id": "f7b43f8a-acb3-45e6-82c6-403ce5c0e0a9",
-  "LevelId": "1zyrrn7g",
-  "DateUtc": "2023-05-02T09:58:43.5485486+00:00"
+  "Id": "43b2ab00-12ca-4ae4-9326-562e697f3fb7",
+  "Level": {
+    "Id": "GIlJ9rMi",
+    "Name": "Titled",
+    "Author": {
+      "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+      "Username": "turecross321",
+      "PermissionsType": 0,
+      "FollowerCount": 0,
+      "FollowingCount": 0,
+      "LikedLevelsCount": 1,
+      "PublishedLevelsCount": 1
+    },
+    "Created": "2023-05-13T08:17:25.080862+00:00",
+    "Modified": "2023-05-13T08:17:25.080862+00:00",
+    "TotalPlays": 1,
+    "UniquePlays": 1,
+    "Likes": 0,
+    "Difficulty": 0
+  },
+  "DateUtc": "2023-05-14T22:00:00+00:00",
+  "Artist": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "FollowerCount": 0,
+    "FollowingCount": 0,
+    "LikedLevelsCount": 0,
+    "PublishedLevelsCount": 72960
+  }
 }
 ```
 
@@ -1312,7 +1526,7 @@ Should be a PNG
 ```json
 {
   "LevelId": "{levelId}",
-  "DateUtc": "2023-05-12"
+  "DateUtc": "2023-05-15"
 }
 ```
 
@@ -1320,9 +1534,36 @@ Should be a PNG
 
 ```json
 {
-  "Id": "f7b43f8a-acb3-45e6-82c6-403ce5c0e0a9",
-  "LevelId": "1zyrrn7g",
-  "DateUtc": "2023-05-12T09:58:43.5485486+00:00"
+  "Id": "43b2ab00-12ca-4ae4-9326-562e697f3fb7",
+  "Level": {
+    "Id": "26vQPIlM",
+    "Name": "Imported Level (26vQPIlM)",
+    "Author": {
+      "Id": "00000000-0000-0000-0000-000000000000",
+      "Username": "admin",
+      "PermissionsType": 2,
+      "FollowerCount": 0,
+      "FollowingCount": 0,
+      "LikedLevelsCount": 0,
+      "PublishedLevelsCount": 72960
+    },
+    "Created": "2019-01-30T03:37:58+00:00",
+    "Modified": "2019-01-30T03:37:58+00:00",
+    "TotalPlays": 0,
+    "UniquePlays": 0,
+    "Likes": 0,
+    "Difficulty": 0
+  },
+  "DateUtc": "2023-05-15T22:00:00+00:00",
+  "Artist": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "FollowerCount": 0,
+    "FollowingCount": 0,
+    "LikedLevelsCount": 0,
+    "PublishedLevelsCount": 72960
+  }
 }
 ```
 
@@ -1369,7 +1610,7 @@ Should be a PNG
 | authors    |
 | orderBy    |
 
-### Note: `authors` can have multiple User Ids, seperated by commas. So an actors query can, for example, be `actors=5503f74b-2620-4103-a892-dcbd99435645,01fb1e88-507c-44a5-a99f-16b6cca2eccd` which would only return news written by those two users.
+### Note: `authors` can have multiple User Ids, seperated by commas. So an `actors` query can, for example, be `actors=5503f74b-2620-4103-a892-dcbd99435645,01fb1e88-507c-44a5-a99f-16b6cca2eccd` which would only return news written by those two users.
 
 | Can be ordered by: |
 | ------------------ |
@@ -1383,31 +1624,26 @@ Should be a PNG
 {
   "Entries": [
     {
-      "Id": "a2e4cf92-4d1c-4315-b88d-8fdb461eca31",
-      "CreationDate": "2023-05-02T22:39:35.303+00:00",
-      "ModificationDate": "2023-05-02T22:39:35.303+00:00",
-      "AuthorUsername": "turecross123",
-      "AuthorId": "68c8624a-85d5-457f-b109-9942ade2ee39",
+      "Id": "eab4643e-cc22-4b57-b7e2-3bda7558b534",
+      "CreationDate": "2023-05-15T16:53:46.8092128+00:00",
+      "ModificationDate": "2023-05-15T16:55:43.3707501+00:00",
+      "Author": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72960
+      },
       "Language": "global",
-      "Title": "RELATIVELY BREAKING NEWS",
-      "Summary": "A man has fallen into the river in Lego City!",
-      "FullText": "A man has fallen into the river in Lego City! Start the new rescue helicopter. HEY! Build the helicopter and off to the rescue. Prepare the lifeline, lower the stretcher, and make the rescue. The new Emergency Collection from Lego City!",
-      "Url": "https://LEGO.com"
-    }
-    {
-      "Id": "e9ecde58-c0c3-4135-ac54-f130a0273757",
-      "CreationDate": "2023-05-02T22:38:17.6127246+00:00",
-      "ModificationDate": "2023-05-02T22:38:17.6127246+00:00",
-      "AuthorUsername": "turecross123",
-      "AuthorId": "68c8624a-85d5-457f-b109-9942ade2ee39",
-      "Language": "global",
-      "Title": "VERY BREAKING NEWS",
-      "Summary": "DJ Khaled is stuck in a tree!",
-      "FullText": "DJ Khaled has had jet ski trouble in the past, getting lost after dark on his way home from Rick Ross' house, and it seems he is currently running into some more trouble on the waterways. The producer has taken to Instagram to share his latest at-sea experience, documenting a trip to Diddy's house to hang with Drake via a \"secret route.\" His special detour turned out to be blocked by fallen trees, however, and when Khaled attempted to take his jet ski over the downed branches he got stuck, then cut his hand and leg trying to untangle the vehicle. He remains positive, however, repeating that the key to overcoming life's literal and metaphorical roadblocks is to not panic.",
+      "Title": "DJ Khaled is still stuck in a tree!",
+      "Summary": "This still ain't no joke team!",
+      "FullText": "DJ Khaled is still stuck in a tree, and he is losing hope!",
       "Url": "http://djkhaled.com"
     }
   ],
-  "Count": 2
+  "Count": 1
 }
 ```
 
@@ -1428,8 +1664,8 @@ Should be a PNG
 ```json
 {
   "Language": "global",
-  "Title": "BREAKING NEWS",
-  "Summary": "DJ Khaled is stuck in a tree!",
+  "Title": "DJ Khaled is stuck in a tree!",
+  "Summary": "This ain't no joke team!",
   "FullText": "DJ Khaled has had jet ski trouble in the past, getting lost after dark on his way home from Rick Ross' house, and it seems he is currently running into some more trouble on the waterways. The producer has taken to Instagram to share his latest at-sea experience, documenting a trip to Diddy's house to hang with Drake via a \"secret route.\" His special detour turned out to be blocked by fallen trees, however, and when Khaled attempted to take his jet ski over the downed branches he got stuck, then cut his hand and leg trying to untangle the vehicle. He remains positive, however, repeating that the key to overcoming life's literal and metaphorical roadblocks is to not panic.",
   "Url": "http://djkhaled.com"
 }
@@ -1439,14 +1675,21 @@ Should be a PNG
 
 ```json
 {
-  "Id": "e9ecde58-c0c3-4135-ac54-f130a0273757",
-  "CreationDate": "2023-05-02T22:24:41.0155527+00:00",
-  "ModificationDate": "2023-05-02T22:24:41.0155527+00:00",
-  "AuthorUsername": "turecross123",
-  "AuthorId": "68c8624a-85d5-457f-b109-9942ade2ee39",
+  "Id": "eab4643e-cc22-4b57-b7e2-3bda7558b534",
+  "CreationDate": "2023-05-15T16:53:46.8092128+00:00",
+  "ModificationDate": "2023-05-15T16:53:46.8093049+00:00",
+  "Author": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "FollowerCount": 0,
+    "FollowingCount": 0,
+    "LikedLevelsCount": 0,
+    "PublishedLevelsCount": 72960
+  },
   "Language": "global",
-  "Title": "BREAKING NEWS",
-  "Summary": "DJ Khaled is stuck in a tree!",
+  "Title": "DJ Khaled is stuck in a tree!",
+  "Summary": "This ain't no joke team!",
   "FullText": "DJ Khaled has had jet ski trouble in the past, getting lost after dark on his way home from Rick Ross' house, and it seems he is currently running into some more trouble on the waterways. The producer has taken to Instagram to share his latest at-sea experience, documenting a trip to Diddy's house to hang with Drake via a \"secret route.\" His special detour turned out to be blocked by fallen trees, however, and when Khaled attempted to take his jet ski over the downed branches he got stuck, then cut his hand and leg trying to untangle the vehicle. He remains positive, however, repeating that the key to overcoming life's literal and metaphorical roadblocks is to not panic.",
   "Url": "http://djkhaled.com"
 }
@@ -1469,9 +1712,9 @@ Should be a PNG
 ```json
 {
   "Language": "global",
-  "Title": "VERY BREAKING NEWS",
-  "Summary": "DJ Khaled is stuck in a tree!",
-  "FullText": "DJ Khaled has had jet ski trouble in the past, getting lost after dark on his way home from Rick Ross' house, and it seems he is currently running into some more trouble on the waterways. The producer has taken to Instagram to share his latest at-sea experience, documenting a trip to Diddy's house to hang with Drake via a \"secret route.\" His special detour turned out to be blocked by fallen trees, however, and when Khaled attempted to take his jet ski over the downed branches he got stuck, then cut his hand and leg trying to untangle the vehicle. He remains positive, however, repeating that the key to overcoming life's literal and metaphorical roadblocks is to not panic.",
+  "Title": "DJ Khaled is still stuck in a tree!",
+  "Summary": "This still ain't no joke team!",
+  "FullText": "DJ Khaled is still stuck in a tree, and he is losing hope!",
   "Url": "http://djkhaled.com"
 }
 ```
@@ -1480,15 +1723,22 @@ Should be a PNG
 
 ```json
 {
-  "Id": "e9ecde58-c0c3-4135-ac54-f130a0273757",
-  "CreationDate": "2023-05-02T22:24:41.0155527+00:00",
-  "ModificationDate": "2023-05-03T22:24:41.0155527+00:00",
-  "AuthorUsername": "turecross123",
-  "AuthorId": "68c8624a-85d5-457f-b109-9942ade2ee39",
+  "Id": "eab4643e-cc22-4b57-b7e2-3bda7558b534",
+  "CreationDate": "2023-05-15T16:53:46.8092128+00:00",
+  "ModificationDate": "2023-05-15T16:55:43.3707501+00:00",
+  "Author": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "FollowerCount": 0,
+    "FollowingCount": 0,
+    "LikedLevelsCount": 0,
+    "PublishedLevelsCount": 72960
+  },
   "Language": "global",
-  "Title": "VERY BREAKING NEWS",
-  "Summary": "DJ Khaled is stuck in a tree!",
-  "FullText": "DJ Khaled has had jet ski trouble in the past, getting lost after dark on his way home from Rick Ross' house, and it seems he is currently running into some more trouble on the waterways. The producer has taken to Instagram to share his latest at-sea experience, documenting a trip to Diddy's house to hang with Drake via a \"secret route.\" His special detour turned out to be blocked by fallen trees, however, and when Khaled attempted to take his jet ski over the downed branches he got stuck, then cut his hand and leg trying to untangle the vehicle. He remains positive, however, repeating that the key to overcoming life's literal and metaphorical roadblocks is to not panic.",
+  "Title": "DJ Khaled is still stuck in a tree!",
+  "Summary": "This still ain't no joke team!",
+  "FullText": "DJ Khaled is still stuck in a tree, and he is losing hope!",
   "Url": "http://djkhaled.com"
 }
 ```
@@ -1562,11 +1812,11 @@ Should be a PNG
 
 #
 
-### Note: `actors` can have multiple User Ids, seperated by commas. So an actors query can, for example, be `actors=5503f74b-2620-4103-a892-dcbd99435645,01fb1e88-507c-44a5-a99f-16b6cca2eccd` which would only return events that those two users did.
+### Note: `actors` can have multiple User Ids, seperated by commas. So an `actors` query can, for example, be `actors=5503f74b-2620-4103-a892-dcbd99435645,01fb1e88-507c-44a5-a99f-16b6cca2eccd` which would only return events that those two users did.
 
 #
 
-### Note: `eventTypes` can have multiple values at the same time, seperated by commas. So a eventType query can, for example, be `eventTypes=0,1` which would return only `Publish` and `Like` events.
+### Note: `eventTypes` can have multiple values at the same time, seperated by commas. So an `eventType` query can, for example, be `eventTypes=0,1` which would return only `Publish` and `Like` events.
 
 #
 
@@ -1588,49 +1838,251 @@ Should be a PNG
 {
   "Activities": [
     {
+      "Id": "1fb26cf7-8db9-4d2f-9bc6-278fa8aa2646",
+      "EventType": 0,
+      "Actor": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72960
+      },
+      "ContentLevel": {
+        "Id": "5eLRLJuN",
+        "Name": "This is a level name",
+        "Author": {
+          "Id": "00000000-0000-0000-0000-000000000000",
+          "Username": "admin",
+          "PermissionsType": 2,
+          "FollowerCount": 0,
+          "FollowingCount": 0,
+          "LikedLevelsCount": 0,
+          "PublishedLevelsCount": 72960
+        },
+        "Created": "2023-05-02T09:58:43.5485486+00:00",
+        "Modified": "2023-05-02T09:58:43.5485486+00:00",
+        "TotalPlays": 0,
+        "UniquePlays": 0,
+        "Likes": 0,
+        "Difficulty": 0
+      },
+      "Date": "2023-05-15T16:45:59.2781181+00:00"
+    },
+    {
+      "Id": "d3c01ce8-b758-4615-8c57-14685e4d8459",
+      "EventType": 4,
+      "Actor": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72960
+      },
+      "ContentUser": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72960
+      },
+      "Date": "2023-05-14T00:14:49.9650531+00:00"
+    },
+    {
+      "Id": "4ad17659-006e-4b36-b319-c7039b8b52c8",
+      "EventType": 4,
+      "Actor": {
+        "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+        "Username": "turecross123",
+        "PermissionsType": 0,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 0
+      },
+      "ContentUser": {
+        "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+        "Username": "turecross123",
+        "PermissionsType": 0,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 0
+      },
+      "Date": "2023-05-13T09:50:49.1702927+00:00"
+    },
+    {
       "Id": "35aefbdc-e3d8-4f08-8bb4-16583d010d36",
       "EventType": 3,
-      "ActorId": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
-      "ActorUsername": "turecross321",
-      "ContentLeaderboardEntryId": "e3ebcc4b-4a17-4cb2-8518-62890d77771b",
+      "Actor": {
+        "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+        "Username": "turecross321",
+        "PermissionsType": 0,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 1,
+        "PublishedLevelsCount": 1
+      },
+      "ContentLeaderboardEntry": {
+        "Id": "e3ebcc4b-4a17-4cb2-8518-62890d77771b",
+        "LevelId": "GIlJ9rMi",
+        "Position": 0,
+        "User": {
+          "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+          "Username": "turecross321",
+          "PermissionsType": 0,
+          "FollowerCount": 0,
+          "FollowingCount": 0,
+          "LikedLevelsCount": 1,
+          "PublishedLevelsCount": 1
+        },
+        "PlayTime": 8149,
+        "Tokens": 1,
+        "Deaths": 0,
+        "Completed": true,
+        "Date": "2023-05-13T08:17:27.037232+00:00"
+      },
       "Date": "2023-05-13T08:17:27.0391331+00:00"
     },
     {
       "Id": "364713da-610c-45da-8a64-9d00a75d335a",
       "EventType": 0,
-      "ActorId": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
-      "ActorUsername": "turecross321",
-      "ContentLevelId": "GIlJ9rMi",
-      "ContentLevelName": "Titled",
+      "Actor": {
+        "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+        "Username": "turecross321",
+        "PermissionsType": 0,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 1,
+        "PublishedLevelsCount": 1
+      },
+      "ContentLevel": {
+        "Id": "GIlJ9rMi",
+        "Name": "Titled",
+        "Author": {
+          "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+          "Username": "turecross321",
+          "PermissionsType": 0,
+          "FollowerCount": 0,
+          "FollowingCount": 0,
+          "LikedLevelsCount": 1,
+          "PublishedLevelsCount": 1
+        },
+        "Created": "2023-05-13T08:17:25.080862+00:00",
+        "Modified": "2023-05-13T08:17:25.080862+00:00",
+        "TotalPlays": 1,
+        "UniquePlays": 1,
+        "Likes": 0,
+        "Difficulty": 0
+      },
       "Date": "2023-05-13T08:17:25.0874232+00:00"
     },
     {
       "Id": "75597e41-c187-4500-8198-ca7f80a2ea76",
       "EventType": 3,
-      "ActorId": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
-      "ActorUsername": "turecross321",
-      "ContentLeaderboardEntryId": "ae8ac9ff-f1db-4519-91a0-840b99f19d91",
+      "Actor": {
+        "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+        "Username": "turecross321",
+        "PermissionsType": 0,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 1,
+        "PublishedLevelsCount": 1
+      },
+      "ContentLeaderboardEntry": {
+        "Id": "ae8ac9ff-f1db-4519-91a0-840b99f19d91",
+        "LevelId": "DkVflCl2",
+        "Position": -1,
+        "User": {
+          "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+          "Username": "turecross321",
+          "PermissionsType": 0,
+          "FollowerCount": 0,
+          "FollowingCount": 0,
+          "LikedLevelsCount": 1,
+          "PublishedLevelsCount": 1
+        },
+        "PlayTime": 255397,
+        "Tokens": 53,
+        "Deaths": 3,
+        "Completed": false,
+        "Date": "2023-05-13T08:11:50.2710058+00:00"
+      },
       "Date": "2023-05-13T08:11:50.2730079+00:00"
     },
     {
       "Id": "2f1328ba-56cf-4398-87f5-273542935adf",
       "EventType": 1,
-      "ActorId": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
-      "ActorUsername": "turecross321",
-      "ContentLevelId": "9LxNV8Jk",
-      "ContentLevelName": "Imported Level (9LxNV8Jk)",
+      "Actor": {
+        "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+        "Username": "turecross321",
+        "PermissionsType": 0,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 1,
+        "PublishedLevelsCount": 1
+      },
+      "ContentLevel": {
+        "Id": "9LxNV8Jk",
+        "Name": "Imported Level (9LxNV8Jk)",
+        "Author": {
+          "Id": "00000000-0000-0000-0000-000000000000",
+          "Username": "admin",
+          "PermissionsType": 2,
+          "FollowerCount": 0,
+          "FollowingCount": 0,
+          "LikedLevelsCount": 0,
+          "PublishedLevelsCount": 72960
+        },
+        "Created": "2018-10-15T01:10:49+00:00",
+        "Modified": "2018-10-15T01:10:49+00:00",
+        "TotalPlays": 1,
+        "UniquePlays": 1,
+        "Likes": 1,
+        "Difficulty": 0
+      },
       "Date": "2023-05-13T08:06:46.9773965+00:00"
     },
     {
       "Id": "8c7cead5-1bd6-4b61-97fc-a602e12a4a03",
       "EventType": 3,
-      "ActorId": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
-      "ActorUsername": "turecross321",
-      "ContentLeaderboardEntryId": "ae0f0fd7-8743-461e-8d4a-56dacc402873",
+      "Actor": {
+        "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+        "Username": "turecross321",
+        "PermissionsType": 0,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 1,
+        "PublishedLevelsCount": 1
+      },
+      "ContentLeaderboardEntry": {
+        "Id": "ae0f0fd7-8743-461e-8d4a-56dacc402873",
+        "LevelId": "9LxNV8Jk",
+        "Position": 0,
+        "User": {
+          "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+          "Username": "turecross321",
+          "PermissionsType": 0,
+          "FollowerCount": 0,
+          "FollowingCount": 0,
+          "LikedLevelsCount": 1,
+          "PublishedLevelsCount": 1
+        },
+        "PlayTime": 93431,
+        "Tokens": 41,
+        "Deaths": 0,
+        "Completed": true,
+        "Date": "2023-05-13T08:06:37.2545837+00:00"
+      },
       "Date": "2023-05-13T08:06:37.2582467+00:00"
     }
   ],
-  "Count": 5
+  "Count": 8
 }
 ```
 
@@ -1668,13 +2120,31 @@ Should be a PNG
 
 ### Query Params
 
-| Param       |
-| ----------- |
-| from        |
-| count       |
-| contentId   |
-| contentType |
-| descending  |
+| Param              |
+| ------------------ |
+| from               |
+| count              |
+| levelId            |
+| userId             |
+| leaderboardEntryId |
+| contentType        |
+| reasonType         |
+| descending         |
+
+| Content Type | Reason            |
+| ------------ | ----------------- |
+| 0            | User              |
+| 1            | Level             |
+| 2            | Leaderboard Entry |
+
+| Reason Type | Reason        |
+| ----------- | ------------- |
+| 0           | Mature        |
+| 1           | Offensive     |
+| 2           | Defamation    |
+| 3           | Impersonation |
+| 4           | Inappropriate |
+| 5           | Other         |
 
 ### Response: 200
 
@@ -1682,12 +2152,30 @@ Should be a PNG
 {
   "Reports": [
     {
-      "Id": "bc40cb6d-78e2-4054-9ec7-973a5d9fac48",
-      "ContentId": "1kO92jIEm",
-      "ContentType": "level",
-      "ReportReasonId": 5,
-      "Issued": "2023-05-02T20:42:12.5031374+00:00",
-      "IssuerId": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c"
+      "Id": "15d0e958-1c82-409e-a3e9-1e25bf98d629",
+      "ContentLevel": {
+        "Id": "GIlJ9rMi",
+        "Name": "Titled",
+        "Author": {
+          "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+          "Username": "turecross321",
+          "PermissionsType": 0,
+          "FollowerCount": 0,
+          "FollowingCount": 0,
+          "LikedLevelsCount": 1,
+          "PublishedLevelsCount": 1
+        },
+        "Created": "2023-05-13T08:17:25.080862+00:00",
+        "Modified": "2023-05-13T08:17:25.080862+00:00",
+        "TotalPlays": 1,
+        "UniquePlays": 1,
+        "Likes": 0,
+        "Difficulty": 0
+      },
+      "ContentType": 1,
+      "ReasonType": 0,
+      "Date": "2023-05-15T17:01:32.9532553+00:00",
+      "IssuerId": "00000000-0000-0000-0000-000000000000"
     }
   ],
   "Count": 1
@@ -1723,16 +2211,22 @@ Should be a PNG
 
 ## End-point: Submit Report
 
-### 💡 Content Id is either a Level Id or a User Id.
+### 💡 Content Id is a User Id, a Level Id or a Leaderboard Entry Id.
 
-| Reason Id | Reason                 |
-| --------- | ---------------------- |
-| 0         | Mature                 |
-| 1         | Offensive              |
-| 2         | Defamation             |
-| 3         | Impersonation          |
-| 4         | Inappropriate Username |
-| 5         | Other                  |
+| Content Type | Reason            |
+| ------------ | ----------------- |
+| 0            | User              |
+| 1            | Level             |
+| 2            | Leaderboard Entry |
+
+| Reason Type | Reason        |
+| ----------- | ------------- |
+| 0           | Mature        |
+| 1           | Offensive     |
+| 2           | Defamation    |
+| 3           | Impersonation |
+| 4           | Inappropriate |
+| 5           | Other         |
 
 ### Method: POST
 
@@ -1744,8 +2238,9 @@ Should be a PNG
 
 ```json
 {
+  "ContentType": 1,
   "ContentId": "{levelId}",
-  "ReportReasonId": 0
+  "ReasonType": 1
 }
 ```
 
@@ -1804,13 +2299,30 @@ Should be a PNG
 {
   "Punishments": [
     {
-      "Id": "c6a71883-90be-42ea-9143-9b6706569063",
-      "UserId": "02354eaf-f805-4ce4-afe4-cf98d9ca3d0c",
+      "Id": "4e5bb644-55f4-46b6-a4ec-bfd5c5eb0cd1",
+      "User": {
+        "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+        "Username": "turecross123",
+        "PermissionsType": 0,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 0
+      },
       "PunishmentType": 0,
-      "Reason": "Even Worse...",
+      "Reason": "Not Good...",
       "Revoked": false,
-      "IssuedAtUtc": "2023-05-02T20:33:54.4159691+00:00",
-      "ExpiresAtUtc": "2030-06-02T09:58:43.5485486+00:00"
+      "Issuer": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "FollowerCount": 0,
+        "FollowingCount": 0,
+        "LikedLevelsCount": 0,
+        "PublishedLevelsCount": 72960
+      },
+      "IssuedAtUtc": "2023-05-15T17:04:10.9497972+00:00",
+      "ExpiresAtUtc": "2023-06-02T09:58:43.5485486+00:00"
     }
   ],
   "Count": 1
@@ -1823,15 +2335,15 @@ Should be a PNG
 
 ### ⚠️ This requires moderator (or higher) permissions.
 
-| PunishmentType | Punishment |
-| -------------- | ---------- |
-| 0              | Ban        |
-
 ### Method: POST
 
 > ```
 > {ip}:10061/api/v1/punishments/create
 > ```
+
+| PunishmentType | Punishment |
+| -------------- | ---------- |
+| 0              | Ban        |
 
 ### Body (**raw**)
 
@@ -1848,12 +2360,29 @@ Should be a PNG
 
 ```json
 {
-  "Id": "c6a71883-90be-42ea-9143-9b6706569063",
-  "UserId": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c",
+  "Id": "4e5bb644-55f4-46b6-a4ec-bfd5c5eb0cd1",
+  "User": {
+    "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+    "Username": "turecross123",
+    "PermissionsType": 0,
+    "FollowerCount": 0,
+    "FollowingCount": 0,
+    "LikedLevelsCount": 0,
+    "PublishedLevelsCount": 0
+  },
   "PunishmentType": 0,
   "Reason": "Not Good...",
   "Revoked": false,
-  "IssuedAtUtc": "2023-05-02T20:33:54.4159691+00:00",
+  "Issuer": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "FollowerCount": 0,
+    "FollowingCount": 0,
+    "LikedLevelsCount": 0,
+    "PublishedLevelsCount": 72960
+  },
+  "IssuedAtUtc": "2023-05-15T17:04:10.9497972+00:00",
   "ExpiresAtUtc": "2023-06-02T09:58:43.5485486+00:00"
 }
 ```
@@ -1870,12 +2399,16 @@ Should be a PNG
 > {ip}:10061/api/v1/punishments/{punishmentId}/edit
 > ```
 
+| PunishmentType | Punishment |
+| -------------- | ---------- |
+| 0              | Ban        |
+
 ### Body (**raw**)
 
 ```json
 {
   "UserId": "{userId}",
-  "PunishmentType": 0, // 0 = Ban
+  "PunishmentType": 0,
   "Reason": "Even Worse...",
   "ExpiresAtUtc": "2030-06-02T09:58:43.5485486+00:00"
 }
@@ -1885,12 +2418,29 @@ Should be a PNG
 
 ```json
 {
-  "Id": "c6a71883-90be-42ea-9143-9b6706569063",
-  "UserId": "02354eaf-f805-4ce4-afe4-cf98d9ca3d0c",
+  "Id": "4e5bb644-55f4-46b6-a4ec-bfd5c5eb0cd1",
+  "User": {
+    "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+    "Username": "turecross123",
+    "PermissionsType": 0,
+    "FollowerCount": 0,
+    "FollowingCount": 0,
+    "LikedLevelsCount": 0,
+    "PublishedLevelsCount": 0
+  },
   "PunishmentType": 0,
   "Reason": "Even Worse...",
   "Revoked": false,
-  "IssuedAtUtc": "2023-05-02T20:33:54.4159691+00:00",
+  "Issuer": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "FollowerCount": 0,
+    "FollowingCount": 0,
+    "LikedLevelsCount": 0,
+    "PublishedLevelsCount": 72960
+  },
+  "IssuedAtUtc": "2023-05-15T17:04:10.9497972+00:00",
   "ExpiresAtUtc": "2030-06-02T09:58:43.5485486+00:00"
 }
 ```

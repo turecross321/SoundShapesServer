@@ -1,35 +1,36 @@
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
-using Realms.Sync;
-using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Api.Levels;
+using SoundShapesServer.Responses.Api.Users;
+using SoundShapesServer.Types.PlayerActivity;
 
 namespace SoundShapesServer.Responses.Api.RecentActivity;
 
 public class ApiPlayerActivityResponse
 {
-    public ApiPlayerActivityResponse(GameEvent eventObject)
+    public ApiPlayerActivityResponse(GameDatabaseContext database, GameEvent eventObject)
     {
         Id = eventObject.Id;
         EventType = eventObject.EventType;
-        ActorId = eventObject.Actor.Id;
-        ActorUsername = eventObject.Actor.Username;
-
-        ContentUserId = eventObject.ContentUser?.Id;
-        ContentUsername = eventObject.ContentUser?.Username;
-        ContentLevelId = eventObject.ContentLevel?.Id;
-        ContentLevelName = eventObject.ContentLevel?.Name;
-        ContentLeaderboardEntryId = eventObject.ContentLeaderboardEntry?.Id;
+        Actor = new ApiUserResponse(eventObject.Actor);
+        
+        if (eventObject.ContentUser != null)
+            ContentUser = new ApiUserResponse(eventObject.ContentUser);
+        if (eventObject.ContentLevel != null)
+            ContentLevel = new ApiLevelSummaryResponse(eventObject.ContentLevel);
+        if (eventObject.ContentLeaderboardEntry != null)
+            ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(eventObject.ContentLeaderboardEntry, database.GetEntryPlacement(eventObject.ContentLeaderboardEntry));
         
         Date = eventObject.Date;
     }
 
     public string Id { get; set; }
     public int EventType { get; set; }
-    public string ActorId { get; set; }
-    public string ActorUsername { get; set; }
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string? ContentUserId { get; set; }
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string? ContentUsername { get; set; }
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string? ContentLevelId { get; set; }
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string? ContentLevelName { get; set; }
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string? ContentLeaderboardEntryId { get; set; }
+    public ApiUserResponse Actor { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiUserResponse? ContentUser { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLevelSummaryResponse? ContentLevel { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLeaderboardEntryResponse? ContentLeaderboardEntry { get; set; }
     public DateTimeOffset Date { get; set; }
 }

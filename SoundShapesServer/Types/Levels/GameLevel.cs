@@ -1,6 +1,6 @@
 using Realms;
 using SoundShapesServer.Types.Albums;
-using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
 
@@ -32,7 +32,7 @@ public class GameLevel : RealmObject
     #pragma warning restore CS8618
 
     [PrimaryKey] [Required] public string Id { get; set; }
-    public GameUser? Author { get; init; }
+    public GameUser Author { get; init; }
     public string Name { get; set; }
     public int Language { get; set; }
     public DateTimeOffset CreationDate { get; set; }

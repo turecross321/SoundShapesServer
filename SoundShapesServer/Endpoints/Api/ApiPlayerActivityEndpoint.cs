@@ -3,7 +3,7 @@ using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.RecentActivity;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api;
@@ -70,6 +70,6 @@ public class ApiPlayerActivityEndpoint : EndpointGroup
         EventFilters filters = new (actors?.ToArray(), onUser, onLevel, eventTypes?.ToArray());
         (GameEvent[] events, int totalEvents) = database.GetEvents(orderType, descending, filters, from, count);
         
-        return new ApiPlayerActivitiesWrapper(events, totalEvents);
+        return new ApiPlayerActivitiesWrapper(database, events, totalEvents);
     }
 }

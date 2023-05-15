@@ -4,7 +4,7 @@ namespace SoundShapesServer.Responses.Api.Levels;
 
 public class ApiDailyLevelsWrapper
 {
-    public ApiDailyLevelsWrapper(DailyLevel[] dailyLevels, int totalLevels)
+    public ApiDailyLevelsWrapper(IEnumerable<DailyLevel> dailyLevels, int totalLevels)
     {
         DailyLevels = dailyLevels.Select(t => new ApiDailyLevelResponse(t)).ToArray();
         Count = totalLevels;

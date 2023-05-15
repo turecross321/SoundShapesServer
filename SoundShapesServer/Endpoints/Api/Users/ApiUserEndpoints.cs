@@ -8,11 +8,19 @@ namespace SoundShapesServer.Endpoints.Api.Users;
 
 public class ApiUserEndpoints : EndpointGroup
 {
-    [ApiEndpoint("users/{id}")]
+    [ApiEndpoint("users/id/{id}")]
     [Authentication(false)]
-    public ApiUserResponse? GetUser(RequestContext context, GameDatabaseContext database, string id)
+    public ApiUserResponse? GetUserWithId(RequestContext context, GameDatabaseContext database, string id)
     {
         GameUser? userToCheck = database.GetUserWithId(id);
+        return userToCheck == null ? null : new ApiUserResponse(userToCheck);
+    }
+    
+    [ApiEndpoint("users/username/{username}")]
+    [Authentication(false)]
+    public ApiUserResponse? GetUserWithUsername(RequestContext context, GameDatabaseContext database, string username)
+    {
+        GameUser? userToCheck = database.GetUserWithUsername(username);
         return userToCheck == null ? null : new ApiUserResponse(userToCheck);
     }
 

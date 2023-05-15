@@ -1,10 +1,10 @@
-using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.News;
 
 namespace SoundShapesServer.Responses.Api.RecentActivity;
 
 public class ApiNewsWrapper
 {
-    public ApiNewsWrapper(NewsEntry[] entries, int totalEntries)
+    public ApiNewsWrapper(IEnumerable<NewsEntry> entries, int totalEntries)
     { 
         Entries = entries.Select(l=> new ApiNewsResponse(l)).ToArray();
         Count = totalEntries;

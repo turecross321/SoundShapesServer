@@ -4,7 +4,7 @@ namespace SoundShapesServer.Types.Leaderboard;
 
 public class LeaderboardFilters
 {
-    public LeaderboardFilters(string? onLevel, GameUser? byUser, bool? completed, bool onlyBest)
+    public LeaderboardFilters(string? onLevel = null, GameUser? byUser = null, bool? completed = null, bool onlyBest = true)
     {
         OnLevel = onLevel;
         ByUser = byUser;

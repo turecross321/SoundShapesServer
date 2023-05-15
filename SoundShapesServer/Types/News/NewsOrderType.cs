@@ -1,4 +1,4 @@
-namespace SoundShapesServer.Types.RecentActivity;
+namespace SoundShapesServer.Types.News;
 
 public enum NewsOrderType
 {

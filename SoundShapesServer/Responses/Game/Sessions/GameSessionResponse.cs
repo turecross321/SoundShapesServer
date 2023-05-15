@@ -1,5 +1,5 @@
 using Newtonsoft.Json;
-using SoundShapesServer.Authentication;
+using SoundShapesServer.Types.Sessions;
 
 namespace SoundShapesServer.Responses.Game.Sessions;
 

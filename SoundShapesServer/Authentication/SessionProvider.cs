@@ -3,6 +3,7 @@ using Bunkum.CustomHttpListener.Request;
 using Bunkum.HttpServer.Authentication;
 using Bunkum.HttpServer.Database;
 using SoundShapesServer.Database;
+using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.SessionHelper;
 

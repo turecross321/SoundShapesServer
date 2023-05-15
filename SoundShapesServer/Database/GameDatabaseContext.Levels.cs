@@ -6,7 +6,7 @@ using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.LevelHelper;
@@ -64,7 +64,7 @@ public partial class GameDatabaseContext
     {
         RemoveLevelResources(level, dataStore);
 
-        RemoveAllReportsWithContentId(level.Id);
+        RemoveAllReportsWithContentLevel(level);
         
         _realm.Write(() =>
         {

@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
-using SoundShapesServer.Authentication;
-using SoundShapesServer.Types;
+using SoundShapesServer.Responses.Api.Users;
+using SoundShapesServer.Types.Punishments;
+using SoundShapesServer.Types.Sessions;
 
 namespace SoundShapesServer.Responses.Api;
 
@@ -10,10 +11,8 @@ public class ApiAuthenticationResponse
     {
         Id = session.Id;
         ExpiresAtUtc = session.ExpiresAt;
-        UserId = session.User?.Id ?? "";
-        Username = session.User?.Username ?? "";
-        PermissionsType = session.User?.PermissionsType ?? (int)Types.PermissionsType.Default;
-
+        User = new ApiUserResponse(session.User);
+        PermissionsType = session.User.PermissionsType;
         IsBanned = punishment != null;
         BanReason = punishment?.Reason;
         BanExpiresAtUtc = punishment?.ExpiresAt;
@@ -21,8 +20,7 @@ public class ApiAuthenticationResponse
 
     public string Id { get; }
     public DateTimeOffset ExpiresAtUtc { get; }
-    public string UserId { get; }
-    public string Username { get; }
+    public ApiUserResponse User { get; set; }
     public int PermissionsType { get; }
     
     public bool IsBanned { get; set; }

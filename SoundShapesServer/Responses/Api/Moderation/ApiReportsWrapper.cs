@@ -1,16 +1,14 @@
-using SoundShapesServer.Helpers;
-using SoundShapesServer.Types;
+using SoundShapesServer.Database;
+using SoundShapesServer.Types.Reports;
 
 namespace SoundShapesServer.Responses.Api.Moderation;
 
 public class ApiReportsWrapper
 {
-    public ApiReportsWrapper(IQueryable<Report> reports, int from, int count)
+    public ApiReportsWrapper(GameDatabaseContext database, IEnumerable<Report> reports, int totalReports)
     {
-        Report[] paginatedReports = PaginationHelper.PaginateReports(reports, from, count);
-
-        Reports = paginatedReports.Select(t => new ApiReportResponse(t)).ToArray();
-        Count = reports.Count();
+        Reports = reports.Select(r => new ApiReportResponse(database, r)).ToArray();
+        Count = totalReports;
     }
 
     public ApiReportResponse[] Reports { get; set; }

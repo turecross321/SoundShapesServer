@@ -3,7 +3,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.RecentActivity;
-using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.RecentActivity;

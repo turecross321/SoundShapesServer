@@ -1,9 +1,8 @@
 using Bunkum.HttpServer.Storage;
 using Realms;
-using SoundShapesServer.Authentication;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.PaginationHelper;
@@ -224,25 +223,6 @@ public partial class GameDatabaseContext
     {
         return id == null ? null : _realm.All<GameUser>().FirstOrDefault(u => u.Id == id);
     }
-    
-    public IQueryable<GameUser> SearchForUsers(string query)
-    {
-        string[] keywords = query.Split(' ');
-        if (keywords.Length == 0) return Enumerable.Empty<GameUser>().AsQueryable();
-        
-        IQueryable<GameUser>? entries = _realm.All<GameUser>();
-        
-        foreach (string keyword in keywords)
-        {
-            if (string.IsNullOrWhiteSpace(keyword)) continue;
-
-            entries = entries.Where(u =>
-                u.Username.Like(keyword, false)
-            );
-        }
-
-        return entries;
-    }
 
     public void RemoveUser(GameUser user, IDataStore dataStore)
     {
@@ -253,7 +233,7 @@ public partial class GameDatabaseContext
         
         dataStore.RemoveFromStore(GetSaveResourceKey(user.Id));
         
-        RemoveAllReportsWithContentId(user.Id);
+        RemoveAllReportsWithContentUser(user);
         
         _realm.Write(() =>
         {

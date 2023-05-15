@@ -3,7 +3,7 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.RecentActivity;
@@ -16,13 +16,13 @@ public class ActivityResponse
         
         Content = (EventType)gameEventObject.EventType switch
         {
-            Types.RecentActivity.EventType.Publish => 
+            Types.PlayerActivity.EventType.Publish => 
                 new RecentActivityLevel(gameEventObject.ContentLevel ?? new GameLevel()),
                 
-            Types.RecentActivity.EventType.Like => 
+            Types.PlayerActivity.EventType.Like => 
                 new RecentActivityLevel(gameEventObject.ContentLevel ?? new GameLevel()),
                 
-            Types.RecentActivity.EventType.Follow => 
+            Types.PlayerActivity.EventType.Follow => 
                 new UserResponse(gameEventObject.ContentUser ?? new GameUser()),
 
             _ => null

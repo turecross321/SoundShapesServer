@@ -1,4 +1,4 @@
-namespace SoundShapesServer.Types.RecentActivity;
+namespace SoundShapesServer.Types.PlayerActivity;
 
 // ReSharper disable InconsistentNaming
 public enum EventType

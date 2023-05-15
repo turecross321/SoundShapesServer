@@ -1,4 +1,4 @@
-namespace SoundShapesServer.Types;
+namespace SoundShapesServer.Types.Sessions;
 public enum SessionType
 {
     Game = 0,

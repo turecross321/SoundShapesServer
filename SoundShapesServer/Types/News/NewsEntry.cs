@@ -2,7 +2,7 @@ using Realms;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Types.RecentActivity;
+namespace SoundShapesServer.Types.News;
 
 public class NewsEntry : RealmObject
 {

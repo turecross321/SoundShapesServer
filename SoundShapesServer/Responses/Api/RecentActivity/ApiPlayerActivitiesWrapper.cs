@@ -1,12 +1,13 @@
-using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Database;
+using SoundShapesServer.Types.PlayerActivity;
 
 namespace SoundShapesServer.Responses.Api.RecentActivity;
 
 public class ApiPlayerActivitiesWrapper
 {
-    public ApiPlayerActivitiesWrapper(GameEvent[] events, int totalEvents)
+    public ApiPlayerActivitiesWrapper(GameDatabaseContext database, IEnumerable<GameEvent> events, int totalEvents)
     {
-        Activities = events.Select(e=> new ApiPlayerActivityResponse(e)).ToArray();
+        Activities = events.Select(e=> new ApiPlayerActivityResponse(database, e)).ToArray();
         Count = totalEvents;
     }
 

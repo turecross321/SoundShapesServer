@@ -1,11 +1,11 @@
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
-using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.RecentActivity;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.News;
+using SoundShapesServer.Types.Sessions;
 
 namespace SoundShapesServer.Endpoints.Game.RecentActivity;
 

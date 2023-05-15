@@ -4,7 +4,7 @@ namespace SoundShapesServer.Responses.Api.Users;
 
 public class ApiUsersWrapper
 {
-    public ApiUsersWrapper(GameUser[] users, int count)
+    public ApiUsersWrapper(IEnumerable<GameUser> users, int count)
     {
         Users = users.Select(u => new ApiUserResponse(u)).ToArray();
         Count = count;

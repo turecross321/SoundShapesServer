@@ -1,14 +1,16 @@
 using Realms;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Types.Levels;
 
 public class DailyLevel : RealmObject
 {
-    public DailyLevel(string id, GameLevel level, DateTimeOffset date)
+    public DailyLevel(string id, GameLevel level, DateTimeOffset date, GameUser artist)
     {
         Id = id;
         Level = level;
         Date = date;
+        Artist = artist;
     }
     
     // Realm cries if this doesn't exist
@@ -19,4 +21,5 @@ public class DailyLevel : RealmObject
     [PrimaryKey] [Required] public string Id { get; init; }
     public GameLevel Level { get; set; }
     public DateTimeOffset Date { get; set; }
+    public GameUser Artist { get; set; }
 }

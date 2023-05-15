@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Security.Cryptography;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.RateLimit;
 using Bunkum.HttpServer.Storage;

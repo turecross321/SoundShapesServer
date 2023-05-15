@@ -5,11 +5,11 @@ namespace SoundShapesServer.Responses.Api.Levels;
 
 public class ApiLeaderboardEntryWrapper
 {
-    public ApiLeaderboardEntryWrapper(LeaderboardEntry[] paginatedEntries, int totalEntries, int from, bool descending)
+    public ApiLeaderboardEntryWrapper(IReadOnlyList<LeaderboardEntry> paginatedEntries, int totalEntries, int from, bool descending)
     {
-        Entries = new ApiLeaderboardEntryResponse[paginatedEntries.Length];
+        Entries = new ApiLeaderboardEntryResponse[paginatedEntries.Count];
         
-        for (int i = 0; i < paginatedEntries.Length; i++)
+        for (int i = 0; i < paginatedEntries.Count; i++)
         {
             Entries[i] = new ApiLeaderboardEntryResponse(paginatedEntries[i], CalculateEntryPlacement(totalEntries, from, i, descending, false));
         }

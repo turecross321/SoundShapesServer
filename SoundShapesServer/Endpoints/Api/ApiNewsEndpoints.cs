@@ -2,7 +2,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.RecentActivity;
-using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api;

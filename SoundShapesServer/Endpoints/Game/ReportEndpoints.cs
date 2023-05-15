@@ -8,6 +8,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Reports;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game;
@@ -15,21 +16,21 @@ namespace SoundShapesServer.Endpoints.Game;
 public class ReportEndpoints : EndpointGroup
 {
     [GameEndpoint("~grief:*.post", Method.Post)]
-    public Response ReportLevel(RequestContext context, GameDatabaseContext database, GameUser user, Stream body)
+    public Response CreateReportForLevel(RequestContext context, GameDatabaseContext database, GameUser user, Stream body)
     {
         MultipartFormDataParser? parser = MultipartFormDataParser.Parse(body);
 
         string reportReasonIdString = parser.GetParameterValue("reportReasonId");
-        if (int.TryParse(reportReasonIdString, out int reportReasonId) == false) return HttpStatusCode.BadRequest;
-        
+        ReportReasonType reportReasonType = Enum.Parse<ReportReasonType>(reportReasonIdString);
+
         string formattedLevelId = parser.GetParameterValue("item");
         string levelId = IdFormatter.DeFormatLevelIdAndVersion(formattedLevelId);
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;
 
-        if (level.Author?.Id == user.Id) return HttpStatusCode.BadRequest;
+        if (level.Author.Id == user.Id) return HttpStatusCode.BadRequest;
         
-        database.SubmitReport(user, level.Id, ServerContentType.Level, reportReasonId);
+        database.CreateReport(user, ReportContentType.Level, reportReasonType, contentLevel:level);
 
         return HttpStatusCode.OK;
     }

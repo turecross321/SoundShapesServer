@@ -12,7 +12,7 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
-public class ApiManageUserEndpoints : EndpointGroup
+public class ApiUserManagementEndpoints : EndpointGroup
 {
     [ApiEndpoint("users/{id}/remove", Method.Post)]
     public Response RemoveUser(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)

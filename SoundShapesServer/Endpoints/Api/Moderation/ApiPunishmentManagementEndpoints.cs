@@ -7,14 +7,14 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Moderation;
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Users;
 using static System.Boolean;
 using static SoundShapesServer.Helpers.PunishmentHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
-public class ApiPunishmentEndpoints : EndpointGroup
+public class ApiPunishmentManagementEndpoints : EndpointGroup
 {
     [ApiEndpoint("punishments/create", Method.Post)]
     public Response PunishUser(RequestContext context, GameDatabaseContext database, GameUser user, ApiPunishRequest body)

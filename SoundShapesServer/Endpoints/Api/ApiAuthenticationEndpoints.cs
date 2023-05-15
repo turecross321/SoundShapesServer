@@ -3,11 +3,11 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
-using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api.Account;
 using SoundShapesServer.Responses.Api;
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.Punishments;
+using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.PunishmentHelper;
 
@@ -15,7 +15,7 @@ namespace SoundShapesServer.Endpoints.Api;
 
 public class ApiAuthenticationEndpoints : EndpointGroup
 {
-    private readonly Response _invalidCredentialsResponse = new Response("The email address or password was incorrect.", ContentType.Json, HttpStatusCode.Forbidden);
+    private readonly Response _invalidCredentialsResponse = new ("The email address or password was incorrect.", ContentType.Plaintext, HttpStatusCode.Forbidden);
     
     [ApiEndpoint("account/login", Method.Post)]
     [Authentication(false)]

@@ -17,7 +17,7 @@ public class ApiLeaderboardManagementEndpoints : EndpointGroup
     {
         if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
 
-        LeaderboardEntry? entry = database.GetLeaderboardWithId(id);
+        LeaderboardEntry? entry = database.GetLeaderboardEntryWithId(id);
         if (entry == null) return HttpStatusCode.NotFound;
         
         database.RemoveLeaderboardEntry(entry);

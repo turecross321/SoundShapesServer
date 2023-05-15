@@ -1,4 +1,5 @@
-using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Responses.Api.Users;
+using SoundShapesServer.Types.News;
 
 namespace SoundShapesServer.Responses.Api.RecentActivity;
 
@@ -10,8 +11,7 @@ public class ApiNewsResponse
         CreationDate = entry.CreationDate;
         ModificationDate = entry.ModificationDate;
         Language = entry.Language;
-        AuthorId = entry.Author.Id;
-        AuthorUsername = entry.Author.Username;
+        Author = new ApiUserResponse(entry.Author);
         Title = entry.Title;
         Summary = entry.Summary;
         FullText = entry.FullText;
@@ -21,8 +21,7 @@ public class ApiNewsResponse
     public string Id { get; set; }
     public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset ModificationDate { get; set; }
-    public string AuthorUsername { get; set; }
-    public string AuthorId { get; set; }
+    public ApiUserResponse Author { get; set; }
     public string Language { get; set; }
     public string Title { get; set; }
     public string Summary { get; set; }

@@ -1,7 +1,7 @@
 using Realms;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Types;
+namespace SoundShapesServer.Types.Punishments;
 
 public class Punishment : RealmObject 
 {

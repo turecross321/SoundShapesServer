@@ -4,7 +4,7 @@ namespace SoundShapesServer.Responses.Api.IP_Authorization;
 
 public class ApiIpAddressesWrapper
 {
-    public ApiIpAddressesWrapper(IpAuthorization[] ipAddresses, int totalAddresses)
+    public ApiIpAddressesWrapper(IEnumerable<IpAuthorization> ipAddresses, int totalAddresses)
     {
         IpAddresses = ipAddresses.Select(a=>new ApiIpAddressResponse(a)).ToArray();
         Count = totalAddresses;

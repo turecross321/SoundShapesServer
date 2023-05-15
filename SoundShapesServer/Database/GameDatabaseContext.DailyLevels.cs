@@ -1,4 +1,6 @@
+using Realms.Sync;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Database;
 
@@ -63,13 +65,14 @@ public partial class GameDatabaseContext
     {
         return _realm.All<DailyLevel>().FirstOrDefault(d => d.Id == id);
     }
-    public DailyLevel CreateDailyLevel(GameLevel level, DateTimeOffset date)
+    public DailyLevel CreateDailyLevel(GameUser user, GameLevel level, DateTimeOffset date)
     {
         DailyLevel dailyLevel = new()
         {
             Id = GenerateGuid(), 
             Level = level, 
-            Date = date.Date
+            Date = date.Date,
+            Artist = user
         };
 
         _realm.Write(() =>

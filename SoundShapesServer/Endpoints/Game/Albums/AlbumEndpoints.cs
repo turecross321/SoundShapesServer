@@ -3,13 +3,13 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
-using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Albums;
 using SoundShapesServer.Responses.Game.Albums.LevelInfo;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Albums;

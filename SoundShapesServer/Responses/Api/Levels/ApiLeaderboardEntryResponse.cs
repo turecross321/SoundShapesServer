@@ -1,3 +1,4 @@
+using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.Leaderboard;
 
 namespace SoundShapesServer.Responses.Api.Levels;
@@ -9,10 +10,7 @@ public class ApiLeaderboardEntryResponse
         Id = entry.Id;
         LevelId = entry.LevelId;
         Position = position;
-
-        UserId = entry.User.Id;
-        Username = entry.User.Username;
-        
+        User = new ApiUserResponse(entry.User);
         PlayTime = entry.PlayTime;
         Tokens = entry.Tokens;
         Deaths = entry.Deaths;
@@ -23,9 +21,7 @@ public class ApiLeaderboardEntryResponse
     public string Id { get; set; }
     public string LevelId { get; set; }
     public int Position { get; set; }
-    public string UserId { get; set; }
-    public string Username { get; set; }
-    
+    public ApiUserResponse User { get; set; }
     public long PlayTime { get; set; }
     public int Tokens { get; set; }
     public int Deaths { get; set; }

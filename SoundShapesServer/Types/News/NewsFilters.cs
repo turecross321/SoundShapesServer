@@ -1,6 +1,6 @@
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Types.RecentActivity;
+namespace SoundShapesServer.Types.News;
 
 public class NewsFilters
 {

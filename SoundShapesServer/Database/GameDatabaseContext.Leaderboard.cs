@@ -1,6 +1,6 @@
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types.Leaderboard;
-using SoundShapesServer.Types.RecentActivity;
+using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.PaginationHelper;
 
@@ -61,7 +61,7 @@ public partial class GameDatabaseContext
         return _realm.All<LeaderboardEntry>().OrderBy(e => e.Date);
     }
 
-    public static IQueryable<LeaderboardEntry> FilterLeaderboard(IQueryable<LeaderboardEntry> entries, LeaderboardFilters filters)
+    private static IQueryable<LeaderboardEntry> FilterLeaderboard(IQueryable<LeaderboardEntry> entries, LeaderboardFilters filters)
     {
         IQueryable<LeaderboardEntry> response = entries;
         
@@ -100,22 +100,24 @@ public partial class GameDatabaseContext
         return response;
     }
 
-    public IQueryable<LeaderboardEntry> GetLeaderboardEntriesOnLevel(string levelId)
-    // Leaderboard Entries use ids instead of level objects, so they support campaign levels too
-    {
-        return _realm.All<LeaderboardEntry>()            
-            .AsEnumerable()
-            .Where(e=>e.LevelId == levelId)
-            .AsQueryable();
-    }
-
-    public LeaderboardEntry? GetLeaderboardWithId(string id)
+    public LeaderboardEntry? GetLeaderboardEntryWithId(string id)
     {
         return _realm.All<LeaderboardEntry>().FirstOrDefault(e => e.Id == id);
     }
     
+    public int GetEntryPlacement(LeaderboardEntry entry)
+    {
+        IQueryable<LeaderboardEntry> entries = LeaderboardOrderedByScore(false);
+        IQueryable<LeaderboardEntry> filteredEntries = FilterLeaderboard(entries,
+            new LeaderboardFilters(onLevel: entry.LevelId, completed: true, onlyBest: true));
+
+        return filteredEntries.ToList().IndexOf(entry);
+    }
+    
     public void RemoveLeaderboardEntry(LeaderboardEntry entry)
     {
+        RemoveAllReportsWithContentLeaderboardEntry(entry);
+        
         _realm.Write(() =>
         {
             _realm.Remove(entry);

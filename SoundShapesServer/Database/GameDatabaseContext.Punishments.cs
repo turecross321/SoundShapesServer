@@ -1,5 +1,5 @@
 using SoundShapesServer.Requests.Api;
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Database;

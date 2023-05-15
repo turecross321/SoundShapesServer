@@ -5,7 +5,7 @@ namespace SoundShapesServer.Responses.Api.Albums;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ApiAlbumsWrapper
 {
-    public ApiAlbumsWrapper(GameAlbum[] albums, int totalAlbums)
+    public ApiAlbumsWrapper(IEnumerable<GameAlbum> albums, int totalAlbums)
     {
         Albums = albums.Select(album => new ApiAlbumResponse(album)).ToArray();
         Count = totalAlbums;

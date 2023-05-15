@@ -1,8 +1,7 @@
 using System.Text.RegularExpressions;
-using SoundShapesServer.Authentication;
 using SoundShapesServer.Database;
 using SoundShapesServer.Endpoints;
-using SoundShapesServer.Types;
+using SoundShapesServer.Types.Sessions;
 
 namespace SoundShapesServer.Helpers;
 
