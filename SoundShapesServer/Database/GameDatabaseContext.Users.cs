@@ -37,11 +37,11 @@ public partial class GameDatabaseContext
             SetUserPassword(user, BCrypt.Net.BCrypt.HashPassword(hash, WorkFactor));
         }
 
-        return BCrypt.Net.BCrypt.Verify(hash, user.PasswordBcrypt);
+        return BCrypt.Net.BCrypt.Verify(hash.ToLower(), user.PasswordBcrypt);
     }
     public bool SetUserPassword(GameUser user, string hash)
     {
-        string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(hash, WorkFactor);
+        string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(hash.ToLower(), WorkFactor);
         
         _realm.Write(() =>
         {
