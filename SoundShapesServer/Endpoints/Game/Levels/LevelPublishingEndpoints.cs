@@ -30,8 +30,8 @@ public class LevelPublishingEndpoints : EndpointGroup
 
         GameLevel publishedLevel = database.CreateLevel(publishLevelRequest, user);
         
-        Response? uploadedResources = UploadLevelResources(dataStore, parser, publishedLevel.Id);
-        if (uploadedResources != null) return (Response)uploadedResources;
+        Response uploadedResources = UploadLevelResources(database, dataStore, parser, publishedLevel, user);
+        if (uploadedResources.StatusCode != HttpStatusCode.Created) return uploadedResources;
         
         return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
@@ -41,10 +41,8 @@ public class LevelPublishingEndpoints : EndpointGroup
     {
         GameLevel? level = database.GetLevelWithId(levelId);
 
-        if (level == null) return new Response(HttpStatusCode.NotFound);
-        if (level.Author.Id != user.Id) return new Response(HttpStatusCode.Forbidden);
-        
-        if (user.Id  != level.Author.Id) return HttpStatusCode.Unauthorized;
+        if (level == null) return HttpStatusCode.NotFound;
+        if (level.Author.Id != user.Id) return HttpStatusCode.Forbidden;
 
         PublishLevelRequest publishLevelRequest = new (
             parser.GetParameterValue("title"), 
@@ -53,20 +51,19 @@ public class LevelPublishingEndpoints : EndpointGroup
         
         GameLevel publishedLevel = database.EditLevel(publishLevelRequest, level);
         
-        Response? uploadedResources = UploadLevelResources(dataStore, parser, levelId);
-        if (uploadedResources != null) return (Response)uploadedResources;
+        Response uploadedResources = UploadLevelResources(database, dataStore, parser, publishedLevel, user);
+        if (uploadedResources.StatusCode != HttpStatusCode.Created) return uploadedResources;
         
         return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
 
 
-    private static Response? UploadLevelResources(IDataStore dataStore, IMultipartFormDataParser parser, string levelId)
+    private static Response UploadLevelResources(GameDatabaseContext database, IDataStore dataStore, 
+        IMultipartFormDataParser parser, GameLevel level, GameUser user)
     {
-        if (parser.GetParameterValue("title").Length > 26) return HttpStatusCode.BadRequest;
-
-        byte[]? level = null;
-        byte[]? image = null;
-        byte[]? sound = null;
+        byte[]? levelFile = null;
+        byte[]? imageFile = null;
+        byte[]? soundFile = null;
         
         foreach (FilePart? file in parser.Files)
         {
@@ -76,13 +73,13 @@ public class LevelPublishingEndpoints : EndpointGroup
             switch (fileType)
             {
                 case FileType.Level:
-                    level = bytes;
+                    levelFile = bytes;
                     break;
                 case FileType.Image:
-                    image = bytes;
+                    imageFile = bytes;
                     break;
                 case FileType.Sound:
-                    sound = bytes;
+                    soundFile = bytes;
                     break;
                 case FileType.Unknown:
                 default:
@@ -91,21 +88,17 @@ public class LevelPublishingEndpoints : EndpointGroup
             }
         }
 
-        if (level == null || image == null || sound == null)
+        if (levelFile == null || imageFile == null || soundFile == null)
         {
             Console.WriteLine("User did not upload all the required files.");
             return HttpStatusCode.BadRequest;
         }
 
-        string levelKey = GetLevelResourceKey(levelId, FileType.Level);
-        string imageKey = GetLevelResourceKey(levelId, FileType.Image);
-        string soundKey = GetLevelResourceKey(levelId, FileType.Sound);
+        database.UploadLevelResources(dataStore, level, levelFile, FileType.Level);
+        database.UploadLevelResources(dataStore, level, imageFile, FileType.Image);
+        database.UploadLevelResources(dataStore, level, soundFile, FileType.Sound);
 
-        dataStore.WriteToStore(levelKey, level);
-        dataStore.WriteToStore(imageKey, image);
-        dataStore.WriteToStore(soundKey, sound);
-
-        return null;
+        return HttpStatusCode.Created;
     }
     
     // Gets called by Endpoints.cs

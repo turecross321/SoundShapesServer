@@ -1,5 +1,6 @@
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types.Leaderboard;
+using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.PaginationHelper;
@@ -18,6 +19,11 @@ public partial class GameDatabaseContext
         });
         
         CreateEvent(user, EventType.ScoreSubmission, null, null, entry);
+        
+        GameLevel? level = GetLevelWithId(levelId);
+        if (level != null) SetLevelPlayTime(level);
+        
+        SetUserPlayTime(user);
     }
     
     public (IQueryable<LeaderboardEntry>, LeaderboardEntry[]) GetLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters, int from, int count)

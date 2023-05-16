@@ -5,14 +5,13 @@ using SoundShapesServer.Types.Sessions;
 
 namespace SoundShapesServer.Responses.Api;
 
-public class ApiAuthenticationResponse
+public class ApiSessionResponse
 {
-    public ApiAuthenticationResponse(GameSession session, Punishment? punishment)
+    public ApiSessionResponse(GameSession session, Punishment? punishment)
     {
         Id = session.Id;
         ExpiresAt = session.ExpiresAt;
-        User = new ApiUserResponse(session.User);
-        PermissionsType = session.User.PermissionsType;
+        User = new ApiUserBriefResponse(session.User);
         IsBanned = punishment != null;
         BanReason = punishment?.Reason;
         BanExpiresAt = punishment?.ExpiresAt;
@@ -20,9 +19,7 @@ public class ApiAuthenticationResponse
 
     public string Id { get; }
     public DateTimeOffset ExpiresAt { get; }
-    public ApiUserResponse User { get; set; }
-    public int PermissionsType { get; }
-    
+    public ApiUserBriefResponse User { get; set; }
     public bool IsBanned { get; set; }
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string? BanReason { get; set; }
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public DateTimeOffset? BanExpiresAt { get; set; }

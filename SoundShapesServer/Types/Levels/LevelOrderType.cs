@@ -12,5 +12,7 @@ public enum LevelOrderType
     Relevance,
     Random,
     Deaths,
+    TotalPlayTime,
+    AveragePlayTime,
     DoNotOrder
 }

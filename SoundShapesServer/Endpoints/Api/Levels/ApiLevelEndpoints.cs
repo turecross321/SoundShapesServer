@@ -68,6 +68,8 @@ public class ApiLevelEndpoints: EndpointGroup
             "relevance" => LevelOrderType.Relevance,
             "random" => LevelOrderType.Random,
             "deaths" => LevelOrderType.Deaths,
+            "totalPlayTime" => LevelOrderType.TotalPlayTime,
+            "averagePlayTime" => LevelOrderType.AveragePlayTime,
             _ => LevelOrderType.DoNotOrder
         };
 
@@ -76,15 +78,15 @@ public class ApiLevelEndpoints: EndpointGroup
         return new ApiLevelsWrapper(levels, levelCount);
     }
 
-    [ApiEndpoint("levels/{levelId}")]
+    [ApiEndpoint("levels/id/{levelId}")]
     [Authentication(false)]
-    public ApiLevelFullResponse? Level(RequestContext context, GameDatabaseContext database, string levelId)
+    public ApiLevelFullResponse? GetLevelWithId(RequestContext context, GameDatabaseContext database, string levelId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
         return level == null ? null : new ApiLevelFullResponse(level);
     }
     
-    [ApiEndpoint("levels/{id}/edit", Method.Post)]
+    [ApiEndpoint("levels/id/{id}/edit", Method.Post)]
     public Response EditLevel(RequestContext context, GameDatabaseContext database, GameUser user,
         ApiEditLevelRequest body, string id)
     {
@@ -103,7 +105,7 @@ public class ApiLevelEndpoints: EndpointGroup
         return new Response(new ApiLevelFullResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
     
-    [ApiEndpoint("levels/{id}/remove", Method.Post)]
+    [ApiEndpoint("levels/id/{id}/remove", Method.Post)]
     public Response RemoveLevel(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);
@@ -119,7 +121,7 @@ public class ApiLevelEndpoints: EndpointGroup
         return HttpStatusCode.OK;
     }
 
-    [ApiEndpoint("levels/{id}/completed")]
+    [ApiEndpoint("levels/id/{id}/completed")]
     public Response HasUserCompletedLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);

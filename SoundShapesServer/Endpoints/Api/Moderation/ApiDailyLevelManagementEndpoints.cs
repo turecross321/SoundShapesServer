@@ -59,7 +59,7 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
         return new Response(new ApiDailyLevelResponse(createdDailyLevel), ContentType.Json, HttpStatusCode.Created);
     }
     
-    [ApiEndpoint("daily/{id}/edit", Method.Post)]
+    [ApiEndpoint("daily/id/{id}/edit", Method.Post)]
     public Response EditDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id, ApiAddDailyLevelRequest body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
@@ -74,7 +74,7 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
         return new Response(new ApiDailyLevelResponse(createdDailyLevel), ContentType.Json, HttpStatusCode.Created);
     }
     
-    [ApiEndpoint("daily/{id}/remove", Method.Post)]
+    [ApiEndpoint("daily/id/{id}/remove", Method.Post)]
     public Response RemoveDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;

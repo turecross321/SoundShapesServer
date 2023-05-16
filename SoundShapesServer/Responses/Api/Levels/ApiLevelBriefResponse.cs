@@ -3,13 +3,13 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Responses.Api.Levels;
 
-public class ApiLevelSummaryResponse
+public class ApiLevelBriefResponse
 {
-    public ApiLevelSummaryResponse(GameLevel level)
+    public ApiLevelBriefResponse(GameLevel level)
     {
         Id = level.Id;
         Name = level.Name;
-        Author = new ApiUserResponse(level.Author);
+        Author = new ApiUserBriefResponse(level.Author);
         Created = level.CreationDate;
         Modified = level.ModificationDate;
         TotalPlays = level.PlaysCount;
@@ -20,7 +20,7 @@ public class ApiLevelSummaryResponse
 
     public string Id { get; set; }
     public string Name { get; set; }
-    public ApiUserResponse Author { get; set; }
+    public ApiUserBriefResponse Author { get; set; }
     public DateTimeOffset Created { get; set; }
     public DateTimeOffset Modified { get; set; }
     public int TotalPlays { get; set; }

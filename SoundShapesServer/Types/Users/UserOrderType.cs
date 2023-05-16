@@ -10,5 +10,6 @@ public enum UserOrderType
     PlayedLevelsCount,
     CompletedLevelsCount,
     Deaths,
+    TotalPlayTime,
     DoNotOrder
 }

@@ -14,11 +14,11 @@ namespace SoundShapesServer.Endpoints.Api.Levels;
 
 public class ApiLevelResourceEndpoints : EndpointGroup
 {
-    [ApiEndpoint("levels/{levelId}/thumbnail")]
+    [ApiEndpoint("levels/id/{id}/thumbnail")]
     [Authentication(false)]
-    public Response LevelThumbnail(RequestContext context, IDataStore dataStore, GameDatabaseContext database, string levelId)
+    public Response LevelThumbnail(RequestContext context, IDataStore dataStore, GameDatabaseContext database, string id)
     {
-        GameLevel? level = database.GetLevelWithId(levelId);
+        GameLevel? level = database.GetLevelWithId(id);
         if (level == null) return HttpStatusCode.NotFound;
 
         string key = GetLevelResourceKey(level.Id, FileType.Image);

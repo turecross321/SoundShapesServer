@@ -1,4 +1,7 @@
+using System.Net;
 using System.Security.Cryptography;
+using Bunkum.CustomHttpListener.Parsing;
+using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
@@ -44,15 +47,42 @@ public partial class GameDatabaseContext
         return level;
     }
 
-    public void SetLevelFileSize(GameLevel level, long fileSize)
+    private void SetLevelFileSize(GameLevel level, long fileSize)
     {
         _realm.Write(() =>
         {
             level.FileSize = fileSize;
         });
     }
+
+    private void SetLevelPlayTime(GameLevel level)
+    {
+        // GameLevel doesn't have a LeaderboardEntry backlink since leaderboard entries only store the level id
+        // (which is to support campaign levels)
+        IQueryable<LeaderboardEntry> entriesOnLevel = _realm.All<LeaderboardEntry>().Where(e => e.LevelId == level.Id);
+        long totalPlayTime = entriesOnLevel.AsEnumerable().Sum(e => e.PlayTime);
+
+        _realm.Write(() =>
+        {
+            level.TotalPlayTime = totalPlayTime;
+        });
+    }
     
-    // Not database related, but idk where this should be otherwise.
+    // Not database related, but idk where these should be otherwise.
+    public Response UploadLevelResources(IDataStore dataStore, GameLevel level,
+        byte[] file, FileType fileType)
+    {
+        if (fileType == FileType.Image && !IsByteArrayPng(file))
+            return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
+
+        string key = GetLevelResourceKey(level.Id, fileType);
+        dataStore.WriteToStore(key, file);
+        
+        if (fileType == FileType.Level) SetLevelFileSize(level, file.Length);
+
+        return HttpStatusCode.Created;
+    }
+    
     private static void RemoveLevelResources(GameLevel level, IDataStore dataStore)
     {
         dataStore.RemoveFromStore(GetLevelResourceKey(level.Id, FileType.Image));
@@ -108,6 +138,8 @@ public partial class GameDatabaseContext
             LevelOrderType.Relevance => LevelsOrderedByRelevance(descending),
             LevelOrderType.Random => LevelsOrderedByRandom(descending),
             LevelOrderType.Deaths => LevelsOrderedByDeaths(descending),
+            LevelOrderType.TotalPlayTime => LevelsOrderedByTotalPlayTime(descending),
+            LevelOrderType.AveragePlayTime => LevelsOrderedByAveragePlayTime(descending),
             _ => LevelsOrderedByCreationDate(descending)
         };
 
@@ -319,6 +351,18 @@ public partial class GameDatabaseContext
     {
         if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.Deaths);
         return _realm.All<GameLevel>().OrderBy(l => l.Deaths);
+    } 
+    
+    private IQueryable<GameLevel> LevelsOrderedByTotalPlayTime(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.TotalPlayTime);
+        return _realm.All<GameLevel>().OrderBy(l => l.TotalPlayTime);
+    } 
+    
+    private IQueryable<GameLevel> LevelsOrderedByAveragePlayTime(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.TotalPlayTime / l.PlaysCount);
+        return _realm.All<GameLevel>().OrderBy(l => l.TotalPlayTime / l.PlaysCount);
     } 
 
     public void AddUniqueCompletion(GameLevel level, GameUser user)

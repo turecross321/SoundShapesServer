@@ -1,5 +1,6 @@
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Relations;
@@ -73,6 +74,14 @@ public partial class GameDatabaseContext
         });
     }
 
+    private void SetUserPlayTime(GameUser user)
+    {
+        _realm.Write(() =>
+        {
+            user.TotalPlayTime = user.LeaderboardEntries.AsEnumerable().Sum(e => e.PlayTime);
+        });
+    }
+
     public (GameUser[], int) GetUsers(UserOrderType order, bool descending, UserFilters filters, int from, int count)
     {
         IQueryable<GameUser> orderedUsers = order switch
@@ -85,6 +94,7 @@ public partial class GameDatabaseContext
             UserOrderType.PlayedLevelsCount => UsersOrderedByPlayedLevelsCount(descending),
             UserOrderType.CompletedLevelsCount => UsersOrderedByCompletedLevelsCount(descending),
             UserOrderType.Deaths => UsersOrderedByDeaths(descending),
+            UserOrderType.TotalPlayTime => UsersOrderedByTotalPlayTime(descending),
             _ => UsersOrderedByCreationDate(descending)
         };
 
@@ -184,6 +194,12 @@ public partial class GameDatabaseContext
     {
         if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.Deaths);
         return _realm.All<GameUser>().OrderBy(u => u.Deaths);
+    }
+    
+    private IQueryable<GameUser> UsersOrderedByTotalPlayTime(bool descending)
+    {
+        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.TotalPlayTime);
+        return _realm.All<GameUser>().OrderBy(u => u.TotalPlayTime);
     }
 
     private const string AdminUsername = "admin";

@@ -12,7 +12,7 @@ namespace SoundShapesServer.Endpoints.Api.Levels;
 
 public class ApiLevelInteractionEndpoints : EndpointGroup
 {
-    [ApiEndpoint("levels/{id}/liked", ContentType.Json)]
+    [ApiEndpoint("levels/id/{id}/liked", ContentType.Json)]
     public ApiIsLevelLikedResponse? CheckIfUserHasLikedLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);
@@ -24,7 +24,7 @@ public class ApiLevelInteractionEndpoints : EndpointGroup
         };
     }
 
-    [ApiEndpoint("levels/{id}/like", Method.Post)]
+    [ApiEndpoint("levels/id/{id}/like", Method.Post)]
     public Response LikeLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);
@@ -35,7 +35,7 @@ public class ApiLevelInteractionEndpoints : EndpointGroup
         return HttpStatusCode.Conflict;
     }
 
-    [ApiEndpoint("levels/{id}/unLike", Method.Post)]
+    [ApiEndpoint("levels/id/{id}/unLike", Method.Post)]
     public Response UnLikeLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);

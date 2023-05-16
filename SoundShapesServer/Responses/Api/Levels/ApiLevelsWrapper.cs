@@ -6,10 +6,10 @@ public class ApiLevelsWrapper
 {
     public ApiLevelsWrapper(GameLevel[] levels, int count)
     {
-        Levels = levels.Select(l=> new ApiLevelSummaryResponse(l)).ToArray();
+        Levels = levels.Select(l=> new ApiLevelBriefResponse(l)).ToArray();
         Count = count;
     }
 
-    public ApiLevelSummaryResponse[] Levels { get; set; }
+    public ApiLevelBriefResponse[] Levels { get; set; }
     public int Count { get; set; }
 }

@@ -45,6 +45,7 @@ public class GameUser : RealmObject, IRateLimitUser
     [Backlink(nameof(GameEvent.ContentUser))] public IQueryable<GameEvent> EventsWhereUserIsRecipient { get; }
 #pragma warning restore CS8618
     public int Deaths { get; set; }
+    public long TotalPlayTime { get; set; }
 
     // Defined in authentication provider. Avoids Realm threading nonsense.
     public bool RateLimitUserIdIsEqual(object obj)

@@ -29,7 +29,7 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
         return new Response(new ApiPunishmentResponse(createdPunishment), ContentType.Json, HttpStatusCode.Created);
     }
 
-    [ApiEndpoint("punishments/{id}/edit", Method.Post)]
+    [ApiEndpoint("punishments/id/{id}/edit", Method.Post)]
     public Response EditPunishment(RequestContext context, GameDatabaseContext database, GameUser user, string id,
         ApiPunishRequest body)
     {
@@ -47,7 +47,7 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
         return new Response(new ApiPunishmentResponse(editedPunishment), ContentType.Json, HttpStatusCode.Created);
     }
 
-    [ApiEndpoint("punishments/{id}/revoke", Method.Post)]
+    [ApiEndpoint("punishments/id/{id}/revoke", Method.Post)]
     public Response RevokePunishment(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;

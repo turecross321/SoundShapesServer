@@ -10,7 +10,7 @@ public class ApiLeaderboardEntryResponse
         Id = entry.Id;
         LevelId = entry.LevelId;
         Position = position;
-        User = new ApiUserResponse(entry.User);
+        User = new ApiUserBriefResponse(entry.User);
         PlayTime = entry.PlayTime;
         Tokens = entry.Tokens;
         Deaths = entry.Deaths;
@@ -21,7 +21,7 @@ public class ApiLeaderboardEntryResponse
     public string Id { get; set; }
     public string LevelId { get; set; }
     public int Position { get; set; }
-    public ApiUserResponse User { get; set; }
+    public ApiUserBriefResponse User { get; set; }
     public long PlayTime { get; set; }
     public int Tokens { get; set; }
     public int Deaths { get; set; }

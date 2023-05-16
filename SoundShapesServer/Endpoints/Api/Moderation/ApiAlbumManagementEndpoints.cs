@@ -25,7 +25,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
         return new Response(new ApiAlbumResponse(album), ContentType.Json, HttpStatusCode.Created);
     }
 
-    [ApiEndpoint("albums/{id}/edit", Method.Post)]
+    [ApiEndpoint("albums/id/{id}/edit", Method.Post)]
     public Response EditAlbum(RequestContext context, GameDatabaseContext database, GameUser user, ApiCreateAlbumRequest body, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
@@ -37,7 +37,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
         return new Response(new ApiAlbumResponse(editedAlbum), ContentType.Json, HttpStatusCode.Created);
     }
 
-    [ApiEndpoint("albums/{id}/setThumbnail", Method.Post)]
+    [ApiEndpoint("albums/id/{id}/setThumbnail", Method.Post)]
     public Response SetAlbumThumbnail(RequestContext context, GameDatabaseContext database, IDataStore dataStore,
         GameUser user, Stream body, string id) 
         => SetAlbumAssets(
@@ -49,7 +49,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
             AlbumResourceType.Thumbnail
     );
     
-    [ApiEndpoint("albums/{id}/setSidePanel", Method.Post)]
+    [ApiEndpoint("albums/id/{id}/setSidePanel", Method.Post)]
     public Response SetAlbumSidePanel(RequestContext context, GameDatabaseContext database, IDataStore dataStore,
         GameUser user, Stream body, string id) 
         => SetAlbumAssets(
@@ -81,7 +81,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
         return HttpStatusCode.Created;
     }
 
-    [ApiEndpoint("albums/{id}/remove", Method.Post)]
+    [ApiEndpoint("albums/id/{id}/remove", Method.Post)]
     public Response RemoveAlbum(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;

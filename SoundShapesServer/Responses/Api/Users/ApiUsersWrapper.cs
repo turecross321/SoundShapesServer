@@ -6,10 +6,10 @@ public class ApiUsersWrapper
 {
     public ApiUsersWrapper(IEnumerable<GameUser> users, int count)
     {
-        Users = users.Select(u => new ApiUserResponse(u)).ToArray();
+        Users = users.Select(u => new ApiUserBriefResponse(u)).ToArray();
         Count = count;
     }
 
-    public ApiUserResponse[] Users { get; set; }
+    public ApiUserBriefResponse[] Users { get; set; }
     public int Count { get; set; }
 }

@@ -26,7 +26,7 @@ public class ApiNewsManagementEndpoints : EndpointGroup
         return new Response(new ApiNewsResponse(createdNewsEntry), ContentType.Json, HttpStatusCode.Created);
     }
 
-    [ApiEndpoint("news/{id}/edit", Method.Post)]
+    [ApiEndpoint("news/id/{id}/edit", Method.Post)]
     public Response EditNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
         GameUser user, ApiCreateNewsEntryRequest body, string id)
     {
@@ -39,7 +39,7 @@ public class ApiNewsManagementEndpoints : EndpointGroup
         return new Response(new ApiNewsResponse(editedNewsEntry), ContentType.Json, HttpStatusCode.Created);
     }
     
-    [ApiEndpoint("news/{id}/setImage", Method.Post)]
+    [ApiEndpoint("news/id/{id}/setImage", Method.Post)]
     public Response SetNewsAssets(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id, Stream body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
@@ -61,7 +61,7 @@ public class ApiNewsManagementEndpoints : EndpointGroup
         return HttpStatusCode.Created;
     }
 
-    [ApiEndpoint("news/{id}/remove", Method.Post)]
+    [ApiEndpoint("news/id/{id}/remove", Method.Post)]
     public Response DeleteNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;

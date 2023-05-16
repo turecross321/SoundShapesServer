@@ -12,12 +12,12 @@ public class ApiPlayerActivityResponse
     {
         Id = eventObject.Id;
         EventType = eventObject.EventType;
-        Actor = new ApiUserResponse(eventObject.Actor);
+        Actor = new ApiUserBriefResponse(eventObject.Actor);
         
         if (eventObject.ContentUser != null)
-            ContentUser = new ApiUserResponse(eventObject.ContentUser);
+            ContentUser = new ApiUserBriefResponse(eventObject.ContentUser);
         if (eventObject.ContentLevel != null)
-            ContentLevel = new ApiLevelSummaryResponse(eventObject.ContentLevel);
+            ContentLevel = new ApiLevelBriefResponse(eventObject.ContentLevel);
         if (eventObject.ContentLeaderboardEntry != null)
             ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(eventObject.ContentLeaderboardEntry, database.GetEntryPlacement(eventObject.ContentLeaderboardEntry));
         
@@ -26,9 +26,9 @@ public class ApiPlayerActivityResponse
 
     public string Id { get; set; }
     public int EventType { get; set; }
-    public ApiUserResponse Actor { get; set; }
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiUserResponse? ContentUser { get; set; }
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLevelSummaryResponse? ContentLevel { get; set; }
+    public ApiUserBriefResponse Actor { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiUserBriefResponse? ContentUser { get; set; }
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLevelBriefResponse? ContentLevel { get; set; }
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLeaderboardEntryResponse? ContentLeaderboardEntry { get; set; }
     public DateTimeOffset Date { get; set; }
 }

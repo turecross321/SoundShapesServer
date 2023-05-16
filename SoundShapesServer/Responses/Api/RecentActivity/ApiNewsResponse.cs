@@ -11,7 +11,7 @@ public class ApiNewsResponse
         CreationDate = entry.CreationDate;
         ModificationDate = entry.ModificationDate;
         Language = entry.Language;
-        Author = new ApiUserResponse(entry.Author);
+        Author = new ApiUserBriefResponse(entry.Author);
         Title = entry.Title;
         Summary = entry.Summary;
         FullText = entry.FullText;
@@ -21,7 +21,7 @@ public class ApiNewsResponse
     public string Id { get; set; }
     public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset ModificationDate { get; set; }
-    public ApiUserResponse Author { get; set; }
+    public ApiUserBriefResponse Author { get; set; }
     public string Language { get; set; }
     public string Title { get; set; }
     public string Summary { get; set; }

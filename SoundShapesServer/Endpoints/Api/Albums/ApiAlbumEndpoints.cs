@@ -9,7 +9,7 @@ namespace SoundShapesServer.Endpoints.Api.Albums;
 
 public class ApiAlbumEndpoints : EndpointGroup
 {
-    [ApiEndpoint("albums/{id}")]
+    [ApiEndpoint("albums/id/{id}")]
     [Authentication(false)]
     public ApiAlbumResponse? GetAlbum(RequestContext context, GameDatabaseContext database, string id)
     {
@@ -44,7 +44,7 @@ public class ApiAlbumEndpoints : EndpointGroup
         return new ApiAlbumsWrapper(albums, totalAlbums);
     }
 
-    [ApiEndpoint("albums/{id}/completed")]
+    [ApiEndpoint("albums/id/{id}/completed")]
     public ApiAlbumCompletionResponse? GetAlbumCompletion(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameAlbum? album = database.GetAlbumWithId(id);

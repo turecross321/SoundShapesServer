@@ -46,18 +46,15 @@ Date is always UTC, and is always formatted like `YYYY-MM-DD`.
 
 ```json
 {
-  "Id": "60148db7-8fac-4790-a2fe-937dff5190a3",
-  "ExpiresAt": "2023-05-16T16:41:37.4393945+00:00",
+  "Id": "0405d98f-59b4-4e4c-a929-d68f7d360b5c",
+  "ExpiresAt": "2023-05-17T15:25:35.4060521+00:00",
   "User": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
-    "FollowerCount": 0,
-    "FollowingCount": 0,
-    "LikedLevelsCount": 0,
-    "PublishedLevelsCount": 72959
+    "PublishedLevelsCount": 72960,
+    "FollowersCount": 0
   },
-  "PermissionsType": 2,
   "IsBanned": false
 }
 ```
@@ -342,6 +339,7 @@ o7
 | playedLevelsCount    |
 | completedLevelsCount |
 | deaths               |
+| totalPlayTime        |
 
 ### Response: 200
 
@@ -352,19 +350,15 @@ o7
       "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
       "Username": "turecross123",
       "PermissionsType": 0,
-      "FollowerCount": 0,
-      "FollowingCount": 0,
-      "LikedLevelsCount": 0,
-      "PublishedLevelsCount": 0
+      "PublishedLevelsCount": 0,
+      "FollowersCount": 0
     },
     {
       "Id": "00000000-0000-0000-0000-000000000000",
       "Username": "admin",
       "PermissionsType": 2,
-      "FollowerCount": 0,
-      "FollowingCount": 0,
-      "LikedLevelsCount": 0,
-      "PublishedLevelsCount": 72959
+      "PublishedLevelsCount": 72960,
+      "FollowersCount": 0
     }
   ],
   "Count": 2
@@ -390,10 +384,12 @@ o7
   "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
   "Username": "turecross123",
   "PermissionsType": 0,
-  "FollowerCount": 0,
+  "FollowersCount": 0,
   "FollowingCount": 0,
   "LikedLevelsCount": 0,
-  "PublishedLevelsCount": 0
+  "PublishedLevelsCount": 0,
+  "Deaths": 0,
+  "TotalPlayTime": 28948
 }
 ```
 
@@ -416,10 +412,12 @@ o7
   "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
   "Username": "turecross123",
   "PermissionsType": 0,
-  "FollowerCount": 0,
+  "FollowersCount": 0,
   "FollowingCount": 0,
   "LikedLevelsCount": 0,
-  "PublishedLevelsCount": 0
+  "PublishedLevelsCount": 0,
+  "Deaths": 0,
+  "TotalPlayTime": 28948
 }
 ```
 
@@ -430,7 +428,7 @@ o7
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/users/{userId}/following
+> {ip}:10061/api/v1/users/id/{userId}/following
 > ```
 
 ### Response: 200
@@ -448,7 +446,7 @@ o7
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/users/{userId}/follow
+> {ip}:10061/api/v1/users/id/{userId}/follow
 > ```
 
 ### Response: 201
@@ -464,7 +462,7 @@ o7
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/users/{userId}/unFollow
+> {ip}:10061/api/v1/users/id/{userId}/unFollow
 > ```
 
 ### Response: 200
@@ -482,7 +480,7 @@ o7
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/user/{userId}/remove
+> {ip}:10061/api/v1/users/id/{userId}/remove
 > ```
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
@@ -494,7 +492,7 @@ o7
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/user/{userId}/setPermissions
+> {ip}:10061/api/v1/users/id/{userId}/setPermissions
 > ```
 
 ### Body (**raw**)
@@ -554,6 +552,8 @@ o7
 | relevance          |
 | random             |
 | deaths             |
+| totalPlayTime      |
+| averagePlayTime    |
 
 ### Response: 200
 
@@ -567,15 +567,30 @@ o7
         "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
         "Username": "turecross321",
         "PermissionsType": 0,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 1,
-        "PublishedLevelsCount": 1
+        "PublishedLevelsCount": 1,
+        "FollowersCount": 0
       },
       "Created": "2023-05-13T08:17:25.080862+00:00",
       "Modified": "2023-05-13T08:17:25.080862+00:00",
-      "TotalPlays": 1,
-      "UniquePlays": 1,
+      "TotalPlays": 5,
+      "UniquePlays": 2,
+      "Likes": 0,
+      "Difficulty": 0
+    },
+    {
+      "Id": "5eLRLJuN",
+      "Name": "This is a level name",
+      "Author": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "PublishedLevelsCount": 72960,
+        "FollowersCount": 0
+      },
+      "Created": "2023-05-02T09:58:43.5485486+00:00",
+      "Modified": "2023-05-02T09:58:43.5485486+00:00",
+      "TotalPlays": 0,
+      "UniquePlays": 0,
       "Likes": 0,
       "Difficulty": 0
     },
@@ -586,10 +601,8 @@ o7
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72959
+        "PublishedLevelsCount": 72960,
+        "FollowersCount": 0
       },
       "Created": "2019-01-30T20:59:00+00:00",
       "Modified": "2019-01-30T20:59:00+00:00",
@@ -605,10 +618,8 @@ o7
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72959
+        "PublishedLevelsCount": 72960,
+        "FollowersCount": 0
       },
       "Created": "2019-01-30T12:08:31+00:00",
       "Modified": "2019-01-30T12:08:31+00:00",
@@ -624,10 +635,8 @@ o7
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72959
+        "PublishedLevelsCount": 72960,
+        "FollowersCount": 0
       },
       "Created": "2019-01-30T06:52:57+00:00",
       "Modified": "2019-01-30T06:52:57+00:00",
@@ -643,10 +652,8 @@ o7
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72959
+        "PublishedLevelsCount": 72960,
+        "FollowersCount": 0
       },
       "Created": "2019-01-30T03:37:58+00:00",
       "Modified": "2019-01-30T03:37:58+00:00",
@@ -662,10 +669,8 @@ o7
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72959
+        "PublishedLevelsCount": 72960,
+        "FollowersCount": 0
       },
       "Created": "2019-01-30T00:02:27+00:00",
       "Modified": "2019-01-30T00:02:27+00:00",
@@ -681,10 +686,8 @@ o7
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72959
+        "PublishedLevelsCount": 72960,
+        "FollowersCount": 0
       },
       "Created": "2019-01-29T23:20:03+00:00",
       "Modified": "2019-01-29T23:20:03+00:00",
@@ -695,44 +698,23 @@ o7
     },
     {
       "Id": "s0OGnpd2",
-      "Name": "Imported Level (s0OGnpd2)",
+      "Name": "This is an updated level name",
       "Author": {
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72959
+        "PublishedLevelsCount": 72960,
+        "FollowersCount": 0
       },
       "Created": "2019-01-29T22:23:10+00:00",
-      "Modified": "2019-01-29T22:23:10+00:00",
-      "TotalPlays": 0,
-      "UniquePlays": 0,
-      "Likes": 0,
-      "Difficulty": 0
-    },
-    {
-      "Id": "Prb9KzRE",
-      "Name": "Imported Level (Prb9KzRE)",
-      "Author": {
-        "Id": "00000000-0000-0000-0000-000000000000",
-        "Username": "admin",
-        "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72959
-      },
-      "Created": "2019-01-29T19:42:07+00:00",
-      "Modified": "2019-01-29T19:42:07+00:00",
+      "Modified": "2023-05-15T16:45:22.6611146+00:00",
       "TotalPlays": 0,
       "UniquePlays": 0,
       "Likes": 0,
       "Difficulty": 0
     }
   ],
-  "Count": 72960
+  "Count": 72961
 }
 ```
 
@@ -743,7 +725,7 @@ o7
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/levels/{levelId}/completed
+> {ip}:10061/api/v1/levels/id/{levelId}/completed
 > ```
 
 ### Response: 200
@@ -763,7 +745,7 @@ o7
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/levels/{levelId}/thumbnail
+> {ip}:10061/api/v1/levels/id/{levelId}/thumbnail
 > ```
 
 ### Response: 200
@@ -781,7 +763,7 @@ o7
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/levels/{levelId}/liked
+> {ip}:10061/api/v1/levels/id/{levelId}/liked
 > ```
 
 ### Response: 200
@@ -799,7 +781,7 @@ o7
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/levels/{levelId}/like
+> {ip}:10061/api/v1/levels/id/{levelId}/like
 > ```
 
 ### Response: 201
@@ -815,7 +797,7 @@ o7
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/levels/{levelId}/unLike
+> {ip}:10061/api/v1/levels/id/{levelId}/unLike
 > ```
 
 ### Response: 200
@@ -833,7 +815,7 @@ o7
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/levels/{levelId}/edit
+> {ip}:10061/api/v1/levels/id/{levelId}/edit
 > ```
 
 ### Body (**raw**)
@@ -882,7 +864,7 @@ o7
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/levels/{levelId}/remove
+> {ip}:10061/api/v1/levels/id/{levelId}/remove
 > ```
 
 ### Response: 200
@@ -907,9 +889,9 @@ o7
 
 ```json
 {
-  "Name": "This is a level name",
+  "Name": "This is a level name!",
   "Language": 0,
-  "Modified": "2023-05-02T09:58:43.5485486+00:00"
+  "Modified": "2023-05-16T09:58:43.5485486+00:00"
 }
 ```
 
@@ -917,23 +899,22 @@ o7
 
 ```json
 {
-  "Id": "5eLRLJuN",
-  "Name": "This is a level name",
+  "Id": "b8TuPIcA",
+  "Name": "This is a level name!",
   "Author": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
-    "FollowerCount": 0,
-    "FollowingCount": 0,
-    "LikedLevelsCount": 0,
-    "PublishedLevelsCount": 72960
+    "PublishedLevelsCount": 72961,
+    "FollowersCount": 0
   },
-  "Created": "2023-05-02T09:58:43.5485486+00:00",
-  "Modified": "2023-05-02T09:58:43.5485486+00:00",
+  "Created": "2023-05-16T09:58:43.5485486+00:00",
+  "Modified": "2023-05-16T09:58:43.5485486+00:00",
   "TotalPlays": 0,
   "UniquePlays": 0,
   "Likes": 0,
   "Deaths": 0,
+  "TotalPlayTime": 0,
   "Language": 0,
   "Difficulty": 0,
   "AlbumIds": [],
@@ -950,7 +931,7 @@ o7
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/levels/{levelId}/setLevel
+> {ip}:10061/api/v1/levels/id/{levelId}/setLevel
 > ```
 
 ### Body
@@ -972,7 +953,7 @@ Should be a Sound Shapes Level File
 ### Method: POST
 
 > ```
-> {ip]:10061/api/v1/levels/{levelId}/setSound
+> {ip]:10061/api/v1/levels/id/{levelId}/setSound
 > ```
 
 ### Body (**binary**)
@@ -994,7 +975,7 @@ Should be a Sound Shapes Sound File
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/levels/{levelId}/setThumbnail
+> {ip}:10061/api/v1/levels/id/{levelId}/setThumbnail
 > ```
 
 ### Body (**binary**)
@@ -1068,7 +1049,7 @@ Should be a PNG
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/albums/{albumId}
+> {ip}:10061/api/v1/albums/id/{albumId}
 > ```
 
 ### Response: 200
@@ -1094,7 +1075,7 @@ Should be a PNG
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/albums/{albumId}/thumbnail
+> {ip}:10061/api/v1/albums/id/{albumId}/thumbnail
 > ```
 
 ### Response: 200
@@ -1116,7 +1097,7 @@ Should be a PNG
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/albums/{albumId}/sidePanel
+> {ip}:10061/api/v1/albums/id/{albumId}/sidePanel
 > ```
 
 ### Response: 200
@@ -1136,7 +1117,7 @@ Should be a PNG
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/albums/{albumId}/completed
+> {ip}:10061/api/v1/albums/id/{albumId}/completed
 > ```
 
 ### Response: 200
@@ -1169,7 +1150,7 @@ Should be a PNG
   "Name": "We The Best",
   "Author": "DJ Khaled",
   "LinerNotes": "<html><h1>This is a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
-  "LevelIds": ["{levelId}"]
+  "LevelIds": ["{levelId}", "{otherLevelId}"]
 }
 ```
 
@@ -1181,7 +1162,7 @@ Should be a PNG
   "Author": "DJ Khaled",
   "Name": "We The Best",
   "LinerNotes": "<html><h1>This is a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
-  "TotalLevels": 1,
+  "TotalLevels": 2,
   "CreationDate": "2023-05-02T20:24:32.7037593+00:00",
   "ModificationDate": "2023-05-02T20:24:32.7037593+00:00"
 }
@@ -1196,7 +1177,7 @@ Should be a PNG
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/albums/{albumId}/edit
+> {ip}:10061/api/v1/albums/id/{albumId}/edit
 > ```
 
 ### Body (**raw**)
@@ -1233,7 +1214,7 @@ Should be a PNG
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/albums/{albumId}/setThumbnail
+> {ip}:10061/api/v1/albums/id/{albumId}/setThumbnail
 > ```
 
 ### Body
@@ -1255,7 +1236,7 @@ Should be a PNG
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/albums/{albumId}/setSidePanel
+> {ip}:10061/api/v1/albums/id/{albumId}/setSidePanel
 > ```
 
 ### Body
@@ -1277,7 +1258,7 @@ Should be a PNG
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/albums/{albumId}/remove
+> {ip}:10061/api/v1/albums/id/{albumId}/remove
 > ```
 
 ### Response: 200
@@ -1333,10 +1314,8 @@ Should be a PNG
         "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
         "Username": "turecross321",
         "PermissionsType": 0,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 1,
-        "PublishedLevelsCount": 1
+        "PublishedLevelsCount": 1,
+        "FollowersCount": 0
       },
       "PlayTime": 255397,
       "Tokens": 53,
@@ -1352,10 +1331,8 @@ Should be a PNG
         "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
         "Username": "turecross321",
         "PermissionsType": 0,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 1,
-        "PublishedLevelsCount": 1
+        "PublishedLevelsCount": 1,
+        "FollowersCount": 0
       },
       "PlayTime": 93431,
       "Tokens": 41,
@@ -1364,17 +1341,83 @@ Should be a PNG
       "Date": "2023-05-13T08:06:37.2545837+00:00"
     },
     {
-      "Id": "e3ebcc4b-4a17-4cb2-8518-62890d77771b",
+      "Id": "c20de6d1-2e63-4d24-9654-19460b29101f",
       "LevelId": "GIlJ9rMi",
       "Position": 2,
+      "User": {
+        "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+        "Username": "turecross123",
+        "PermissionsType": 0,
+        "PublishedLevelsCount": 0,
+        "FollowersCount": 0
+      },
+      "PlayTime": 7033,
+      "Tokens": 1,
+      "Deaths": 0,
+      "Completed": true,
+      "Date": "2023-05-16T15:06:47.2878822+00:00"
+    },
+    {
+      "Id": "6902618d-02b3-41ca-8c16-217b1b1df172",
+      "LevelId": "GIlJ9rMi",
+      "Position": 3,
+      "User": {
+        "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+        "Username": "turecross123",
+        "PermissionsType": 0,
+        "PublishedLevelsCount": 0,
+        "FollowersCount": 0
+      },
+      "PlayTime": 7283,
+      "Tokens": 1,
+      "Deaths": 0,
+      "Completed": true,
+      "Date": "2023-05-16T15:07:19.2745572+00:00"
+    },
+    {
+      "Id": "529d3e20-5ff0-439b-aa91-c5bff73339a2",
+      "LevelId": "GIlJ9rMi",
+      "Position": 4,
+      "User": {
+        "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+        "Username": "turecross123",
+        "PermissionsType": 0,
+        "PublishedLevelsCount": 0,
+        "FollowersCount": 0
+      },
+      "PlayTime": 7299,
+      "Tokens": 1,
+      "Deaths": 0,
+      "Completed": true,
+      "Date": "2023-05-16T15:27:42.9384007+00:00"
+    },
+    {
+      "Id": "db0b653b-43ed-4233-a4e0-cf80ad79574b",
+      "LevelId": "GIlJ9rMi",
+      "Position": 5,
+      "User": {
+        "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+        "Username": "turecross123",
+        "PermissionsType": 0,
+        "PublishedLevelsCount": 0,
+        "FollowersCount": 0
+      },
+      "PlayTime": 7333,
+      "Tokens": 1,
+      "Deaths": 0,
+      "Completed": true,
+      "Date": "2023-05-16T15:27:56.1172208+00:00"
+    },
+    {
+      "Id": "e3ebcc4b-4a17-4cb2-8518-62890d77771b",
+      "LevelId": "GIlJ9rMi",
+      "Position": 6,
       "User": {
         "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
         "Username": "turecross321",
         "PermissionsType": 0,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 1,
-        "PublishedLevelsCount": 1
+        "PublishedLevelsCount": 1,
+        "FollowersCount": 0
       },
       "PlayTime": 8149,
       "Tokens": 1,
@@ -1383,7 +1426,7 @@ Should be a PNG
       "Date": "2023-05-13T08:17:27.037232+00:00"
     }
   ],
-  "Count": 3
+  "Count": 7
 }
 ```
 
@@ -1396,7 +1439,7 @@ Should be a PNG
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/leaderboard/{leaderboardEntryId}/remove
+> {ip}:10061/api/v1/leaderboard/id/{leaderboardEntryId}/remove
 > ```
 
 ### Response: 200
@@ -1414,7 +1457,7 @@ Should be a PNG
 ### Method: GET
 
 > ```
-> {url}:10061/api/v1/daily?date=2023-05-14
+> {url}:10061/api/v1/daily
 > ```
 
 ### Query Params
@@ -1441,10 +1484,8 @@ Should be a PNG
           "Id": "00000000-0000-0000-0000-000000000000",
           "Username": "admin",
           "PermissionsType": 2,
-          "FollowerCount": 0,
-          "FollowingCount": 0,
-          "LikedLevelsCount": 0,
-          "PublishedLevelsCount": 72960
+          "PublishedLevelsCount": 72961,
+          "FollowersCount": 0
         },
         "Created": "2019-01-30T03:37:58+00:00",
         "Modified": "2019-01-30T03:37:58+00:00",
@@ -1458,10 +1499,8 @@ Should be a PNG
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72960
+        "PublishedLevelsCount": 72961,
+        "FollowersCount": 0
       }
     },
     {
@@ -1473,10 +1512,8 @@ Should be a PNG
           "Id": "00000000-0000-0000-0000-000000000000",
           "Username": "admin",
           "PermissionsType": 2,
-          "FollowerCount": 0,
-          "FollowingCount": 0,
-          "LikedLevelsCount": 0,
-          "PublishedLevelsCount": 72960
+          "PublishedLevelsCount": 72961,
+          "FollowersCount": 0
         },
         "Created": "2019-01-30T03:37:58+00:00",
         "Modified": "2019-01-30T03:37:58+00:00",
@@ -1490,10 +1527,8 @@ Should be a PNG
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72960
+        "PublishedLevelsCount": 72961,
+        "FollowersCount": 0
       }
     }
   ],
@@ -1518,7 +1553,7 @@ Should be a PNG
 ```json
 {
   "LevelId": "{levelId}",
-  "Date": "2023-05-02"
+  "Date": "2023-05-16"
 }
 ```
 
@@ -1526,57 +1561,32 @@ Should be a PNG
 
 ```json
 {
-  "Id": "43b2ab00-12ca-4ae4-9326-562e697f3fb7",
+  "Id": "1887e8d5-3c87-4e24-8304-0523128195ff",
   "Level": {
-    "Id": "GIlJ9rMi",
-    "Name": "Titled",
+    "Id": "b8TuPIcA",
+    "Name": "This is a level name!",
     "Author": {
-      "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
-      "Username": "turecross321",
-      "PermissionsType": 0,
-      "FollowerCount": 0,
-      "FollowingCount": 0,
-      "LikedLevelsCount": 1,
-      "PublishedLevelsCount": 1
+      "Id": "00000000-0000-0000-0000-000000000000",
+      "Username": "admin",
+      "PermissionsType": 2,
+      "PublishedLevelsCount": 72961,
+      "FollowersCount": 0
     },
-    "Created": "2023-05-13T08:17:25.080862+00:00",
-    "Modified": "2023-05-13T08:17:25.080862+00:00",
-    "TotalPlays": 1,
-    "UniquePlays": 1,
+    "Created": "2023-05-16T09:58:43.5485486+00:00",
+    "Modified": "2023-05-16T09:58:43.5485486+00:00",
+    "TotalPlays": 0,
+    "UniquePlays": 0,
     "Likes": 0,
     "Difficulty": 0
   },
-  "Date": "2023-05-14T22:00:00+00:00",
+  "Date": "2023-05-15T22:00:00+00:00",
   "Author": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
-    "FollowerCount": 0,
-    "FollowingCount": 0,
-    "LikedLevelsCount": 0,
-    "PublishedLevelsCount": 72960
+    "PublishedLevelsCount": 72961,
+    "FollowersCount": 0
   }
-}
-```
-
-⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
-
-## End-point: Edit Daily Level
-
-### ⚠️ This requires administrator permissions.
-
-### Method: POST
-
-> ```
-> {ip}:10061/api/v1/daily/{id}/edit
-> ```
-
-### Body (**raw**)
-
-```json
-{
-  "LevelId": "{levelId}",
-  "Date": "2023-05-15"
 }
 ```
 
@@ -1626,7 +1636,7 @@ Should be a PNG
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/daily/{dailyLevelId}/remove
+> {ip}:10061/api/v1/daily/id/{dailyLevelId}/remove
 > ```
 
 ### Response: 200
@@ -1681,10 +1691,8 @@ Should be a PNG
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72960
+        "PublishedLevelsCount": 72961,
+        "FollowersCount": 0
       },
       "Language": "global",
       "Title": "DJ Khaled is still stuck in a tree!",
@@ -1732,10 +1740,8 @@ Should be a PNG
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
-    "FollowerCount": 0,
-    "FollowingCount": 0,
-    "LikedLevelsCount": 0,
-    "PublishedLevelsCount": 72960
+    "PublishedLevelsCount": 72961,
+    "FollowersCount": 0
   },
   "Language": "global",
   "Title": "DJ Khaled is stuck in a tree!",
@@ -1754,7 +1760,7 @@ Should be a PNG
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/news/{newsEntryId}/edit
+> {ip}:10061/api/v1/news/id/{newsEntryId}/edit
 > ```
 
 ### Body (**raw**)
@@ -1780,10 +1786,8 @@ Should be a PNG
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
-    "FollowerCount": 0,
-    "FollowingCount": 0,
-    "LikedLevelsCount": 0,
-    "PublishedLevelsCount": 72960
+    "PublishedLevelsCount": 72961,
+    "FollowersCount": 0
   },
   "Language": "global",
   "Title": "DJ Khaled is still stuck in a tree!",
@@ -1800,7 +1804,7 @@ Should be a PNG
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/news/{newsEntryId}/remove
+> {ip}:10061/api/v1/news/id/{newsEntryId}/remove
 > ```
 
 ### Response: 200
@@ -1820,7 +1824,7 @@ Should be a PNG
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/news/{newsEntryId}/setImage
+> {ip}:10061/api/v1/news/id/{newsEntryId}/setImage
 > ```
 
 ### Body
@@ -1888,16 +1892,159 @@ Should be a PNG
 {
   "Activities": [
     {
+      "Id": "489012f8-637b-4f5b-b83f-d713b20d1e80",
+      "EventType": 0,
+      "Actor": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "PublishedLevelsCount": 72961,
+        "FollowersCount": 0
+      },
+      "ContentLevel": {
+        "Id": "b8TuPIcA",
+        "Name": "This is a level name!",
+        "Author": {
+          "Id": "00000000-0000-0000-0000-000000000000",
+          "Username": "admin",
+          "PermissionsType": 2,
+          "PublishedLevelsCount": 72961,
+          "FollowersCount": 0
+        },
+        "Created": "2023-05-16T09:58:43.5485486+00:00",
+        "Modified": "2023-05-16T09:58:43.5485486+00:00",
+        "TotalPlays": 0,
+        "UniquePlays": 0,
+        "Likes": 0,
+        "Difficulty": 0
+      },
+      "Date": "2023-05-16T15:38:48.377909+00:00"
+    },
+    {
+      "Id": "f8b0e054-08d6-4e60-a7ca-10a373605282",
+      "EventType": 3,
+      "Actor": {
+        "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+        "Username": "turecross123",
+        "PermissionsType": 0,
+        "PublishedLevelsCount": 0,
+        "FollowersCount": 0
+      },
+      "ContentLeaderboardEntry": {
+        "Id": "db0b653b-43ed-4233-a4e0-cf80ad79574b",
+        "LevelId": "GIlJ9rMi",
+        "Position": -1,
+        "User": {
+          "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+          "Username": "turecross123",
+          "PermissionsType": 0,
+          "PublishedLevelsCount": 0,
+          "FollowersCount": 0
+        },
+        "PlayTime": 7333,
+        "Tokens": 1,
+        "Deaths": 0,
+        "Completed": true,
+        "Date": "2023-05-16T15:27:56.1172208+00:00"
+      },
+      "Date": "2023-05-16T15:27:56.1190942+00:00"
+    },
+    {
+      "Id": "afc0e7ca-44af-40a7-bdb5-2311cf3f3ace",
+      "EventType": 3,
+      "Actor": {
+        "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+        "Username": "turecross123",
+        "PermissionsType": 0,
+        "PublishedLevelsCount": 0,
+        "FollowersCount": 0
+      },
+      "ContentLeaderboardEntry": {
+        "Id": "529d3e20-5ff0-439b-aa91-c5bff73339a2",
+        "LevelId": "GIlJ9rMi",
+        "Position": -1,
+        "User": {
+          "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+          "Username": "turecross123",
+          "PermissionsType": 0,
+          "PublishedLevelsCount": 0,
+          "FollowersCount": 0
+        },
+        "PlayTime": 7299,
+        "Tokens": 1,
+        "Deaths": 0,
+        "Completed": true,
+        "Date": "2023-05-16T15:27:42.9384007+00:00"
+      },
+      "Date": "2023-05-16T15:27:42.9430711+00:00"
+    },
+    {
+      "Id": "7e59bf49-0826-43b9-8804-b2c3938f3909",
+      "EventType": 3,
+      "Actor": {
+        "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+        "Username": "turecross123",
+        "PermissionsType": 0,
+        "PublishedLevelsCount": 0,
+        "FollowersCount": 0
+      },
+      "ContentLeaderboardEntry": {
+        "Id": "6902618d-02b3-41ca-8c16-217b1b1df172",
+        "LevelId": "GIlJ9rMi",
+        "Position": -1,
+        "User": {
+          "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+          "Username": "turecross123",
+          "PermissionsType": 0,
+          "PublishedLevelsCount": 0,
+          "FollowersCount": 0
+        },
+        "PlayTime": 7283,
+        "Tokens": 1,
+        "Deaths": 0,
+        "Completed": true,
+        "Date": "2023-05-16T15:07:19.2745572+00:00"
+      },
+      "Date": "2023-05-16T15:07:19.2788198+00:00"
+    },
+    {
+      "Id": "c2cba14a-0d76-4f4e-bcd5-7bd4f51c62f2",
+      "EventType": 3,
+      "Actor": {
+        "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+        "Username": "turecross123",
+        "PermissionsType": 0,
+        "PublishedLevelsCount": 0,
+        "FollowersCount": 0
+      },
+      "ContentLeaderboardEntry": {
+        "Id": "c20de6d1-2e63-4d24-9654-19460b29101f",
+        "LevelId": "GIlJ9rMi",
+        "Position": 0,
+        "User": {
+          "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+          "Username": "turecross123",
+          "PermissionsType": 0,
+          "PublishedLevelsCount": 0,
+          "FollowersCount": 0
+        },
+        "PlayTime": 7033,
+        "Tokens": 1,
+        "Deaths": 0,
+        "Completed": true,
+        "Date": "2023-05-16T15:06:47.2878822+00:00"
+      },
+      "Date": "2023-05-16T15:06:47.2913487+00:00"
+    },
+    {
       "Id": "1fb26cf7-8db9-4d2f-9bc6-278fa8aa2646",
       "EventType": 0,
       "Actor": {
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72960
+        "PublishedLevelsCount": 72961,
+        "FollowersCount": 0
       },
       "ContentLevel": {
         "Id": "5eLRLJuN",
@@ -1906,10 +2053,8 @@ Should be a PNG
           "Id": "00000000-0000-0000-0000-000000000000",
           "Username": "admin",
           "PermissionsType": 2,
-          "FollowerCount": 0,
-          "FollowingCount": 0,
-          "LikedLevelsCount": 0,
-          "PublishedLevelsCount": 72960
+          "PublishedLevelsCount": 72961,
+          "FollowersCount": 0
         },
         "Created": "2023-05-02T09:58:43.5485486+00:00",
         "Modified": "2023-05-02T09:58:43.5485486+00:00",
@@ -1927,19 +2072,15 @@ Should be a PNG
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72960
+        "PublishedLevelsCount": 72961,
+        "FollowersCount": 0
       },
       "ContentUser": {
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72960
+        "PublishedLevelsCount": 72961,
+        "FollowersCount": 0
       },
       "Date": "2023-05-14T00:14:49.9650531+00:00"
     },
@@ -1950,19 +2091,15 @@ Should be a PNG
         "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
         "Username": "turecross123",
         "PermissionsType": 0,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 0
+        "PublishedLevelsCount": 0,
+        "FollowersCount": 0
       },
       "ContentUser": {
         "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
         "Username": "turecross123",
         "PermissionsType": 0,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 0
+        "PublishedLevelsCount": 0,
+        "FollowersCount": 0
       },
       "Date": "2023-05-13T09:50:49.1702927+00:00"
     },
@@ -1973,23 +2110,19 @@ Should be a PNG
         "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
         "Username": "turecross321",
         "PermissionsType": 0,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 1,
-        "PublishedLevelsCount": 1
+        "PublishedLevelsCount": 1,
+        "FollowersCount": 0
       },
       "ContentLeaderboardEntry": {
         "Id": "e3ebcc4b-4a17-4cb2-8518-62890d77771b",
         "LevelId": "GIlJ9rMi",
-        "Position": 0,
+        "Position": 1,
         "User": {
           "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
           "Username": "turecross321",
           "PermissionsType": 0,
-          "FollowerCount": 0,
-          "FollowingCount": 0,
-          "LikedLevelsCount": 1,
-          "PublishedLevelsCount": 1
+          "PublishedLevelsCount": 1,
+          "FollowersCount": 0
         },
         "PlayTime": 8149,
         "Tokens": 1,
@@ -1998,141 +2131,9 @@ Should be a PNG
         "Date": "2023-05-13T08:17:27.037232+00:00"
       },
       "Date": "2023-05-13T08:17:27.0391331+00:00"
-    },
-    {
-      "Id": "364713da-610c-45da-8a64-9d00a75d335a",
-      "EventType": 0,
-      "Actor": {
-        "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
-        "Username": "turecross321",
-        "PermissionsType": 0,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 1,
-        "PublishedLevelsCount": 1
-      },
-      "ContentLevel": {
-        "Id": "GIlJ9rMi",
-        "Name": "Titled",
-        "Author": {
-          "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
-          "Username": "turecross321",
-          "PermissionsType": 0,
-          "FollowerCount": 0,
-          "FollowingCount": 0,
-          "LikedLevelsCount": 1,
-          "PublishedLevelsCount": 1
-        },
-        "Created": "2023-05-13T08:17:25.080862+00:00",
-        "Modified": "2023-05-13T08:17:25.080862+00:00",
-        "TotalPlays": 1,
-        "UniquePlays": 1,
-        "Likes": 0,
-        "Difficulty": 0
-      },
-      "Date": "2023-05-13T08:17:25.0874232+00:00"
-    },
-    {
-      "Id": "75597e41-c187-4500-8198-ca7f80a2ea76",
-      "EventType": 3,
-      "Actor": {
-        "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
-        "Username": "turecross321",
-        "PermissionsType": 0,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 1,
-        "PublishedLevelsCount": 1
-      },
-      "ContentLeaderboardEntry": {
-        "Id": "ae8ac9ff-f1db-4519-91a0-840b99f19d91",
-        "LevelId": "DkVflCl2",
-        "Position": -1,
-        "User": {
-          "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
-          "Username": "turecross321",
-          "PermissionsType": 0,
-          "FollowerCount": 0,
-          "FollowingCount": 0,
-          "LikedLevelsCount": 1,
-          "PublishedLevelsCount": 1
-        },
-        "PlayTime": 255397,
-        "Tokens": 53,
-        "Deaths": 3,
-        "Completed": false,
-        "Date": "2023-05-13T08:11:50.2710058+00:00"
-      },
-      "Date": "2023-05-13T08:11:50.2730079+00:00"
-    },
-    {
-      "Id": "2f1328ba-56cf-4398-87f5-273542935adf",
-      "EventType": 1,
-      "Actor": {
-        "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
-        "Username": "turecross321",
-        "PermissionsType": 0,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 1,
-        "PublishedLevelsCount": 1
-      },
-      "ContentLevel": {
-        "Id": "9LxNV8Jk",
-        "Name": "Imported Level (9LxNV8Jk)",
-        "Author": {
-          "Id": "00000000-0000-0000-0000-000000000000",
-          "Username": "admin",
-          "PermissionsType": 2,
-          "FollowerCount": 0,
-          "FollowingCount": 0,
-          "LikedLevelsCount": 0,
-          "PublishedLevelsCount": 72960
-        },
-        "Created": "2018-10-15T01:10:49+00:00",
-        "Modified": "2018-10-15T01:10:49+00:00",
-        "TotalPlays": 1,
-        "UniquePlays": 1,
-        "Likes": 1,
-        "Difficulty": 0
-      },
-      "Date": "2023-05-13T08:06:46.9773965+00:00"
-    },
-    {
-      "Id": "8c7cead5-1bd6-4b61-97fc-a602e12a4a03",
-      "EventType": 3,
-      "Actor": {
-        "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
-        "Username": "turecross321",
-        "PermissionsType": 0,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 1,
-        "PublishedLevelsCount": 1
-      },
-      "ContentLeaderboardEntry": {
-        "Id": "ae0f0fd7-8743-461e-8d4a-56dacc402873",
-        "LevelId": "9LxNV8Jk",
-        "Position": 0,
-        "User": {
-          "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
-          "Username": "turecross321",
-          "PermissionsType": 0,
-          "FollowerCount": 0,
-          "FollowingCount": 0,
-          "LikedLevelsCount": 1,
-          "PublishedLevelsCount": 1
-        },
-        "PlayTime": 93431,
-        "Tokens": 41,
-        "Deaths": 0,
-        "Completed": true,
-        "Date": "2023-05-13T08:06:37.2545837+00:00"
-      },
-      "Date": "2023-05-13T08:06:37.2582467+00:00"
     }
   ],
-  "Count": 8
+  "Count": 13
 }
 ```
 
@@ -2145,7 +2146,7 @@ Should be a PNG
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/activities/{activityId}/remove
+> {ip}:10061/api/v1/activities/id/{activityId}/remove
 > ```
 
 ### Response: 200
@@ -2210,22 +2211,26 @@ Should be a PNG
           "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
           "Username": "turecross321",
           "PermissionsType": 0,
-          "FollowerCount": 0,
-          "FollowingCount": 0,
-          "LikedLevelsCount": 1,
-          "PublishedLevelsCount": 1
+          "PublishedLevelsCount": 1,
+          "FollowersCount": 0
         },
         "Created": "2023-05-13T08:17:25.080862+00:00",
         "Modified": "2023-05-13T08:17:25.080862+00:00",
-        "TotalPlays": 1,
-        "UniquePlays": 1,
+        "TotalPlays": 5,
+        "UniquePlays": 2,
         "Likes": 0,
         "Difficulty": 0
       },
       "ContentType": 1,
       "ReasonType": 0,
       "Date": "2023-05-15T17:01:32.9532553+00:00",
-      "IssuerId": "00000000-0000-0000-0000-000000000000"
+      "Issuer": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "PublishedLevelsCount": 72961,
+        "FollowersCount": 0
+      }
     }
   ],
   "Count": 1
@@ -2241,19 +2246,41 @@ Should be a PNG
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/reports/{reportId}
+> {ip}:10061/api/v1/reports/id/{reportId}
 > ```
 
 ### Response: 200
 
 ```json
 {
-  "Id": "bc40cb6d-78e2-4054-9ec7-973a5d9fac48",
-  "ContentId": "1kO92jIEm",
-  "ContentType": 0,
-  "ReportReasonId": 5,
-  "Issued": "2023-05-02T20:42:12.5031374+00:00",
-  "IssuerId": "27110eaf-f805-4ce4-afe4-cf98d9ca3d0c"
+  "Id": "15d0e958-1c82-409e-a3e9-1e25bf98d629",
+  "ContentLevel": {
+    "Id": "GIlJ9rMi",
+    "Name": "Titled",
+    "Author": {
+      "Id": "4db810b2-b68b-4034-a851-a20f4cb5d8e2",
+      "Username": "turecross321",
+      "PermissionsType": 0,
+      "PublishedLevelsCount": 1,
+      "FollowersCount": 0
+    },
+    "Created": "2023-05-13T08:17:25.080862+00:00",
+    "Modified": "2023-05-13T08:17:25.080862+00:00",
+    "TotalPlays": 5,
+    "UniquePlays": 2,
+    "Likes": 0,
+    "Difficulty": 0
+  },
+  "ContentType": 1,
+  "ReasonType": 0,
+  "Date": "2023-05-15T17:01:32.9532553+00:00",
+  "Issuer": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "PublishedLevelsCount": 72961,
+    "FollowersCount": 0
+  }
 }
 ```
 
@@ -2309,7 +2336,7 @@ Should be a PNG
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/reports/{reportId}/remove
+> {ip}:10061/api/v1/reports/id/{reportId}/remove
 > ```
 
 ### Response: 200
@@ -2354,22 +2381,18 @@ Should be a PNG
         "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
         "Username": "turecross123",
         "PermissionsType": 0,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 0
+        "PublishedLevelsCount": 0,
+        "FollowersCount": 0
       },
       "PunishmentType": 0,
       "Reason": "Still Not Good...",
-      "Revoked": false,
+      "Revoked": true,
       "Author": {
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "FollowerCount": 0,
-        "FollowingCount": 0,
-        "LikedLevelsCount": 0,
-        "PublishedLevelsCount": 72960
+        "PublishedLevelsCount": 72961,
+        "FollowersCount": 0
       },
       "IssuedAt": "2023-05-15T19:13:01.052509+00:00",
       "ExpiresAt": "2030-06-02T09:58:43.5485486+00:00"
@@ -2401,7 +2424,7 @@ Should be a PNG
 {
   "UserId": "{userId}",
   "PunishmentType": 0,
-  "Reason": "Not Good...",
+  "Reason": "NOT GOOD...",
   "ExpiresAt": "2023-06-02T09:58:43.5485486+00:00"
 }
 ```
@@ -2410,29 +2433,25 @@ Should be a PNG
 
 ```json
 {
-  "Id": "ed43c3e6-a4d6-4d26-ab1e-8c43fcfe2030",
+  "Id": "52036622-ffda-460e-b4d6-5f8f78c27790",
   "Recipient": {
     "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
     "Username": "turecross123",
     "PermissionsType": 0,
-    "FollowerCount": 0,
-    "FollowingCount": 0,
-    "LikedLevelsCount": 0,
-    "PublishedLevelsCount": 0
+    "PublishedLevelsCount": 0,
+    "FollowersCount": 0
   },
   "PunishmentType": 0,
-  "Reason": "Not Good...",
+  "Reason": "NOT GOOD...",
   "Revoked": false,
   "Author": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
-    "FollowerCount": 0,
-    "FollowingCount": 0,
-    "LikedLevelsCount": 0,
-    "PublishedLevelsCount": 72960
+    "PublishedLevelsCount": 72961,
+    "FollowersCount": 0
   },
-  "IssuedAt": "2023-05-15T19:13:01.052509+00:00",
+  "IssuedAt": "2023-05-16T15:50:34.7685334+00:00",
   "ExpiresAt": "2023-06-02T09:58:43.5485486+00:00"
 }
 ```
@@ -2446,7 +2465,7 @@ Should be a PNG
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/punishments/{punishmentId}/edit
+> {ip}:10061/api/v1/punishments/id/{punishmentId}/edit
 > ```
 
 | PunishmentType | Punishment |
@@ -2468,15 +2487,13 @@ Should be a PNG
 
 ```json
 {
-  "Id": "ed43c3e6-a4d6-4d26-ab1e-8c43fcfe2030",
+  "Id": "52036622-ffda-460e-b4d6-5f8f78c27790",
   "Recipient": {
     "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
     "Username": "turecross123",
     "PermissionsType": 0,
-    "FollowerCount": 0,
-    "FollowingCount": 0,
-    "LikedLevelsCount": 0,
-    "PublishedLevelsCount": 0
+    "PublishedLevelsCount": 0,
+    "FollowersCount": 0
   },
   "PunishmentType": 0,
   "Reason": "Still Not Good...",
@@ -2485,12 +2502,10 @@ Should be a PNG
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
-    "FollowerCount": 0,
-    "FollowingCount": 0,
-    "LikedLevelsCount": 0,
-    "PublishedLevelsCount": 72960
+    "PublishedLevelsCount": 72961,
+    "FollowersCount": 0
   },
-  "IssuedAt": "2023-05-15T19:13:01.052509+00:00",
+  "IssuedAt": "2023-05-16T15:50:34.7685334+00:00",
   "ExpiresAt": "2030-06-02T09:58:43.5485486+00:00"
 }
 ```
@@ -2504,7 +2519,7 @@ Should be a PNG
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/punishments/{punishmentId}/revoke
+> {ip}:10061/api/v1/punishments/id/{punishmentId}/revoke
 > ```
 
 ### Response: 200

@@ -8,13 +8,13 @@ public class ApiDailyLevelResponse
     public ApiDailyLevelResponse(DailyLevel dailyLevel)
     {
         Id = dailyLevel.Id;
-        Level = new ApiLevelSummaryResponse(dailyLevel.Level);
+        Level = new ApiLevelBriefResponse(dailyLevel.Level);
         Date = dailyLevel.Date;
-        Author = new ApiUserResponse(dailyLevel.Author);
+        Author = new ApiUserBriefResponse(dailyLevel.Author);
     }
 
     public string Id { get; }
-    public ApiLevelSummaryResponse Level { get; }
+    public ApiLevelBriefResponse Level { get; }
     public DateTimeOffset Date { get; }
-    public ApiUserResponse Author { get; set; }
+    public ApiUserBriefResponse Author { get; set; }
 }

@@ -29,7 +29,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         Punishment? ban = IsUserBanned(user);
         GameSession session = database.CreateSession(context, user, ban == null ? SessionType.Api : SessionType.Banned);
         
-        return new Response(new ApiAuthenticationResponse(session, ban), ContentType.Json);
+        return new Response(new ApiSessionResponse(session, ban), ContentType.Json);
     }
 
     [ApiEndpoint("account/logout", Method.Post)]
