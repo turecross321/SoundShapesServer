@@ -24,7 +24,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         GameUser? user = database.GetUserWithEmail(body.Email);
         if (user == null) return _invalidCredentialsResponse;
 
-        if (database.ValidatePassword(user, body.PasswordSha512)) return _invalidCredentialsResponse;
+        if (!database.ValidatePassword(user, body.PasswordSha512)) return _invalidCredentialsResponse;
 
         Punishment? ban = IsUserBanned(user);
         GameSession session = database.CreateSession(context, user, ban == null ? SessionType.Api : SessionType.Banned);
