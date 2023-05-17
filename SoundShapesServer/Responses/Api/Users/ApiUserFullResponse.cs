@@ -13,6 +13,7 @@ public class ApiUserFullResponse
         FollowingCount = user.Following.Count();
         LikedLevelsCount = user.LikedLevels.Count();
         PublishedLevelsCount = user.Levels.Count();
+        ActivitiesCount = user.Events.Count();
         Deaths = user.Deaths;
         TotalPlayTime = user.TotalPlayTime;
     }
@@ -24,6 +25,7 @@ public class ApiUserFullResponse
     public int FollowingCount { get; set; }
     public int LikedLevelsCount { get; set; }
     public int PublishedLevelsCount { get; set; }
+    public int ActivitiesCount { get; set; }
     public int Deaths { get; set; }
     public long TotalPlayTime { get; set; }
 }

@@ -388,6 +388,7 @@ o7
   "FollowingCount": 0,
   "LikedLevelsCount": 0,
   "PublishedLevelsCount": 0,
+  "ActivitiesCount": 5,
   "Deaths": 0,
   "TotalPlayTime": 28948
 }
@@ -416,6 +417,7 @@ o7
   "FollowingCount": 0,
   "LikedLevelsCount": 0,
   "PublishedLevelsCount": 0,
+  "ActivitiesCount": 5,
   "Deaths": 0,
   "TotalPlayTime": 28948
 }
