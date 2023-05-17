@@ -18,16 +18,15 @@ public class LevelEndpoints : EndpointGroup
     [Authentication(false)]
     public Response LevelsEndpoint(RequestContext context, GameDatabaseContext database, GameUser? user, GameSession? session)
     {
-        if (session == null) return HttpStatusCode.Forbidden;
-     
-        // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
-        if (session.SessionType != (int)SessionType.Game || user == null) return new Response(new LevelsWrapper(), ContentType.Json);
-
         string? orderString = context.QueryString["orderBy"];
         string? query = context.QueryString["query"];
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
         string categoryString = context.QueryString["search"] ?? "all";
+        
+        // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
+        if (categoryString == "tagged3" && (session == null || session.SessionType != (int)SessionType.Game || user == null)) 
+            return new Response(new LevelsWrapper(), ContentType.Json);
         
         LevelOrderType? order = null;
         LevelFilters filters = new ();
