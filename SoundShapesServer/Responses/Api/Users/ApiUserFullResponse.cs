@@ -9,6 +9,7 @@ public class ApiUserFullResponse
         Id = user.Id;
         Username = user.Username;
         PermissionsType = user.PermissionsType;
+        CreationDate = user.CreationDate;
         FollowersCount = user.Followers.Count();
         FollowingCount = user.Following.Count();
         LikedLevelsCount = user.LikedLevels.Count();
@@ -21,6 +22,7 @@ public class ApiUserFullResponse
     public string Id { get; set; }
     public string Username { get; set; }
     public int PermissionsType { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
     public int FollowersCount { get; set; }
     public int FollowingCount { get; set; }
     public int LikedLevelsCount { get; set; }
