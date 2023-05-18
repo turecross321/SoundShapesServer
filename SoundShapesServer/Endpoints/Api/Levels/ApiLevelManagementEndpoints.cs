@@ -12,9 +12,8 @@ using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.PermissionHelper;
-using static SoundShapesServer.Helpers.ResourceHelper;
 
-namespace SoundShapesServer.Endpoints.Api.Moderation;
+namespace SoundShapesServer.Endpoints.Api.Levels;
 
 public class ApiLevelManagementEndpoints : EndpointGroup
 {
@@ -54,7 +53,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
         if (level.Author.Id != user.Id && !IsUserAdmin(user))
             return HttpStatusCode.Unauthorized;
 
-        return database.UploadLevelResources(dataStore, level, body, fileType);
+        return database.UploadLevelResource(dataStore, level, body, fileType);
     }
 
     // Remove Levels is in ../Levels/ApiLevelEndpoints

@@ -6,7 +6,6 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Albums;
 
 namespace SoundShapesServer.Endpoints.Game.Albums;
@@ -27,11 +26,21 @@ public class AlbumResourceEndpoints : EndpointGroup
     public Response GetAlbumResource
         (RequestContext context, IDataStore dataStore, GameDatabaseContext database, string albumId, string resource)
     {
-        if (database.GetAlbumWithId(albumId) == null) return HttpStatusCode.NotFound;
+        GameAlbum? album = database.GetAlbumWithId(albumId);
+        if (album == null) return HttpStatusCode.NotFound;
 
         if (!Enum.TryParse(resource, out AlbumResourceType resourceType)) return HttpStatusCode.NotFound;
-        string key = ResourceHelper.GetAlbumResourceKey(albumId, resourceType);
 
+        string? key = resourceType switch
+        {
+            AlbumResourceType.Thumbnail => album.ThumbnailFilePath,
+            AlbumResourceType.SidePanel => album.SidePanelFilePath,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        if (key == null) return HttpStatusCode.NotFound;
+        if (!dataStore.ExistsInStore(key)) return HttpStatusCode.Gone;
+        
         return GetResource(dataStore, key);
     }
 }

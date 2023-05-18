@@ -1,5 +1,6 @@
 using Bunkum.RealmDatabase;
 using Realms;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Leaderboard;
@@ -16,7 +17,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 12;
+    protected override ulong SchemaVersion => 13;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -41,6 +42,30 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 
     protected override void Migrate(Migration migration, ulong oldVersion)
     {
-        // Not used
+        if (oldVersion < 13)
+        {
+            foreach (GameLevel level in migration.NewRealm.All<GameLevel>())
+            {
+                level.LevelFilePath = ResourceHelper.GetLevelResourceKey(level.Id, FileType.Level);
+                level.ThumbnailFilePath = ResourceHelper.GetLevelResourceKey(level.Id, FileType.Image);
+                level.SoundFilePath = ResourceHelper.GetLevelResourceKey(level.Id, FileType.Sound);
+            }
+
+            foreach (GameAlbum album in migration.NewRealm.All<GameAlbum>())
+            {
+                album.ThumbnailFilePath = ResourceHelper.GetAlbumResourceKey(album.Id, AlbumResourceType.Thumbnail);
+                album.SidePanelFilePath = ResourceHelper.GetAlbumResourceKey(album.Id, AlbumResourceType.SidePanel);
+            }
+
+            foreach (GameUser user in migration.NewRealm.All<GameUser>())
+            {
+                user.SaveFilePath = ResourceHelper.GetSaveResourceKey(user.Id);
+            }
+
+            foreach (NewsEntry newsEntry in migration.NewRealm.All<NewsEntry>())
+            {
+                newsEntry.ThumbnailFilePath = ResourceHelper.GetNewsResourceKey(newsEntry.Id);
+            }
+        }
     }
 }

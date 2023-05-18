@@ -94,9 +94,9 @@ public class LevelPublishingEndpoints : EndpointGroup
             return HttpStatusCode.BadRequest;
         }
 
-        database.UploadLevelResources(dataStore, level, levelFile, FileType.Level);
-        database.UploadLevelResources(dataStore, level, imageFile, FileType.Image);
-        database.UploadLevelResources(dataStore, level, soundFile, FileType.Sound);
+        database.UploadLevelResource(dataStore, level, levelFile, FileType.Level);
+        database.UploadLevelResource(dataStore, level, imageFile, FileType.Image);
+        database.UploadLevelResource(dataStore, level, soundFile, FileType.Sound);
 
         return HttpStatusCode.Created;
     }

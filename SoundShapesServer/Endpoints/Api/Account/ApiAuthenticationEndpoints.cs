@@ -11,7 +11,7 @@ using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.PunishmentHelper;
 
-namespace SoundShapesServer.Endpoints.Api;
+namespace SoundShapesServer.Endpoints.Api.Account;
 
 public class ApiAuthenticationEndpoints : EndpointGroup
 {

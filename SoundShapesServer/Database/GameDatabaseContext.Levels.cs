@@ -68,8 +68,7 @@ public partial class GameDatabaseContext
         });
     }
     
-    // Not database related, but idk where these should be otherwise.
-    public Response UploadLevelResources(IDataStore dataStore, GameLevel level,
+    public Response UploadLevelResource(IDataStore dataStore, GameLevel level,
         byte[] file, FileType fileType)
     {
         if (fileType == FileType.Image && !IsByteArrayPng(file))
@@ -78,16 +77,39 @@ public partial class GameDatabaseContext
         string key = GetLevelResourceKey(level.Id, fileType);
         dataStore.WriteToStore(key, file);
         
-        if (fileType == FileType.Level) SetLevelFileSize(level, file.Length);
+        SetLevelFilePath(level, fileType, key);
 
         return HttpStatusCode.Created;
     }
-    
+
+    private void SetLevelFilePath(GameLevel level, FileType fileType, string path)
+    {
+        _realm.Write(() =>
+        {
+            switch (fileType)
+            {
+                case FileType.Level:
+                    level.LevelFilePath = path;
+                    break;
+                case FileType.Image:
+                    level.ThumbnailFilePath = path;
+                    break;
+                case FileType.Sound:
+                    level.ThumbnailFilePath = path;
+                    break;
+                case FileType.Unknown:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(fileType), fileType, null);
+            }
+        });
+    }
+
     private static void RemoveLevelResources(GameLevel level, IDataStore dataStore)
     {
-        dataStore.RemoveFromStore(GetLevelResourceKey(level.Id, FileType.Image));
-        dataStore.RemoveFromStore(GetLevelResourceKey(level.Id, FileType.Level));
-        dataStore.RemoveFromStore(GetLevelResourceKey(level.Id, FileType.Sound));
+        if (level.LevelFilePath != null) dataStore.RemoveFromStore(level.LevelFilePath);
+        if (level.ThumbnailFilePath != null) dataStore.RemoveFromStore(level.ThumbnailFilePath);
+        if (level.SoundFilePath != null) dataStore.RemoveFromStore(level.SoundFilePath);
     }
     
     public void RemoveLevel(GameLevel level, IDataStore dataStore)

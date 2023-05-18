@@ -1,3 +1,6 @@
+using System.Net;
+using Bunkum.CustomHttpListener.Parsing;
+using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
@@ -23,13 +26,47 @@ public partial class GameDatabaseContext
 
     public void RemoveAlbum(IDataStore dataStore, GameAlbum album)
     {
-        dataStore.RemoveFromStore(ResourceHelper.GetAlbumResourceKey(album.Id, AlbumResourceType.Thumbnail));
-        dataStore.RemoveFromStore(ResourceHelper.GetAlbumResourceKey(album.Id, AlbumResourceType.SidePanel));
+        RemoveAlbumResources(dataStore, album);
         
         _realm.Write(() =>
         {
             _realm.Remove(album);
         });
+    }
+
+    // These aren't database related, but idk where to put them otherwise
+    public Response UploadAlbumResource(IDataStore dataStore, GameAlbum album, byte[] file, AlbumResourceType resourceType)
+    {
+        // Album Files should always be Images
+        if (!ResourceHelper.IsByteArrayPng(file))
+            return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
+
+        string key = ResourceHelper.GetAlbumResourceKey(album.Id, resourceType);
+        dataStore.WriteToStore(key, file);
+        
+        SetAlbumFilePath(album, resourceType, key);
+
+        return HttpStatusCode.Created;
+    }
+
+    private void SetAlbumFilePath(GameAlbum album, AlbumResourceType resourceType, string path)
+    {
+        switch (resourceType)
+        {
+            case AlbumResourceType.Thumbnail:
+                album.ThumbnailFilePath = path;
+                break;
+            case AlbumResourceType.SidePanel:
+                album.SidePanelFilePath = path;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(resourceType), resourceType, null);
+        }
+    }
+    private void RemoveAlbumResources(IDataStore dataStore, GameAlbum album)
+    {
+        if (album.ThumbnailFilePath != null) dataStore.RemoveFromStore(album.ThumbnailFilePath);
+        if (album.SidePanelFilePath != null) dataStore.RemoveFromStore(album.SidePanelFilePath);
     }
     
     public GameAlbum EditAlbum(GameAlbum album, ApiCreateAlbumRequest request)
@@ -51,7 +88,6 @@ public partial class GameDatabaseContext
 
         return album;
     }
-    // TODO: Implement same ordering system as levels
     public (GameAlbum[], int) GetAlbums(AlbumOrderType order, bool descending, int from, int count)
     {
         IQueryable<GameAlbum> orderedAlbums = order switch

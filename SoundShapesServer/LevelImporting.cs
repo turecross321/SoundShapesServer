@@ -118,13 +118,9 @@ public static class LevelImporting
             PublishLevelRequest request = new ($"Imported Level ({levelId})", 0, levelBytes.LongLength, levelCreationDate);
             GameLevel publishedLevel = database.CreateLevel(request, serverUser, false, levelId);
 
-            string levelKey = GetLevelResourceKey(publishedLevel.Id, FileType.Level);
-            string thumbnailKey = GetLevelResourceKey(publishedLevel.Id, FileType.Image);
-            string soundKey = GetLevelResourceKey(publishedLevel.Id, FileType.Sound);
-
-            dataStore.WriteToStore(levelKey, levelBytes);
-            dataStore.WriteToStore(thumbnailKey, thumbnailBytes);
-            dataStore.WriteToStore(soundKey, soundBytes);
+            database.UploadLevelResource(dataStore, publishedLevel, levelBytes, FileType.Level);
+            database.UploadLevelResource(dataStore, publishedLevel, thumbnailBytes, FileType.Image);
+            database.UploadLevelResource(dataStore, publishedLevel, soundBytes, FileType.Sound);
             
             File.Delete(level.FilePath);
             File.Delete(thumbnail.FilePath);

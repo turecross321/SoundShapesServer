@@ -35,6 +35,9 @@ public class GameLevel : RealmObject
     public GameUser Author { get; init; }
     public string Name { get; set; }
     public int Language { get; set; }
+    public string? LevelFilePath { get; set; }
+    public string? ThumbnailFilePath { get; set; }
+    public string? SoundFilePath { get; set; }
     public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset ModificationDate { get; set; }
     public long TotalPlayTime { get; set; }

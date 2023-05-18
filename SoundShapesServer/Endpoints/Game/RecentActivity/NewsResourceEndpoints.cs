@@ -4,7 +4,8 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
-using SoundShapesServer.Helpers;
+using SoundShapesServer.Database;
+using SoundShapesServer.Types.News;
 
 namespace SoundShapesServer.Endpoints.Game.RecentActivity;
 
@@ -12,11 +13,16 @@ public class NewsResourceEndpoints : EndpointGroup
 {
     [GameEndpoint("~news:{id}/~content:thumbnail/data.get", ContentType.BinaryData)]
     [Authentication(false)]
-    public Response GetNewsImage(RequestContext context, IDataStore dataStore, string id)
+    public Response GetNewsImage(RequestContext context, GameDatabaseContext database, IDataStore dataStore, string id)
     {
-        dataStore.TryGetDataFromStore(ResourceHelper.GetNewsResourceKey(id), out byte[]? data);
-        if (data == null) return HttpStatusCode.NotFound;
+        NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
+        if (newsEntry == null) return HttpStatusCode.NotFound;
+
+        string? key = newsEntry.ThumbnailFilePath;
         
-        return new Response(data, ContentType.BinaryData);
+        if (key == null) return HttpStatusCode.NotFound;
+        if (!dataStore.ExistsInStore(key)) return HttpStatusCode.Gone;
+
+        return new Response(dataStore.GetDataFromStore(key), ContentType.BinaryData);
     }
 }

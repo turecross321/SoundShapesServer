@@ -8,7 +8,7 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Endpoints.Api.Moderation;
+namespace SoundShapesServer.Endpoints.Api.PlayerActivity;
 
 public class ApiPlayerActivityManagementEndpoint : EndpointGroup
 {

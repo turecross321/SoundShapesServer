@@ -6,19 +6,18 @@ using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.IP_Authorization;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using static System.Boolean;
 
-namespace SoundShapesServer.Endpoints.Api;
+namespace SoundShapesServer.Endpoints.Api.IpAuthorization;
 
 public class ApiIpAuthorization : EndpointGroup
 {
     [ApiEndpoint("ip/authorize", Method.Post)]
     public Response AuthorizeIpAddress(RequestContext context, GameDatabaseContext database, ApiAuthorizeIpRequest body, GameUser user)
     {
-        IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress, (int)SessionType.Game);
+        Types.IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress, (int)SessionType.Game);
 
         if (database.AuthorizeIpAddress(ip, body.OneTimeUse))
             return HttpStatusCode.Created;
@@ -28,7 +27,7 @@ public class ApiIpAuthorization : EndpointGroup
     [ApiEndpoint("ip/unAuthorize", Method.Post)]
     public Response UnAuthorizeIpAddress(RequestContext context, GameDatabaseContext database, ApiUnAuthorizeIpRequest body, GameUser user)
     {
-        IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress, (int)SessionType.Game);
+        Types.IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress, (int)SessionType.Game);
 
         database.RemoveIpAddress(ip);
         return HttpStatusCode.OK;
@@ -43,7 +42,7 @@ public class ApiIpAuthorization : EndpointGroup
         bool? authorized = null;
         if (TryParse(context.QueryString["authorized"], out bool authorizedTemp)) authorized = authorizedTemp;
         
-        (IpAuthorization[] addresses, int totalAddresses) =
+        (Types.IpAuthorization[] addresses, int totalAddresses) =
             database.GetIpAddresses(user, from, count,  SessionType.Game, authorized);
 
         return new ApiIpAddressesWrapper(addresses, totalAddresses);

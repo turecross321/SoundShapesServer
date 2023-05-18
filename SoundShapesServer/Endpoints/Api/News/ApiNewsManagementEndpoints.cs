@@ -10,9 +10,8 @@ using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.RecentActivity;
 using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.ResourceHelper;
 
-namespace SoundShapesServer.Endpoints.Api.Moderation;
+namespace SoundShapesServer.Endpoints.Api.News;
 
 public class ApiNewsManagementEndpoints : EndpointGroup
 {
@@ -39,26 +38,15 @@ public class ApiNewsManagementEndpoints : EndpointGroup
         return new Response(new ApiNewsResponse(editedNewsEntry), ContentType.Json, HttpStatusCode.Created);
     }
     
-    [ApiEndpoint("news/id/{id}/setImage", Method.Post)]
-    public Response SetNewsAssets(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id, Stream body)
+    [ApiEndpoint("news/id/{id}/setThumbnail", Method.Post)]
+    public Response SetNewsAssets(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id, byte[] body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
         if (newsEntry == null) return HttpStatusCode.NotFound;
-        
-        byte[] image;
 
-        using (MemoryStream memoryStream = new ())
-        {
-            body.CopyTo(memoryStream);
-            image = memoryStream.ToArray();
-        }
-        
-        if (!IsByteArrayPng(image)) return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
-
-        dataStore.WriteToStore(GetNewsResourceKey(id), image);
-        return HttpStatusCode.Created;
+        return database.UploadNewsResource(dataStore, newsEntry, body);
     }
 
     [ApiEndpoint("news/id/{id}/remove", Method.Post)]

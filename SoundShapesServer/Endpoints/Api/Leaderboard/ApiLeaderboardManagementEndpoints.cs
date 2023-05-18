@@ -8,7 +8,7 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Endpoints.Api.Moderation;
+namespace SoundShapesServer.Endpoints.Api.Leaderboard;
 
 public class ApiLeaderboardManagementEndpoints : EndpointGroup
 {

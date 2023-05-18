@@ -6,7 +6,7 @@ using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Users;
 using static System.Boolean;
 
-namespace SoundShapesServer.Endpoints.Api;
+namespace SoundShapesServer.Endpoints.Api.Leaderboard;
 
 public class ApiLeaderboardEndpoints : EndpointGroup
 {

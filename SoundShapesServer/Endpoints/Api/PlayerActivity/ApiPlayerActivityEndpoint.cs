@@ -6,7 +6,7 @@ using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Endpoints.Api;
+namespace SoundShapesServer.Endpoints.Api.PlayerActivity;
 
 public class ApiPlayerActivityEndpoint : EndpointGroup
 {

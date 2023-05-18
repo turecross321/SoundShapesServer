@@ -10,7 +10,7 @@ using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Endpoints.Api.Moderation;
+namespace SoundShapesServer.Endpoints.Api.Users;
 
 public class ApiUserManagementEndpoints : EndpointGroup
 {

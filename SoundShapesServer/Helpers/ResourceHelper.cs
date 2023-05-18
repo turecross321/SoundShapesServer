@@ -50,13 +50,16 @@ public static class ResourceHelper
     private const string LevelsPath = "levels";
     public static string GetLevelResourceKey(string levelId, FileType fileType)
     {
-        if (fileType == FileType.Image) return $"{LevelsPath}/{levelId}-thumbnail";
-        if (fileType == FileType.Level) return $"{LevelsPath}/{levelId}-level";
-        if (fileType == FileType.Sound) return $"{LevelsPath}/{levelId}-sound";
-
-        return "";
+        return fileType switch
+        {
+            FileType.Image => $"{LevelsPath}/{levelId}-thumbnail",
+            FileType.Level => $"{LevelsPath}/{levelId}-level",
+            FileType.Sound => $"{LevelsPath}/{levelId}-sound",
+            FileType.Unknown => throw new Exception(),
+            _ => throw new Exception()
+        };
     }
-    
+
     private const string AlbumsPath = "albums";
     public static string GetAlbumResourceKey(string albumId, AlbumResourceType resourceType)
     {
@@ -64,10 +67,10 @@ public static class ResourceHelper
         {
             AlbumResourceType.Thumbnail => $"{AlbumsPath}/{albumId}-thumbnail",
             AlbumResourceType.SidePanel => $"{AlbumsPath}/{albumId}-sidePanel",
-            _ => ""
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
-    
+
     public static string GenerateAlbumResourceUrl(string albumId, AlbumResourceType type)
     {
         return $"otg/~album:{albumId}/~content:{type.ToString()}/data.get";

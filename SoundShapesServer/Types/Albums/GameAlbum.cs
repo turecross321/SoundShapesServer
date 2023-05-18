@@ -34,4 +34,7 @@ public class GameAlbum : RealmObject
     public IList<GameLevel> Levels { get; }
     #pragma warning restore CS8618
     // ReSharper restore UnassignedGetOnlyAutoProperty
+    
+    public string? ThumbnailFilePath { get; set; }
+    public string? SidePanelFilePath { get; set; }
 }

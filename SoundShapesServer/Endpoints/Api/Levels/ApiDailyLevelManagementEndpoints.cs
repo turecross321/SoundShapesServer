@@ -11,7 +11,7 @@ using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 using static System.Boolean;
 
-namespace SoundShapesServer.Endpoints.Api.Moderation;
+namespace SoundShapesServer.Endpoints.Api.Levels;
 
 public class ApiDailyLevelManagementEndpoints : EndpointGroup
 {

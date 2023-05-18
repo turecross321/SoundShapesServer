@@ -19,6 +19,7 @@ public class GameUser : RealmObject, IRateLimitUser
     public bool HasFinishedRegistration { get; set; }
     public bool Deleted { get; init; }
     public DateTimeOffset CreationDate { get; init; }
+    public string? SaveFilePath { get; set; }
 
     #pragma warning disable CS8618
     // ReSharper disable all UnassignedGetOnlyAutoProperty

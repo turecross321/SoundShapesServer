@@ -13,11 +13,13 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game;
 
-public class CloudSyncingEndpoints : EndpointGroup
+public class CloudSyncEndpoints : EndpointGroup
 {
     [GameEndpoint("~identity:{userId}/~content:progress.put", Method.Post)]
-    public Response UploadSave(RequestContext context, IDataStore dataStore, GameUser user, string userId, Stream body)
+    public Response UploadSave(RequestContext context, IDataStore dataStore, GameUser user, Stream body)
     {
+        string? key = user.SaveFilePath;
+        
         MultipartFormDataParser? parser = MultipartFormDataParser.Parse(body);
         
         string saveString = parser.GetParameterValue("file");
@@ -28,15 +30,17 @@ public class CloudSyncingEndpoints : EndpointGroup
 
         byte[] combinedSave = newSave;
 
-        string key = ResourceHelper.GetSaveResourceKey(user.Id);
-        
-        // If there's an old one, combine them
-        if (dataStore.TryGetDataFromStore(key, out byte[]? oldSave))
+        if (key != null)
         {
-            if (oldSave != null)
+            // If there's an old save, combine them
+            if (dataStore.ExistsInStore(key))
+            {
+                byte[] oldSave = dataStore.GetDataFromStore(key);
                 combinedSave = CloudSyncHelper.CombineSaves(oldSave, newSave);
+            }
         }
 
+        key ??= ResourceHelper.GetSaveResourceKey(user.Id);
         dataStore.WriteToStore(key, combinedSave);
 
         return HttpStatusCode.OK;
@@ -52,26 +56,27 @@ public class CloudSyncingEndpoints : EndpointGroup
     [GameEndpoint("~identity:{userId}/~content:progress/data.get")]
     public Response GetSave(RequestContext context, IDataStore dataStore, GameUser user, string userId)
     {
-        string key = ResourceHelper.GetSaveResourceKey(user.Id);
+        string? key = user.SaveFilePath;
+        if (key == null) return HttpStatusCode.NotFound;
+        if (!dataStore.ExistsInStore(key)) return HttpStatusCode.Gone;
 
-        dataStore.TryGetDataFromStore(key, out byte[]? bytes);
-        if (bytes == null) return HttpStatusCode.NotFound;
-        
-        // This next part here sets the onlineID parameter to the user's username.
+        byte[] bytes = dataStore.GetDataFromStore(key);
+
+        // This next part sets the onlineID parameter to the user's username.
         // This makes so cloud saves don't break when a user changes their username.
         
-        // convert save byte array to string
+        // Convert save byte array to string
         string jsonString = Encoding.UTF8.GetString(bytes);
-        // parse the string to a Newtonsoft JObject
+        // Parse the string to a Newtonsoft JObject
         JObject? json = JsonConvert.DeserializeObject<JObject>(jsonString);
         if (json == null) return HttpStatusCode.InternalServerError;
 
         json["onlineID"] = user.Username;
         
-        // serialize the JObject to a JSON string
+        // Serialize the JObject to a JSON string
         string responseString = JsonConvert.SerializeObject(json);
 
-        // convert the JSON string to a byte array
+        // Convert the JSON string to a byte array
         byte[] responseData = Encoding.UTF8.GetBytes(responseString);
         
         return new Response(responseData, ContentType.BinaryData);

@@ -1,8 +1,12 @@
+using System.Net;
+using Bunkum.CustomHttpListener.Parsing;
+using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Users;
+using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Database;
 
@@ -103,10 +107,25 @@ public partial class GameDatabaseContext
         return entry;
     }
 
+    public Response UploadNewsResource(IDataStore dataStore, NewsEntry newsEntry, byte[] file)
+    {
+        if (!IsByteArrayPng(file)) return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
+
+        string key = GetNewsResourceKey(newsEntry.Id);
+        dataStore.WriteToStore(key, file);
+
+        _realm.Write(() =>
+        {
+            newsEntry.ThumbnailFilePath = key;
+        });
+
+        return HttpStatusCode.Created;
+    }
+    
     public void RemoveNewsEntry(IDataStore dataStore, NewsEntry entry)
     {
-        dataStore.RemoveFromStore(ResourceHelper.GetNewsResourceKey(entry.Id));
-        
+        if (entry.ThumbnailFilePath != null) dataStore.RemoveFromStore(entry.ThumbnailFilePath);
+
         _realm.Write(() =>
         {
             _realm.Remove(entry);

@@ -41,4 +41,5 @@ public class NewsEntry : RealmObject
     public string FullText { get; set; }
     public string Url { get; set; }
     public int CharacterCount { get; set; }
+    public string? ThumbnailFilePath { get; set; }
 }

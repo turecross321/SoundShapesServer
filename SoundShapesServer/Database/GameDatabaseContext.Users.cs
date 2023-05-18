@@ -1,12 +1,10 @@
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.PaginationHelper;
-using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Database;
 
@@ -245,9 +243,9 @@ public partial class GameDatabaseContext
         {
             RemoveLevel(level, dataStore);
         }
-        
-        dataStore.RemoveFromStore(GetSaveResourceKey(user.Id));
-        
+
+        if (user.SaveFilePath != null) dataStore.RemoveFromStore(user.SaveFilePath);
+
         RemoveAllReportsWithContentUser(user);
         
         _realm.Write(() =>

@@ -10,9 +10,8 @@ using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Albums;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.ResourceHelper;
 
-namespace SoundShapesServer.Endpoints.Api.Moderation;
+namespace SoundShapesServer.Endpoints.Api.Albums;
 
 public class ApiAlbumManagementEndpoints : EndpointGroup
 {
@@ -39,7 +38,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
 
     [ApiEndpoint("albums/id/{id}/setThumbnail", Method.Post)]
     public Response SetAlbumThumbnail(RequestContext context, GameDatabaseContext database, IDataStore dataStore,
-        GameUser user, Stream body, string id) 
+        GameUser user, byte[] body, string id) 
         => SetAlbumAssets(
             database,
             dataStore,
@@ -51,7 +50,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     
     [ApiEndpoint("albums/id/{id}/setSidePanel", Method.Post)]
     public Response SetAlbumSidePanel(RequestContext context, GameDatabaseContext database, IDataStore dataStore,
-        GameUser user, Stream body, string id) 
+        GameUser user, byte[] body, string id) 
         => SetAlbumAssets(
             database,
             dataStore,
@@ -61,24 +60,13 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
             AlbumResourceType.SidePanel
         );
     
-    private Response SetAlbumAssets(GameDatabaseContext database, IDataStore dataStore, GameUser user, Stream body, string id, AlbumResourceType resourceType)
+    private Response SetAlbumAssets(GameDatabaseContext database, IDataStore dataStore, GameUser user, byte[] body, string id, AlbumResourceType resourceType)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
         GameAlbum? album = database.GetAlbumWithId(id);
         if (album == null) return HttpStatusCode.NotFound;
 
-        byte[] image;
-
-        using (MemoryStream memoryStream = new ())
-        {
-            body.CopyTo(memoryStream);
-            image = memoryStream.ToArray();
-        }
-        
-        if (!IsByteArrayPng(image)) return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
-
-        dataStore.WriteToStore(GetAlbumResourceKey(album.Id, resourceType), image);
-        return HttpStatusCode.Created;
+        return database.UploadAlbumResource(dataStore, album, body, resourceType);
     }
 
     [ApiEndpoint("albums/id/{id}/remove", Method.Post)]

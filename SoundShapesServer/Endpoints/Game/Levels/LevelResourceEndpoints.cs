@@ -35,9 +35,16 @@ public class LevelResourceEndpoints : EndpointGroup
         if (level == null) return HttpStatusCode.NotFound;
 
         FileType fileType = GetFileTypeFromName(file);
-        
-        string key = GetLevelResourceKey(level.Id, fileType);
 
-        return GetResource(dataStore, key);
+        string? key = fileType switch
+        {
+            FileType.Level => level.LevelFilePath,
+            FileType.Image => level.ThumbnailFilePath,
+            FileType.Sound => level.SoundFilePath,
+            FileType.Unknown => null,
+            _ => null
+        };
+
+        return key == null ? HttpStatusCode.NotFound : GetResource(dataStore, key);
     }
 }

@@ -5,7 +5,7 @@ using SoundShapesServer.Responses.Api.RecentActivity;
 using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Endpoints.Api;
+namespace SoundShapesServer.Endpoints.Api.News;
 
 public class ApiNewsEndpoints : EndpointGroup
 {
