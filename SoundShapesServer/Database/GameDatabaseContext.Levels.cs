@@ -78,7 +78,8 @@ public partial class GameDatabaseContext
         dataStore.WriteToStore(key, file);
         
         SetLevelFilePath(level, fileType, key);
-
+        if (fileType == FileType.Level) SetLevelFileSize(level, file.LongLength);
+        
         return HttpStatusCode.Created;
     }
 

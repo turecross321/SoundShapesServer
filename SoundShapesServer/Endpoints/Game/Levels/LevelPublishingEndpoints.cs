@@ -30,7 +30,7 @@ public class LevelPublishingEndpoints : EndpointGroup
 
         GameLevel publishedLevel = database.CreateLevel(publishLevelRequest, user);
         
-        Response uploadedResources = UploadLevelResources(database, dataStore, parser, publishedLevel, user);
+        Response uploadedResources = UploadLevelResources(database, dataStore, parser, publishedLevel);
         if (uploadedResources.StatusCode != HttpStatusCode.Created) return uploadedResources;
         
         return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
@@ -51,7 +51,7 @@ public class LevelPublishingEndpoints : EndpointGroup
         
         GameLevel publishedLevel = database.EditLevel(publishLevelRequest, level);
         
-        Response uploadedResources = UploadLevelResources(database, dataStore, parser, publishedLevel, user);
+        Response uploadedResources = UploadLevelResources(database, dataStore, parser, publishedLevel);
         if (uploadedResources.StatusCode != HttpStatusCode.Created) return uploadedResources;
         
         return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
@@ -59,7 +59,7 @@ public class LevelPublishingEndpoints : EndpointGroup
 
 
     private static Response UploadLevelResources(GameDatabaseContext database, IDataStore dataStore, 
-        IMultipartFormDataParser parser, GameLevel level, GameUser user)
+        IMultipartFormDataParser parser, GameLevel level)
     {
         byte[]? levelFile = null;
         byte[]? imageFile = null;

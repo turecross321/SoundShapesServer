@@ -25,9 +25,15 @@ public class LevelEndpoints : EndpointGroup
         string categoryString = context.QueryString["search"] ?? "all";
         
         // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
-        if (categoryString == "tagged3" && (session == null || session.SessionType != (int)SessionType.Game || user == null)) 
-            return new Response(new LevelsWrapper(), ContentType.Json);
+        if (session == null || session.SessionType != (int)SessionType.Game || user == null)
+        {
+            if (categoryString == "tagged3")
+                return new Response(new LevelsWrapper(), ContentType.Json);
+            
+            return HttpStatusCode.Forbidden;
+        }
         
+
         LevelOrderType? order = null;
         LevelFilters filters = new ();
 
