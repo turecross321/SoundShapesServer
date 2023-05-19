@@ -36,9 +36,9 @@ public class LeaderboardEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level != null) // Doing this since story levels can be null
         {
-            if (deSerializedRequest.Completed) LevelInteractionEndpoints.AddCompletion(database, level, user);
-            LevelInteractionEndpoints.AddPlay(database, user, level);
-            LevelInteractionEndpoints.AddDeathsToLevel(database, level, user, deSerializedRequest.Deaths);
+            if (deSerializedRequest.Completed) database.AddCompletionToLevel(user, level);
+            database.CreatePlay(user, level);
+            database.AddDeathsToLevel(user, level, deSerializedRequest.Deaths);
             database.SetLevelDifficulty(level);
         }
 

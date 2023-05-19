@@ -129,7 +129,7 @@ public partial class GameDatabaseContext
         return count > 0;
     }
     
-    public void AddPlayToLevel(GameUser user, GameLevel level)
+    public void CreatePlay(GameUser user, GameLevel level)
     {
         LevelPlayRelation relation = new (user, level, DateTimeOffset.UtcNow);
         LevelUniquePlayRelation? uniqueRelation = _realm.All<LevelUniquePlayRelation>()

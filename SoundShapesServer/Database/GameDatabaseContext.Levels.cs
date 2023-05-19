@@ -304,8 +304,8 @@ public partial class GameDatabaseContext
     
     private IQueryable<GameLevel> LevelsOrderedByPlays(bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.Plays);
-        return _realm.All<GameLevel>().OrderBy(l => l.Plays);
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.PlaysCount);
+        return _realm.All<GameLevel>().OrderBy(l => l.PlaysCount);
     } 
     
     private IQueryable<GameLevel> LevelsOrderedByUniquePlays(bool descending)
@@ -384,15 +384,22 @@ public partial class GameDatabaseContext
     
     private IQueryable<GameLevel> LevelsOrderedByAveragePlayTime(bool descending)
     {
-        // I AM SORRY WHOEVER IS READING THIS
+        // I AM SORRY TO WHOEVER IS READING THIS
         if (descending) return _realm.All<GameLevel>().AsEnumerable().OrderByDescending(l => l.TotalPlayTime != 0 && l.PlaysCount != 0 ? l.TotalPlayTime / l.PlaysCount : 0).AsQueryable();
         return _realm.All<GameLevel>().AsEnumerable().OrderBy(l => l.TotalPlayTime != 0 && l.PlaysCount != 0 ? l.TotalPlayTime / l.PlaysCount : 0).AsQueryable();
-    } 
-
-    public void AddUniqueCompletion(GameLevel level, GameUser user)
+    }
+    public void AddCompletionToLevel(GameUser user, GameLevel level)
     {
-        if (level.UniqueCompletions.Contains(user)) return;
+        if (!level.UniqueCompletions.Contains(user)) AddUniqueCompletion(user, level);
+        
+        _realm.Write(() =>
+        {
+            level.CompletionCount++;
+        });
+    }
 
+    private void AddUniqueCompletion(GameUser user, GameLevel level)
+    {
         _realm.Write(() =>
         {
             level.UniqueCompletions.Add(user);
@@ -400,14 +407,7 @@ public partial class GameDatabaseContext
             user.CompletedLevelsCount = user.CompletedLevels.Count();
         });
     }
-    public void AddCompletionToLevel(GameLevel level)
-    {
-        _realm.Write(() =>
-        {
-            level.CompletionCount++;
-        });
-    }
-
+    
     public void SetLevelDifficulty(GameLevel level)
     {
         _realm.Refresh();

@@ -12,23 +12,6 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 
 public class LevelInteractionEndpoints : EndpointGroup
 {
-    // Called from LeaderboardEndpoints
-    public static void AddCompletion(GameDatabaseContext database, GameLevel level, GameUser user)
-    {
-        database.AddUniqueCompletion(level, user);
-        database.AddCompletionToLevel(level);
-    }
-    // Called from LeaderboardEndpoints
-    public static void AddPlay(GameDatabaseContext database, GameUser user, GameLevel level)
-    {
-        database.AddPlayToLevel(user, level);
-    }
-    // Called from LeaderboardEndpoints
-    public static void AddDeathsToLevel(GameDatabaseContext database, GameLevel level, GameUser user, int deaths)
-    {
-        database.AddDeathsToLevel(user, level, deaths);
-    }
-    
     [GameEndpoint("~identity:{userId}/~like:%2F~level%3A{arguments}", ContentType.Json)]
     public Response LevelLikeRequests(RequestContext context, GameDatabaseContext database, GameUser user, string userId, string arguments)
     {
