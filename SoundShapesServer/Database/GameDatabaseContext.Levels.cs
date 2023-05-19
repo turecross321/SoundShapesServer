@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
+using Realms;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
@@ -384,8 +385,9 @@ public partial class GameDatabaseContext
     
     private IQueryable<GameLevel> LevelsOrderedByAveragePlayTime(bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.TotalPlayTime / l.PlaysCount);
-        return _realm.All<GameLevel>().OrderBy(l => l.TotalPlayTime / l.PlaysCount);
+        // I AM SORRY WHOEVER IS READING THIS
+        if (descending) return _realm.All<GameLevel>().AsEnumerable().OrderByDescending(l => l.TotalPlayTime != 0 && l.PlaysCount != 0 ? l.TotalPlayTime / l.PlaysCount : 0).AsQueryable();
+        return _realm.All<GameLevel>().AsEnumerable().OrderBy(l => l.TotalPlayTime != 0 && l.PlaysCount != 0 ? l.TotalPlayTime / l.PlaysCount : 0).AsQueryable();
     } 
 
     public void AddUniqueCompletion(GameLevel level, GameUser user)
