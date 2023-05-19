@@ -37,7 +37,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("account/sendEmailSession", Method.Post)]
-    public Response SendEmailSession(RequestContext context, GameDatabaseContext database, GameUser user, ApiEmailSessionRequest body)
+    public Response SendEmailSession(RequestContext context, GameDatabaseContext database, GameUser user, ApiEmailSessionRequest body, EmailService emailService)
     {
         string emailSessionId = GenerateEmailSessionId(database);
         GameSession emailSession = database.CreateSession(context, user, SessionType.SetEmail, 600, emailSessionId); // 10 minutes
@@ -45,15 +45,13 @@ public class ApiAccountSettingEndpoints : EndpointGroup
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your new email code: " + emailSession.Id + "\n" +
                            "If this wasn't you, change your password immediately. Code expires in 10 minutes.";
-
-        EmailService emailService = context.Services.OfType<EmailService>().First();
         emailService.SendEmail(body.NewEmail, "Sound Shapes New Email Code", emailBody);
 
         return HttpStatusCode.Created;
     }
     
     [ApiEndpoint("account/setEmail", Method.Post)]
-    public Response SetUserEmail(RequestContext context, GameDatabaseContext database, ApiSetEmailRequest body, GameSession session)
+    public Response SetUserEmail(RequestContext context, GameDatabaseContext database, ApiSetEmailRequest body, GameSession session, EmailService emailService)
     {
         GameUser user = session.User;
 
@@ -71,14 +69,14 @@ public class ApiAccountSettingEndpoints : EndpointGroup
         database.RemoveSession(session);
         
         if (!user.HasFinishedRegistration)
-            return SendPasswordSession(context, database, new ApiPasswordSessionRequest(body.NewEmail));
+            return SendPasswordSession(context, database, new ApiPasswordSessionRequest(body.NewEmail), emailService);
 
         return HttpStatusCode.Created;
     }
 
     [ApiEndpoint("account/sendPasswordSession", Method.Post)]
     [Authentication(false)]
-    public Response SendPasswordSession(RequestContext context, GameDatabaseContext database, ApiPasswordSessionRequest body)
+    public Response SendPasswordSession(RequestContext context, GameDatabaseContext database, ApiPasswordSessionRequest body, EmailService emailService)
     {
         GameUser? user = database.GetUserWithEmail(body.Email);
         if (user == null) return HttpStatusCode.Created; // trol
@@ -90,7 +88,6 @@ public class ApiAccountSettingEndpoints : EndpointGroup
                            "Here is your password code: " + passwordSession.Id + "\n" +
                            "If this wasn't you, feel free to ignore this email. Code expires in 10 minutes.";
 
-        EmailService emailService = context.Services.OfType<EmailService>().First();
         emailService.SendEmail(body.Email, "Sound Shapes Password Code", emailBody);
 
         return HttpStatusCode.Created;
@@ -112,7 +109,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("account/sendRemovalSession", Method.Post)]
-    public Response SendUserRemovalSession(RequestContext context, GameDatabaseContext database, GameUser user, GameSession session)
+    public Response SendUserRemovalSession(RequestContext context, GameDatabaseContext database, GameUser user, GameSession session, EmailService emailService)
     {
         if (user.Email == null)
             return new Response(
@@ -125,8 +122,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your account removal code: " + removalSession.Id + "\n" +
                            "If this wasn't you, change your password immediately. Code expires in 10 minutes.";
-
-        EmailService emailService = context.Services.OfType<EmailService>().First();
+        
         emailService.SendEmail(user.Email, "Sound Shapes Account Removal Code", emailBody);
 
         return HttpStatusCode.Created;

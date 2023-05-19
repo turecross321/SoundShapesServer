@@ -8,7 +8,7 @@ using SoundShapesServer.Configuration;
 
 namespace SoundShapesServer.Services;
 
-public class EmailService : Service
+public class EmailService : EndpointService
 {
     private readonly SmtpClient _smtpClient;
     
