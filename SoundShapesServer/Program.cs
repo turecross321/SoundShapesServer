@@ -63,4 +63,5 @@ server.AddService<EmailService>();
 server.AddMiddleware<CrossOriginMiddleware>();
 server.AddMiddleware<FileSizeMiddleware>();
 
-await server.StartAndBlockAsync();
+server.Start();
+await Task.Delay(-1);
