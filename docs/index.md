@@ -407,7 +407,7 @@ o7
   "PublishedLevelsCount": 0,
   "ActivitiesCount": 6,
   "PlayedLevelsCount": 1,
-  "Deaths": 0,
+  "TotalDeaths": 0,
   "TotalPlayTime": 48048
 }
 ```
@@ -438,7 +438,7 @@ o7
   "PublishedLevelsCount": 0,
   "ActivitiesCount": 6,
   "PlayedLevelsCount": 1,
-  "Deaths": 0,
+  "TotalDeaths": 0,
   "TotalPlayTime": 48048
 }
 ```
