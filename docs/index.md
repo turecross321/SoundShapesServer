@@ -405,9 +405,10 @@ o7
   "FollowingCount": 0,
   "LikedLevelsCount": 0,
   "PublishedLevelsCount": 0,
-  "ActivitiesCount": 5,
+  "ActivitiesCount": 6,
+  "PlayedLevelsCount": 1,
   "Deaths": 0,
-  "TotalPlayTime": 28948
+  "TotalPlayTime": 48048
 }
 ```
 
@@ -435,9 +436,10 @@ o7
   "FollowingCount": 0,
   "LikedLevelsCount": 0,
   "PublishedLevelsCount": 0,
-  "ActivitiesCount": 5,
+  "ActivitiesCount": 6,
+  "PlayedLevelsCount": 1,
   "Deaths": 0,
-  "TotalPlayTime": 28948
+  "TotalPlayTime": 48048
 }
 ```
 

@@ -15,6 +15,7 @@ public class ApiUserFullResponse
         LikedLevelsCount = user.LikedLevels.Count();
         PublishedLevelsCount = user.Levels.Count();
         ActivitiesCount = user.Events.Count();
+        PlayedLevelsCount = user.PlayedLevels.Count();
         Deaths = user.Deaths;
         TotalPlayTime = user.TotalPlayTime;
     }
@@ -28,6 +29,7 @@ public class ApiUserFullResponse
     public int LikedLevelsCount { get; set; }
     public int PublishedLevelsCount { get; set; }
     public int ActivitiesCount { get; set; }
+    public int PlayedLevelsCount { get; set; }
     public int Deaths { get; set; }
     public long TotalPlayTime { get; set; }
 }
