@@ -17,7 +17,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 13;
+    protected override ulong SchemaVersion => 14;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -42,9 +42,12 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 
     protected override void Migrate(Migration migration, ulong oldVersion)
     {
+        IQueryable<dynamic> oldLevels = migration.OldRealm.DynamicApi.All("GameLevel");
+        IQueryable<GameLevel> newLevels = migration.NewRealm.All<GameLevel>();
+        
         if (oldVersion < 13)
         {
-            foreach (GameLevel level in migration.NewRealm.All<GameLevel>())
+            foreach (GameLevel level in newLevels)
             {
                 level.LevelFilePath = ResourceHelper.GetLevelResourceKey(level.Id, FileType.Level);
                 level.ThumbnailFilePath = ResourceHelper.GetLevelResourceKey(level.Id, FileType.Image);

@@ -41,7 +41,7 @@ public class GameLevel : RealmObject
     public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset ModificationDate { get; set; }
     public long TotalPlayTime { get; set; }
-    public int Deaths { get; set; }
+    public int TotalDeaths { get; set; }
     [Backlink(nameof(LevelPlayRelation.Level))] public IQueryable<LevelPlayRelation> Plays { get; }
     public int PlaysCount { get; set; }
     [Backlink(nameof(LevelUniquePlayRelation.Level))] public IQueryable<LevelUniquePlayRelation> UniquePlays { get; }

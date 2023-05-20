@@ -354,7 +354,7 @@ o7
 | creationDate         |
 | playedLevelsCount    |
 | completedLevelsCount |
-| deaths               |
+| totalDeaths          |
 | totalPlayTime        |
 
 ### Response: 200
@@ -573,7 +573,7 @@ o7
 | difficulty         |
 | relevance          |
 | random             |
-| deaths             |
+| totalDeaths        |
 | totalPlayTime      |
 | averagePlayTime    |
 
@@ -869,7 +869,7 @@ o7
   "TotalPlays": 0,
   "UniquePlays": 0,
   "Likes": 0,
-  "Deaths": 0,
+  "TotalDeaths": 0,
   "Language": 4,
   "Difficulty": 0,
   "AlbumIds": [],
@@ -935,7 +935,7 @@ o7
   "TotalPlays": 0,
   "UniquePlays": 0,
   "Likes": 0,
-  "Deaths": 0,
+  "TotalDeaths": 0,
   "TotalPlayTime": 0,
   "Language": 0,
   "Difficulty": 0,

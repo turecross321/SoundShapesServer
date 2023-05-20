@@ -372,8 +372,8 @@ public partial class GameDatabaseContext
     
     private IQueryable<GameLevel> LevelsOrderedByDeaths(bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.Deaths);
-        return _realm.All<GameLevel>().OrderBy(l => l.Deaths);
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.TotalDeaths);
+        return _realm.All<GameLevel>().OrderBy(l => l.TotalDeaths);
     } 
     
     private IQueryable<GameLevel> LevelsOrderedByTotalPlayTime(bool descending)
@@ -421,7 +421,7 @@ public partial class GameDatabaseContext
     {
         _realm.Write(() =>
         {
-            level.Deaths += deaths;
+            level.TotalDeaths += deaths;
             user.Deaths += deaths;
         });
     }

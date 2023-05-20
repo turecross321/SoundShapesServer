@@ -1,3 +1,4 @@
+using SoundShapesServer.Responses.Api.Albums;
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.Levels;
 
@@ -15,12 +16,12 @@ public class ApiLevelFullResponse
         TotalPlays = level.PlaysCount;
         UniquePlays = level.UniquePlaysCount;
         Likes = level.Likes.Count();
-        Deaths = level.Deaths;
+        TotalDeaths = level.TotalDeaths;
         TotalPlayTime = level.TotalPlayTime;
         Language = level.Language;
         Difficulty = level.Difficulty;
-        AlbumIds = level.Albums.AsEnumerable().Select(a => a.Id).ToArray();
-        DailyLevelIds = level.DailyLevels.AsEnumerable().Select(d => d.Id).ToArray();
+        Albums = level.Albums.Select(a => new ApiAlbumResponse(a)).ToArray();
+        DailyLevels = level.DailyLevels.Select(a => new ApiDailyLevelResponse(a)).ToArray();
     }
 
     public string Id { get; set; }
@@ -31,10 +32,10 @@ public class ApiLevelFullResponse
     public int TotalPlays { get; set; }
     public int UniquePlays { get; set; }
     public int Likes { get; set; }
-    public int Deaths { get; set; }
+    public int TotalDeaths { get; set; }
     public long TotalPlayTime { get; set; }
     public int Language { get; set; }
     public float Difficulty { get; set; }
-    public string[] AlbumIds { get; set; }
-    public string[] DailyLevelIds { get; set; }
+    public ApiAlbumResponse[] Albums { get; set; }
+    public ApiDailyLevelResponse[] DailyLevels { get; set; }
 }
