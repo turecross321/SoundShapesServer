@@ -872,8 +872,8 @@ o7
   "TotalDeaths": 0,
   "Language": 4,
   "Difficulty": 0,
-  "AlbumIds": [],
-  "DailyLevelIds": []
+  "Albums": [],
+  "DailyLevels": []
 }
 ```
 
@@ -939,8 +939,8 @@ o7
   "TotalPlayTime": 0,
   "Language": 0,
   "Difficulty": 0,
-  "AlbumIds": [],
-  "DailyLevelIds": []
+  "Albums": [],
+  "DailyLevels": []
 }
 ```
 
