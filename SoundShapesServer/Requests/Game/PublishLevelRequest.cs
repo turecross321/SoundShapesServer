@@ -18,7 +18,7 @@ public class PublishLevelRequest
         Name = request.Name;
         Language = request.Language;
         FileSize = 0;
-        Created = request.Modified ?? DateTimeOffset.UtcNow;
+        Created = request.ModificationDate ?? DateTimeOffset.UtcNow;
     }
 
     public PublishLevelRequest(ApiEditLevelRequest request)

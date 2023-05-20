@@ -3,14 +3,14 @@ namespace SoundShapesServer.Requests.Api;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ApiPublishLevelRequest
 {
-    public ApiPublishLevelRequest(int language, string name, DateTimeOffset modified)
+    public ApiPublishLevelRequest(int language, string name, DateTimeOffset modificationDate)
     {
         Language = language;
         Name = name;
-        Modified = modified;
+        ModificationDate = modificationDate;
     }
 
     public string Name { get; }
     public int Language { get; }
-    public DateTimeOffset? Modified { get; set; } 
+    public DateTimeOffset? ModificationDate { get; set; } 
 }

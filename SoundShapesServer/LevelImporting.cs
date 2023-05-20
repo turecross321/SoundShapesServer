@@ -102,9 +102,9 @@ public static class LevelImporting
             
             byte[] levelBytes = File.ReadAllBytes(level.FilePath);
 
-            if (levelBytes.Length < 10)
+            if (levelBytes.Length < 300)
             {
-                Console.WriteLine(level.FilePath + " is less than 10 bytes. Skipping...");
+                Console.WriteLine(level.FilePath + " is less than 300 bytes. Skipping...");
                 continue;
             }
             

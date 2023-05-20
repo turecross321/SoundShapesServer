@@ -57,7 +57,7 @@ server.UseJsonConfig<GameServerConfig>("gameServer.json");
 server.UseDatabaseProvider(databaseProvider);
 server.AddStorageService(dataStore);
 server.AddAuthenticationService(new SessionProvider(), true);
-server.AddRateLimitService(new RateLimitSettings(60, 400, 60)); // Todo: figure out a good balance here between security and usability
+server.AddRateLimitService(new RateLimitSettings(30, 400, 0)); // Todo: figure out a good balance here between security and usability
 server.AddService<EmailService>();
 
 server.AddMiddleware<CrossOriginMiddleware>();

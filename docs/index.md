@@ -592,8 +592,8 @@ o7
         "PublishedLevelsCount": 1,
         "FollowersCount": 0
       },
-      "Created": "2023-05-13T08:17:25.080862+00:00",
-      "Modified": "2023-05-13T08:17:25.080862+00:00",
+      "CreationDate": "2023-05-13T08:17:25.080862+00:00",
+      "ModificationDate": "2023-05-13T08:17:25.080862+00:00",
       "TotalPlays": 5,
       "UniquePlays": 2,
       "Likes": 0,
@@ -609,8 +609,8 @@ o7
         "PublishedLevelsCount": 72960,
         "FollowersCount": 0
       },
-      "Created": "2023-05-02T09:58:43.5485486+00:00",
-      "Modified": "2023-05-02T09:58:43.5485486+00:00",
+      "CreationDate": "2023-05-02T09:58:43.5485486+00:00",
+      "ModificationDate": "2023-05-02T09:58:43.5485486+00:00",
       "TotalPlays": 0,
       "UniquePlays": 0,
       "Likes": 0,
@@ -626,8 +626,8 @@ o7
         "PublishedLevelsCount": 72960,
         "FollowersCount": 0
       },
-      "Created": "2019-01-30T20:59:00+00:00",
-      "Modified": "2019-01-30T20:59:00+00:00",
+      "CreationDate": "2019-01-30T20:59:00+00:00",
+      "ModificationDate": "2019-01-30T20:59:00+00:00",
       "TotalPlays": 0,
       "UniquePlays": 0,
       "Likes": 0,
@@ -643,8 +643,8 @@ o7
         "PublishedLevelsCount": 72960,
         "FollowersCount": 0
       },
-      "Created": "2019-01-30T12:08:31+00:00",
-      "Modified": "2019-01-30T12:08:31+00:00",
+      "CreationDate": "2019-01-30T12:08:31+00:00",
+      "ModificationDate": "2019-01-30T12:08:31+00:00",
       "TotalPlays": 0,
       "UniquePlays": 0,
       "Likes": 0,
@@ -660,8 +660,8 @@ o7
         "PublishedLevelsCount": 72960,
         "FollowersCount": 0
       },
-      "Created": "2019-01-30T06:52:57+00:00",
-      "Modified": "2019-01-30T06:52:57+00:00",
+      "CreationDate": "2019-01-30T06:52:57+00:00",
+      "ModificationDate": "2019-01-30T06:52:57+00:00",
       "TotalPlays": 0,
       "UniquePlays": 0,
       "Likes": 0,
@@ -677,8 +677,8 @@ o7
         "PublishedLevelsCount": 72960,
         "FollowersCount": 0
       },
-      "Created": "2019-01-30T03:37:58+00:00",
-      "Modified": "2019-01-30T03:37:58+00:00",
+      "CreationDate": "2019-01-30T03:37:58+00:00",
+      "ModificationDate": "2019-01-30T03:37:58+00:00",
       "TotalPlays": 0,
       "UniquePlays": 0,
       "Likes": 0,
@@ -694,8 +694,8 @@ o7
         "PublishedLevelsCount": 72960,
         "FollowersCount": 0
       },
-      "Created": "2019-01-30T00:02:27+00:00",
-      "Modified": "2019-01-30T00:02:27+00:00",
+      "CreationDate": "2019-01-30T00:02:27+00:00",
+      "ModificationDate": "2019-01-30T00:02:27+00:00",
       "TotalPlays": 0,
       "UniquePlays": 0,
       "Likes": 0,
@@ -711,8 +711,8 @@ o7
         "PublishedLevelsCount": 72960,
         "FollowersCount": 0
       },
-      "Created": "2019-01-29T23:20:03+00:00",
-      "Modified": "2019-01-29T23:20:03+00:00",
+      "CreationDate": "2019-01-29T23:20:03+00:00",
+      "ModificationDate": "2019-01-29T23:20:03+00:00",
       "TotalPlays": 0,
       "UniquePlays": 0,
       "Likes": 0,
@@ -728,8 +728,8 @@ o7
         "PublishedLevelsCount": 72960,
         "FollowersCount": 0
       },
-      "Created": "2019-01-29T22:23:10+00:00",
-      "Modified": "2023-05-15T16:45:22.6611146+00:00",
+      "CreationDate": "2019-01-29T22:23:10+00:00",
+      "ModificationDate": "2023-05-15T16:45:22.6611146+00:00",
       "TotalPlays": 0,
       "UniquePlays": 0,
       "Likes": 0,
@@ -864,8 +864,8 @@ o7
     "LikedLevelsCount": 0,
     "PublishedLevelsCount": 72959
   },
-  "Created": "2019-01-29T22:23:10+00:00",
-  "Modified": "2023-05-15T16:45:22.6611146+00:00",
+  "CreationDate": "2019-01-29T22:23:10+00:00",
+  "ModificationDate": "2023-05-15T16:45:22.6611146+00:00",
   "TotalPlays": 0,
   "UniquePlays": 0,
   "Likes": 0,
@@ -913,7 +913,7 @@ o7
 {
   "Name": "This is a level name!",
   "Language": 0,
-  "Modified": "2023-05-16T09:58:43.5485486+00:00"
+  "ModificationDate": "2023-05-16T09:58:43.5485486+00:00"
 }
 ```
 
@@ -930,8 +930,8 @@ o7
     "PublishedLevelsCount": 72961,
     "FollowersCount": 0
   },
-  "Created": "2023-05-16T09:58:43.5485486+00:00",
-  "Modified": "2023-05-16T09:58:43.5485486+00:00",
+  "CreationDate": "2023-05-16T09:58:43.5485486+00:00",
+  "ModificationDate": "2023-05-16T09:58:43.5485486+00:00",
   "TotalPlays": 0,
   "UniquePlays": 0,
   "Likes": 0,
@@ -1509,8 +1509,8 @@ Should be a PNG
           "PublishedLevelsCount": 72961,
           "FollowersCount": 0
         },
-        "Created": "2019-01-30T03:37:58+00:00",
-        "Modified": "2019-01-30T03:37:58+00:00",
+        "CreationDate": "2019-01-30T03:37:58+00:00",
+        "ModificationDate": "2019-01-30T03:37:58+00:00",
         "TotalPlays": 0,
         "UniquePlays": 0,
         "Likes": 0,
@@ -1537,8 +1537,8 @@ Should be a PNG
           "PublishedLevelsCount": 72961,
           "FollowersCount": 0
         },
-        "Created": "2019-01-30T03:37:58+00:00",
-        "Modified": "2019-01-30T03:37:58+00:00",
+        "CreationDate": "2019-01-30T03:37:58+00:00",
+        "ModificationDate": "2019-01-30T03:37:58+00:00",
         "TotalPlays": 0,
         "UniquePlays": 0,
         "Likes": 0,
@@ -1594,8 +1594,8 @@ Should be a PNG
       "PublishedLevelsCount": 72961,
       "FollowersCount": 0
     },
-    "Created": "2023-05-16T09:58:43.5485486+00:00",
-    "Modified": "2023-05-16T09:58:43.5485486+00:00",
+    "CreationDate": "2023-05-16T09:58:43.5485486+00:00",
+    "ModificationDate": "2023-05-16T09:58:43.5485486+00:00",
     "TotalPlays": 0,
     "UniquePlays": 0,
     "Likes": 0,
@@ -1629,8 +1629,8 @@ Should be a PNG
       "LikedLevelsCount": 0,
       "PublishedLevelsCount": 72960
     },
-    "Created": "2019-01-30T03:37:58+00:00",
-    "Modified": "2019-01-30T03:37:58+00:00",
+    "CreationDate": "2019-01-30T03:37:58+00:00",
+    "ModificationDate": "2019-01-30T03:37:58+00:00",
     "TotalPlays": 0,
     "UniquePlays": 0,
     "Likes": 0,
@@ -1953,8 +1953,8 @@ Should be a PNG
           "PublishedLevelsCount": 72961,
           "FollowersCount": 0
         },
-        "Created": "2023-05-16T09:58:43.5485486+00:00",
-        "Modified": "2023-05-16T09:58:43.5485486+00:00",
+        "CreationDate": "2023-05-16T09:58:43.5485486+00:00",
+        "ModificationDate": "2023-05-16T09:58:43.5485486+00:00",
         "TotalPlays": 0,
         "UniquePlays": 0,
         "Likes": 0,
@@ -2098,8 +2098,8 @@ Should be a PNG
           "PublishedLevelsCount": 72961,
           "FollowersCount": 0
         },
-        "Created": "2023-05-02T09:58:43.5485486+00:00",
-        "Modified": "2023-05-02T09:58:43.5485486+00:00",
+        "CreationDate": "2023-05-02T09:58:43.5485486+00:00",
+        "ModificationDate": "2023-05-02T09:58:43.5485486+00:00",
         "TotalPlays": 0,
         "UniquePlays": 0,
         "Likes": 0,
@@ -2256,8 +2256,8 @@ Should be a PNG
           "PublishedLevelsCount": 1,
           "FollowersCount": 0
         },
-        "Created": "2023-05-13T08:17:25.080862+00:00",
-        "Modified": "2023-05-13T08:17:25.080862+00:00",
+        "CreationDate": "2023-05-13T08:17:25.080862+00:00",
+        "ModificationDate": "2023-05-13T08:17:25.080862+00:00",
         "TotalPlays": 5,
         "UniquePlays": 2,
         "Likes": 0,
@@ -2306,8 +2306,8 @@ Should be a PNG
       "PublishedLevelsCount": 1,
       "FollowersCount": 0
     },
-    "Created": "2023-05-13T08:17:25.080862+00:00",
-    "Modified": "2023-05-13T08:17:25.080862+00:00",
+    "CreationDate": "2023-05-13T08:17:25.080862+00:00",
+    "ModificationDate": "2023-05-13T08:17:25.080862+00:00",
     "TotalPlays": 5,
     "UniquePlays": 2,
     "Likes": 0,
