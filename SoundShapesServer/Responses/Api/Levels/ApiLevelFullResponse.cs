@@ -20,8 +20,8 @@ public class ApiLevelFullResponse
         TotalPlayTime = level.TotalPlayTime;
         Language = level.Language;
         Difficulty = level.Difficulty;
-        Albums = level.Albums.Select(a => new ApiAlbumResponse(a)).ToArray();
-        DailyLevels = level.DailyLevels.Select(a => new ApiDailyLevelResponse(a)).ToArray();
+        Albums = level.Albums.AsEnumerable().Select(a => new ApiAlbumResponse(a)).ToArray();
+        DailyLevels = level.DailyLevels.AsEnumerable().Select(a => new ApiDailyLevelResponse(a)).ToArray();
     }
 
     public string Id { get; set; }
