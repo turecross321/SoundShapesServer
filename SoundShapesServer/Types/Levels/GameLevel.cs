@@ -38,6 +38,11 @@ public class GameLevel : RealmObject
     public string? LevelFilePath { get; set; }
     public string? ThumbnailFilePath { get; set; }
     public string? SoundFilePath { get; set; }
+    public int Bpm { get; set; }
+    public int TransposeValue { get; set; }
+    public int ScaleIndex { get; set; }
+    public int TotalScreens { get; set; }
+    public int TotalEntities { get; set; }
     public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset ModificationDate { get; set; }
     public long TotalPlayTime { get; set; }

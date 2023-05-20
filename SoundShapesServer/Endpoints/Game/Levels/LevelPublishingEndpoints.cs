@@ -6,6 +6,7 @@ using Bunkum.HttpServer.Storage;
 using HttpMultipartParser;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
@@ -25,8 +26,7 @@ public class LevelPublishingEndpoints : EndpointGroup
 
         PublishLevelRequest publishLevelRequest = new (
             parser.GetParameterValue("title"), 
-            int.Parse(parser.GetParameterValue("sce_np_language")),
-            parser.Files.First(f => f.Name == "level").Data.Length);
+            int.Parse(parser.GetParameterValue("sce_np_language")));
 
         GameLevel publishedLevel = database.CreateLevel(publishLevelRequest, user);
         
@@ -46,8 +46,7 @@ public class LevelPublishingEndpoints : EndpointGroup
 
         PublishLevelRequest publishLevelRequest = new (
             parser.GetParameterValue("title"), 
-            int.Parse(parser.GetParameterValue("sce_np_language")),
-            parser.Files.First(f => f.Name == "level").Data.Length);
+            int.Parse(parser.GetParameterValue("sce_np_language")));
         
         GameLevel publishedLevel = database.EditLevel(publishLevelRequest, level);
         
@@ -62,7 +61,7 @@ public class LevelPublishingEndpoints : EndpointGroup
         IMultipartFormDataParser parser, GameLevel level)
     {
         byte[]? levelFile = null;
-        byte[]? imageFile = null;
+        byte[]? thumbnailFile = null;
         byte[]? soundFile = null;
         
         foreach (FilePart? file in parser.Files)
@@ -76,7 +75,7 @@ public class LevelPublishingEndpoints : EndpointGroup
                     levelFile = bytes;
                     break;
                 case FileType.Image:
-                    imageFile = bytes;
+                    thumbnailFile = bytes;
                     break;
                 case FileType.Sound:
                     soundFile = bytes;
@@ -88,15 +87,13 @@ public class LevelPublishingEndpoints : EndpointGroup
             }
         }
 
-        if (levelFile == null || imageFile == null || soundFile == null)
+        if (levelFile == null || thumbnailFile == null || soundFile == null)
         {
             Console.WriteLine("User did not upload all the required files.");
             return HttpStatusCode.BadRequest;
         }
 
-        database.UploadLevelResource(dataStore, level, levelFile, FileType.Level);
-        database.UploadLevelResource(dataStore, level, imageFile, FileType.Image);
-        database.UploadLevelResource(dataStore, level, soundFile, FileType.Sound);
+        database.UploadLevelResources(dataStore, level, levelFile, thumbnailFile, soundFile);
 
         return HttpStatusCode.Created;
     }

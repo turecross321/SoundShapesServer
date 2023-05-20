@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
+using Newtonsoft.Json.Linq;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
@@ -47,14 +48,6 @@ public partial class GameDatabaseContext
         return level;
     }
 
-    private void SetLevelFileSize(GameLevel level, long fileSize)
-    {
-        _realm.Write(() =>
-        {
-            level.FileSize = fileSize;
-        });
-    }
-
     private void SetLevelPlayTime(GameLevel level)
     {
         // GameLevel doesn't have a LeaderboardEntry backlink since leaderboard entries only store the level id
@@ -65,6 +58,35 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             level.TotalPlayTime = totalPlayTime;
+        });
+    }
+
+    public void UploadLevelResources(IDataStore dataStore, GameLevel level, byte[] levelFile, byte[] thumbnailFile,
+        byte[] soundFile)
+    {
+        UploadLevelResource(dataStore, level, levelFile, FileType.Level);
+        UploadLevelResource(dataStore, level, thumbnailFile, FileType.Image);
+        UploadLevelResource(dataStore, level, soundFile, FileType.Sound);
+    }
+
+    private void SetLevelInfo(GameLevel level, byte[] levelFile)
+    {
+        JObject deCompressedLevel = LevelFileToJObject(levelFile);
+
+        int bpm = deCompressedLevel.Value<int?>("bpm") ?? 120;
+        int transposeValue = deCompressedLevel.Value<int?>("transposeValue") ?? 0;
+        int scaleIndex = deCompressedLevel.Value<int?>("scaleIndex") ?? 0;
+        int screensCount = (deCompressedLevel.GetValue("screenData") ?? throw new InvalidOperationException()).Count();
+        int entitiesCount = (deCompressedLevel.GetValue("entitiesB") ?? throw new InvalidOperationException()).Count();
+
+        _realm.Write(() =>
+        {
+            level.FileSize = levelFile.Length;
+            level.Bpm = bpm;
+            level.TransposeValue = transposeValue;
+            level.ScaleIndex = scaleIndex;
+            level.TotalScreens = screensCount;
+            level.TotalEntities = entitiesCount;
         });
     }
     
@@ -78,8 +100,9 @@ public partial class GameDatabaseContext
         dataStore.WriteToStore(key, file);
         
         SetLevelFilePath(level, fileType, key);
-        if (fileType == FileType.Level) SetLevelFileSize(level, file.LongLength);
         
+        if (fileType == FileType.Level) SetLevelInfo(level, file);
+
         return HttpStatusCode.Created;
     }
 
@@ -160,9 +183,11 @@ public partial class GameDatabaseContext
             LevelOrderType.Difficulty => LevelsOrderedByDifficulty(descending),
             LevelOrderType.Relevance => LevelsOrderedByRelevance(descending),
             LevelOrderType.Random => LevelsOrderedByRandom(descending),
-            LevelOrderType.Deaths => LevelsOrderedByDeaths(descending),
+            LevelOrderType.TotalDeaths => LevelsOrderedByDeaths(descending),
             LevelOrderType.TotalPlayTime => LevelsOrderedByTotalPlayTime(descending),
             LevelOrderType.AveragePlayTime => LevelsOrderedByAveragePlayTime(descending),
+            LevelOrderType.TotalScreens => LevelsOrderedByScreens(descending),
+            LevelOrderType.TotalEntities => LevelsOrderedByEntites(descending),
             _ => LevelsOrderedByCreationDate(descending)
         };
 
@@ -388,6 +413,19 @@ public partial class GameDatabaseContext
         if (descending) return _realm.All<GameLevel>().AsEnumerable().OrderByDescending(l => l.TotalPlayTime != 0 && l.PlaysCount != 0 ? l.TotalPlayTime / l.PlaysCount : 0).AsQueryable();
         return _realm.All<GameLevel>().AsEnumerable().OrderBy(l => l.TotalPlayTime != 0 && l.PlaysCount != 0 ? l.TotalPlayTime / l.PlaysCount : 0).AsQueryable();
     }
+
+    private IQueryable<GameLevel> LevelsOrderedByScreens(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.TotalScreens);
+        return _realm.All<GameLevel>().OrderBy(l => l.TotalScreens);
+    }
+    
+    private IQueryable<GameLevel> LevelsOrderedByEntites(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.TotalEntities);
+        return _realm.All<GameLevel>().OrderBy(l => l.TotalEntities);
+    }
+    
     public void AddCompletionToLevel(GameUser user, GameLevel level)
     {
         if (!level.UniqueCompletions.Contains(user)) AddUniqueCompletion(user, level);

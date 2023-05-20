@@ -11,8 +11,10 @@ public enum LevelOrderType
     Difficulty,
     Relevance,
     Random,
-    Deaths,
+    TotalDeaths,
     TotalPlayTime,
     AveragePlayTime,
+    TotalScreens,
+    TotalEntities,
     DoNotOrder
 }

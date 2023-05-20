@@ -1,3 +1,5 @@
+using Newtonsoft.Json.Linq;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 
 namespace SoundShapesServer.Requests.Game;
@@ -5,11 +7,10 @@ namespace SoundShapesServer.Requests.Game;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class PublishLevelRequest
 {
-    public PublishLevelRequest(string name, int language, long fileSize, DateTimeOffset? created = null)
+    public PublishLevelRequest(string name, int language, DateTimeOffset? created = null)
     {
         Name = name;
         Language = language;
-        FileSize = fileSize;
         Created = created ?? DateTimeOffset.UtcNow;
     }
 
@@ -30,5 +31,5 @@ public class PublishLevelRequest
     public string Name { get; }
     public int Language { get; }
     public long FileSize { get; }
-    public DateTimeOffset Created { get; set; }    
+    public DateTimeOffset Created { get; }    
 }

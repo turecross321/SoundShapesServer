@@ -15,6 +15,7 @@
       <PackageReference Include="HttpMultipartParser" Version="8.1.0" />
       <PackageReference Include="NPTicket" Version="2.0.0" />
       <PackageReference Include="Realm" Version="11.0.0" />
+      <PackageReference Include="SharpZipLib" Version="1.4.2" />
     </ItemGroup>
 
 </Project>

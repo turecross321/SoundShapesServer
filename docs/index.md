@@ -576,6 +576,8 @@ o7
 | totalDeaths        |
 | totalPlayTime      |
 | averagePlayTime    |
+| totalScreens       |
+| totalEntities      |
 
 ### Response: 200
 
@@ -748,29 +750,41 @@ o7
 > {ip}:10061/api/v1/levels/id/{levelId}
 > ```
 
+| Index | Scale      |
+| ----- | ---------- |
+| 0     | Major      |
+| 1     | Pentatonic |
+| 2     | Minor      |
+| 3     | Chromatic  |
+
 ### Response: 200
 
 ```json
 {
-  "Id": "Prb9KzRE",
-  "Name": "Imported Level (Prb9KzRE)",
+  "Id": "7i5Ig3Fj",
+  "Name": "Untitled",
   "Author": {
-    "Id": "00000000-0000-0000-0000-000000000000",
-    "Username": "admin",
-    "PermissionsType": 2,
-    "PublishedLevelsCount": 72931,
+    "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+    "Username": "turecross123",
+    "PermissionsType": 0,
+    "PublishedLevelsCount": 11,
     "FollowersCount": 0
   },
-  "CreationDate": "2019-01-29T19:42:07+00:00",
-  "ModificationDate": "2019-01-29T19:42:07+00:00",
-  "TotalPlays": 0,
-  "UniquePlays": 0,
+  "CreationDate": "2023-05-20T23:23:54.9590085+00:00",
+  "ModificationDate": "2023-05-20T23:23:54.9590085+00:00",
+  "TotalPlays": 1,
+  "UniquePlays": 1,
   "Likes": 0,
   "TotalDeaths": 0,
-  "TotalPlayTime": 0,
-  "Language": 0,
+  "TotalPlayTime": 5916,
+  "Language": 1,
   "Difficulty": 0,
-  "FileSize": 3358,
+  "FileSize": 1071,
+  "Bpm": 120,
+  "TransposeValue": 0,
+  "ScaleIndex": 0,
+  "TotalScreens": 30,
+  "TotalEntities": 32,
   "Albums": [],
   "DailyLevels": []
 }
@@ -909,26 +923,30 @@ o7
 
 ```json
 {
-  "Id": "s0OGnpd2",
+  "Id": "7i5Ig3Fj",
   "Name": "This is an updated level name",
   "Author": {
-    "Id": "00000000-0000-0000-0000-000000000000",
-    "Username": "admin",
-    "PermissionsType": 2,
-    "FollowerCount": 0,
-    "FollowingCount": 0,
-    "LikedLevelsCount": 0,
-    "PublishedLevelsCount": 72959
+    "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+    "Username": "turecross123",
+    "PermissionsType": 0,
+    "PublishedLevelsCount": 11,
+    "FollowersCount": 0
   },
-  "CreationDate": "2019-01-29T22:23:10+00:00",
-  "ModificationDate": "2023-05-15T16:45:22.6611146+00:00",
-  "TotalPlays": 0,
-  "UniquePlays": 0,
+  "CreationDate": "2023-05-16T09:58:43.5485486+00:00",
+  "ModificationDate": "2023-05-20T23:23:54.9590085+00:00",
+  "TotalPlays": 1,
+  "UniquePlays": 1,
   "Likes": 0,
   "TotalDeaths": 0,
+  "TotalPlayTime": 5916,
   "Language": 4,
   "Difficulty": 0,
-  "FileSize": 0,
+  "FileSize": 1071,
+  "Bpm": 120,
+  "TransposeValue": 0,
+  "ScaleIndex": 0,
+  "TotalScreens": 30,
+  "TotalEntities": 32,
   "Albums": [],
   "DailyLevels": []
 }
@@ -978,25 +996,30 @@ o7
 
 ```json
 {
-  "Id": "b8TuPIcA",
+  "Id": "7i5Ig3Fj",
   "Name": "This is a level name!",
   "Author": {
-    "Id": "00000000-0000-0000-0000-000000000000",
-    "Username": "admin",
-    "PermissionsType": 2,
-    "PublishedLevelsCount": 72961,
+    "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+    "Username": "turecross123",
+    "PermissionsType": 0,
+    "PublishedLevelsCount": 11,
     "FollowersCount": 0
   },
   "CreationDate": "2023-05-16T09:58:43.5485486+00:00",
   "ModificationDate": "2023-05-16T09:58:43.5485486+00:00",
-  "TotalPlays": 0,
-  "UniquePlays": 0,
+  "TotalPlays": 1,
+  "UniquePlays": 1,
   "Likes": 0,
   "TotalDeaths": 0,
-  "TotalPlayTime": 0,
-  "Language": 0,
+  "TotalPlayTime": 5916,
+  "Language": 1,
   "Difficulty": 0,
-  "FileSize": 0,
+  "FileSize": 1071,
+  "Bpm": 120,
+  "TransposeValue": 0,
+  "ScaleIndex": 0,
+  "TotalScreens": 30,
+  "TotalEntities": 32,
   "Albums": [],
   "DailyLevels": []
 }

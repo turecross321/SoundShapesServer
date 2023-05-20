@@ -1,4 +1,7 @@
+using System.Text;
 using HttpMultipartParser;
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+using Newtonsoft.Json.Linq;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 
@@ -36,6 +39,27 @@ public static class ResourceHelper
         if (file.ContentType == "application/vnd.soundshapes.sound") return FileType.Sound;
             
         return FileType.Unknown;
+    }
+
+    public static JObject LevelFileToJObject(byte[] level)
+    {
+        using MemoryStream stream = new(level);
+        return JObject.Parse(DecompressZlib(stream));
+    }
+    private static string DecompressZlib(MemoryStream compressedStream)
+    {
+        using InflaterInputStream inflater = new(compressedStream);
+        using MemoryStream outputMemoryStream = new();
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = inflater.Read(buffer, 0, buffer.Length)) > 0)
+        {
+            outputMemoryStream.Write(buffer, 0, bytesRead);
+        }
+
+        outputMemoryStream.Seek(0, SeekOrigin.Begin);
+        using StreamReader reader = new(outputMemoryStream, Encoding.UTF8);
+        return reader.ReadToEnd();
     }
 
     public static FileType GetFileTypeFromName(string name)

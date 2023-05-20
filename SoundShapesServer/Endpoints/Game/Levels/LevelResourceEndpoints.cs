@@ -24,6 +24,7 @@ public class LevelResourceEndpoints : EndpointGroup
             return HttpStatusCode.InternalServerError;
 
         Debug.Assert(data != null);
+
         return new Response(data, ContentType.BinaryData);
     }
 
@@ -44,6 +45,8 @@ public class LevelResourceEndpoints : EndpointGroup
             FileType.Unknown => null,
             _ => null
         };
+        
+
 
         return key == null ? HttpStatusCode.NotFound : GetResource(dataStore, key);
     }

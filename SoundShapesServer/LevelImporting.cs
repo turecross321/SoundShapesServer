@@ -115,12 +115,10 @@ public static class LevelImporting
             byte[] soundBytes = File.ReadAllBytes(sound.FilePath);
 
             string levelId = LevelHelper.GenerateLevelId();
-            PublishLevelRequest request = new ($"Imported Level ({levelId})", 0, levelBytes.LongLength, levelCreationDate);
+            PublishLevelRequest request = new ($"Imported Level ({levelId})", 0, levelCreationDate);
             GameLevel publishedLevel = database.CreateLevel(request, serverUser, false, levelId);
-
-            database.UploadLevelResource(dataStore, publishedLevel, levelBytes, FileType.Level);
-            database.UploadLevelResource(dataStore, publishedLevel, thumbnailBytes, FileType.Image);
-            database.UploadLevelResource(dataStore, publishedLevel, soundBytes, FileType.Sound);
+            
+            database.UploadLevelResources(dataStore, publishedLevel, levelBytes, thumbnailBytes, soundBytes);
             
             File.Delete(level.FilePath);
             File.Delete(thumbnail.FilePath);

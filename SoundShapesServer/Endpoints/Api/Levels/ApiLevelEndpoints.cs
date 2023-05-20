@@ -67,9 +67,11 @@ public class ApiLevelEndpoints: EndpointGroup
             "difficulty" => LevelOrderType.Difficulty,
             "relevance" => LevelOrderType.Relevance,
             "random" => LevelOrderType.Random,
-            "totalDeaths" => LevelOrderType.Deaths,
+            "totalDeaths" => LevelOrderType.TotalDeaths,
             "totalPlayTime" => LevelOrderType.TotalPlayTime,
             "averagePlayTime" => LevelOrderType.AveragePlayTime,
+            "totalScreens" => LevelOrderType.TotalScreens,
+            "totalEntities" => LevelOrderType.TotalEntities,
             _ => LevelOrderType.DoNotOrder
         };
 

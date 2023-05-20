@@ -21,6 +21,11 @@ public class ApiLevelFullResponse
         Language = level.Language;
         Difficulty = level.Difficulty;
         FileSize = level.FileSize;
+        Bpm = level.Bpm;
+        TransposeValue = level.TransposeValue;
+        ScaleIndex = level.ScaleIndex;
+        TotalScreens = level.TotalScreens;
+        TotalEntities = level.TotalEntities;
         Albums = level.Albums.AsEnumerable().Select(a => new ApiAlbumResponse(a)).ToArray();
         DailyLevels = level.DailyLevels.AsEnumerable().Select(a => new ApiDailyLevelResponse(a)).ToArray();
     }
@@ -38,6 +43,11 @@ public class ApiLevelFullResponse
     public int Language { get; set; }
     public float Difficulty { get; set; }
     public long FileSize { get; set; }
+    public int Bpm { get; set; }
+    public int TransposeValue { get; set; }
+    public int ScaleIndex { get; set; }
+    public int TotalScreens { get; set; }
+    public int TotalEntities { get; set; }
     public ApiAlbumResponse[] Albums { get; set; }
     public ApiDailyLevelResponse[] DailyLevels { get; set; }
 }
