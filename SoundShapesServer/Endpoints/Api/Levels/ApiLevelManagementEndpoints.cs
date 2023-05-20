@@ -30,21 +30,21 @@ public class ApiLevelManagementEndpoints : EndpointGroup
     public Response UploadLevelFile
     (RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, byte[] body,
         string id)
-        => UploadLevelResources(database, dataStore, user, body, id, FileType.Level);
+        => UploadLevelResource(database, dataStore, user, body, id, FileType.Level);
     
     [ApiEndpoint("levels/id/{id}/setSound", Method.Post)]
     public Response UploadSoundFile
     (RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, byte[] body,
         string id)
-        => UploadLevelResources(database, dataStore, user, body, id, FileType.Sound);
+        => UploadLevelResource(database, dataStore, user, body, id, FileType.Sound);
     
     [ApiEndpoint("levels/id/{id}/setThumbnail", Method.Post)]
     public Response UploadThumbnail
     (RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, byte[] body,
         string id)
-        => UploadLevelResources(database, dataStore, user, body, id, FileType.Image);
+        => UploadLevelResource(database, dataStore, user, body, id, FileType.Image);
 
-    private Response UploadLevelResources(GameDatabaseContext database, IDataStore dataStore, GameUser user, 
+    private Response UploadLevelResource(GameDatabaseContext database, IDataStore dataStore, GameUser user, 
         byte[] body, string id, FileType fileType)
     {
         GameLevel? level = database.GetLevelWithId(id);

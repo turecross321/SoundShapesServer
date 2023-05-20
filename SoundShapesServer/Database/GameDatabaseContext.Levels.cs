@@ -96,7 +96,7 @@ public partial class GameDatabaseContext
                     level.ThumbnailFilePath = path;
                     break;
                 case FileType.Sound:
-                    level.ThumbnailFilePath = path;
+                    level.SoundFilePath = path;
                     break;
                 case FileType.Unknown:
                     break;
