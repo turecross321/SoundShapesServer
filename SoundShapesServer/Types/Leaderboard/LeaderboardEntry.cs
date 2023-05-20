@@ -12,8 +12,8 @@ public class LeaderboardEntry : RealmObject
         User = user;
         LevelId = levelId;
         Score = request.Score;
-        PlayTime = request.PlayTime;
-        Deaths = request.Deaths;
+        PlayTime = Math.Max(request.PlayTime, 0);
+        Deaths = Math.Max(request.Deaths, 0);
         Golded = request.Golded;
         Tokens = request.Tokens;
         Completed = request.Completed;
