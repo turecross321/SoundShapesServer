@@ -19,10 +19,10 @@ public static class LeaderboardHelper
             switch (name)
             {
                 case "deaths":
-                    response.Deaths = int.Parse(value);
+                    response.Deaths = Math.Max(int.Parse(value), 0);
                     break;
                 case "playTime":
-                    response.PlayTime = long.Parse(value);
+                    response.PlayTime = Math.Max(long.Parse(value), 0);
                     break;
                 case "golded":
                     response.Golded = int.Parse(value);
