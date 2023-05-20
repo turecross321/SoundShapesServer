@@ -740,6 +740,62 @@ o7
 }
 ```
 
+## End-point: Get Level with Id
+
+### Method: GET
+
+> ```
+> {ip}:10061/api/v1/levels/id/{levelId}
+> ```
+
+### Response: 200
+
+```json
+{
+  "Id": "Prb9KzRE",
+  "Name": "Imported Level (Prb9KzRE)",
+  "Author": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "PublishedLevelsCount": 72931,
+    "FollowersCount": 0
+  },
+  "CreationDate": "2019-01-29T19:42:07+00:00",
+  "ModificationDate": "2019-01-29T19:42:07+00:00",
+  "TotalPlays": 0,
+  "UniquePlays": 0,
+  "Likes": 0,
+  "TotalDeaths": 0,
+  "TotalPlayTime": 0,
+  "Language": 0,
+  "Difficulty": 0,
+  "FileSize": 3358,
+  "Albums": [],
+  "DailyLevels": []
+}
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+## End-point: Has User Completed Level
+
+### Method: GET
+
+> ```
+> {ip}:10061/api/v1/levels/id/{levelId}/completed
+> ```
+
+### Response: 200
+
+```json
+{
+  "HasCompleted": true
+}
+```
+
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
 ## End-point: Has User Completed Level
@@ -872,6 +928,7 @@ o7
   "TotalDeaths": 0,
   "Language": 4,
   "Difficulty": 0,
+  "FileSize": 0,
   "Albums": [],
   "DailyLevels": []
 }
@@ -939,6 +996,7 @@ o7
   "TotalPlayTime": 0,
   "Language": 0,
   "Difficulty": 0,
+  "FileSize": 0,
   "Albums": [],
   "DailyLevels": []
 }
