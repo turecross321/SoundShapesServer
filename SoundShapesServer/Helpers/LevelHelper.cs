@@ -47,6 +47,6 @@ public static class LevelHelper
     private const int LevelNameCharacterLimit = 26;
     public static string AdhereToLevelNameCharacterLimit(string name)
     {
-        return name[..LevelNameCharacterLimit];
+        return name[..Math.Min(name.Length, LevelNameCharacterLimit)];
     }
 }
