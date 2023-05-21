@@ -799,7 +799,7 @@ o7
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/levels/id/{levelId}/completed
+> {ip}:10061/api/v1/levels/id/{levelId}/user/id/{userId}
 > ```
 
 ### Response: 200

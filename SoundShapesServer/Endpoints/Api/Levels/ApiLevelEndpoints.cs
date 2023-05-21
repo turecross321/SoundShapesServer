@@ -123,11 +123,15 @@ public class ApiLevelEndpoints: EndpointGroup
         return HttpStatusCode.OK;
     }
 
-    [ApiEndpoint("levels/id/{id}/completed")]
-    public Response HasUserCompletedLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
+    [ApiEndpoint("levels/id/{levelId}/user/id/{userId}")]
+    [Authentication(false)]
+    public Response HasUserCompletedLevel(RequestContext context, GameDatabaseContext database, string levelId, string userId)
     {
-        GameLevel? level = database.GetLevelWithId(id);
+        GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;
+
+        GameUser? user = database.GetUserWithId(userId);
+        if (user == null) return HttpStatusCode.NotFound;
         
         bool completed = level.UniqueCompletions.Contains(user);
 
