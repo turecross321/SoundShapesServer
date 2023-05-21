@@ -123,7 +123,7 @@ public class ApiLevelEndpoints: EndpointGroup
         return HttpStatusCode.OK;
     }
 
-    [ApiEndpoint("levels/id/{levelId}/user/id/{userId}")]
+    [ApiEndpoint("levels/id/{levelId}/users/id/{userId}")]
     [Authentication(false)]
     public Response HasUserCompletedLevel(RequestContext context, GameDatabaseContext database, string levelId, string userId)
     {
