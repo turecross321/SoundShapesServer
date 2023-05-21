@@ -41,20 +41,30 @@ public static class ResourceHelper
         return FileType.Unknown;
     }
 
-    public static JObject LevelFileToJObject(byte[] level)
+    public static JObject? LevelFileToJObject(byte[] level)
     {
         using MemoryStream stream = new(level);
-        return JObject.Parse(DecompressZlib(stream));
+        string? json = DecompressZlib(stream);
+        if (json == null) return null;
+        
+        return JObject.Parse(json);
     }
-    private static string DecompressZlib(MemoryStream compressedStream)
+    private static string? DecompressZlib(MemoryStream compressedStream)
     {
         using InflaterInputStream inflater = new(compressedStream);
         using MemoryStream outputMemoryStream = new();
         byte[] buffer = new byte[4096];
         int bytesRead;
-        while ((bytesRead = inflater.Read(buffer, 0, buffer.Length)) > 0)
+        try
         {
-            outputMemoryStream.Write(buffer, 0, bytesRead);
+            while ((bytesRead = inflater.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                outputMemoryStream.Write(buffer, 0, bytesRead);
+            }
+        }
+        catch (Exception e)
+        {
+            return null;
         }
 
         outputMemoryStream.Seek(0, SeekOrigin.Begin);

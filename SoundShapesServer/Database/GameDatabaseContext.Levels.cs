@@ -69,9 +69,12 @@ public partial class GameDatabaseContext
         UploadLevelResource(dataStore, level, soundFile, FileType.Sound);
     }
 
-    private void SetLevelInfo(GameLevel level, byte[] levelFile)
+    private bool SetLevelInfo(GameLevel level, byte[] levelFile)
     {
-        JObject deCompressedLevel = LevelFileToJObject(levelFile);
+        JObject? deCompressedLevel = LevelFileToJObject(levelFile);
+        if (deCompressedLevel == null)
+            return false;
+
 
         int bpm = deCompressedLevel.Value<int?>("bpm") ?? 120;
         int transposeValue = deCompressedLevel.Value<int?>("transposeValue") ?? 0;
@@ -88,6 +91,8 @@ public partial class GameDatabaseContext
             level.TotalScreens = screensCount;
             level.TotalEntities = entitiesCount;
         });
+
+        return true;
     }
     
     public Response UploadLevelResource(IDataStore dataStore, GameLevel level,
@@ -100,10 +105,9 @@ public partial class GameDatabaseContext
         dataStore.WriteToStore(key, file);
         
         SetLevelFilePath(level, fileType, key);
-        
-        if (fileType == FileType.Level) SetLevelInfo(level, file);
 
-        return HttpStatusCode.Created;
+        if (fileType != FileType.Level) return HttpStatusCode.Created;
+        return !SetLevelInfo(level, file) ? HttpStatusCode.BadRequest : HttpStatusCode.Created;
     }
 
     private void SetLevelFilePath(GameLevel level, FileType fileType, string path)
