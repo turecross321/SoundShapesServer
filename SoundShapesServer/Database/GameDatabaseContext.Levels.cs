@@ -80,7 +80,12 @@ public partial class GameDatabaseContext
         int transposeValue = deCompressedLevel.Value<int?>("transposeValue") ?? 0;
         int scaleIndex = deCompressedLevel.Value<int?>("scaleIndex") ?? 0;
         int screensCount = (deCompressedLevel.GetValue("screenData") ?? throw new InvalidOperationException()).Count();
-        int entitiesCount = (deCompressedLevel.GetValue("entities") ?? throw new InvalidOperationException()).Count();
+
+        int totalEntities = deCompressedLevel.GetValue("entities")?.Count() ?? 0;
+        // This was added in later versions of the game, and it replaces entities
+        int totalEntitiesB = deCompressedLevel.GetValue("entitiesB")?.Count() ?? 0;
+
+        int entitiesCount = Math.Max(totalEntities, totalEntitiesB);
 
         _realm.Write(() =>
         {
