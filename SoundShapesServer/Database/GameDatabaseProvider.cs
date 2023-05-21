@@ -42,33 +42,5 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 
     protected override void Migrate(Migration migration, ulong oldVersion)
     {
-        IQueryable<dynamic> oldLevels = migration.OldRealm.DynamicApi.All("GameLevel");
-        IQueryable<GameLevel> newLevels = migration.NewRealm.All<GameLevel>();
-        
-        if (oldVersion < 13)
-        {
-            foreach (GameLevel level in newLevels)
-            {
-                level.LevelFilePath = ResourceHelper.GetLevelResourceKey(level.Id, FileType.Level);
-                level.ThumbnailFilePath = ResourceHelper.GetLevelResourceKey(level.Id, FileType.Image);
-                level.SoundFilePath = ResourceHelper.GetLevelResourceKey(level.Id, FileType.Sound);
-            }
-
-            foreach (GameAlbum album in migration.NewRealm.All<GameAlbum>())
-            {
-                album.ThumbnailFilePath = ResourceHelper.GetAlbumResourceKey(album.Id, AlbumResourceType.Thumbnail);
-                album.SidePanelFilePath = ResourceHelper.GetAlbumResourceKey(album.Id, AlbumResourceType.SidePanel);
-            }
-
-            foreach (GameUser user in migration.NewRealm.All<GameUser>())
-            {
-                user.SaveFilePath = ResourceHelper.GetSaveResourceKey(user.Id);
-            }
-
-            foreach (NewsEntry newsEntry in migration.NewRealm.All<NewsEntry>())
-            {
-                newsEntry.ThumbnailFilePath = ResourceHelper.GetNewsResourceKey(newsEntry.Id);
-            }
-        }
     }
 }

@@ -1,9 +1,11 @@
+using System.Security.Cryptography;
 using System.Text;
 using HttpMultipartParser;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using Newtonsoft.Json.Linq;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
+using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Helpers;
 
@@ -71,6 +73,25 @@ public static class ResourceHelper
         using StreamReader reader = new(outputMemoryStream, Encoding.UTF8);
         return reader.ReadToEnd();
     }
+    
+    public static string HashString(string input)
+    {
+        byte[] bytes = Encoding.UTF8.GetBytes(input);
+        return HashFile(bytes);
+    }
+
+    public static string HashFile(byte[] file)
+    {
+        using SHA512 hash = SHA512.Create();
+        byte[] hashedInputBytes = hash.ComputeHash(file);
+
+        // Convert to text
+        // StringBuilder Capacity is 128, because 512 bits / 8 bits in byte * 2 symbols for byte 
+        StringBuilder hashedInputStringBuilder = new StringBuilder(128);
+        foreach (byte b in hashedInputBytes)
+            hashedInputStringBuilder.Append(b.ToString("X2"));
+        return hashedInputStringBuilder.ToString();
+    }
 
     public static FileType GetFileTypeFromName(string name)
     {
@@ -82,15 +103,16 @@ public static class ResourceHelper
     }
 
     private const string LevelsPath = "levels";
-    public static string GetLevelResourceKey(string levelId, FileType fileType)
+    public static string GetLevelResourceKey(GameLevel level, FileType fileType)
     {
+        string path = $"{LevelsPath}/{level.Id[0]}/{level.Id}";
+
         return fileType switch
         {
-            FileType.Image => $"{LevelsPath}/{levelId}-thumbnail",
-            FileType.Level => $"{LevelsPath}/{levelId}-level",
-            FileType.Sound => $"{LevelsPath}/{levelId}-sound",
-            FileType.Unknown => throw new Exception(),
-            _ => throw new Exception()
+            FileType.Level => path + "-level",
+            FileType.Image => path + "-thumbnail",
+            FileType.Sound => path + "-sound",
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
 

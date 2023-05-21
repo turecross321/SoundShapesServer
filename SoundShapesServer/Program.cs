@@ -38,7 +38,7 @@ if (string.IsNullOrEmpty(adminUser.PasswordBcrypt))
     string? input = Console.ReadLine();
     if (input != null)
     {
-        string hashedPassword = UserHelper.HashString(input);
+        string hashedPassword = ResourceHelper.HashString(input);
         databaseContext.SetUserPassword(adminUser, hashedPassword);
         Console.WriteLine($"Admin user's password has been set to {input}");
     }

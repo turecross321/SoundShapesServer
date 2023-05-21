@@ -101,7 +101,7 @@ public partial class GameDatabaseContext
         if (fileType == FileType.Image && !IsByteArrayPng(file))
             return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
 
-        string key = GetLevelResourceKey(level.Id, fileType);
+        string key = GetLevelResourceKey(level, fileType);
         dataStore.WriteToStore(key, file);
         
         SetLevelFilePath(level, fileType, key);
