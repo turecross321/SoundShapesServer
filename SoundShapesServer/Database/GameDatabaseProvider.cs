@@ -1,6 +1,5 @@
 using Bunkum.RealmDatabase;
 using Realms;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Leaderboard;

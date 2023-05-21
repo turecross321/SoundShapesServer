@@ -64,7 +64,7 @@ public static class ResourceHelper
                 outputMemoryStream.Write(buffer, 0, bytesRead);
             }
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return null;
         }
