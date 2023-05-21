@@ -23,7 +23,7 @@ public partial class GameDatabaseContext
     public GameLevel CreateLevel(PublishLevelRequest request, GameUser user, bool createEvent = true, string? levelId = null)
     {
         levelId ??= GenerateLevelId();
-        GameLevel level = new(levelId, user, request.Name, request.Language, request.FileSize, request.Created);
+        GameLevel level = new(levelId, user, AdhereToLevelNameCharacterLimit(request.Name), request.Language, request.FileSize, request.Created);
 
         _realm.Write(() =>
         {
@@ -40,7 +40,7 @@ public partial class GameDatabaseContext
     {
         _realm.Write(() =>
         {
-            level.Name = updatedPublishLevel.Name;
+            level.Name = AdhereToLevelNameCharacterLimit(updatedPublishLevel.Name);
             level.Language = updatedPublishLevel.Language;
             level.ModificationDate = DateTimeOffset.UtcNow;
         });

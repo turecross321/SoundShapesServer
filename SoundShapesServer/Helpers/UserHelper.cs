@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using static System.Text.RegularExpressions.Regex;
 
 namespace SoundShapesServer.Helpers;

@@ -4,7 +4,6 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
-using SoundShapesServer.Endpoints.Game.Levels;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Game.Leaderboards;
 using SoundShapesServer.Types.Leaderboard;

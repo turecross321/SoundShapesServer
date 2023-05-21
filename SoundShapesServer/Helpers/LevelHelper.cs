@@ -43,4 +43,10 @@ public static class LevelHelper
 
         return 0;
     }
+
+    private const int LevelNameCharacterLimit = 26;
+    public static string AdhereToLevelNameCharacterLimit(string name)
+    {
+        return name[..(LevelNameCharacterLimit)];
+    }
 }
