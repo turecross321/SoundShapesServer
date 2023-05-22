@@ -83,6 +83,8 @@ public class ApiLevelEndpoints: EndpointGroup
             "averagePlayTime" => LevelOrderType.AveragePlayTime,
             "totalScreens" => LevelOrderType.TotalScreens,
             "totalEntities" => LevelOrderType.TotalEntities,
+            "bpm" => LevelOrderType.Bpm,
+            "transposeValue" => LevelOrderType.TransposeValue,
             _ => LevelOrderType.DoNotOrder
         };
 

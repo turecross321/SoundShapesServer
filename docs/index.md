@@ -583,6 +583,8 @@ o7
 | averagePlayTime    |
 | totalScreens       |
 | totalEntities      |
+| bpm                |
+| transposeValue     |
 
 ### Response: 200
 

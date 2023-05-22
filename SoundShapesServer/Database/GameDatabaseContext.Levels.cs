@@ -196,7 +196,9 @@ public partial class GameDatabaseContext
             LevelOrderType.TotalPlayTime => LevelsOrderedByTotalPlayTime(descending),
             LevelOrderType.AveragePlayTime => LevelsOrderedByAveragePlayTime(descending),
             LevelOrderType.TotalScreens => LevelsOrderedByScreens(descending),
-            LevelOrderType.TotalEntities => LevelsOrderedByEntites(descending),
+            LevelOrderType.TotalEntities => LevelsOrderedByEntities(descending),
+            LevelOrderType.Bpm => LevelsOrderedByBpm(descending),
+            LevelOrderType.TransposeValue => LevelsOrderedByTransposeValue(descending),
             _ => LevelsOrderedByCreationDate(descending)
         };
 
@@ -444,12 +446,24 @@ public partial class GameDatabaseContext
         return _realm.All<GameLevel>().OrderBy(l => l.TotalScreens);
     }
     
-    private IQueryable<GameLevel> LevelsOrderedByEntites(bool descending)
+    private IQueryable<GameLevel> LevelsOrderedByEntities(bool descending)
     {
         if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.TotalEntities);
         return _realm.All<GameLevel>().OrderBy(l => l.TotalEntities);
     }
     
+    private IQueryable<GameLevel> LevelsOrderedByBpm(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.Bpm);
+        return _realm.All<GameLevel>().OrderBy(l => l.Bpm);
+    }
+    
+    private IQueryable<GameLevel> LevelsOrderedByTransposeValue(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.TransposeValue);
+        return _realm.All<GameLevel>().OrderBy(l => l.TransposeValue);
+    }
+
     public void AddCompletionToLevel(GameUser user, GameLevel level)
     {
         if (!level.UniqueCompletions.Contains(user)) AddUniqueCompletion(user, level);

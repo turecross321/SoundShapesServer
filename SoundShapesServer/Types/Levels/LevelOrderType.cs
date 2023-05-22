@@ -16,5 +16,7 @@ public enum LevelOrderType
     AveragePlayTime,
     TotalScreens,
     TotalEntities,
+    Bpm,
+    TransposeValue,
     DoNotOrder
 }
