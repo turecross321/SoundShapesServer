@@ -51,7 +51,7 @@ public class LevelEndpoints : EndpointGroup
         else if (query != null && query.Contains("metadata.displayName:"))
         {
             filters = new LevelFilters(search: query.Split(":")[1]);
-            order = LevelOrderType.Relevance;
+            order = LevelOrderType.CreationDate;
         }
         
         else switch (categoryString)
