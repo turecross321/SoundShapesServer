@@ -23,6 +23,8 @@ public static class LevelHelper
     {
         // I know this is ugly, but this is authentic to the original servers, while also supporting decimals
         // which is used for sorting levels by difficulty.
+
+        if (level.TotalDeaths == 0 || level.CompletionCount == 0) return 0;
         
         float averageAmountOfDeaths = (float)level.TotalDeaths / level.CompletionCount;
         
