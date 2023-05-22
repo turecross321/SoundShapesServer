@@ -46,16 +46,18 @@ Date is always UTC, and is always formatted like `YYYY-MM-DD`.
 
 ```json
 {
-  "Id": "0405d98f-59b4-4e4c-a929-d68f7d360b5c",
-  "ExpiresAt": "2023-05-17T15:25:35.4060521+00:00",
+  "Id": "be84d1f9-52be-48ae-899a-0180fb039d63",
+  "ExpiresAt": "2023-05-23T18:24:25.6308469+00:00",
   "User": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
-    "PublishedLevelsCount": 72960,
-    "FollowersCount": 0
+    "PublishedLevelsCount": 72932,
+    "FollowersCount": 1
   },
-  "IsBanned": false
+  "IsBanned": false,
+  "BanReason": null,
+  "BanExpiresAt": null
 }
 ```
 
@@ -547,20 +549,23 @@ o7
 
 ### Query Params
 
-| Param       |
-| ----------- |
-| from        |
-| count       |
-| byUser      |
-| likedByUser |
-| completedBy |
-| inAlbum     |
-| inDaily     |
-| inDailyDate |
-| inLastDaily |
-| search      |
-| descending  |
-| orderBy     |
+| Param          |
+| -------------- |
+| from           |
+| count          |
+| byUser         |
+| likedByUser    |
+| completedBy    |
+| inAlbum        |
+| inDaily        |
+| inDailyDate    |
+| inLastDaily    |
+| search         |
+| bpm            |
+| transposeValue |
+| scaleIndex     |
+| descending     |
+| orderBy        |
 
 | Can be ordered by: |
 | ------------------ |
@@ -799,7 +804,7 @@ o7
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/levels/id/{levelId}/user/id/{userId}
+> {ip}:10061/api/v1/levels/id/{levelId}/users/id/{userId}
 > ```
 
 ### Response: 200

@@ -21,6 +21,6 @@ public class ApiSessionResponse
     public DateTimeOffset ExpiresAt { get; }
     public ApiUserBriefResponse User { get; set; }
     public bool IsBanned { get; set; }
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string? BanReason { get; set; }
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public DateTimeOffset? BanExpiresAt { get; set; }
+    public string? BanReason { get; set; }
+    public DateTimeOffset? BanExpiresAt { get; set; }
 }

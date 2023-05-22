@@ -321,6 +321,21 @@ public partial class GameDatabaseContext
             response = tempResponse.AsQueryable();
         }
 
+        if (filters.Bpm != null)
+        {
+            response = response.Where(l => l.Bpm == filters.Bpm);
+        }
+
+        if (filters.Scale != null)
+        {
+            response = response.Where(l => l.ScaleIndex == (int)filters.Scale);
+        }
+
+        if (filters.TransposeValue != null)
+        {
+            response = response.Where(l => l.TransposeValue == filters.TransposeValue);
+        }
+        
         return response;
     }
 
