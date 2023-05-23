@@ -7,7 +7,9 @@ public class GameSessionResponse
 {
     public GameSessionResponse(GameSession session)
     {
-        ExpirationDate = session.ExpiresAt.ToUnixTimeMilliseconds();
+        // Game doesn't actually listen to expiry date, until it disconnects, and it will only try to get a new session
+        // if the old one is already expired. This can only lead to problems, hence this always being set to 0
+        ExpirationDate = 0; 
         Id = session.Id;
         User = new SessionUserResponse(session.User);
     }
