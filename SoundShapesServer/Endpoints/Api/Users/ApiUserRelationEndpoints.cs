@@ -9,17 +9,21 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api.Users;
 
-public class ApiUserInteractionEndpoints : EndpointGroup
+public class ApiUserRelationEndpoints : EndpointGroup
 {
-    [ApiEndpoint("users/id/{id}/following")]
-    public ApiIsUserFollowedResponse? CheckIfFollowingUser(RequestContext context, GameDatabaseContext database, GameUser user, string id)
+    [ApiEndpoint("users/id/{recipientId}/users/id/{actorId}")]
+    [Authentication(false)]
+    public ApiUserRelationResponse? CheckIfFollowingUser(RequestContext context, GameDatabaseContext database, string recipientId, string actorId)
     {
-        GameUser? recipient = database.GetUserWithId(id);
+        GameUser? recipient = database.GetUserWithId(recipientId);
         if (recipient == null) return null;
+        
+        GameUser? actor = database.GetUserWithId(actorId);
+        if (actor == null) return null;
 
-        return new ApiIsUserFollowedResponse
+        return new ApiUserRelationResponse
         {
-            IsFollowing = database.IsUserFollowingOtherUser(user, recipient)
+            Following = database.IsUserFollowingOtherUser(actor, recipient)
         };
     }
 

@@ -135,19 +135,4 @@ public class ApiLevelEndpoints: EndpointGroup
         database.RemoveLevel(level, dataStore);
         return HttpStatusCode.OK;
     }
-
-    [ApiEndpoint("levels/id/{levelId}/users/id/{userId}")]
-    [Authentication(false)]
-    public Response HasUserCompletedLevel(RequestContext context, GameDatabaseContext database, string levelId, string userId)
-    {
-        GameLevel? level = database.GetLevelWithId(levelId);
-        if (level == null) return HttpStatusCode.NotFound;
-
-        GameUser? user = database.GetUserWithId(userId);
-        if (user == null) return HttpStatusCode.NotFound;
-        
-        bool completed = level.UniqueCompletions.Contains(user);
-
-        return new Response(new ApiHasUserCompletedLevelResponse(completed), ContentType.Json);
-    }
 }

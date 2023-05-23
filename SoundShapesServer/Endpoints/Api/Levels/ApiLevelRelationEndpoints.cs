@@ -10,17 +10,22 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api.Levels;
 
-public class ApiLevelInteractionEndpoints : EndpointGroup
+public class ApiLevelRelationEndpoints : EndpointGroup
 {
-    [ApiEndpoint("levels/id/{id}/liked", ContentType.Json)]
-    public ApiIsLevelLikedResponse? CheckIfUserHasLikedLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
+    [ApiEndpoint("levels/id/{levelId}/users/id/{userId}", ContentType.Json)]
+    [Authentication(false)]
+    public ApiLevelRelationResponse? CheckIfUserHasLikedLevel(RequestContext context, GameDatabaseContext database, string levelId, string userId)
     {
-        GameLevel? level = database.GetLevelWithId(id);
+        GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return null;
 
-        return new ApiIsLevelLikedResponse()
+        GameUser? user = database.GetUserWithId(userId);
+        if (user == null) return null;
+
+        return new ApiLevelRelationResponse()
         {
-            IsLiked = database.IsUserLikingLevel(user, level)
+            Completed = level.UniqueCompletions.Contains(user),
+            Liked = database.IsUserLikingLevel(user, level)
         };
     }
 
