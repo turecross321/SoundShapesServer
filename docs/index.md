@@ -299,21 +299,13 @@ o7
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
-## End-point: UnAuthorize Ip
+## End-point: Remove Authorized IP
 
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/ip/unAuthorize
+> {ip}:10061/api/v1/ip/{ipAddress}/remove
 > ```
-
-### Body (**raw**)
-
-```json
-{
-  "IpAddress": "{ipAddress}"
-}
-```
 
 ### Response: 200
 

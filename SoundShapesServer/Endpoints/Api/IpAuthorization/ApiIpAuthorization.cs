@@ -24,10 +24,10 @@ public class ApiIpAuthorization : EndpointGroup
 
         return HttpStatusCode.Conflict;
     }
-    [ApiEndpoint("ip/unAuthorize", Method.Post)]
-    public Response UnAuthorizeIpAddress(RequestContext context, GameDatabaseContext database, ApiUnAuthorizeIpRequest body, GameUser user)
+    [ApiEndpoint("ip/{address}/remove", Method.Post)]
+    public Response UnAuthorizeIpAddress(RequestContext context, GameDatabaseContext database, string address, GameUser user)
     {
-        Types.IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress, (int)SessionType.Game);
+        Types.IpAuthorization ip = database.GetIpFromAddress(user, address, (int)SessionType.Game);
 
         database.RemoveIpAddress(ip);
         return HttpStatusCode.OK;
