@@ -4,8 +4,10 @@ public enum LevelOrderType
 {
     CreationDate,
     ModificationDate,
-    Plays,
+    TotalPlays,
     UniquePlays,
+    UniqueCompletions,
+    TotalCompletions,
     Likes,
     FileSize,
     Difficulty,

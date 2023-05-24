@@ -77,8 +77,10 @@ public class ApiLevelEndpoints: EndpointGroup
         {
             "creationDate" => LevelOrderType.CreationDate,
             "modificationDate" => LevelOrderType.ModificationDate,
-            "plays" => LevelOrderType.Plays,
+            "totalPlays" => LevelOrderType.TotalPlays,
             "uniquePlays" => LevelOrderType.UniquePlays,
+            "totalCompletions" => LevelOrderType.TotalCompletions,
+            "uniqueCompletions" => LevelOrderType.UniqueCompletions,
             "likes" => LevelOrderType.Likes,
             "fileSize" => LevelOrderType.FileSize,
             "difficulty" => LevelOrderType.Difficulty,

@@ -573,8 +573,10 @@ o7
 | ------------------ |
 | creationDate       |
 | modificationDate   |
-| plays              |
+| totalPlays         |
 | uniquePlays        |
+| totalCompletions   |
+| uniqueCompletions  |
 | likes              |
 | fileSize           |
 | difficulty         |
@@ -1104,7 +1106,7 @@ Should be a PNG
 | ------------------ |
 | creationDate       |
 | modificationDate   |
-| plays              |
+| totalPlays         |
 | uniquePlays        |
 | levelsCount        |
 | fileSize           |

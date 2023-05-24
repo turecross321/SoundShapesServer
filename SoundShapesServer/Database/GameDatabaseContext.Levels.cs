@@ -197,8 +197,10 @@ public partial class GameDatabaseContext
         {
             LevelOrderType.CreationDate => LevelsOrderedByCreationDate(descending),
             LevelOrderType.ModificationDate => LevelsOrderedByModificationDate(descending),
-            LevelOrderType.Plays => LevelsOrderedByPlays(descending),
+            LevelOrderType.TotalPlays => LevelsOrderedByPlays(descending),
             LevelOrderType.UniquePlays => LevelsOrderedByUniquePlays(descending),
+            LevelOrderType.TotalCompletions => LevelsOrderedByTotalCompletions(descending),
+            LevelOrderType.UniqueCompletions => LevelsOrderedByUniqueCompletions(descending),
             LevelOrderType.Likes => LevelsOrderedByLikes(descending),
             LevelOrderType.FileSize => LevelsOrderedByFileSize(descending),
             LevelOrderType.Difficulty => LevelsOrderedByDifficulty(descending),
@@ -474,6 +476,18 @@ public partial class GameDatabaseContext
     {
         if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.TransposeValue);
         return _realm.All<GameLevel>().OrderBy(l => l.TransposeValue);
+    }
+
+    private IQueryable<GameLevel> LevelsOrderedByTotalCompletions(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.CompletionCount);
+        return _realm.All<GameLevel>().OrderBy(l => l.CompletionCount);
+    }
+    
+    private IQueryable<GameLevel> LevelsOrderedByUniqueCompletions(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.UniqueCompletionsCount);
+        return _realm.All<GameLevel>().OrderBy(l => l.UniqueCompletionsCount);
     }
 
     public void AddCompletionToLevel(GameUser user, GameLevel level)

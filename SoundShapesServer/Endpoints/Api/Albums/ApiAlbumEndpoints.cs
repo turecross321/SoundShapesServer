@@ -31,7 +31,7 @@ public class ApiAlbumEndpoints : EndpointGroup
         {
             "creationDate" => AlbumOrderType.CreationDate,
             "modificationDate" => AlbumOrderType.ModificationDate,
-            "plays" => AlbumOrderType.Plays,
+            "totalPlays" => AlbumOrderType.Plays,
             "uniquePlays" => AlbumOrderType.UniquePlays,
             "levelsCount" => AlbumOrderType.LevelsCount,
             "fileSize" => AlbumOrderType.FileSize,
