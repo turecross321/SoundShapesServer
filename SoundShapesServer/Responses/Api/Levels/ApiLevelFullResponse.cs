@@ -15,6 +15,8 @@ public class ApiLevelFullResponse
         ModificationDate = level.ModificationDate;
         TotalPlays = level.PlaysCount;
         UniquePlays = level.UniquePlaysCount;
+        TotalCompletions = level.CompletionCount;
+        UniqueCompletions = level.UniqueCompletions.Count;
         Likes = level.Likes.Count();
         TotalDeaths = level.TotalDeaths;
         TotalPlayTime = level.TotalPlayTime;
@@ -39,6 +41,8 @@ public class ApiLevelFullResponse
     public DateTimeOffset ModificationDate { get; set; }
     public int TotalPlays { get; set; }
     public int UniquePlays { get; set; }
+    public int TotalCompletions { get; set; }
+    public int UniqueCompletions { get; set; }
     public int Likes { get; set; }
     public int TotalDeaths { get; set; }
     public long TotalPlayTime { get; set; }
