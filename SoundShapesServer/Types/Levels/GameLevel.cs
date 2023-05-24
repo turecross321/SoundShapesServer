@@ -43,6 +43,8 @@ public class GameLevel : RealmObject
     public int ScaleIndex { get; set; }
     public int TotalScreens { get; set; }
     public int TotalEntities { get; set; }
+    public bool HasCar { get; set; }
+    public bool HasExplodingCar { get; set; }
     public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset ModificationDate { get; set; }
     public long TotalPlayTime { get; set; }

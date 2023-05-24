@@ -26,6 +26,8 @@ public class ApiLevelFullResponse
         ScaleIndex = level.ScaleIndex;
         TotalScreens = level.TotalScreens;
         TotalEntities = level.TotalEntities;
+        HasCar = level.HasCar;
+        HasExplodingCar = level.HasExplodingCar;
         Albums = level.Albums.AsEnumerable().Select(a => new ApiAlbumResponse(a)).ToArray();
         DailyLevels = level.DailyLevels.AsEnumerable().Select(a => new ApiDailyLevelResponse(a)).ToArray();
     }
@@ -48,6 +50,8 @@ public class ApiLevelFullResponse
     public int ScaleIndex { get; set; }
     public int TotalScreens { get; set; }
     public int TotalEntities { get; set; }
+    public bool HasCar { get; set; }
+    public bool HasExplodingCar { get; set; }
     public ApiAlbumResponse[] Albums { get; set; }
     public ApiDailyLevelResponse[] DailyLevels { get; set; }
 }

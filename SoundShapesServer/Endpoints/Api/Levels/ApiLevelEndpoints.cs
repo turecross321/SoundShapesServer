@@ -45,6 +45,12 @@ public class ApiLevelEndpoints: EndpointGroup
         string? bpmString = context.QueryString["bpm"];
         string? transposeValueString = context.QueryString["transposeValue"];
         string? scaleString = context.QueryString["scaleIndex"];
+        
+        bool? hasCar = null;
+        if (TryParse(context.QueryString["hasCar"], out bool hasCarTemp)) hasCar = hasCarTemp;
+        
+        bool? hasExplodingCar = null;
+        if (TryParse(context.QueryString["hasExplodingCar"], out bool hasExplodingCarTemp)) hasExplodingCar = hasExplodingCarTemp;
 
         GameUser? byUser = null;
         GameUser? likedBy = null;
@@ -65,7 +71,7 @@ public class ApiLevelEndpoints: EndpointGroup
         if (transposeValueString != null) transposeValue = int.Parse(transposeValueString);
 
         LevelFilters filters = new (byUser, likedBy, inAlbum, inDaily, inDailyDate, lastDate, 
-            searchQuery, completedBy, bpm, scale, transposeValue);
+            searchQuery, completedBy, bpm, scale, transposeValue, hasCar, hasExplodingCar);
 
         LevelOrderType order = orderString switch
         {

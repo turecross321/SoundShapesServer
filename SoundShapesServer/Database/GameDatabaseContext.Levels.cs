@@ -87,6 +87,16 @@ public partial class GameDatabaseContext
 
         int entitiesCount = Math.Max(totalEntities, totalEntitiesB);
 
+        bool hasCar = deCompressedLevel.GetValue("entityTypesUsed")
+            ?.Values<string>().FirstOrDefault
+                // ReSharper disable once StringLiteralTypo
+                (e => e == "Platformer_EntityPacks_GameStuff_CarCheckpoint") != null;
+        
+        bool hasExplodingCar = deCompressedLevel.GetValue("entityTypesUsed")
+            ?.Values<string>().FirstOrDefault
+                // ReSharper disable once StringLiteralTypo
+                (e => e == "Platformer_EntityPacks_GameStuff_ExplodingCarCheckpoint") != null;
+
         _realm.Write(() =>
         {
             level.FileSize = levelFile.Length;
@@ -95,6 +105,8 @@ public partial class GameDatabaseContext
             level.ScaleIndex = scaleIndex;
             level.TotalScreens = screensCount;
             level.TotalEntities = entitiesCount;
+            level.HasCar = hasCar;
+            level.HasExplodingCar = hasExplodingCar;
         });
 
         return true;

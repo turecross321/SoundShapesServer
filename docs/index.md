@@ -585,6 +585,8 @@ o7
 | totalEntities      |
 | bpm                |
 | transposeValue     |
+| hasCar             |
+| hasExplodingCar    |
 
 ### Response: 200
 
@@ -768,30 +770,32 @@ o7
 
 ```json
 {
-  "Id": "7i5Ig3Fj",
+  "Id": "tYkIx22O",
   "Name": "Untitled",
   "Author": {
-    "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
+    "Id": "73144da0-1b78-453b-8a59-aaa55e9abdaa",
     "Username": "turecross123",
     "PermissionsType": 0,
-    "PublishedLevelsCount": 11,
+    "PublishedLevelsCount": 3,
     "FollowersCount": 0
   },
-  "CreationDate": "2023-05-20T23:23:54.9590085+00:00",
-  "ModificationDate": "2023-05-20T23:23:54.9590085+00:00",
-  "TotalPlays": 1,
+  "CreationDate": "2023-05-24T12:22:08.801239+00:00",
+  "ModificationDate": "2023-05-24T12:32:53.6500089+00:00",
+  "TotalPlays": 4,
   "UniquePlays": 1,
   "Likes": 0,
   "TotalDeaths": 0,
-  "TotalPlayTime": 5916,
+  "TotalPlayTime": 21265,
   "Language": 1,
   "Difficulty": 0,
-  "FileSize": 1071,
+  "FileSize": 983,
   "Bpm": 120,
   "TransposeValue": 0,
   "ScaleIndex": 0,
-  "TotalScreens": 30,
-  "TotalEntities": 32,
+  "TotalScreens": 27,
+  "TotalEntities": 25,
+  "HasCar": true,
+  "HasExplodingCar": false,
   "Albums": [],
   "DailyLevels": []
 }
@@ -919,6 +923,8 @@ o7
   "ScaleIndex": 0,
   "TotalScreens": 30,
   "TotalEntities": 32,
+  "HasCar": true,
+  "HasExplodingCar": false,
   "Albums": [],
   "DailyLevels": []
 }
@@ -979,19 +985,21 @@ o7
   },
   "CreationDate": "2023-05-16T09:58:43.5485486+00:00",
   "ModificationDate": "2023-05-16T09:58:43.5485486+00:00",
-  "TotalPlays": 1,
-  "UniquePlays": 1,
+  "TotalPlays": 0,
+  "UniquePlays": 0,
   "Likes": 0,
   "TotalDeaths": 0,
-  "TotalPlayTime": 5916,
-  "Language": 1,
+  "TotalPlayTime": 0,
+  "Language": 0,
   "Difficulty": 0,
-  "FileSize": 1071,
-  "Bpm": 120,
+  "FileSize": 0,
+  "Bpm": 0,
   "TransposeValue": 0,
   "ScaleIndex": 0,
-  "TotalScreens": 30,
-  "TotalEntities": 32,
+  "TotalScreens": 0,
+  "TotalEntities": 0,
+  "HasCar": false,
+  "HasExplodingCar": false,
   "Albums": [],
   "DailyLevels": []
 }

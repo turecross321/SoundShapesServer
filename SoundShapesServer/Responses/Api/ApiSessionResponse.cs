@@ -1,4 +1,3 @@
-using Newtonsoft.Json;
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Sessions;
