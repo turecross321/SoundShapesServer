@@ -549,23 +549,25 @@ o7
 
 ### Query Params
 
-| Param          |
-| -------------- |
-| from           |
-| count          |
-| byUser         |
-| likedByUser    |
-| completedBy    |
-| inAlbum        |
-| inDaily        |
-| inDailyDate    |
-| inLastDaily    |
-| search         |
-| bpm            |
-| transposeValue |
-| scaleIndex     |
-| descending     |
-| orderBy        |
+| Param           |
+| --------------- |
+| from            |
+| count           |
+| byUser          |
+| likedByUser     |
+| completedBy     |
+| inAlbum         |
+| inDaily         |
+| inDailyDate     |
+| inLastDaily     |
+| search          |
+| bpm             |
+| transposeValue  |
+| scaleIndex      |
+| hasCar          |
+| hasExplodingCar |
+| descending      |
+| orderBy         |
 
 | Can be ordered by: |
 | ------------------ |
@@ -585,8 +587,6 @@ o7
 | totalEntities      |
 | bpm                |
 | transposeValue     |
-| hasCar             |
-| hasExplodingCar    |
 
 ### Response: 200
 
@@ -783,6 +783,8 @@ o7
   "ModificationDate": "2023-05-24T12:32:53.6500089+00:00",
   "TotalPlays": 4,
   "UniquePlays": 1,
+  "TotalCompletions": 3,
+  "UniqueCompletions": 1,
   "Likes": 0,
   "TotalDeaths": 0,
   "TotalPlayTime": 21265,
@@ -912,6 +914,8 @@ o7
   "ModificationDate": "2023-05-20T23:23:54.9590085+00:00",
   "TotalPlays": 1,
   "UniquePlays": 1,
+  "TotalCompletions": 3,
+  "UniqueCompletions": 1,
   "Likes": 0,
   "TotalDeaths": 0,
   "TotalPlayTime": 5916,
@@ -987,6 +991,8 @@ o7
   "ModificationDate": "2023-05-16T09:58:43.5485486+00:00",
   "TotalPlays": 0,
   "UniquePlays": 0,
+  "TotalCompletions": 0,
+  "UniqueCompletions": 0,
   "Likes": 0,
   "TotalDeaths": 0,
   "TotalPlayTime": 0,
