@@ -16,7 +16,7 @@ public class LevelEndpoints : EndpointGroup
     [GameEndpoint("~index:*.page", ContentType.Json)]
     [GameEndpoint("~index:level.page", ContentType.Json)]
     [Authentication(false)]
-    public Response LevelsEndpoint(RequestContext context, GameDatabaseContext database, GameUser user, GameSession? session)
+    public Response LevelsEndpoint(RequestContext context, GameDatabaseContext database, GameUser? user, GameSession? session)
     {
         string? orderString = context.QueryString["orderBy"];
         string? query = context.QueryString["query"];
@@ -25,8 +25,13 @@ public class LevelEndpoints : EndpointGroup
         string categoryString = context.QueryString["search"] ?? "all";
         
         // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
-        if (session?.SessionType == (int)SessionType.Unauthorized && categoryString != "tagged3")
+        if (session == null || user == null)            
             return HttpStatusCode.Forbidden;
+        if (session.SessionType != (int)SessionType.Game)
+        {
+            if (session.SessionType != (int)SessionType.Unauthorized || categoryString != "tagged3")
+                return HttpStatusCode.Forbidden;
+        }
 
         LevelOrderType? order = null;
         LevelFilters filters = new ();
