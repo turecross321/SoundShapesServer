@@ -34,6 +34,6 @@ jobs:
         workflow: ng.yml
         workflow_conclusion: success
         name: "Sound Shapes Website"
-        repo: turecross321/sound-shapes-website-angular
+        repo: turecross321/soundshapes-website-angular
         if_no_artifact_found: fail
         path: "SoundShapesServer/bin/Release/net7.0/linux-x64/publish/website"
