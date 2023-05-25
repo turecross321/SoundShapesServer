@@ -351,6 +351,16 @@ public partial class GameDatabaseContext
         {
             response = response.Where(l => l.TransposeValue == filters.TransposeValue);
         }
+
+        if (filters.HasCar != null)
+        {
+            response = response.Where(l => l.HasCar == filters.HasCar);
+        }
+
+        if (filters.HasExplodingCar != null)
+        {
+            response = response.Where(l => l.HasExplodingCar == filters.HasExplodingCar);
+        }
         
         return response;
     }
