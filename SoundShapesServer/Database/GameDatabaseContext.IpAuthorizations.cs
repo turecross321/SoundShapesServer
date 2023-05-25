@@ -7,9 +7,9 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    private IpAuthorization AddUserIp(GameUser user, string ipAddress, SessionType sessionType)
+    private IpAuthorization CreateIpAddress(GameUser user, string ipAddress)
     {
-        IpAuthorization ip = new() { IpAddress = ipAddress, User = user, SessionType = (int)sessionType};
+        IpAuthorization ip = new() { IpAddress = ipAddress, User = user};
         
         _realm.Write(() =>
         {
@@ -19,12 +19,12 @@ public partial class GameDatabaseContext
         return ip;
     }
 
-    public IpAuthorization GetIpFromAddress(GameUser user, string ipAddress, SessionType sessionType)
+    public IpAuthorization GetIpFromAddress(GameUser user, string ipAddress)
     {
         _realm.Refresh();
         
-        IpAuthorization? ip = user.IpAddresses.FirstOrDefault(i => i.IpAddress == ipAddress && i.SessionType == (int)sessionType);
-        if (ip == null) ip = AddUserIp(user, ipAddress, sessionType);
+        IpAuthorization? ip = user.IpAddresses.FirstOrDefault(i => i.IpAddress == ipAddress);
+        if (ip == null) ip = CreateIpAddress(user, ipAddress);
         
         return ip;
     }
@@ -36,6 +36,11 @@ public partial class GameDatabaseContext
         {
             ip.Authorized = true;
             ip.OneTimeUse = oneTime;
+
+            foreach (GameSession session in ip.Sessions.Where(s=>s.SessionType == (int)SessionType.Unauthorized))
+            {
+                session.SessionType = (int)SessionType.Game;
+            }
         });
 
         _realm.Refresh();
@@ -61,7 +66,7 @@ public partial class GameDatabaseContext
         _realm.Refresh();
     }
 
-    public void UseIpAddress(IpAuthorization ip)
+    public void UseOneTimeIpAddress(IpAuthorization ip)
     {
         _realm.Write(() =>
         {
@@ -74,18 +79,16 @@ public partial class GameDatabaseContext
     {
         IQueryable<IpAuthorization> addresses = _realm.All<IpAuthorization>().Where(i => i.User == user);
 
-        IQueryable<IpAuthorization> filteredAddresses = FilterIpAddresses(addresses, sessionType, authorized);
+        IQueryable<IpAuthorization> filteredAddresses = FilterIpAddresses(addresses, authorized);
         IpAuthorization[] paginatedAddresses = PaginationHelper.PaginateIpAddresses(filteredAddresses, from, count);
 
         return (paginatedAddresses, filteredAddresses.Count());
     }
 
     private IQueryable<IpAuthorization> FilterIpAddresses(IQueryable<IpAuthorization> addresses,
-        SessionType sessionType, bool? authorized)
+        bool? authorized)
     {
         IQueryable<IpAuthorization> response = addresses;
-
-        response = response.Where(i => i.SessionType == (int)sessionType);
 
         if (authorized != null)
         {

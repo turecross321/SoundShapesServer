@@ -17,7 +17,7 @@ public class ApiIpAuthorization : EndpointGroup
     [ApiEndpoint("ip/authorize", Method.Post)]
     public Response AuthorizeIpAddress(RequestContext context, GameDatabaseContext database, ApiAuthorizeIpRequest body, GameUser user)
     {
-        Types.IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress, (int)SessionType.Game);
+        Types.IpAuthorization ip = database.GetIpFromAddress(user, body.IpAddress);
 
         if (database.AuthorizeIpAddress(ip, body.OneTimeUse))
             return HttpStatusCode.Created;
@@ -27,7 +27,7 @@ public class ApiIpAuthorization : EndpointGroup
     [ApiEndpoint("ip/{address}/remove", Method.Post)]
     public Response UnAuthorizeIpAddress(RequestContext context, GameDatabaseContext database, string address, GameUser user)
     {
-        Types.IpAuthorization ip = database.GetIpFromAddress(user, address, (int)SessionType.Game);
+        Types.IpAuthorization ip = database.GetIpFromAddress(user, address);
 
         database.RemoveIpAddress(ip);
         return HttpStatusCode.OK;

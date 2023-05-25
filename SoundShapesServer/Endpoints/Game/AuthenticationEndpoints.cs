@@ -5,6 +5,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using NPTicket;
+using Realms.Sync;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Sessions;
 using SoundShapesServer.Types;
@@ -41,28 +42,30 @@ public class AuthenticationEndpoints : EndpointGroup
 
         GameUser? user = database.GetUserWithUsername(ticket.Username);
         user ??= database.CreateUser(ticket.Username);
+        
+        IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
 
-        GameSession? session = null;
-        IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user, SessionType.Game);
-
+        SessionType? sessionType = null;
+        
         if (config.ApiAuthentication)
         {
             // If user hasn't finished registration, or if their IP isn't authorized, give them an unauthorized Session
             if (user.HasFinishedRegistration == false || ip.Authorized == false)
             {
-                session = database.CreateSession(context, user, SessionType.Unauthorized, 10);
+                sessionType = SessionType.Unauthorized;
             }
         }
         
-        if (IsUserBanned(user) != null) session = database.CreateSession(context, user, SessionType.Unauthorized, 10);
+        if (IsUserBanned(user) != null) sessionType = SessionType.Banned;
 
         PlatformType? platformType = PlatformHelper.GetPlatformType(ticket);
         if (platformType == null) return HttpStatusCode.BadRequest;
-        
-        session ??= database.CreateSession(context, user, (int)SessionType.Game, 14400, null, platformType); // 4 hours
+
+        sessionType ??= SessionType.Game;
+        GameSession session = database.CreateSession(context, user, (SessionType)sessionType, 14400, null, platformType); // 4 hours
 
         Debug.Assert(session.Ip != null, "session.Ip != null");
-        if (session.Ip.OneTimeUse) database.UseIpAddress(session.Ip);
+        if (session.Ip.OneTimeUse) database.UseOneTimeIpAddress(session.Ip);
 
         GameSessionResponse gameSessionResponse = new (session);
 
