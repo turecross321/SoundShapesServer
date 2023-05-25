@@ -7,46 +7,6 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public IQueryable<GameUser> GetFollowers(GameUser userBeingFollowed)
-    {
-        IQueryable<FollowRelation> relations = _realm.All<FollowRelation>().Where(r => r.Recipient == userBeingFollowed);
-
-        FollowRelation[] selectedRelations = relations 
-            .AsEnumerable()
-            .ToArray();
-
-        List<GameUser> followers = selectedRelations.Select(t => t.Follower).ToList();
-
-        return followers.AsQueryable();
-    }
-
-    public IQueryable<GameUser> GetFollowedUsers(GameUser follower)
-    {
-        IQueryable<FollowRelation> relations = _realm.All<FollowRelation>().Where(r => r.Follower == follower);
-
-        FollowRelation[] selectedRelations = relations
-            .AsEnumerable()
-            .OrderBy(r=>r.Date)
-            .ToArray();
-
-        List<GameUser> following = selectedRelations.Select(t => t.Recipient).ToList();
-
-        return following.AsQueryable();
-    }
-
-    public IQueryable<GameLevel> GetUsersLikedLevels(GameUser userToGetLevelsFrom)
-    {
-        List<LevelLikeRelation> relations = _realm.All<LevelLikeRelation>()
-            .Where(l => l.Liker == userToGetLevelsFrom)
-            .ToList();
-
-        LevelLikeRelation[] selectedRelations = relations.Where(l => l.Liker.Id == userToGetLevelsFrom.Id).ToArray();
-
-        List<GameLevel> levels = selectedRelations.Select(t => t.Level).ToList();
-
-        return levels.AsQueryable();
-    }
-
     public bool FollowUser(GameUser follower, GameUser recipient)
     {
         if (IsUserFollowingOtherUser(follower, recipient)) return false;
