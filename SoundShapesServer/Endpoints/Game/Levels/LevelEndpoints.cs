@@ -16,7 +16,7 @@ public class LevelEndpoints : EndpointGroup
     [GameEndpoint("~index:*.page", ContentType.Json)]
     [GameEndpoint("~index:level.page", ContentType.Json)]
     [Authentication(false)]
-    public Response LevelsEndpoint(RequestContext context, GameDatabaseContext database, GameUser? user, GameSession? session)
+    public Response LevelsEndpoint(RequestContext context, GameDatabaseContext database, GameUser user, GameSession? session)
     {
         string? orderString = context.QueryString["orderBy"];
         string? query = context.QueryString["query"];

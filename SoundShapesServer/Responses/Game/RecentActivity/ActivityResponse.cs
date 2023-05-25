@@ -36,7 +36,7 @@ public class ActivityResponse
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
-        };
+        }
 
         Timestamp ??= 0.ToString();
         EventType = RecentActivityHelper.EventEnumToGameString((EventType)gameEventObject.EventType);

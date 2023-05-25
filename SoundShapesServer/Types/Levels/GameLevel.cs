@@ -38,17 +38,8 @@ public class GameLevel : RealmObject
     public string? LevelFilePath { get; set; }
     public string? ThumbnailFilePath { get; set; }
     public string? SoundFilePath { get; set; }
-    public int Bpm { get; set; }
-    public int TransposeValue { get; set; }
-    public int ScaleIndex { get; set; }
-    public int TotalScreens { get; set; }
-    public int TotalEntities { get; set; }
-    public bool HasCar { get; set; }
-    public bool HasExplodingCar { get; set; }
     public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset ModificationDate { get; set; }
-    public long TotalPlayTime { get; set; }
-    public int TotalDeaths { get; set; }
     [Backlink(nameof(LevelPlayRelation.Level))] public IQueryable<LevelPlayRelation> Plays { get; }
     public int PlaysCount { get; set; }
     [Backlink(nameof(LevelUniquePlayRelation.Level))] public IQueryable<LevelUniquePlayRelation> UniquePlays { get; }
@@ -63,4 +54,14 @@ public class GameLevel : RealmObject
     [Backlink(nameof(GameEvent.ContentLevel))] public IQueryable<GameEvent> Events { get; }
     public long FileSize { get; set; }
     public float Difficulty { get; set; }
+    public int Bpm { get; set; }
+    public int TransposeValue { get; set; }
+    public int ScaleIndex { get; set; }
+    public int TotalScreens { get; set; }
+    public int TotalEntities { get; set; }
+    public int TotalNotes { get; set; }
+    public bool HasCar { get; set; }
+    public bool HasExplodingCar { get; set; }
+    public long TotalPlayTime { get; set; }
+    public int TotalDeaths { get; set; }
 }
