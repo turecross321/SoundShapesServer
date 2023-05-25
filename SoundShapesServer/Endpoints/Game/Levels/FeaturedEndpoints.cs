@@ -20,8 +20,8 @@ public class FeaturedEndpoints : EndpointGroup
             panelDescription: "Check here for random levels! Gets reshuffled every day!", imageUrl: "",
             panelTitle: "Random Levels"),
         
-        new CommunityTab(buttonLabel: "Large Levels", query: "all&orderBy=fileSize",
-            panelDescription: "Check here for the largest levels, sorted by file size!", imageUrl: "",
+        new CommunityTab(buttonLabel: "Large Levels", query: "all&orderBy=totalScreens",
+            panelDescription: "Check here for the largest levels, sorted by the amount of screens!", imageUrl: "",
             panelTitle: "Large Levels"),
         
         new CommunityTab(buttonLabel: "Hard Levels", query: "all&orderBy=difficulty",

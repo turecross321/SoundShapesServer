@@ -71,7 +71,7 @@ public class LevelEndpoints : EndpointGroup
             "creationDate" => LevelOrderType.CreationDate,
             "uniquePlays" => LevelOrderType.UniquePlays,
             "random" => LevelOrderType.Random,
-            "fileSize" => LevelOrderType.FileSize,
+            "totalScreens" => LevelOrderType.TotalScreens,
             "difficulty" => LevelOrderType.Difficulty,
             "likes" => LevelOrderType.Likes,
             _ => LevelOrderType.CreationDate
