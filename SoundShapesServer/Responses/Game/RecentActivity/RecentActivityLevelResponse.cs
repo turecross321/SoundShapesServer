@@ -6,9 +6,9 @@ using static SoundShapesServer.Helpers.IdFormatter;
 
 namespace SoundShapesServer.Responses.Game.RecentActivity;
 
-public class RecentActivityLevel
+public class RecentActivityLevelResponse
 {
-    public RecentActivityLevel(GameLevel level)
+    public RecentActivityLevelResponse(GameLevel level)
     {
         Id = level.Id;
         LatestVersion = new Version(FormatLevelIdAndVersion(level.Id, level.ModificationDate.ToUnixTimeSeconds()));

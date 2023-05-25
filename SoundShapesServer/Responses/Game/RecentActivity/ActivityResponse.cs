@@ -14,22 +14,32 @@ public class ActivityResponse
     {
         Actor = new UserResponse(gameEventObject.Actor);
         
-        Content = (EventType)gameEventObject.EventType switch
+        switch ((EventType)gameEventObject.EventType)
         {
-            Types.PlayerActivity.EventType.Publish => 
-                new RecentActivityLevel(gameEventObject.ContentLevel ?? new GameLevel()),
-                
-            Types.PlayerActivity.EventType.Like => 
-                new RecentActivityLevel(gameEventObject.ContentLevel ?? new GameLevel()),
-                
-            Types.PlayerActivity.EventType.Follow => 
-                new UserResponse(gameEventObject.ContentUser ?? new GameUser()),
+            case Types.PlayerActivity.EventType.Publish:
+                Content = new RecentActivityLevelResponse(gameEventObject.ContentLevel ?? new GameLevel());
+                Timestamp = (gameEventObject.ContentLevel?.ModificationDate.ToUnixTimeMilliseconds() ?? 0).ToString();
+                break;
 
-            _ => null
+            case Types.PlayerActivity.EventType.Like:
+                Content = new RecentActivityLevelResponse(gameEventObject.ContentLevel ?? new GameLevel());
+                Timestamp = (gameEventObject.ContentLevel?.ModificationDate.ToUnixTimeMilliseconds() ?? 0).ToString();
+                break;
+                
+            case Types.PlayerActivity.EventType.Follow:
+                Content = new UserResponse(gameEventObject.ContentUser ?? new GameUser());
+                Timestamp = gameEventObject.Date.ToString();
+                break;
+            case Types.PlayerActivity.EventType.ScoreSubmission:
+                break;
+            case Types.PlayerActivity.EventType.AccountRegistration:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         };
 
+        Timestamp ??= 0.ToString();
         EventType = RecentActivityHelper.EventEnumToGameString((EventType)gameEventObject.EventType);
-        Timestamp = gameEventObject.Date.ToUnixTimeMilliseconds().ToString();
     }
     
     
