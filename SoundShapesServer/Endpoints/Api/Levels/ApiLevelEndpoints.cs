@@ -20,7 +20,7 @@ public class ApiLevelEndpoints: EndpointGroup
 {
     [ApiEndpoint("levels")]
     [Authentication(false)]
-    public ApiLevelsWrapper GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user)
+    public ApiLevelsWrapper GetLevels(RequestContext context, GameDatabaseContext database)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
