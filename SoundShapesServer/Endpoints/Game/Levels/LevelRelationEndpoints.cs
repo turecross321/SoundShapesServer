@@ -10,7 +10,7 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
 
-public class LevelInteractionEndpoints : EndpointGroup
+public class LevelRelationEndpoints : EndpointGroup
 {
     [GameEndpoint("~identity:{userId}/~like:%2F~level%3A{arguments}", ContentType.Json)]
     public Response LevelLikeRequests(RequestContext context, GameDatabaseContext database, GameUser user, string userId, string arguments)
