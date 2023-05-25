@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Bunkum.HttpServer;
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
@@ -12,7 +13,7 @@ namespace SoundShapesServer;
 
 public static class LevelImporting
 {
-    private static readonly string ImportPath = Path.Combine(".", "levelImport");
+    private static readonly string ImportPath = Path.Combine(BunkumFileSystem.DataDirectory, "levelImport");
 
     public static void ImportLevels(GameDatabaseContext database, IDataStore dataStore)
     {
