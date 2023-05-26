@@ -16,7 +16,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 22;
+    protected override ulong SchemaVersion => 24;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -34,7 +34,8 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         typeof(GameAlbum),
         typeof(Report),
         typeof(Punishment),
-        typeof(GameEvent)
+        typeof(GameEvent),
+        typeof(CommunityTab)
     };
 
     protected override string Filename => "database.realm";

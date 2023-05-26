@@ -1,19 +1,19 @@
+using Realms;
+using SoundShapesServer.Types.Users;
+
+#pragma warning disable CS8618
+
 namespace SoundShapesServer.Types;
 
-public class CommunityTab
+public class CommunityTab : RealmObject
 {
-    public CommunityTab(string buttonLabel, string query, string panelDescription, string imageUrl, string panelTitle)
-    {
-        ButtonLabel = buttonLabel;
-        Query = query;
-        PanelDescription = panelDescription;
-        ImageUrl = imageUrl;
-        PanelTitle = panelTitle;
-    }
-
-    public string ButtonLabel { get; init; }
-    public string Query { get; init; }
-    public string PanelDescription { get; init; }
-    public string ImageUrl { get; init; }
-    public string PanelTitle { get; init; }
+    [PrimaryKey] public string Id { get; set; }
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public string ButtonLabel { get; set; }
+    public string Query { get; set; }
+    public string? ThumbnailFilePath { get; set; }
+    public GameUser Author { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
+    public DateTimeOffset ModificationDate { get; set; }
 }

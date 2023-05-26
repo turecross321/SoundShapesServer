@@ -9,10 +9,8 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Api.Levels;
-using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
-using static System.Boolean;
 
 namespace SoundShapesServer.Endpoints.Api.Levels;
 
@@ -25,76 +23,12 @@ public class ApiLevelEndpoints: EndpointGroup
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
         
-        bool descending = Parse(context.QueryString["descending"] ?? "true");
+        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
+        
         string? orderString = context.QueryString["orderBy"];
 
-        string? byUserId = context.QueryString["byUser"];
-        string? likedByUserId = context.QueryString["likedBy"];
-        string? completedByString = context.QueryString["completedBy"];
-        string? inAlbumId = context.QueryString["inAlbum"];
-        
-        bool? inDaily = null;
-        if (TryParse(context.QueryString["inDaily"], out bool inDailyTemp)) inDaily = inDailyTemp;
-        string? inDailyDateString = context.QueryString["inDailyDate"];
-
-        bool? lastDate = null;
-        if (TryParse(context.QueryString["inLastDaily"], out bool lastDateTemp)) lastDate = lastDateTemp;
-
-        string? searchQuery = context.QueryString["search"];
-        
-        string? bpmString = context.QueryString["bpm"];
-        string? transposeValueString = context.QueryString["transposeValue"];
-        string? scaleString = context.QueryString["scaleIndex"];
-        
-        bool? hasCar = null;
-        if (TryParse(context.QueryString["hasCar"], out bool hasCarTemp)) hasCar = hasCarTemp;
-        
-        bool? hasExplodingCar = null;
-        if (TryParse(context.QueryString["hasExplodingCar"], out bool hasExplodingCarTemp)) hasExplodingCar = hasExplodingCarTemp;
-
-        GameUser? byUser = null;
-        GameUser? likedBy = null;
-        GameUser? completedBy = null;
-        GameAlbum? inAlbum = null;
-        DateTimeOffset? inDailyDate = null;
-        int? bpm = null;
-        LevelMusicScale? scale = null;
-        int? transposeValue = null;
-
-        if (byUserId != null) byUser = database.GetUserWithId(byUserId);
-        if (likedByUserId != null) likedBy = database.GetUserWithId(likedByUserId);
-        if (completedByString != null) completedBy = database.GetUserWithId(completedByString);
-        if (inAlbumId != null) inAlbum = database.GetAlbumWithId(inAlbumId);
-        if (inDailyDateString != null) inDailyDate = DateTimeOffset.Parse(inDailyDateString);
-        if (bpmString != null) bpm = int.Parse(bpmString);
-        if (scaleString != null) scale = Enum.Parse<LevelMusicScale>(scaleString);
-        if (transposeValueString != null) transposeValue = int.Parse(transposeValueString);
-
-        LevelFilters filters = new (byUser, likedBy, inAlbum, inDaily, inDailyDate, lastDate, 
-            searchQuery, completedBy, bpm, scale, transposeValue, hasCar, hasExplodingCar);
-
-        LevelOrderType order = orderString switch
-        {
-            "creationDate" => LevelOrderType.CreationDate,
-            "modificationDate" => LevelOrderType.ModificationDate,
-            "totalPlays" => LevelOrderType.TotalPlays,
-            "uniquePlays" => LevelOrderType.UniquePlays,
-            "totalCompletions" => LevelOrderType.TotalCompletions,
-            "uniqueCompletions" => LevelOrderType.UniqueCompletions,
-            "likes" => LevelOrderType.Likes,
-            "fileSize" => LevelOrderType.FileSize,
-            "difficulty" => LevelOrderType.Difficulty,
-            "relevance" => LevelOrderType.Relevance,
-            "random" => LevelOrderType.Random,
-            "totalDeaths" => LevelOrderType.TotalDeaths,
-            "totalPlayTime" => LevelOrderType.TotalPlayTime,
-            "averagePlayTime" => LevelOrderType.AveragePlayTime,
-            "totalScreens" => LevelOrderType.TotalScreens,
-            "totalEntities" => LevelOrderType.TotalEntities,
-            "bpm" => LevelOrderType.Bpm,
-            "transposeValue" => LevelOrderType.TransposeValue,
-            _ => LevelOrderType.DoNotOrder
-        };
+        LevelOrderType order = LevelHelper.GetLevelOrderType(orderString);
+        LevelFilters filters = LevelHelper.GetLevelFilters(context, database);
 
         (GameLevel[] levels, int levelCount) = database.GetLevels(order, descending, filters, from, count);
         

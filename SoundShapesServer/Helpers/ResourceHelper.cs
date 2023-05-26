@@ -127,9 +127,20 @@ public static class ResourceHelper
         };
     }
 
-    public static string GenerateAlbumResourceUrl(string albumId, AlbumResourceType type)
+    public static string GetAlbumResourceUrl(string albumId, AlbumResourceType type)
     {
         return $"otg/~album:{albumId}/~content:{type.ToString()}/data.get";
+    }
+
+    private const string CommunityTabsPath = "communityTabs";
+
+    public static string GetCommunityTabResourceKey(string id)
+    {
+        return $"{CommunityTabsPath}/{id}/-thumbnail";
+    }
+    public static string GetCommunityTabThumbnailUrl(string id)
+    {
+        return $"otg/~communityTab:{id}/~content:thumbnail/data.get";
     }
     
     private const string SavesPath = "saves";

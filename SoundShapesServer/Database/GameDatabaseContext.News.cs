@@ -91,7 +91,7 @@ public partial class GameDatabaseContext
         return entry;
     }
 
-    public NewsEntry EditNewsEntry(NewsEntry entry, ApiCreateNewsEntryRequest request)
+    public NewsEntry EditNewsEntry(NewsEntry entry, ApiCreateNewsEntryRequest request, GameUser user)
     {
         _realm.Write(() =>
         {
@@ -102,6 +102,7 @@ public partial class GameDatabaseContext
             entry.Url = request.Url ?? "";
             entry.ModificationDate = DateTimeOffset.UtcNow;
             entry.CharacterCount = entry.FullText.Length;
+            entry.Author = user;
         });
 
         return entry;

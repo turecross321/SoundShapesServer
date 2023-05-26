@@ -13,10 +13,10 @@ public class AlbumMetadata
         
         Author = album.Author;
         LinerNotes = linerNotesString;
-        SidePanelUrl = ResourceHelper.GenerateAlbumResourceUrl(album.Id, AlbumResourceType.SidePanel);
+        SidePanelUrl = ResourceHelper.GetAlbumResourceUrl(album.Id, AlbumResourceType.SidePanel);
         CreationDate = album.CreationDate.ToString();
         Name = album.Name;
-        ThumbnailUrl = ResourceHelper.GenerateAlbumResourceUrl(album.Id, AlbumResourceType.Thumbnail);
+        ThumbnailUrl = ResourceHelper.GetAlbumResourceUrl(album.Id, AlbumResourceType.Thumbnail);
     }
 
     [JsonProperty("albumArtist")] public string Author { get; set; }

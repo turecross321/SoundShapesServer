@@ -6,13 +6,14 @@ using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Sessions;
+#pragma warning disable CS8618
 
 namespace SoundShapesServer.Types.Users;
 
 public class GameUser : RealmObject, IRateLimitUser
 {
-    [PrimaryKey] [Required] public string Id { get; init; } = "";
-    public string Username { get; set; } = "";
+    [PrimaryKey] [Required] public string Id { get; init; }
+    public string Username { get; set; }
     public int PermissionsType { get; set; } = (int)Types.PermissionsType.Default;
     public string? Email { get; set; }
     public string? PasswordBcrypt { get; set; }
@@ -20,10 +21,8 @@ public class GameUser : RealmObject, IRateLimitUser
     public bool Deleted { get; init; }
     public DateTimeOffset CreationDate { get; init; }
     public string? SaveFilePath { get; set; }
-
-    #pragma warning disable CS8618
-    // ReSharper disable all UnassignedGetOnlyAutoProperty
     
+    // ReSharper disable all UnassignedGetOnlyAutoProperty
     [Backlink(nameof(IpAuthorization.User))]
     public IQueryable<IpAuthorization> IpAddresses { get; }
 
@@ -44,7 +43,6 @@ public class GameUser : RealmObject, IRateLimitUser
     [Backlink(nameof(LeaderboardEntry.User))] public IQueryable<LeaderboardEntry> LeaderboardEntries { get; }
     [Backlink(nameof(GameEvent.Actor))] public IQueryable<GameEvent> Events { get; }
     [Backlink(nameof(GameEvent.ContentUser))] public IQueryable<GameEvent> EventsWhereUserIsRecipient { get; }
-#pragma warning restore CS8618
     public int Deaths { get; set; }
     public long TotalPlayTime { get; set; }
 

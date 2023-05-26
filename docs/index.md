@@ -7,19 +7,20 @@ The value of `Authorization` should always be your **Session Id**, unless specif
 
 Date is always UTC, and is always formatted like `YYYY-MM-DD`.
 
-| Endpoints                    |
-| ---------------------------- |
-| [/account](#Account)         |
-| [/ip](#Ip)                   |
-| [/users](#Users)             |
-| [/levels](#Levels)           |
-| [/albums](#Albums)           |
-| [/leaderboard](#Leaderboard) |
-| [/daily](#Daily)             |
-| [/news](#News)               |
-| [/activities](#Activities)   |
-| [/reports](#Reports)         |
-| [/punishments](#Punishments) |
+| Endpoints                        |
+| -------------------------------- |
+| [/account](#Account)             |
+| [/ip](#Ip)                       |
+| [/users](#Users)                 |
+| [/levels](#Levels)               |
+| [/albums](#Albums)               |
+| [/leaderboard](#Leaderboard)     |
+| [/daily](#Daily)                 |
+| [/news](#News)                   |
+| [/activities](#Activities)       |
+| [/reports](#Reports)             |
+| [/punishments](#Punishments)     |
+| [/communityTabs](#CommunityTabs) |
 
 # 📁 Account {#Account}
 
@@ -1810,6 +1811,40 @@ Should be a PNG
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
+## End-point: Get News Entry With Id
+
+### 🔑 This does not require the `Authorization` header.
+
+### Method: GET
+
+> ```
+> {ip}:10061/api/v1/news/id/{newsEntryId}
+> ```
+
+### Response: 200
+
+```json
+{
+  "Id": "eab4643e-cc22-4b57-b7e2-3bda7558b534",
+  "CreationDate": "2023-05-15T16:53:46.8092128+00:00",
+  "ModificationDate": "2023-05-15T16:55:43.3707501+00:00",
+  "Author": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "PublishedLevelsCount": 72961,
+    "FollowersCount": 0
+  },
+  "Language": "global",
+  "Title": "DJ Khaled is still stuck in a tree!",
+  "Summary": "This still ain't no joke team!",
+  "FullText": "DJ Khaled is still stuck in a tree, and he is losing hope!",
+  "Url": "http://djkhaled.com"
+}
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
 ## End-point: Create News Entry
 
 ### ⚠️ This requires administrator permissions.
@@ -1943,8 +1978,6 @@ Should be a PNG
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
 ## End-point: Get News Entry Thumbnail
-
-### ⚠️ This requires administrator permissions.
 
 ### Method: GET
 
@@ -2649,6 +2682,221 @@ Should be a PNG
 
 ```json
 
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+# 📁 Community Tabs {#CommunityTabs}
+
+## End-point: Get Community Tabs
+
+### Method: GET
+
+> ```
+> {ip}:10061/api/v1/communityTabs
+> ```
+
+### Response: 200
+
+```json
+{
+  "CommunityTabs": [
+    {
+      "Id": "89c70faf-f45a-4679-8d83-7d7e267ae82b",
+      "Title": "Wacha Wam",
+      "Description": "This Sh*t is what it's all about. Check this out...",
+      "ButtonLabel": "GOOD SHIT",
+      "Query": "orderBy=totalScreens&hasExplodingCar=true",
+      "Author": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "PublishedLevelsCount": 72932,
+        "FollowersCount": 0
+      },
+      "CreationDate": "2023-05-26T14:14:48.6946975+00:00",
+      "ModificationDate": "2023-05-26T14:17:54.1203037+00:00"
+    }
+  ],
+  "Count": 1
+}
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+## End-point: Get Community Tab With Id
+
+### Method: GET
+
+> ```
+> {ip}:10061/api/v1/communityTabs/id/{communityTabId}
+> ```
+
+### Response: 200
+
+```json
+{
+  "Id": "89c70faf-f45a-4679-8d83-7d7e267ae82b",
+  "Title": "Wacha Wam",
+  "Description": "This Sh*t is what it's all about. Check this out...",
+  "ButtonLabel": "GOOD SHIT",
+  "Query": "orderBy=totalScreens&hasExplodingCar=true",
+  "Author": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "PublishedLevelsCount": 72932,
+    "FollowersCount": 0
+  },
+  "CreationDate": "2023-05-26T14:14:48.6946975+00:00",
+  "ModificationDate": "2023-05-26T14:17:54.1203037+00:00"
+}
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+## End-point: Create Community Tab
+
+### ⚠️ This requires administrator permissions.
+
+### Method: POST
+
+> ```
+> {ip}:10061/api/v1/communityTabs/create
+> ```
+
+### Note: The Query Parameter should contain `levels` parameters.
+
+### Body (**raw**)
+
+```json
+{
+  "ButtonLabel": "GOOD SHIT",
+  "Title": "Wacha Wam",
+  "Description": "This Sh*t is what it's all about. Check this out...",
+  "Query": "orderBy=totalScreens&hasExplodingCar=true"
+}
+```
+
+### Response: 201
+
+```json
+{
+  "Id": "89c70faf-f45a-4679-8d83-7d7e267ae82b",
+  "Title": "Wacha Wam",
+  "Description": "This Sh*t is what it's all about. Check this out...",
+  "ButtonLabel": "GOOD SHIT",
+  "Query": "orderBy=totalScreens&hasExplodingCar=true",
+  "Author": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "PublishedLevelsCount": 72932,
+    "FollowersCount": 0
+  },
+  "CreationDate": "2023-05-26T14:14:48.6946975+00:00",
+  "ModificationDate": "2023-05-26T14:14:48.6946975+00:00"
+}
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+## End-point: Edit Community Tab
+
+### ⚠️ This requires administrator permissions.
+
+### Method: POST
+
+> ```
+> {ip}:10061/api/v1/communityTabs/id/{communityTabId}/edit
+> ```
+
+### Body (**raw**)
+
+```json
+{
+  "ButtonLabel": "EXTREMELY GOOD SHIT",
+  "Title": "Kacha Wacha Wam Bam",
+  "Description": "This Sh*t is what everyone's talking about. Check this out...",
+  "Query": "orderBy=totalScreens&scaleIndex=2"
+}
+```
+
+### Response: 201
+
+```json
+{
+  "Id": "89c70faf-f45a-4679-8d83-7d7e267ae82b",
+  "Title": "Kacha Wacha Wam Bam",
+  "Description": "This Sh*t is what everyone's talking about. Check this out...",
+  "ButtonLabel": "EXTREMELY GOOD SHIT",
+  "Query": "orderBy=totalScreens&scaleIndex=2",
+  "Author": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "PublishedLevelsCount": 72932,
+    "FollowersCount": 0
+  },
+  "CreationDate": "2023-05-26T14:14:48.6946975+00:00",
+  "ModificationDate": "2023-05-26T14:34:10.2373146+00:00"
+}
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+## End-point: Set Thumbnail for Community Tab
+
+### ⚠️ This requires administrator permissions.
+
+### Method: POST
+
+> ```
+> {ip}:10061/api/v1/communityTabs/id/{communityTabId}/setThumbnail
+> ```
+
+### Body (**binary**)
+
+Should be a PNG
+
+### Response: 201
+
+```json
+
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+## End-point: Remove Community Tab
+
+### Method: POST
+
+> ```
+> {ip}:10061/api/v1/communityTabs/{communityTabId}/remove
+> ```
+
+### Response: 200
+
+```json
+
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+## End-point: Get Community Tab Thumbnail
+
+### Method: GET
+
+> ```
+> {ip}:10061/api/v1/news/id/{newsEntryId}/thumbnail
+> ```
+
+### Response: 201
+
+```binary
+�PNG
+
+���
 ```
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃

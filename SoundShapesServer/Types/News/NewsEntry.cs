@@ -31,10 +31,10 @@ public class NewsEntry : RealmObject
     }
     #pragma warning restore CS8618
 
-    [PrimaryKey] [Required] public string Id { get; init; } = "";
+    [PrimaryKey] [Required] public string Id { get; init; }
     public DateTimeOffset CreationDate { get; init; }
     public DateTimeOffset ModificationDate { get; set; }
-    public GameUser Author { get; init; }
+    public GameUser Author { get; set; }
     public string Language { get; set; } = "global";
     public string Title { get; set; }
     public string Summary { get; set; }

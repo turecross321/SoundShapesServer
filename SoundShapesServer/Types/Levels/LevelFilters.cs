@@ -1,4 +1,3 @@
-using SoundShapesServer.Endpoints.Api.Levels;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Users;
 
@@ -8,7 +7,7 @@ public class LevelFilters
 {
     public LevelFilters(GameUser? byUser = null, GameUser? likedByUser = null, GameAlbum? inAlbum = null, 
         bool? inDaily = null, DateTimeOffset? inDailyDate = null, bool? inLatestDaily = null, string? search = null, 
-        GameUser? completedBy = null, int? bpm = null, LevelMusicScale? scale = null, int? transposeValue = null,
+        GameUser? completedBy = null, int? bpm = null, int? scaleIndex = null, int? transposeValue = null,
         bool? hasCar = null, bool? hasExplodingCar = null)
     {
         ByUser = byUser;
@@ -20,7 +19,7 @@ public class LevelFilters
         InLatestDaily = inLatestDaily;
         Search = search;
         Bpm = bpm;
-        Scale = scale;
+        ScaleIndex = scaleIndex;
         TransposeValue = transposeValue;
         HasCar = hasCar;
         HasExplodingCar = hasExplodingCar;
@@ -35,7 +34,7 @@ public class LevelFilters
     public bool? InLatestDaily;
     public readonly string? Search;
     public int? Bpm;
-    public LevelMusicScale? Scale;
+    public int? ScaleIndex;
     public int? TransposeValue;
     public bool? HasCar;
     public bool? HasExplodingCar;

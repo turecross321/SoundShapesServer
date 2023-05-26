@@ -34,7 +34,7 @@ public class ApiNewsManagementEndpoints : EndpointGroup
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
         if (newsEntry == null) return HttpStatusCode.NotFound;
 
-        NewsEntry editedNewsEntry = database.EditNewsEntry(newsEntry, body);
+        NewsEntry editedNewsEntry = database.EditNewsEntry(newsEntry, body, user);
         return new Response(new ApiNewsResponse(editedNewsEntry), ContentType.Json, HttpStatusCode.Created);
     }
     

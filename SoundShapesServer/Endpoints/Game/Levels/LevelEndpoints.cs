@@ -3,6 +3,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
@@ -22,19 +23,20 @@ public class LevelEndpoints : EndpointGroup
         string? query = context.QueryString["query"];
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
-        string categoryString = context.QueryString["search"] ?? "all";
+        string searchString = context.QueryString["search"] ?? "all";
+        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
         
         // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
         if (session == null || user == null)            
             return HttpStatusCode.Forbidden;
         if (session.SessionType != (int)SessionType.Game)
         {
-            if (session.SessionType != (int)SessionType.Unauthorized || categoryString != "tagged3")
+            if (session.SessionType != (int)SessionType.Unauthorized || searchString != "tagged3")
                 return HttpStatusCode.Forbidden;
         }
 
         LevelOrderType? order = null;
-        LevelFilters filters = new ();
+        LevelFilters? filters = null;
 
         if (query != null && query.Contains("author.id:"))
         {
@@ -44,16 +46,14 @@ public class LevelEndpoints : EndpointGroup
             if (usersToGetLevelsFrom == null) return HttpStatusCode.NotFound;
 
             filters = new LevelFilters(usersToGetLevelsFrom);
-            order = LevelOrderType.CreationDate;
         }
 
         else if (query != null && query.Contains("metadata.displayName:"))
         {
             filters = new LevelFilters(search: query.Split(":")[1]);
-            order = LevelOrderType.CreationDate;
         }
         
-        else switch (categoryString)
+        else switch (searchString)
         {
             case "tagged3":
                 filters = new LevelFilters(inDaily:true, inLatestDaily:true);
@@ -64,19 +64,11 @@ public class LevelEndpoints : EndpointGroup
                 order = LevelOrderType.Relevance;
                 break;
         }
-        
-        order ??= orderString switch
-        {
-            "creationDate" => LevelOrderType.CreationDate,
-            "uniquePlays" => LevelOrderType.UniquePlays,
-            "random" => LevelOrderType.Random,
-            "totalScreens" => LevelOrderType.TotalScreens,
-            "difficulty" => LevelOrderType.Difficulty,
-            "likes" => LevelOrderType.Likes,
-            _ => LevelOrderType.CreationDate
-        };
 
-        (GameLevel[] levels, int totalLevels) = database.GetLevels((LevelOrderType)order, true, filters, from, count);
+        order ??= LevelHelper.GetLevelOrderType(orderString);
+        filters ??= LevelHelper.GetLevelFilters(context, database);
+
+        (GameLevel[] levels, int totalLevels) = database.GetLevels((LevelOrderType)order, descending, filters, from, count);
 
         return new Response(new LevelsWrapper(levels, user, totalLevels, from, count), ContentType.Json);
     }

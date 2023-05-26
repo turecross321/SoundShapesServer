@@ -342,9 +342,9 @@ public partial class GameDatabaseContext
             response = response.Where(l => l.Bpm == filters.Bpm);
         }
 
-        if (filters.Scale != null)
+        if (filters.ScaleIndex != null)
         {
-            response = response.Where(l => l.ScaleIndex == (int)filters.Scale);
+            response = response.Where(l => l.ScaleIndex == filters.ScaleIndex);
         }
 
         if (filters.TransposeValue != null)

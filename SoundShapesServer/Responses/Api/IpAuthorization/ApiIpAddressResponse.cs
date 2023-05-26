@@ -1,6 +1,6 @@
 using SoundShapesServer.Types;
 
-namespace SoundShapesServer.Responses.Api.IP_Authorization;
+namespace SoundShapesServer.Responses.Api.IPAuthorization;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ApiIpAddressResponse

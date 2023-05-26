@@ -1,6 +1,6 @@
 using SoundShapesServer.Types;
 
-namespace SoundShapesServer.Responses.Api.IP_Authorization;
+namespace SoundShapesServer.Responses.Api.IPAuthorization;
 
 public class ApiIpAddressesWrapper
 {

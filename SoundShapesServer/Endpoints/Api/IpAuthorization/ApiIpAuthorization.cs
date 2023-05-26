@@ -5,10 +5,9 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api;
-using SoundShapesServer.Responses.Api.IP_Authorization;
+using SoundShapesServer.Responses.Api.IPAuthorization;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
-using static System.Boolean;
 
 namespace SoundShapesServer.Endpoints.Api.IpAuthorization;
 
@@ -40,7 +39,7 @@ public class ApiIpAuthorization : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
         
         bool? authorized = null;
-        if (TryParse(context.QueryString["authorized"], out bool authorizedTemp)) authorized = authorizedTemp;
+        if (bool.TryParse(context.QueryString["authorized"], out bool authorizedTemp)) authorized = authorizedTemp;
         
         (Types.IpAuthorization[] addresses, int totalAddresses) =
             database.GetIpAddresses(user, from, count,  SessionType.Game, authorized);

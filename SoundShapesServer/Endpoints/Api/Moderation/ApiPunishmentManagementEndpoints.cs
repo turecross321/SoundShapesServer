@@ -9,7 +9,6 @@ using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Moderation;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Users;
-using static System.Boolean;
 
 namespace SoundShapesServer.Endpoints.Api.Moderation;
 
@@ -79,9 +78,9 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
             recipient = database.GetUserWithId(recipientString);
 
         bool? revoked = null;
-        if (TryParse(context.QueryString["revoked"], out bool revokedTemp)) revoked = revokedTemp;
+        if (bool.TryParse(context.QueryString["revoked"], out bool revokedTemp)) revoked = revokedTemp;
         
-        bool descending = Parse(context.QueryString["descending"] ?? "true");
+        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
 
         PunishmentFilters filters = new (author, recipient, revoked);
         (Punishment[] punishments, int totalPunishments) = database.GetPunishments(descending, filters, from, count);

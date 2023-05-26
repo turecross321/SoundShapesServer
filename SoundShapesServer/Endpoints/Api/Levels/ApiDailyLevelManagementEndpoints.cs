@@ -9,7 +9,6 @@ using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
-using static System.Boolean;
 
 namespace SoundShapesServer.Endpoints.Api.Levels;
 
@@ -23,14 +22,14 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
         
-        bool descending = Parse(context.QueryString["descending"] ?? "true");
+        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
         
         string? dateString = context.QueryString["date"];
         DateTimeOffset? date = null;
         if (dateString != null) date = DateTimeOffset.Parse(dateString).Date;
         
         bool? lastDate = null;
-        if (TryParse(context.QueryString["lastDate"], out bool lastDateTemp)) lastDate = lastDateTemp;
+        if (bool.TryParse(context.QueryString["lastDate"], out bool lastDateTemp)) lastDate = lastDateTemp;
 
         DailyLevelFilters filters = new (date, lastDate);
         
