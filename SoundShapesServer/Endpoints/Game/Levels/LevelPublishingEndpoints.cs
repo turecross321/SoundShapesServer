@@ -3,6 +3,7 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
+using Bunkum.ProfanityFilter;
 using HttpMultipartParser;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
@@ -19,13 +20,15 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class LevelPublishingEndpoints : EndpointGroup
 {
     // Gets called by Endpoints.cs
-    public static Response CreateLevel(GameServerConfig config, IDataStore dataStore, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user)
+    public static Response CreateLevel(GameServerConfig config, IDataStore dataStore, ProfanityService profanity, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user)
     {
         if (user.Levels.Count() >= config.LevelPublishLimit) return HttpStatusCode.Forbidden;
 
         PublishLevelRequest publishLevelRequest = new (
             parser.GetParameterValue("title"), 
             int.Parse(parser.GetParameterValue("sce_np_language")));
+        
+        if (profanity.SentenceContainsProfanity(publishLevelRequest.Name)) return HttpStatusCode.Forbidden;
 
         GameLevel publishedLevel = database.CreateLevel(publishLevelRequest, user);
         
@@ -36,7 +39,7 @@ public class LevelPublishingEndpoints : EndpointGroup
     }
     
     // Gets called by Endpoints.cs
-    public static Response UpdateLevel(IDataStore dataStore, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user, string levelId)
+    public static Response UpdateLevel(IDataStore dataStore, ProfanityService profanity, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user, string levelId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
 
@@ -46,6 +49,8 @@ public class LevelPublishingEndpoints : EndpointGroup
         PublishLevelRequest publishLevelRequest = new (
             parser.GetParameterValue("title"), 
             int.Parse(parser.GetParameterValue("sce_np_language")));
+        
+        if (profanity.SentenceContainsProfanity(publishLevelRequest.Name)) return HttpStatusCode.Forbidden;
         
         GameLevel publishedLevel = database.EditLevel(publishLevelRequest, level);
         

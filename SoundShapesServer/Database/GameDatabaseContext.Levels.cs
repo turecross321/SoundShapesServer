@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
+using Bunkum.ProfanityFilter;
 using Newtonsoft.Json.Linq;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;

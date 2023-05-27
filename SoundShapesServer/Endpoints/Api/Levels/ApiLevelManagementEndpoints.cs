@@ -4,7 +4,9 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
+using Bunkum.ProfanityFilter;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Api.Levels;
@@ -18,9 +20,10 @@ namespace SoundShapesServer.Endpoints.Api.Levels;
 public class ApiLevelManagementEndpoints : EndpointGroup
 {
     [ApiEndpoint("levels/create", Method.Post)]
-    public Response CreateLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiPublishLevelRequest body)
+    public Response CreateLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiPublishLevelRequest body, ProfanityService profanity)
     {
         if (IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
+        if (profanity.SentenceContainsProfanity(body.Name)) return HttpStatusCode.Forbidden;
 
         GameLevel publishedLevel = database.CreateLevel(new PublishLevelRequest(body), user);
         return new Response(new ApiLevelFullResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
@@ -56,5 +59,40 @@ public class ApiLevelManagementEndpoints : EndpointGroup
         return database.UploadLevelResource(dataStore, level, body, fileType);
     }
 
-    // Remove Levels is in ../Levels/ApiLevelEndpoints
+    [ApiEndpoint("levels/id/{id}/edit", Method.Post)]
+    public Response EditLevel(RequestContext context, GameDatabaseContext database, ProfanityService profanity, GameUser user,
+        ApiEditLevelRequest body, string id)
+    {
+        if (body == null) throw new ArgumentNullException(nameof(body));
+
+        GameLevel? level = database.GetLevelWithId(id);
+        if (level == null) return HttpStatusCode.NotFound;
+
+        if (level.Author.Id != user.Id)
+        {
+            if (IsUserModeratorOrMore(user) == false)
+                return HttpStatusCode.Unauthorized;
+        }
+
+        if (profanity.SentenceContainsProfanity(body.Name)) return HttpStatusCode.Forbidden;
+
+        GameLevel publishedLevel = database.EditLevel(new PublishLevelRequest(body), level);
+        return new Response(new ApiLevelFullResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
+    }
+    
+    [ApiEndpoint("levels/id/{id}/remove", Method.Post)]
+    public Response RemoveLevel(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)
+    {
+        GameLevel? level = database.GetLevelWithId(id);
+        if (level == null) return HttpStatusCode.NotFound;
+
+        if (level.Author.Id != user.Id)
+        {
+            if (IsUserModeratorOrMore(user) == false)
+                return HttpStatusCode.Unauthorized;
+        }
+
+        database.RemoveLevel(level, dataStore);
+        return HttpStatusCode.OK;
+    }
 }

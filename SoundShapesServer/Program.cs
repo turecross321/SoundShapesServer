@@ -2,6 +2,7 @@
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.RateLimit;
 using Bunkum.HttpServer.Storage;
+using Bunkum.ProfanityFilter;
 using SoundShapesServer;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Configuration;
@@ -59,6 +60,7 @@ server.AddStorageService(dataStore);
 server.AddAuthenticationService(new SessionProvider(), true);
 server.AddRateLimitService(new RateLimitSettings(30, 400, 0)); // Todo: figure out a good balance here between security and usability
 server.AddService<EmailService>();
+server.AddProfanityService();
 
 server.AddMiddleware<CrossOriginMiddleware>();
 server.AddMiddleware<FileSizeMiddleware>();

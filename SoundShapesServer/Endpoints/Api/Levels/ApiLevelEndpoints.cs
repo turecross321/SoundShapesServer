@@ -42,39 +42,4 @@ public class ApiLevelEndpoints: EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         return level == null ? null : new ApiLevelFullResponse(level);
     }
-    
-    [ApiEndpoint("levels/id/{id}/edit", Method.Post)]
-    public Response EditLevel(RequestContext context, GameDatabaseContext database, GameUser user,
-        ApiEditLevelRequest body, string id)
-    {
-        if (body == null) throw new ArgumentNullException(nameof(body));
-
-        GameLevel? level = database.GetLevelWithId(id);
-        if (level == null) return HttpStatusCode.NotFound;
-
-        if (level.Author.Id != user.Id)
-        {
-            if (PermissionHelper.IsUserModeratorOrMore(user) == false)
-                return HttpStatusCode.Unauthorized;
-        }
-        
-        GameLevel publishedLevel = database.EditLevel(new PublishLevelRequest(body), level);
-        return new Response(new ApiLevelFullResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
-    }
-    
-    [ApiEndpoint("levels/id/{id}/remove", Method.Post)]
-    public Response RemoveLevel(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)
-    {
-        GameLevel? level = database.GetLevelWithId(id);
-        if (level == null) return HttpStatusCode.NotFound;
-
-        if (level.Author.Id != user.Id)
-        {
-            if (PermissionHelper.IsUserModeratorOrMore(user) == false)
-                return HttpStatusCode.Unauthorized;
-        }
-
-        database.RemoveLevel(level, dataStore);
-        return HttpStatusCode.OK;
-    }
 }

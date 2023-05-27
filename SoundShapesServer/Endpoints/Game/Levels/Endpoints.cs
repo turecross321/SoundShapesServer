@@ -4,6 +4,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
+using Bunkum.ProfanityFilter;
 using HttpMultipartParser;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
@@ -37,7 +38,7 @@ public class Endpoints : EndpointGroup
     }
 
     [GameEndpoint("~level:{args}", Method.Post)]
-    public Response PostEndpoints(RequestContext context, IDataStore dataStore, Stream body, GameDatabaseContext database, GameServerConfig config, GameUser user, string args)
+    public Response PostEndpoints(RequestContext context, IDataStore dataStore, ProfanityService profanity, Stream body, GameDatabaseContext database, GameServerConfig config, GameUser user, string args)
     {
         string[] arguments = args.Split('.');
 
@@ -46,11 +47,11 @@ public class Endpoints : EndpointGroup
         
         MultipartFormDataParser? parser = MultipartFormDataParser.Parse(body);
 
-        if (action == "create") return LevelPublishingEndpoints.CreateLevel(config, dataStore, parser, database, user);
+        if (action == "create") return LevelPublishingEndpoints.CreateLevel(config, dataStore, profanity, parser, database, user);
         
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return new Response(HttpStatusCode.NotFound);
 
-        return action == "update" ? LevelPublishingEndpoints.UpdateLevel(dataStore, parser, database, user, level.Id) : new Response(HttpStatusCode.NotFound);
+        return action == "update" ? LevelPublishingEndpoints.UpdateLevel(dataStore, profanity, parser, database, user, level.Id) : new Response(HttpStatusCode.NotFound);
     }
 }
