@@ -64,6 +64,7 @@ public class LevelEndpoints : EndpointGroup
                 break;
             // ReSharper disable once StringLiteralTypo
             case "greatesthits":
+                filters = new LevelFilters();
                 order = LevelOrderType.Relevance;
                 break;
         }
