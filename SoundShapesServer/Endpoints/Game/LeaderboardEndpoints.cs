@@ -55,7 +55,7 @@ public class LeaderboardEndpoints : EndpointGroup
         int from = int.Parse(context.QueryString["from"] ?? "0");
         
         const bool descending = false;
-        (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, descending, new LeaderboardFilters(levelId), from, count);
+        (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, descending, new LeaderboardFilters(levelId, onlyBest:true), from, count);
         return new LeaderboardEntriesWrapper(allEntries, paginatedEntries, from, count, descending);
     }
 
