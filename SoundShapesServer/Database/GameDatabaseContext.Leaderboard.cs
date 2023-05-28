@@ -90,14 +90,14 @@ public partial class GameDatabaseContext
         {
             List<LeaderboardEntry> bestEntries = new ();
 
-            GameUser? previousUser = null;
+            List<string> previousUserIds = new ();
             // The lower "Score", the higher the score actually is because scores don't start from 0, and they decrease.
             foreach (LeaderboardEntry entry in response.OrderBy(e=>e.Score))
             {
-                if (entry.User.Id == previousUser?.Id) continue;
+                if (previousUserIds.Contains(entry.User.Id)) continue;
                 
                 bestEntries.Add(entry);
-                previousUser = entry.User;
+                previousUserIds.Add(entry.User.Id);
             }
 
             response = bestEntries.AsQueryable();
