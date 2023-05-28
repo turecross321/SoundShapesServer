@@ -1,10 +1,8 @@
-using SoundShapesServer.Types;
-
-namespace SoundShapesServer.Responses.Api.IPAuthorization;
+namespace SoundShapesServer.Responses.Api.IpAuthorization;
 
 public class ApiIpAddressesWrapper
 {
-    public ApiIpAddressesWrapper(IEnumerable<IpAuthorization> ipAddresses, int totalAddresses)
+    public ApiIpAddressesWrapper(IEnumerable<Types.IpAuthorization> ipAddresses, int totalAddresses)
     {
         IpAddresses = ipAddresses.Select(a=>new ApiIpAddressResponse(a)).ToArray();
         Count = totalAddresses;

@@ -112,7 +112,7 @@ public partial class GameDatabaseContext
     
     private IQueryable<GameUser> FilterUsers(IQueryable<GameUser> users, UserFilters filters)
     {
-        IQueryable<GameUser> response = users.Where(u=>u.HasFinishedRegistration);
+        IQueryable<GameUser> response = users;
         
         if (filters.IsFollowingUser != null)
         {

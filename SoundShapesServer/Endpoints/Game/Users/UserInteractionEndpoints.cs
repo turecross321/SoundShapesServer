@@ -7,9 +7,9 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Following;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Endpoints.Game.Profiles;
+namespace SoundShapesServer.Endpoints.Game.Users;
 
-public class ProfileInteractionEndpoints : EndpointGroup
+public class UserInteractionEndpoints : EndpointGroup
 {
 
     [GameEndpoint("~identity:{followerId}/~follow:%2F~identity%3A{arguments}", ContentType.Json)]

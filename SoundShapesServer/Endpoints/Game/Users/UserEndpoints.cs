@@ -6,9 +6,9 @@ using SoundShapesServer.Responses.Game.Following;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Endpoints.Game.Profiles;
+namespace SoundShapesServer.Endpoints.Game.Users;
 
-public class ProfileEndpoints : EndpointGroup
+public class UserEndpoints : EndpointGroup
 {
     [GameEndpoint("~identity:{id}/~metadata:*.get", ContentType.Json)]
     public UserMetadataResponse? ViewProfile(RequestContext context, string id, GameDatabaseContext database)
