@@ -27,8 +27,11 @@ public class LevelEndpoints : EndpointGroup
         bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
         
         // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
-        if (session == null || user == null)            
+        if (session == null || user == null)
+        {
+            if (searchString == "tagged3") return new Response(new LevelsWrapper());
             return HttpStatusCode.Forbidden;
+        }
         if (session.SessionType != (int)SessionType.Game)
         {
             if (session.SessionType != (int)SessionType.Unauthorized || searchString != "tagged3")
