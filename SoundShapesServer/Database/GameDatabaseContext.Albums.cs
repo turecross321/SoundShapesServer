@@ -51,17 +51,20 @@ public partial class GameDatabaseContext
 
     private void SetAlbumFilePath(GameAlbum album, AlbumResourceType resourceType, string path)
     {
-        switch (resourceType)
+        _realm.Write(() =>
         {
-            case AlbumResourceType.Thumbnail:
-                album.ThumbnailFilePath = path;
-                break;
-            case AlbumResourceType.SidePanel:
-                album.SidePanelFilePath = path;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(resourceType), resourceType, null);
-        }
+            switch (resourceType)
+            {
+                case AlbumResourceType.Thumbnail:
+                    album.ThumbnailFilePath = path;
+                    break;
+                case AlbumResourceType.SidePanel:
+                    album.SidePanelFilePath = path;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(resourceType), resourceType, null);
+            }
+        });
     }
     private void RemoveAlbumResources(IDataStore dataStore, GameAlbum album)
     {
