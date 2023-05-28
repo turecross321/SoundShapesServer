@@ -10,7 +10,7 @@ public class ApiPublishLevelRequest
         ModificationDate = modificationDate;
     }
 
-    public string Name { get; }
+    public string Name { get; set; }
     public int Language { get; }
     public DateTimeOffset? ModificationDate { get; set; } 
 }

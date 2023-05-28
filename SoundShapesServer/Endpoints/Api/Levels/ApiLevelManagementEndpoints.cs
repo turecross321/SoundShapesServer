@@ -6,7 +6,6 @@ using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using Bunkum.ProfanityFilter;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Api.Levels;
@@ -23,8 +22,8 @@ public class ApiLevelManagementEndpoints : EndpointGroup
     public Response CreateLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiPublishLevelRequest body, ProfanityService profanity)
     {
         if (IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
-        if (profanity.SentenceContainsProfanity(body.Name)) return HttpStatusCode.Forbidden;
 
+        body.Name = profanity.CensorSentence(body.Name); // Censor any potential profanity
         GameLevel publishedLevel = database.CreateLevel(new PublishLevelRequest(body), user);
         return new Response(new ApiLevelFullResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
@@ -74,8 +73,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
                 return HttpStatusCode.Unauthorized;
         }
 
-        if (profanity.SentenceContainsProfanity(body.Name)) return HttpStatusCode.Forbidden;
-
+        body.Name = profanity.CensorSentence(body.Name); // Censor any potential profanity
         GameLevel publishedLevel = database.EditLevel(new PublishLevelRequest(body), level);
         return new Response(new ApiLevelFullResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }

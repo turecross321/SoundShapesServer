@@ -9,6 +9,6 @@ public class ApiEditLevelRequest
         Name = name;
     }
 
-    public string Name { get; }
+    public string Name { get; set; }
     public int Language { get; }
 }

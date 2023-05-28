@@ -28,8 +28,7 @@ public class LevelPublishingEndpoints : EndpointGroup
             parser.GetParameterValue("title"), 
             int.Parse(parser.GetParameterValue("sce_np_language")));
         
-        if (profanity.SentenceContainsProfanity(publishLevelRequest.Name)) return HttpStatusCode.Forbidden;
-
+        publishLevelRequest.Name = profanity.CensorSentence(publishLevelRequest.Name); // Censor any potential profanity
         GameLevel publishedLevel = database.CreateLevel(publishLevelRequest, user);
         
         Response uploadedResources = UploadLevelResources(database, dataStore, parser, publishedLevel);
@@ -50,8 +49,7 @@ public class LevelPublishingEndpoints : EndpointGroup
             parser.GetParameterValue("title"), 
             int.Parse(parser.GetParameterValue("sce_np_language")));
         
-        if (profanity.SentenceContainsProfanity(publishLevelRequest.Name)) return HttpStatusCode.Forbidden;
-        
+        publishLevelRequest.Name = profanity.CensorSentence(publishLevelRequest.Name); // Censor any potential profanity
         GameLevel publishedLevel = database.EditLevel(publishLevelRequest, level);
         
         Response uploadedResources = UploadLevelResources(database, dataStore, parser, publishedLevel);

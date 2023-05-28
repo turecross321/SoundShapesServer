@@ -26,7 +26,7 @@ public class PublishLevelRequest
         Language = request.Language;
     }
 
-    public string Name { get; }
+    public string Name { get; set; }
     public int Language { get; }
     public long FileSize { get; }
     public DateTimeOffset Created { get; }    

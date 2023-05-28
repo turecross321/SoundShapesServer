@@ -1,7 +1,6 @@
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
-using SoundShapesServer.Responses.Api.CommunityTabs;
 using SoundShapesServer.Responses.Api.RecentActivity;
 using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Users;
