@@ -97,7 +97,7 @@ public partial class GameDatabaseContext
                 if (previousUserIds.Contains(entry.User.Id)) continue;
                 
                 bestEntries.Add(entry);
-                previousUserIds.Add(etry.User);
+                previousUserIds.Add(entry.User);
             }
 
             response = bestEntries.AsQueryable();
