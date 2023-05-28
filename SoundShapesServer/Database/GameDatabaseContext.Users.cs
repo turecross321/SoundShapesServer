@@ -80,6 +80,14 @@ public partial class GameDatabaseContext
         });
     }
 
+    public void SetUserSaveFilePath(GameUser user, string? path)
+    {
+        _realm.Write(() =>
+        {
+            user.SaveFilePath = path;
+        });
+    }
+
     public (GameUser[], int) GetUsers(UserOrderType order, bool descending, UserFilters filters, int from, int count)
     {
         IQueryable<GameUser> orderedUsers = order switch

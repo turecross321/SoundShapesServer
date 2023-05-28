@@ -5,9 +5,11 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
+using Bunkum.RealmDatabase;
 using HttpMultipartParser;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Users;
 
@@ -16,7 +18,7 @@ namespace SoundShapesServer.Endpoints.Game;
 public class CloudSyncEndpoints : EndpointGroup
 {
     [GameEndpoint("~identity:{userId}/~content:progress.put", Method.Post)]
-    public Response UploadSave(RequestContext context, IDataStore dataStore, GameUser user, Stream body)
+    public Response UploadSave(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, Stream body)
     {
         string? key = user.SaveFilePath;
         
@@ -26,7 +28,7 @@ public class CloudSyncEndpoints : EndpointGroup
         byte[] newSave = Encoding.UTF8.GetBytes(saveString);
 
         // I shit you not, this is how the game tells the server it wants to delete the save:
-        if (CloudSyncHelper.IsSaveEmpty(newSave)) return DeleteSave(dataStore, user); 
+        if (CloudSyncHelper.IsSaveEmpty(newSave)) return DeleteSave(database, dataStore, user); 
 
         byte[] combinedSave = newSave;
 
@@ -41,16 +43,19 @@ public class CloudSyncEndpoints : EndpointGroup
         }
 
         key ??= ResourceHelper.GetSaveResourceKey(user.Id);
+        
+        database.SetUserSaveFilePath(user, key);
         dataStore.WriteToStore(key, combinedSave);
 
         return HttpStatusCode.OK;
     }
 
-    private Response DeleteSave(IDataStore dataStore, GameUser user)
+    private Response DeleteSave(GameDatabaseContext database, IDataStore dataStore, GameUser user)
     {
         string key = ResourceHelper.GetSaveResourceKey(user.Id);
-
-        return dataStore.RemoveFromStore(key) ? HttpStatusCode.OK : HttpStatusCode.InternalServerError;
+        dataStore.RemoveFromStore(key);
+        database.SetUserSaveFilePath(user, null);
+        return HttpStatusCode.OK;
     }
 
     [GameEndpoint("~identity:{userId}/~content:progress/data.get")]
