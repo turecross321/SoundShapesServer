@@ -8,6 +8,7 @@ public enum GameContentType
     level,
     upload,
     like,
+    queued,
     follow,
     album,
     link,

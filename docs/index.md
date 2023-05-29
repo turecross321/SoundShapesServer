@@ -546,8 +546,10 @@ o7
 | --------------- |
 | from            |
 | count           |
-| byUser          |
-| likedByUser     |
+| createdBy       |
+| likedBy         |
+| queuedBy        |
+| likedOrQueuedBy |
 | completedBy     |
 | inAlbum         |
 | inDaily         |
@@ -571,6 +573,7 @@ o7
 | totalCompletions   |
 | uniqueCompletions  |
 | likes              |
+| queues             |
 | fileSize           |
 | difficulty         |
 | relevance          |
@@ -815,7 +818,8 @@ o7
 ```json
 {
   "Completed": true,
-  "Liked": false
+  "Liked": false,
+  "Queued": false
 }
 ```
 
@@ -883,6 +887,38 @@ x�ݝ[���
 
 > ```
 > {ip}:10061/api/v1/levels/id/{levelId}/unLike
+> ```
+
+### Response: 200
+
+```json
+
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+## End-point: Queue Level
+
+### Method: POST
+
+> ```
+> {ip}:10061/api/v1/levels/id/{levelId}/queue
+> ```
+
+### Response: 201
+
+```json
+
+```
+
+⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
+
+## End-point: Unqueue Level
+
+### Method: POST
+
+> ```
+> {ip}:10061/api/v1/levels/id/{levelId}/unQueue
 > ```
 
 ### Response: 200
@@ -2034,9 +2070,10 @@ Should be a PNG
 | ----- | -------------------- |
 | 0     | Publish              |
 | 1     | Like                 |
-| 2     | Follow               |
-| 3     | Score Submission     |
-| 4     | Account Registration |
+| 2     | Queue                |
+| 3     | Follow               |
+| 4     | Score Submission     |
+| 5     | Account Registration |
 
 | Can be ordered by: |
 | ------------------ |

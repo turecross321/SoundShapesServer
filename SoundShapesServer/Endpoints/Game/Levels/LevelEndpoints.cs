@@ -2,6 +2,7 @@ using System.Net;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
+using Newtonsoft.Json.Linq;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Levels;
@@ -77,19 +78,23 @@ public class LevelEndpoints : EndpointGroup
         return new Response(new LevelsWrapper(levels, user, totalLevels, from, count), ContentType.Json);
     }
     
+
+    // Game only uses data from the queued response
+    //[GameEndpoint("~identity:{userId}/~like:*.page", ContentType.Json)]
+    //public LevelsWrapper? Liked(RequestContext context, GameDatabaseContext database, GameUser user, string userId) {}
+
     [GameEndpoint("~identity:{userId}/~queued:*.page", ContentType.Json)]
-    [GameEndpoint("~identity:{userId}/~like:*.page", ContentType.Json)]
-    public LevelsWrapper? QueuedAndLiked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
+    [Authentication(false)]
+    public RelationLevelsWrapper? QueuedAndLiked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
     {
-        // Queued levels and Liked levels should be two different categories, but there aren't any buttons seperating them, so i'm just not going to implement them as one for now
         int count = int.Parse(context.QueryString["count"] ?? "9");
         int from = int.Parse(context.QueryString["from"] ?? "0");
-
+        
         GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
         if (userToGetLevelsFrom == null) return null;
-
-        (GameLevel[] levels, int totalLevels) = database.GetLevels(LevelOrderType.DoNotOrder, true, new LevelFilters(likedByUser: userToGetLevelsFrom), from, count);
-
-        return new LevelsWrapper(levels, user, totalLevels, from, count);
+        
+        (GameLevel[] levels, int totalLevels) = database.GetLevels(LevelOrderType.DoNotOrder, true, new LevelFilters(likedOrQueuedByUser: userToGetLevelsFrom), from, count);
+        
+        return new RelationLevelsWrapper(levels, user, totalLevels, from, count);
     }
 }

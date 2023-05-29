@@ -4,5 +4,5 @@ public class ApiLevelRelationResponse
 {
     public bool Completed { get; set; }
     public bool Liked { get; set; }
-    // TODO: QUEUED
+    public bool Queued { get; set; }
 }

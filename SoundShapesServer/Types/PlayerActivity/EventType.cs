@@ -5,7 +5,8 @@ public enum EventType
 {
     Publish = 0,
     Like = 1,
-    Follow = 2,
-    ScoreSubmission = 3,
-    AccountRegistration = 4
+    Queue = 2,
+    Follow = 3,
+    ScoreSubmission = 4,
+    AccountRegistration = 5
 }

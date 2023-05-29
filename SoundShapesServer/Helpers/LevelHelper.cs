@@ -67,6 +67,7 @@ public static class LevelHelper
             "totalCompletions" => LevelOrderType.TotalCompletions,
             "uniqueCompletions" => LevelOrderType.UniqueCompletions,
             "likes" => LevelOrderType.Likes,
+            "queues" => LevelOrderType.Queues,
             "fileSize" => LevelOrderType.FileSize,
             "difficulty" => LevelOrderType.Difficulty,
             "relevance" => LevelOrderType.Relevance,
@@ -84,8 +85,10 @@ public static class LevelHelper
     
     public static LevelFilters GetLevelFilters(RequestContext context, GameDatabaseContext database)
     {
-        string? byUserId = context.QueryString["byUser"];
+        string? byUserId = context.QueryString["createdBy"];
         string? likedByUserId = context.QueryString["likedBy"];
+        string? queuedByUserId = context.QueryString["queuedBy"];
+        string? likedOrQueuedByUserId = context.QueryString["likedOrQueuedBy"];
         string? completedByString = context.QueryString["completedBy"];
         string? inAlbumId = context.QueryString["inAlbum"];
         
@@ -112,6 +115,8 @@ public static class LevelHelper
 
         GameUser? byUser = null;
         GameUser? likedBy = null;
+        GameUser? queuedBy = null;
+        GameUser? likedOrQueuedBy = null;
         GameUser? completedBy = null;
         GameAlbum? inAlbum = null;
         DateTimeOffset? inDailyDate = null;
@@ -120,15 +125,15 @@ public static class LevelHelper
 
         if (byUserId != null) byUser = database.GetUserWithId(byUserId);
         if (likedByUserId != null) likedBy = database.GetUserWithId(likedByUserId);
+        if (queuedByUserId != null) queuedBy = database.GetUserWithId(queuedByUserId);
+        if (likedOrQueuedByUserId != null) likedOrQueuedBy = database.GetUserWithId(likedOrQueuedByUserId);
         if (completedByString != null) completedBy = database.GetUserWithId(completedByString);
         if (inAlbumId != null) inAlbum = database.GetAlbumWithId(inAlbumId);
         if (inDailyDateString != null) inDailyDate = DateTimeOffset.Parse(inDailyDateString);
         if (bpmString != null) bpm = int.Parse(bpmString);
         if (transposeValueString != null) transposeValue = int.Parse(transposeValueString);
 
-        return new LevelFilters(byUser, likedBy, inAlbum, inDaily, inDailyDate, lastDate, 
+        return new LevelFilters(byUser, likedBy, queuedBy, likedOrQueuedBy, inAlbum, inDaily, inDailyDate, lastDate, 
             searchQuery, completedBy, bpm, scaleIndex, transposeValue, hasCar, hasExplodingCar);
     }
-    
-    
 }

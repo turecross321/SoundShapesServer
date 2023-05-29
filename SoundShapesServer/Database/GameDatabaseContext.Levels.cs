@@ -202,6 +202,7 @@ public partial class GameDatabaseContext
             LevelOrderType.TotalCompletions => LevelsOrderedByTotalCompletions(descending),
             LevelOrderType.UniqueCompletions => LevelsOrderedByUniqueCompletions(descending),
             LevelOrderType.Likes => LevelsOrderedByLikes(descending),
+            LevelOrderType.Queues => LevelsOrderedByQueues(descending),
             LevelOrderType.FileSize => LevelsOrderedByFileSize(descending),
             LevelOrderType.Difficulty => LevelsOrderedByDifficulty(descending),
             LevelOrderType.Relevance => LevelsOrderedByRelevance(descending),
@@ -230,23 +231,36 @@ public partial class GameDatabaseContext
         {
             response = response.Where(l => l.Author == filters.ByUser);
         }
-        
-        if (filters.LikedByUser != null)
+
+        if (filters.LikedByUser != null || filters.QueuedByUser != null || filters.LikedOrQueuedByUser != null)
         {
-            IQueryable<LevelLikeRelation> relations = filters.LikedByUser.LikedLevels;
+            IQueryable<LevelLikeRelation>? likeRelations = filters.LikedByUser?.LikedLevels;
+            IQueryable<LevelQueueRelation>? queueRelations = filters.QueuedByUser?.QueuedLevels;
+
+            likeRelations ??= filters.LikedOrQueuedByUser?.LikedLevels;
+            queueRelations ??= filters.LikedOrQueuedByUser?.QueuedLevels;
 
             List<GameLevel> tempResponse = new ();
 
-            foreach (LevelLikeRelation relation in relations)
-            {
-                GameLevel likedLevel = relation.Level;
-                GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == likedLevel.Id);
-                if (responseLevel != null) tempResponse.Add(responseLevel);
-            }
+            if (likeRelations != null)
+                foreach (LevelLikeRelation relation in likeRelations)
+                {
+                    GameLevel likedLevel = relation.Level;
+                    GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == likedLevel.Id);
+                    if (responseLevel != null) tempResponse.Add(responseLevel);
+                }
+
+            if (queueRelations != null)
+                foreach (LevelQueueRelation relation in queueRelations)
+                {
+                    GameLevel queuedLevel = relation.Level;
+                    GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == queuedLevel.Id);
+                    if (responseLevel != null) tempResponse.Add(responseLevel);
+                }
 
             response = tempResponse.AsQueryable();
         }
-        
+
         if (filters.InAlbum != null)
         {
             List<GameLevel> tempResponse = new ();
@@ -393,6 +407,12 @@ public partial class GameDatabaseContext
     {
         if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.LikesCount);
         return _realm.All<GameLevel>().OrderBy(l => l.LikesCount);
+    } 
+    
+    private IQueryable<GameLevel> LevelsOrderedByQueues(bool descending)
+    {
+        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.QueuesCount);
+        return _realm.All<GameLevel>().OrderBy(l => l.QueuesCount);
     } 
     
     private IQueryable<GameLevel> LevelsOrderedByFileSize(bool descending)

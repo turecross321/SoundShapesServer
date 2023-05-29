@@ -14,7 +14,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
 {
     [ApiEndpoint("levels/id/{levelId}/users/id/{userId}", ContentType.Json)]
     [Authentication(false)]
-    public ApiLevelRelationResponse? CheckIfUserHasLikedLevel(RequestContext context, GameDatabaseContext database, string levelId, string userId)
+    public ApiLevelRelationResponse? GetLevelRelation(RequestContext context, GameDatabaseContext database, string levelId, string userId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return null;
@@ -25,7 +25,8 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         return new ApiLevelRelationResponse()
         {
             Completed = level.UniqueCompletions.Contains(user),
-            Liked = database.IsUserLikingLevel(user, level)
+            Liked = database.HasUserLikedLevel(user, level),
+            Queued = database.HasUserQueuedLevel(user, level)
         };
     }
 
@@ -47,6 +48,28 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         if (level == null) return HttpStatusCode.NotFound;
 
         if (database.UnLikeLevel(user, level)) return HttpStatusCode.OK;
+        
+        return HttpStatusCode.Conflict;
+    }
+    
+    [ApiEndpoint("levels/id/{id}/queue", Method.Post)]
+    public Response QueueLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
+    {
+        GameLevel? level = database.GetLevelWithId(id);
+        if (level == null) return HttpStatusCode.NotFound;
+
+        if (database.QueueLevel(user, level)) return HttpStatusCode.Created;
+        
+        return HttpStatusCode.Conflict;
+    }
+
+    [ApiEndpoint("levels/id/{id}/unQueue", Method.Post)]
+    public Response UnQueueLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
+    {
+        GameLevel? level = database.GetLevelWithId(id);
+        if (level == null) return HttpStatusCode.NotFound;
+
+        if (database.UnQueueLevel(user, level)) return HttpStatusCode.OK;
         
         return HttpStatusCode.Conflict;
     }

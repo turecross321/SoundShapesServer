@@ -47,7 +47,7 @@ public partial class GameDatabaseContext
 
     public bool LikeLevel(GameUser liker, GameLevel level)
     {
-        if (IsUserLikingLevel(liker, level)) return false;
+        if (HasUserLikedLevel(liker, level)) return false;
         LevelLikeRelation relation = new(DateTimeOffset.UtcNow, liker, level);
         
         _realm.Write(() =>
@@ -61,25 +61,65 @@ public partial class GameDatabaseContext
         return true;
     }
     
-    public bool UnLikeLevel(GameUser liker, GameLevel level)
+    public bool UnLikeLevel(GameUser user, GameLevel level)
     {
-        if (!IsUserLikingLevel(liker, level)) return false;
+        if (!HasUserLikedLevel(user, level)) return false;
 
-        LevelLikeRelation? relation = _realm.All<LevelLikeRelation>().FirstOrDefault(l => l.Liker == liker && l.Level == level);
+        LevelLikeRelation? relation = _realm.All<LevelLikeRelation>().FirstOrDefault(l => l.User == user && l.Level == level);
 
         if (relation == null) return false;
         
         _realm.Write(() =>
         {
             _realm.Remove(relation);
+            user.LikedLevelsCount = user.LikedLevels.Count();
         });
         
         return true;
     }
 
-    public bool IsUserLikingLevel(GameUser liker, GameLevel level)
+    public bool HasUserLikedLevel(GameUser user, GameLevel level)
     {
-        LevelLikeRelation? relation = _realm.All<LevelLikeRelation>().FirstOrDefault(l => l.Liker == liker && l.Level == level);
+        LevelLikeRelation? relation = _realm.All<LevelLikeRelation>().FirstOrDefault(l => l.User == user && l.Level == level);
+        return relation != null;
+    }
+    
+    public bool QueueLevel(GameUser user, GameLevel level)
+    {
+        if (HasUserQueuedLevel(user, level)) return false;
+        LevelQueueRelation relation = new(DateTimeOffset.UtcNow, user, level);
+        
+        _realm.Write(() =>
+        {
+            _realm.Add(relation);
+            user.QueuedLevelsCount = user.QueuedLevels.Count();
+        });
+        
+        CreateEvent(user, EventType.Queue, null, level);
+
+        return true;
+    }
+    
+    public bool UnQueueLevel(GameUser user, GameLevel level)
+    {
+        if (!HasUserQueuedLevel(user, level)) return false;
+
+        LevelQueueRelation? relation = _realm.All<LevelQueueRelation>().FirstOrDefault(l => l.User == user && l.Level == level);
+
+        if (relation == null) return false;
+        
+        _realm.Write(() =>
+        {
+            _realm.Remove(relation);
+            user.QueuedLevelsCount = user.QueuedLevels.Count();
+        });
+        
+        return true;
+    }
+
+    public bool HasUserQueuedLevel(GameUser user, GameLevel level)
+    {
+        LevelQueueRelation? relation = _realm.All<LevelQueueRelation>().FirstOrDefault(l => l.User == user && l.Level == level);
         return relation != null;
     }
     

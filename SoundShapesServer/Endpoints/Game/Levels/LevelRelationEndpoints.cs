@@ -15,23 +15,38 @@ public class LevelRelationEndpoints : EndpointGroup
     [GameEndpoint("~identity:{userId}/~like:%2F~level%3A{arguments}", ContentType.Json)]
     public Response LevelLikeRequests(RequestContext context, GameDatabaseContext database, GameUser user, string userId, string arguments)
     {
-        string[] argumentArray = arguments.Split("."); // This is to seperate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
+        string[] argumentArray = arguments.Split("."); // This is to separate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
         string levelId = argumentArray[0];
         string requestType = argumentArray[1];
 
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return new Response(HttpStatusCode.NotFound);
         
-        if (requestType == "put") return LikeLevel(user, level, database);
-        if (requestType == "get") return CheckIfUserHasLikedLevel(user, level, database);
-        if (requestType == "delete") return UnLikeLevel(user, level, database);
+        if (requestType == "put") return LikeLevel(database, user, level);
+        if (requestType == "get") return CheckIfUserHasLikedLevel(database, user, level);
+        if (requestType == "delete") return UnLikeLevel(database, user, level);
+
+        return new Response(HttpStatusCode.NotFound);
+    }
+    
+    [Endpoint("/otg/~identity:{userId}/~queued:%2F~level%3A{arguments}")]
+    public Response LevelQueueRequests(RequestContext context, GameDatabaseContext database, GameUser user, string arguments)
+    {
+        string[] argumentArray = arguments.Split("."); // This is to separate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
+        string levelId = argumentArray[0];
+        string requestType = argumentArray[1];
+        
+        GameLevel? level = database.GetLevelWithId(levelId);
+        if (level == null) return new Response(HttpStatusCode.NotFound);
+        
+        if (requestType == "delete") return UnQueueLevel(database, user, level);
 
         return new Response(HttpStatusCode.NotFound);
     }
 
-    private Response CheckIfUserHasLikedLevel(GameUser user, GameLevel level, GameDatabaseContext database)
+    private Response CheckIfUserHasLikedLevel(GameDatabaseContext database, GameUser user, GameLevel level)
     {
-        if (database.IsUserLikingLevel(user, level))
+        if (database.HasUserLikedLevel(user, level))
         {
             // Returning an empty class because this doesn't actually need any data. It just needs a response and some sort of object
             LevelLikeResponse response = new();
@@ -41,15 +56,21 @@ public class LevelRelationEndpoints : EndpointGroup
 
         return new Response(HttpStatusCode.NotFound);
     }
-    private Response LikeLevel(GameUser user, GameLevel level, GameDatabaseContext database)
+    private Response LikeLevel(GameDatabaseContext database, GameUser user, GameLevel level)
     {
         if (database.LikeLevel(user, level)) return new Response(HttpStatusCode.OK);
         return new Response(HttpStatusCode.BadRequest);
     }
 
-    private Response UnLikeLevel(GameUser user, GameLevel level, GameDatabaseContext database)
+    private Response UnLikeLevel(GameDatabaseContext database, GameUser user, GameLevel level)
     {
         if (database.UnLikeLevel(user, level)) return new Response(HttpStatusCode.OK);
+        return new Response(HttpStatusCode.BadRequest);
+    }
+
+    private Response UnQueueLevel(GameDatabaseContext database, GameUser user, GameLevel level)
+    {
+        if (database.UnQueueLevel(user, level)) return new Response(HttpStatusCode.OK);
         return new Response(HttpStatusCode.BadRequest);
     }
 }

@@ -26,8 +26,10 @@ public class GameUser : RealmObject, IRateLimitUser
     [Backlink(nameof(IpAuthorization.User))]
     public IQueryable<IpAuthorization> IpAddresses { get; }
 
-    [Backlink(nameof(LevelLikeRelation.Liker))] public IQueryable<LevelLikeRelation> LikedLevels { get; }
+    [Backlink(nameof(LevelLikeRelation.User))] public IQueryable<LevelLikeRelation> LikedLevels { get; }
     public int LikedLevelsCount { get; set; }
+    [Backlink(nameof(LevelQueueRelation.User))] public IQueryable<LevelQueueRelation> QueuedLevels { get; }
+    public int QueuedLevelsCount { get; set; }
     [Backlink(nameof(LevelUniquePlayRelation.User))] public IQueryable<LevelUniquePlayRelation> PlayedLevels { get; }
     public int PlayedLevelsCount { get; set; }
     [Backlink(nameof(GameLevel.UniqueCompletions))] public IQueryable<GameLevel> CompletedLevels { get; }

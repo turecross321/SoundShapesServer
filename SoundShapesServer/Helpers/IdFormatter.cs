@@ -11,6 +11,12 @@ public static class IdFormatter
         return $"/~level:{id}/~version:{version}";
     }
 
+    public static string FormatRelationLevelId(string userId, string levelId)
+    {
+        // yes, you're reading this correctly. both liked and queued levels should have queued in the id
+        return "/~identity:" + userId + "/~queued:/~level:" + levelId;
+    }
+
     public static string DeFormatLevelIdAndVersion(string formattedId)
     {
         return formattedId.Split(":")[1].Split("/")[0];

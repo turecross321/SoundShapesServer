@@ -16,12 +16,13 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 24;
+    protected override ulong SchemaVersion => 28;
 
     protected override List<Type> SchemaTypes => new()
     {
         typeof(FollowRelation),
         typeof(LevelLikeRelation),
+        typeof(LevelQueueRelation),
         typeof(LevelPlayRelation),
         typeof(LevelUniquePlayRelation),
         typeof(GameUser),
@@ -42,5 +43,36 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 
     protected override void Migrate(Migration migration, ulong oldVersion)
     {
+        IQueryable<dynamic> oldLikeRelations = migration.OldRealm.DynamicApi.All("LevelLikeRelation");
+        IQueryable<LevelLikeRelation> newLikeRelations = migration.NewRealm.All<LevelLikeRelation>();
+        for (int i = 0; i < newLikeRelations.Count(); i++)
+        {
+            dynamic oldRelation = oldLikeRelations.ElementAt(i);
+            LevelLikeRelation newRelation = newLikeRelations.ElementAt(i);
+
+            if (oldVersion < 25)
+            {
+                string userId = oldRelation.Liker.Id;
+                GameUser user = migration.NewRealm.All<GameUser>().First(u => u.Id == userId);
+                
+                newRelation.User = user;
+            }
+        }
+        
+        IQueryable<GameEvent> events = migration.NewRealm.All<GameEvent>();
+
+        for (int i = 0; i < events.Count(); i++)
+        {
+            GameEvent gameEvent = events.ElementAt(i);
+            
+            // v28 added the Queue event type
+            if (oldVersion < 28)
+            {
+                if (gameEvent.EventType >= (int)EventType.Queue)
+                {
+                    gameEvent.EventType += 1;
+                }
+            }
+        }
     }
 }

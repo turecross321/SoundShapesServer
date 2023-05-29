@@ -9,6 +9,7 @@ public enum LevelOrderType
     UniqueCompletions,
     TotalCompletions,
     Likes,
+    Queues,
     FileSize,
     Difficulty,
     Relevance,

@@ -5,13 +5,15 @@ namespace SoundShapesServer.Types.Levels;
 
 public class LevelFilters
 {
-    public LevelFilters(GameUser? byUser = null, GameUser? likedByUser = null, GameAlbum? inAlbum = null, 
+    public LevelFilters(GameUser? byUser = null, GameUser? likedByUser = null, GameUser? queuedByUser = null, GameUser? likedOrQueuedByUser = null, GameAlbum? inAlbum = null, 
         bool? inDaily = null, DateTimeOffset? inDailyDate = null, bool? inLatestDaily = null, string? search = null, 
         GameUser? completedBy = null, int? bpm = null, int? scaleIndex = null, int? transposeValue = null,
         bool? hasCar = null, bool? hasExplodingCar = null)
     {
         ByUser = byUser;
         LikedByUser = likedByUser;
+        QueuedByUser = queuedByUser;
+        LikedOrQueuedByUser = likedOrQueuedByUser;
         CompletedBy = completedBy;
         InAlbum = inAlbum;
         InDaily = inDaily;
@@ -27,6 +29,8 @@ public class LevelFilters
     
     public readonly GameUser? ByUser;
     public readonly GameUser? LikedByUser;
+    public readonly GameUser? QueuedByUser;
+    public readonly GameUser? LikedOrQueuedByUser;
     public readonly GameUser? CompletedBy;
     public readonly GameAlbum? InAlbum;
     public bool? InDaily;
