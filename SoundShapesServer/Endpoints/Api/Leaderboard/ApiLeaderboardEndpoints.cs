@@ -9,7 +9,7 @@ namespace SoundShapesServer.Endpoints.Api.Leaderboard;
 
 public class ApiLeaderboardEndpoints : EndpointGroup
 {
-    [ApiEndpoint("leaderboard")]
+    [ApiEndpoint("scores")]
     [Authentication(false)]
     public ApiLeaderboardEntryWrapper GetLeaderboard(RequestContext context, GameDatabaseContext database, string id)
     {

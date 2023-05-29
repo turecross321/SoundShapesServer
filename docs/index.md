@@ -1418,7 +1418,7 @@ Should be a PNG
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/leaderboard
+> {ip}:10061/api/v1/scores
 > ```
 
 ### Query Params
@@ -1579,7 +1579,7 @@ Should be a PNG
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/leaderboard/id/{leaderboardEntryId}/remove
+> {ip}:10061/api/v1/scores/id/{leaderboardEntryId}/remove
 > ```
 
 ### Response: 200
