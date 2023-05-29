@@ -115,12 +115,12 @@ public class AuthenticationEndpoints : EndpointGroup
         {
             string emailSessionId = GenerateEmailSessionId(database);
             database.CreateSession(context, user, SessionType.SetEmail, 600, emailSessionId); // 10 minutes
-            return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}.\nYour email code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
+            return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}/register\nYour email code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
         }
 
         Debug.Assert(session.Ip != null, "session.Ip != null");
         if (session.Ip.Authorized == false)
-            return $"Your IP Address has not been authorized. To proceed, you will have to log in to your account at {config.WebsiteUrl} and authorize the following IP Address: {session.Ip.IpAddress}\n-\n{DateTime.UtcNow}";
+            return $"Your IP Address has not been authorized. To proceed, you will have to log in to your account at {config.WebsiteUrl}/authorization and authorize the following IP Address: {session.Ip.IpAddress}\n-\n{DateTime.UtcNow}";
 
         return null;
     }
