@@ -23,8 +23,8 @@ public partial class GameDatabaseContext
 
     public CommunityTab? CreateCommunityTab(ApiCreateCommunityTabRequest request, GameUser user)
     {
-        // More than 7 community tabs will crash the game
-        if (_realm.All<CommunityTab>().Count() >= 7) return null;
+        // More than 4 community tabs will cause performance issues
+        if (_realm.All<CommunityTab>().Count() >= 4) return null;
         
         CommunityTab communityTab = new ()
         {
