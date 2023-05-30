@@ -46,8 +46,7 @@ public partial class GameDatabaseContext
     }
 
     public bool LikeLevel(GameUser liker, GameLevel level)
-    {
-        if (HasUserLikedLevel(liker, level)) return false;
+    { 
         LevelLikeRelation relation = new(DateTimeOffset.UtcNow, liker, level);
         
         _realm.Write(() =>
@@ -63,8 +62,6 @@ public partial class GameDatabaseContext
     
     public bool UnLikeLevel(GameUser user, GameLevel level)
     {
-        if (!HasUserLikedLevel(user, level)) return false;
-
         LevelLikeRelation? relation = _realm.All<LevelLikeRelation>().FirstOrDefault(l => l.User == user && l.Level == level);
 
         if (relation == null) return false;
@@ -86,7 +83,6 @@ public partial class GameDatabaseContext
     
     public bool QueueLevel(GameUser user, GameLevel level)
     {
-        if (HasUserQueuedLevel(user, level)) return false;
         LevelQueueRelation relation = new(DateTimeOffset.UtcNow, user, level);
         
         _realm.Write(() =>
@@ -102,8 +98,6 @@ public partial class GameDatabaseContext
     
     public bool UnQueueLevel(GameUser user, GameLevel level)
     {
-        if (!HasUserQueuedLevel(user, level)) return false;
-
         LevelQueueRelation? relation = _realm.All<LevelQueueRelation>().FirstOrDefault(l => l.User == user && l.Level == level);
 
         if (relation == null) return false;

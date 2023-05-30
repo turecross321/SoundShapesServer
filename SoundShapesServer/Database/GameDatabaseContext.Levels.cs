@@ -193,32 +193,11 @@ public partial class GameDatabaseContext
 
     public (GameLevel[], int) GetLevels(LevelOrderType order, bool descending, LevelFilters filters, int from, int count)
     {
-        IQueryable<GameLevel> orderedLevels = order switch
-        {
-            LevelOrderType.CreationDate => LevelsOrderedByCreationDate(descending),
-            LevelOrderType.ModificationDate => LevelsOrderedByModificationDate(descending),
-            LevelOrderType.TotalPlays => LevelsOrderedByPlays(descending),
-            LevelOrderType.UniquePlays => LevelsOrderedByUniquePlays(descending),
-            LevelOrderType.TotalCompletions => LevelsOrderedByTotalCompletions(descending),
-            LevelOrderType.UniqueCompletions => LevelsOrderedByUniqueCompletions(descending),
-            LevelOrderType.Likes => LevelsOrderedByLikes(descending),
-            LevelOrderType.Queues => LevelsOrderedByQueues(descending),
-            LevelOrderType.FileSize => LevelsOrderedByFileSize(descending),
-            LevelOrderType.Difficulty => LevelsOrderedByDifficulty(descending),
-            LevelOrderType.Relevance => LevelsOrderedByRelevance(descending),
-            LevelOrderType.Random => LevelsOrderedByRandom(descending),
-            LevelOrderType.TotalDeaths => LevelsOrderedByDeaths(descending),
-            LevelOrderType.TotalPlayTime => LevelsOrderedByTotalPlayTime(descending),
-            LevelOrderType.AveragePlayTime => LevelsOrderedByAveragePlayTime(descending),
-            LevelOrderType.TotalScreens => LevelsOrderedByScreens(descending),
-            LevelOrderType.TotalEntities => LevelsOrderedByEntities(descending),
-            LevelOrderType.Bpm => LevelsOrderedByBpm(descending),
-            LevelOrderType.TransposeValue => LevelsOrderedByTransposeValue(descending),
-            _ => LevelsOrderedByCreationDate(descending)
-        };
-
-        IQueryable<GameLevel> filteredLevels = FilterLevels(orderedLevels, filters);
-        GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(filteredLevels, from, count);
+        IQueryable<GameLevel> levels = _realm.All<GameLevel>();
+        IQueryable<GameLevel> filteredLevels = FilterLevels(levels, filters);
+        IQueryable<GameLevel> orderedLevels = OrderLevels(filteredLevels, order, descending);
+        
+        GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(orderedLevels, from, count);
 
         return (paginatedLevels, filteredLevels.Count());
     }
@@ -234,31 +213,23 @@ public partial class GameDatabaseContext
 
         if (filters.LikedByUser != null || filters.QueuedByUser != null || filters.LikedOrQueuedByUser != null)
         {
-            IQueryable<LevelLikeRelation>? likeRelations = filters.LikedByUser?.LikedLevels;
-            IQueryable<LevelQueueRelation>? queueRelations = filters.QueuedByUser?.QueuedLevels;
+            IEnumerable<LevelLikeRelation>? likeRelations = filters.LikedByUser?.LikedLevels;
+            IEnumerable<LevelQueueRelation>? queueRelations = filters.QueuedByUser?.QueuedLevels;
 
             likeRelations ??= filters.LikedOrQueuedByUser?.LikedLevels;
             queueRelations ??= filters.LikedOrQueuedByUser?.QueuedLevels;
 
-            List<GameLevel> tempResponse = new ();
+            // if null, make them empty
+            likeRelations ??= Enumerable.Empty<LevelLikeRelation>();
+            queueRelations ??= Enumerable.Empty<LevelQueueRelation>();
+            
+            IEnumerable<GameLevel> combinedLevels = likeRelations
+                .Select(lR => new { lR.Level, lR.Date })
+                .Concat(queueRelations.Select(qR => new { qR.Level, qR.Date }))
+                .OrderByDescending(obj => obj.Date)
+                .Select(obj => obj.Level);
 
-            if (likeRelations != null)
-                foreach (LevelLikeRelation relation in likeRelations)
-                {
-                    GameLevel likedLevel = relation.Level;
-                    GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == likedLevel.Id);
-                    if (responseLevel != null) tempResponse.Add(responseLevel);
-                }
-
-            if (queueRelations != null)
-                foreach (LevelQueueRelation relation in queueRelations)
-                {
-                    GameLevel queuedLevel = relation.Level;
-                    GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == queuedLevel.Id);
-                    if (responseLevel != null) tempResponse.Add(responseLevel);
-                }
-
-            response = tempResponse.AsQueryable();
+            response = combinedLevels.AsQueryable();
         }
 
         if (filters.InAlbum != null)
@@ -379,55 +350,82 @@ public partial class GameDatabaseContext
         return response;
     }
 
-    private IQueryable<GameLevel> LevelsOrderedByCreationDate(bool descending)
+    private IQueryable<GameLevel> OrderLevels(IQueryable<GameLevel> levels, LevelOrderType order, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.CreationDate);
-        return _realm.All<GameLevel>().OrderBy(l => l.CreationDate);
+        return order switch
+        {
+            LevelOrderType.CreationDate => OrderLevelsByCreationDate(levels, descending),
+            LevelOrderType.ModificationDate => OrderLevelsByModificationDate(levels, descending),
+            LevelOrderType.TotalPlays => OrderLevelsByPlays(levels, descending),
+            LevelOrderType.UniquePlays => OrderLevelsByUniquePlays(levels, descending),
+            LevelOrderType.TotalCompletions => OrderLevelsByCompletions(levels, descending),
+            LevelOrderType.UniqueCompletions => OrderLevelsByUniqueCompletions(levels, descending),
+            LevelOrderType.Likes => OrderLevelsByLikes(levels, descending),
+            LevelOrderType.Queues => OrderLevelsByQueues(levels, descending),
+            LevelOrderType.FileSize => OrderLevelsByFileSize(levels, descending),
+            LevelOrderType.Difficulty => OrderLevelsByDifficulty(levels, descending),
+            LevelOrderType.Relevance => OrderLevelsByRelevance(levels, descending),
+            LevelOrderType.Random => OrderLevelsByRandom(levels, descending),
+            LevelOrderType.TotalDeaths => OrderLevelsByDeaths(levels, descending),
+            LevelOrderType.TotalPlayTime => OrderLevelsByPlayTime(levels, descending),
+            LevelOrderType.AveragePlayTime => OrderLevelsByAveragePlayTime(levels, descending),
+            LevelOrderType.TotalScreens => OrderLevelsByScreens(levels, descending),
+            LevelOrderType.TotalEntities => OrderLevelsByEntities(levels, descending),
+            LevelOrderType.Bpm => OrderLevelsByBpm(levels, descending),
+            LevelOrderType.TransposeValue => OrderLevelsByTransposeValue(levels, descending),
+            _ => levels
+        };
+    }
+    
+    private static IQueryable<GameLevel> OrderLevelsByCreationDate(IQueryable<GameLevel> levels, bool descending)
+    {
+        if (descending) return levels.OrderByDescending(l => l.CreationDate);
+        return levels.OrderBy(l => l.CreationDate);
     } 
     
-    private IQueryable<GameLevel> LevelsOrderedByModificationDate(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByModificationDate(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.ModificationDate);
-        return _realm.All<GameLevel>().OrderBy(l => l.ModificationDate);
+        if (descending) return levels.OrderByDescending(l => l.ModificationDate);
+        return levels.OrderBy(l => l.ModificationDate);
     } 
     
-    private IQueryable<GameLevel> LevelsOrderedByPlays(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByPlays(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.PlaysCount);
-        return _realm.All<GameLevel>().OrderBy(l => l.PlaysCount);
+        if (descending) return levels.OrderByDescending(l => l.PlaysCount);
+        return levels.OrderBy(l => l.PlaysCount);
     } 
     
-    private IQueryable<GameLevel> LevelsOrderedByUniquePlays(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByUniquePlays(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.UniquePlaysCount);
-        return _realm.All<GameLevel>().OrderBy(l => l.UniquePlaysCount);
+        if (descending) return levels.OrderByDescending(l => l.UniquePlaysCount);
+        return levels.OrderBy(l => l.UniquePlaysCount);
     } 
     
-    private IQueryable<GameLevel> LevelsOrderedByLikes(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByLikes(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.LikesCount);
-        return _realm.All<GameLevel>().OrderBy(l => l.LikesCount);
+        if (descending) return levels.OrderByDescending(l => l.LikesCount);
+        return levels.OrderBy(l => l.LikesCount);
     } 
     
-    private IQueryable<GameLevel> LevelsOrderedByQueues(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByQueues(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.QueuesCount);
-        return _realm.All<GameLevel>().OrderBy(l => l.QueuesCount);
+        if (descending) return levels.OrderByDescending(l => l.QueuesCount);
+        return levels.OrderBy(l => l.QueuesCount);
     } 
     
-    private IQueryable<GameLevel> LevelsOrderedByFileSize(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByFileSize(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.FileSize);
-        return _realm.All<GameLevel>().OrderBy(l => l.FileSize);
+        if (descending) return levels.OrderByDescending(l => l.FileSize);
+        return levels.OrderBy(l => l.FileSize);
     } 
     
-    private IQueryable<GameLevel> LevelsOrderedByDifficulty(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByDifficulty(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.Difficulty);
-        return _realm.All<GameLevel>().OrderBy(l => l.Difficulty);
+        if (descending) return levels.OrderByDescending(l => l.Difficulty);
+        return levels.OrderBy(l => l.Difficulty);
     } 
     
-    private IQueryable<GameLevel> LevelsOrderedByRelevance(bool descending)
+    private IQueryable<GameLevel> OrderLevelsByRelevance(IQueryable<GameLevel> levels, bool descending)
     {
         DateTimeOffset oneWeekAgo = DateTimeOffset.UtcNow.AddDays(-7);
         IQueryable<LevelUniquePlayRelation> relations = _realm.All<LevelUniquePlayRelation>().Where(r=>r.Date > oneWeekAgo);
@@ -440,12 +438,14 @@ public partial class GameDatabaseContext
                 Count = g.Count()
             });
 
+        groupedRelations = groupedRelations.Where(r => levels.AsEnumerable().Contains(r.Level));
+        
         if (descending) return groupedRelations.OrderByDescending(r => r.Count).Select(r => r.Level).AsQueryable();
         return groupedRelations.OrderBy(r => r.Count).Select(r => r.Level).AsQueryable();
     } 
     
     // TODO: Cache this every 24 hours
-    private IQueryable<GameLevel> LevelsOrderedByRandom(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByRandom(IQueryable<GameLevel> levels, bool descending)
     {
         DateTime seedDateTime = DateTime.Today;
         byte[] seedBytes = BitConverter.GetBytes(seedDateTime.Ticks);
@@ -454,71 +454,71 @@ public partial class GameDatabaseContext
 
         Random rng = new(seed);
         
-        if (descending) return _realm.All<GameLevel>()
+        if (descending) return levels
             .AsEnumerable()
             .OrderByDescending(_ => rng.Next())
             .AsQueryable();
         
-        return _realm.All<GameLevel>()
+        return levels
             .AsEnumerable()
             .OrderBy(_ => rng.Next())
             .AsQueryable();
     }
     
-    private IQueryable<GameLevel> LevelsOrderedByDeaths(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByDeaths(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.TotalDeaths);
-        return _realm.All<GameLevel>().OrderBy(l => l.TotalDeaths);
+        if (descending) return levels.OrderByDescending(l => l.TotalDeaths);
+        return levels.OrderBy(l => l.TotalDeaths);
     } 
     
-    private IQueryable<GameLevel> LevelsOrderedByTotalPlayTime(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByPlayTime(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.TotalPlayTime);
-        return _realm.All<GameLevel>().OrderBy(l => l.TotalPlayTime);
+        if (descending) return levels.OrderByDescending(l => l.TotalPlayTime);
+        return levels.OrderBy(l => l.TotalPlayTime);
     } 
     
-    private IQueryable<GameLevel> LevelsOrderedByAveragePlayTime(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByAveragePlayTime(IQueryable<GameLevel> levels, bool descending)
     {
         // I AM SORRY TO WHOEVER IS READING THIS
-        if (descending) return _realm.All<GameLevel>().AsEnumerable().OrderByDescending(l => l.TotalPlayTime != 0 && l.PlaysCount != 0 ? l.TotalPlayTime / l.PlaysCount : 0).AsQueryable();
-        return _realm.All<GameLevel>().AsEnumerable().OrderBy(l => l.TotalPlayTime != 0 && l.PlaysCount != 0 ? l.TotalPlayTime / l.PlaysCount : 0).AsQueryable();
+        if (descending) return levels.AsEnumerable().OrderByDescending(l => l.TotalPlayTime != 0 && l.PlaysCount != 0 ? l.TotalPlayTime / l.PlaysCount : 0).AsQueryable();
+        return levels.AsEnumerable().OrderBy(l => l.TotalPlayTime != 0 && l.PlaysCount != 0 ? l.TotalPlayTime / l.PlaysCount : 0).AsQueryable();
     }
 
-    private IQueryable<GameLevel> LevelsOrderedByScreens(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByScreens(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.TotalScreens);
-        return _realm.All<GameLevel>().OrderBy(l => l.TotalScreens);
+        if (descending) return levels.OrderByDescending(l => l.TotalScreens);
+        return levels.OrderBy(l => l.TotalScreens);
     }
     
-    private IQueryable<GameLevel> LevelsOrderedByEntities(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByEntities(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.TotalEntities);
-        return _realm.All<GameLevel>().OrderBy(l => l.TotalEntities);
+        if (descending) return levels.OrderByDescending(l => l.TotalEntities);
+        return levels.OrderBy(l => l.TotalEntities);
     }
     
-    private IQueryable<GameLevel> LevelsOrderedByBpm(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByBpm(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.Bpm);
-        return _realm.All<GameLevel>().OrderBy(l => l.Bpm);
+        if (descending) return levels.OrderByDescending(l => l.Bpm);
+        return levels.OrderBy(l => l.Bpm);
     }
     
-    private IQueryable<GameLevel> LevelsOrderedByTransposeValue(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByTransposeValue(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.TransposeValue);
-        return _realm.All<GameLevel>().OrderBy(l => l.TransposeValue);
+        if (descending) return levels.OrderByDescending(l => l.TransposeValue);
+        return levels.OrderBy(l => l.TransposeValue);
     }
 
-    private IQueryable<GameLevel> LevelsOrderedByTotalCompletions(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByCompletions(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.CompletionCount);
-        return _realm.All<GameLevel>().OrderBy(l => l.CompletionCount);
+        if (descending) return levels.OrderByDescending(l => l.CompletionCount);
+        return levels.OrderBy(l => l.CompletionCount);
     }
     
-    private IQueryable<GameLevel> LevelsOrderedByUniqueCompletions(bool descending)
+    private static IQueryable<GameLevel> OrderLevelsByUniqueCompletions(IQueryable<GameLevel> levels, bool descending)
     {
-        if (descending) return _realm.All<GameLevel>().OrderByDescending(l => l.UniqueCompletionsCount);
-        return _realm.All<GameLevel>().OrderBy(l => l.UniqueCompletionsCount);
-    }
+        if (descending) return levels.OrderByDescending(l => l.UniqueCompletionsCount);
+        return levels.OrderBy(l => l.UniqueCompletionsCount);
+    }    
 
     public void AddCompletionToLevel(GameUser user, GameLevel level)
     {

@@ -12,9 +12,10 @@ public class RelationLevelResponse
     {
         Id = IdFormatter.FormatRelationLevelId(user.Id, level.Id);
         
-        DateTimeOffset? likeDate = level.Likes.FirstOrDefault(r => r.User == user && r.Level == level)?.Date;
-        DateTimeOffset? queueDate = level.Likes.FirstOrDefault(r => r.User == user && r.Level == level)?.Date;
-        DateTimeOffset mostRecentDate = (likeDate > queueDate ? likeDate : queueDate) ?? DateTimeOffset.UnixEpoch;
+        DateTimeOffset likeDate = level.Likes.FirstOrDefault(r => r.User == user && r.Level == level)?.Date ?? DateTimeOffset.UnixEpoch;
+        DateTimeOffset queueDate = level.Queues.FirstOrDefault(r => r.User == user && r.Level == level)?.Date ?? DateTimeOffset.UnixEpoch;
+        DateTimeOffset mostRecentDate = likeDate > queueDate ? likeDate : queueDate;
+        if (mostRecentDate == DateTimeOffset.UnixEpoch) throw new Exception();
         
         Timestamp = mostRecentDate.ToUnixTimeMilliseconds();
         Level = new LevelTargetResponse(level, user);
