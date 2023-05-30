@@ -61,7 +61,7 @@ public partial class GameDatabaseContext
         return session;
     }
 
-    public GameSession[] GetSessionsWithIp(IpAuthorization ip)
+    private GameSession[] GetSessionsWithIp(IpAuthorization ip)
     {
         return _realm.All<GameSession>().Where(s => s.Ip == ip).ToArray();
     }
@@ -77,9 +77,9 @@ public partial class GameDatabaseContext
     private void RemoveAllSessionsWithUser(GameUser user)
     {
         GameSession[] sessions = user.Sessions.ToArray();
-        for (int i = 0; i < sessions.Length; i++)
+        foreach (GameSession session in sessions)
         {
-            RemoveSession(sessions[i]);
+            RemoveSession(session);
         }
     }
 }
