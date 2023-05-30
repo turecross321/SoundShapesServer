@@ -8,12 +8,70 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public (Report[], int) GetReports(bool descending, ReportFilters filters, int from, int count)
+    public void RemoveReport(Report report)
     {
-        IQueryable<Report> orderedReports = ReportsOrderedByDate(descending);
-        IQueryable<Report> filteredReports = FilterReports(orderedReports, filters);
+        _realm.Write(() =>
+        {
+            _realm.Remove(report);
+        });
+    }
 
-        Report[] paginatedReports = PaginateReports(filteredReports, from, count);
+    private void RemoveAllReportsWithContentUser(GameUser user)
+    {
+        _realm.Write(() =>
+        {
+            _realm.RemoveRange(_realm.All<Report>().Where(r=>r.ContentUser == user));
+        });
+    }
+    private void RemoveAllReportsWithContentLevel(GameLevel level)
+    {
+        _realm.Write(() =>
+        {
+            _realm.RemoveRange(_realm.All<Report>().Where(r=>r.ContentLevel == level));
+        });
+    }
+    private void RemoveAllReportsWithContentLeaderboardEntry(LeaderboardEntry entry)
+    {
+        _realm.Write(() =>
+        {
+            _realm.RemoveRange(_realm.All<Report>().Where(r=>r.ContentLeaderboardEntry == entry));
+        });
+    }
+
+    public void CreateReport(GameUser reporter, ReportContentType contentType, ReportReasonType reportReasonType, 
+        GameUser? contentUser = null, GameLevel? contentLevel = null, LeaderboardEntry? contentLeaderboardEntry = null)
+    {
+        Report report = new ()
+        {
+            Id = GenerateGuid(),            
+            Issuer = reporter,
+            ContentType = (int)contentType,
+            ContentUser = contentUser,
+            ContentLevel = contentLevel,
+            ContentLeaderboardEntry = contentLeaderboardEntry,
+            ReasonType = (int)reportReasonType,
+            Date = DateTimeOffset.UtcNow
+        };
+        
+        _realm.Write(() =>
+        {
+            _realm.Add(report);
+        });
+    }
+    
+    public Report? GetReportWithId(string id)
+    {
+        return _realm.All<Report>().FirstOrDefault(r => r.Id == id);
+    }
+    
+    public (Report[], int) GetReports(ReportOrderType order, bool descending, ReportFilters filters, int from, int count)
+    {
+        IQueryable<Report> reports = _realm.All<Report>();
+        
+        IQueryable<Report> filteredReports = FilterReports(reports, filters);
+        IQueryable<Report> orderedReports = OrderReports(reports, order, descending);
+
+        Report[] paginatedReports = PaginateReports(orderedReports, from, count);
         return (paginatedReports, filteredReports.Count());
     }
     private IQueryable<Report> FilterReports(IQueryable<Report> reports, ReportFilters filters)
@@ -48,64 +106,22 @@ public partial class GameDatabaseContext
         return response;
     }
 
-    private IQueryable<Report> ReportsOrderedByDate(bool descending)
+    #region Report Ordering
+
+    private IQueryable<Report> OrderReports(IQueryable<Report> reports, ReportOrderType order, bool descending)
     {
-        if (descending) return _realm.All<Report>().OrderByDescending(r => r.Date);
-        return _realm.All<Report>().OrderBy(r => r.Date);
+        return order switch
+        {
+            ReportOrderType.Date => OrderReportsByDate(reports, descending),
+            _ => reports
+        };
     }
     
-    public Report? GetReportWithId(string id)
+    private static IQueryable<Report> OrderReportsByDate(IQueryable<Report> reports, bool descending)
     {
-        return _realm.All<Report>().FirstOrDefault(r => r.Id == id);
+        if (descending) return reports.OrderByDescending(r => r.Date);
+        return reports.OrderBy(r => r.Date);
     }
-
-    public void RemoveReport(Report report)
-    {
-        _realm.Write(() =>
-        {
-            _realm.Remove(report);
-        });
-    }
-
-    private void RemoveAllReportsWithContentUser(GameUser user)
-    {
-        _realm.Write(() =>
-        {
-            _realm.RemoveRange(_realm.All<Report>().Where(r=>r.ContentUser == user));
-        });
-    }
-    private void RemoveAllReportsWithContentLevel(GameLevel level)
-    {
-        _realm.Write(() =>
-        {
-            _realm.RemoveRange(_realm.All<Report>().Where(r=>r.ContentLevel == level));
-        });
-    }
-    private void RemoveAllReportsWithContentLeaderboardEntry(LeaderboardEntry entry)
-    {
-        _realm.Write(() =>
-        {
-            _realm.RemoveRange(_realm.All<Report>().Where(r=>r.ContentLeaderboardEntry == entry));
-        });
-    }
-    public void CreateReport(GameUser reporter, ReportContentType contentType, ReportReasonType reportReasonType, 
-        GameUser? contentUser = null, GameLevel? contentLevel = null, LeaderboardEntry? contentLeaderboardEntry = null)
-    {
-        Report report = new ()
-        {
-            Id = GenerateGuid(),            
-            Issuer = reporter,
-            ContentType = (int)contentType,
-            ContentUser = contentUser,
-            ContentLevel = contentLevel,
-            ContentLeaderboardEntry = contentLeaderboardEntry,
-            ReasonType = (int)reportReasonType,
-            Date = DateTimeOffset.UtcNow
-        };
-        
-        _realm.Write(() =>
-        {
-            _realm.Add(report);
-        });
-    }
+    
+    #endregion
 }

@@ -10,6 +10,70 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
+    private const string AdminUsername = "admin";
+    public GameUser GetAdminUser()
+    {
+        GameUser? user = GetUserWithUsername(AdminUsername);
+        if (user != null) return user;
+
+        user ??= new GameUser()
+        {
+            Id = new Guid().ToString(), // 00000000-0000-0000-0000-000000000000
+            Username = AdminUsername,
+            PermissionsType = (int)PermissionsType.Administrator,
+            HasFinishedRegistration = true
+        };
+        
+        _realm.Write(() =>
+        {
+            _realm.Add(user);
+        });
+
+        return user;
+    }
+
+    public void RemoveUser(GameUser user, IDataStore dataStore)
+    {
+        foreach (GameLevel level in user.Levels)
+        {
+            RemoveLevel(level, dataStore);
+        }
+
+        if (user.SaveFilePath != null) dataStore.RemoveFromStore(user.SaveFilePath);
+
+        RemoveAllReportsWithContentUser(user);
+        
+        _realm.Write(() =>
+        {
+            _realm.RemoveRange(user.Sessions);
+            _realm.RemoveRange(user.IpAddresses);
+            _realm.RemoveRange(user.Followers);
+            _realm.RemoveRange(user.Following);
+            _realm.RemoveRange(user.Events);
+            _realm.RemoveRange(user.EventsWhereUserIsRecipient);
+
+            string id = user.Id;
+            string username = user.Username;
+            
+            _realm.Remove(user);
+            
+            _realm.Add(new GameUser
+            {
+                Id = id,
+                Username = username,
+                Deleted = true
+            });
+        });
+    }
+
+    public void SetUserPermissions(GameUser user, PermissionsType type)
+    {
+        _realm.Write(() =>
+        {
+            user.PermissionsType = (int)type;
+        });
+    }
+    
     public GameUser CreateUser(string username)
     {
         GameUser user = new ()
@@ -87,25 +151,30 @@ public partial class GameDatabaseContext
             user.SaveFilePath = path;
         });
     }
+    
+    public GameUser? GetUserWithUsername(string username)
+    {
+        return _realm.All<GameUser>().FirstOrDefault(u => u.Username == username);
+    }
+
+    public GameUser? GetUserWithEmail(string email)
+    {
+        return _realm.All<GameUser>().FirstOrDefault(u => u.Email == email);
+    }
+
+    public GameUser? GetUserWithId(string? id)
+    {
+        return id == null ? null : _realm.All<GameUser>().FirstOrDefault(u => u.Id == id);
+    }
 
     public (GameUser[], int) GetUsers(UserOrderType order, bool descending, UserFilters filters, int from, int count)
     {
-        IQueryable<GameUser> orderedUsers = order switch
-        {
-            UserOrderType.FollowersCount => UsersOrderedByFollowersCount(descending),
-            UserOrderType.FollowingCount => UsersOrderedByFollowingCount(descending),
-            UserOrderType.LevelsCount => UsersOrderedByLevelsCount(descending),
-            UserOrderType.LikedLevelsCount => UsersOrderedByLikedLevelsCount(descending),
-            UserOrderType.CreationDate => UsersOrderedByCreationDate(descending),
-            UserOrderType.PlayedLevelsCount => UsersOrderedByPlayedLevelsCount(descending),
-            UserOrderType.CompletedLevelsCount => UsersOrderedByCompletedLevelsCount(descending),
-            UserOrderType.Deaths => UsersOrderedByDeaths(descending),
-            UserOrderType.TotalPlayTime => UsersOrderedByTotalPlayTime(descending),
-            _ => UsersOrderedByCreationDate(descending)
-        };
+        IQueryable<GameUser> users = _realm.All<GameUser>();
 
-        IQueryable<GameUser> filteredUsers = FilterUsers(orderedUsers, filters);
-        GameUser[] paginatedUsers = PaginateUsers(filteredUsers, from, count);
+        IQueryable<GameUser> filteredUsers = FilterUsers(users, filters);
+        IQueryable<GameUser> orderedUsers = OrderUsers(filteredUsers, order, descending);
+        
+        GameUser[] paginatedUsers = PaginateUsers(orderedUsers, from, count);
 
         return (paginatedUsers, filteredUsers.Count());
     }
@@ -154,136 +223,78 @@ public partial class GameDatabaseContext
         return response;
     }
 
-    private IQueryable<GameUser> UsersOrderedByFollowersCount(bool descending)
-    {
-        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.FollowersCount);
-        return _realm.All<GameUser>().OrderBy(u => u.FollowersCount);
-    }
-    
-    private IQueryable<GameUser> UsersOrderedByFollowingCount(bool descending)
-    {
-        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.FollowingCount);
-        return _realm.All<GameUser>().OrderBy(u => u.FollowingCount);
-    } 
-    
-    private IQueryable<GameUser> UsersOrderedByLevelsCount(bool descending)
-    {
-        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.LevelsCount);
-        return _realm.All<GameUser>().OrderBy(u => u.LevelsCount);
-    } 
-    
-    private IQueryable<GameUser> UsersOrderedByLikedLevelsCount(bool descending)
-    {
-        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.LikedLevelsCount);
-        return _realm.All<GameUser>().OrderBy(u => u.LikedLevelsCount);
-    } 
-    
-    private IQueryable<GameUser> UsersOrderedByCreationDate(bool descending)
-    {
-        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.CreationDate);
-        return _realm.All<GameUser>().OrderBy(u => u.CreationDate);
-    } 
-    
-    private IQueryable<GameUser> UsersOrderedByPlayedLevelsCount(bool descending)
-    {
-        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.PlayedLevelsCount);
-        return _realm.All<GameUser>().OrderBy(u => u.PlayedLevelsCount);
-    } 
-    
-    private IQueryable<GameUser> UsersOrderedByCompletedLevelsCount(bool descending)
-    {
-        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.CompletedLevelsCount);
-        return _realm.All<GameUser>().OrderBy(u => u.CompletedLevelsCount);
-    } 
-    
-    private IQueryable<GameUser> UsersOrderedByDeaths(bool descending)
-    {
-        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.Deaths);
-        return _realm.All<GameUser>().OrderBy(u => u.Deaths);
-    }
-    
-    private IQueryable<GameUser> UsersOrderedByTotalPlayTime(bool descending)
-    {
-        if (descending) return _realm.All<GameUser>().OrderByDescending(u => u.TotalPlayTime);
-        return _realm.All<GameUser>().OrderBy(u => u.TotalPlayTime);
-    }
+    #region Order Users
 
-    private const string AdminUsername = "admin";
-    public GameUser GetAdminUser()
+    private static IQueryable<GameUser> OrderUsers(IQueryable<GameUser> users, UserOrderType order, bool descending)
     {
-        GameUser? user = GetUserWithUsername(AdminUsername);
-        if (user != null) return user;
-
-        user ??= new GameUser()
+        return order switch
         {
-            Id = new Guid().ToString(), // 00000000-0000-0000-0000-000000000000
-            Username = AdminUsername,
-            PermissionsType = (int)PermissionsType.Administrator,
-            HasFinishedRegistration = true
+            UserOrderType.FollowersCount => OrderUsersByFollowers(users, descending),
+            UserOrderType.FollowingCount => OrderUsersByFollowing(users, descending),
+            UserOrderType.LevelsCount => OrderUsersByLevels(users, descending),
+            UserOrderType.LikedLevelsCount => OrderUsersByLikedLevels(users, descending),
+            UserOrderType.CreationDate => OrderUsersByCreationDate(users, descending),
+            UserOrderType.PlayedLevelsCount => OrderUsersByPlayedLevels(users, descending),
+            UserOrderType.CompletedLevelsCount => OrderUsersByCompletedLevels(users, descending),
+            UserOrderType.Deaths => OrderUsersByDeaths(users, descending),
+            UserOrderType.TotalPlayTime => OrderUsersByPlayTime(users, descending),
+            _ => users
         };
-        
-        _realm.Write(() =>
-        {
-            _realm.Add(user);
-        });
-
-        return user;
     }
-
-    public GameUser? GetUserWithUsername(string username)
+    
+    private static IQueryable<GameUser> OrderUsersByFollowers(IQueryable<GameUser> users, bool descending)
     {
-        return _realm.All<GameUser>().FirstOrDefault(u => u.Username == username);
+        if (descending) return users.OrderByDescending(u => u.FollowersCount);
+        return users.OrderBy(u => u.FollowersCount);
     }
-
-    public GameUser? GetUserWithEmail(string email)
+    
+    private static IQueryable<GameUser> OrderUsersByFollowing(IQueryable<GameUser> users, bool descending)
     {
-        return _realm.All<GameUser>().FirstOrDefault(u => u.Email == email);
-    }
-
-    public GameUser? GetUserWithId(string? id)
+        if (descending) return users.OrderByDescending(u => u.FollowingCount);
+        return users.OrderBy(u => u.FollowingCount);
+    } 
+    
+    private static IQueryable<GameUser> OrderUsersByLevels(IQueryable<GameUser> users, bool descending)
     {
-        return id == null ? null : _realm.All<GameUser>().FirstOrDefault(u => u.Id == id);
-    }
-
-    public void RemoveUser(GameUser user, IDataStore dataStore)
+        if (descending) return users.OrderByDescending(u => u.LevelsCount);
+        return users.OrderBy(u => u.LevelsCount);
+    } 
+    
+    private static IQueryable<GameUser> OrderUsersByLikedLevels(IQueryable<GameUser> users, bool descending)
     {
-        foreach (GameLevel level in user.Levels)
-        {
-            RemoveLevel(level, dataStore);
-        }
-
-        if (user.SaveFilePath != null) dataStore.RemoveFromStore(user.SaveFilePath);
-
-        RemoveAllReportsWithContentUser(user);
-        
-        _realm.Write(() =>
-        {
-            _realm.RemoveRange(user.Sessions);
-            _realm.RemoveRange(user.IpAddresses);
-            _realm.RemoveRange(user.Followers);
-            _realm.RemoveRange(user.Following);
-            _realm.RemoveRange(user.Events);
-            _realm.RemoveRange(user.EventsWhereUserIsRecipient);
-
-            string id = user.Id;
-            string username = user.Username;
-            
-            _realm.Remove(user);
-            
-            _realm.Add(new GameUser
-            {
-                Id = id,
-                Username = username,
-                Deleted = true
-            });
-        });
-    }
-
-    public void SetUserPermissions(GameUser user, PermissionsType type)
+        if (descending) return users.OrderByDescending(u => u.LikedLevelsCount);
+        return users.OrderBy(u => u.LikedLevelsCount);
+    } 
+    
+    private static IQueryable<GameUser> OrderUsersByCreationDate(IQueryable<GameUser> users, bool descending)
     {
-        _realm.Write(() =>
-        {
-            user.PermissionsType = (int)type;
-        });
+        if (descending) return users.OrderByDescending(u => u.CreationDate);
+        return users.OrderBy(u => u.CreationDate);
+    } 
+    
+    private static IQueryable<GameUser> OrderUsersByPlayedLevels(IQueryable<GameUser> users, bool descending)
+    {
+        if (descending) return users.OrderByDescending(u => u.PlayedLevelsCount);
+        return users.OrderBy(u => u.PlayedLevelsCount);
+    } 
+    
+    private static IQueryable<GameUser> OrderUsersByCompletedLevels(IQueryable<GameUser> users, bool descending)
+    {
+        if (descending) return users.OrderByDescending(u => u.CompletedLevelsCount);
+        return users.OrderBy(u => u.CompletedLevelsCount);
+    } 
+    
+    private static IQueryable<GameUser> OrderUsersByDeaths(IQueryable<GameUser> users, bool descending)
+    {
+        if (descending) return users.OrderByDescending(u => u.Deaths);
+        return users.OrderBy(u => u.Deaths);
     }
+    
+    private static IQueryable<GameUser> OrderUsersByPlayTime(IQueryable<GameUser> users, bool descending)
+    {
+        if (descending) return users.OrderByDescending(u => u.TotalPlayTime);
+        return users.OrderBy(u => u.TotalPlayTime);
+    }
+    
+    #endregion
 }

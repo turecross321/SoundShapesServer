@@ -84,7 +84,7 @@ public class ApiReportManagementEndpoints : EndpointGroup
 
         ReportFilters filters = new (contentType, reasonType, contentUser, contentLevel, contentLeaderboardEntry);
 
-        (Report[] reports, int totalReports) = database.GetReports(descending, filters, from, count);
+        (Report[] reports, int totalReports) = database.GetReports(ReportOrderType.Date, descending, filters, from, count);
         return new ApiReportsWrapper(database, reports, totalReports);
     }
 }

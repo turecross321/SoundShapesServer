@@ -176,12 +176,51 @@ public partial class GameDatabaseContext
         });
     }
     
+    public void AddCompletionToLevel(GameUser user, GameLevel level)
+    {
+        if (!level.UniqueCompletions.Contains(user)) AddUniqueCompletion(user, level);
+        
+        _realm.Write(() =>
+        {
+            level.CompletionCount++;
+        });
+    }
+
+    private void AddUniqueCompletion(GameUser user, GameLevel level)
+    {
+        _realm.Write(() =>
+        {
+            level.UniqueCompletions.Add(user);
+            level.UniqueCompletionsCount = level.UniqueCompletions.Count;
+            user.CompletedLevelsCount = user.CompletedLevels.Count();
+        });
+    }
+    
+    public void SetLevelDifficulty(GameLevel level)
+    {
+        _realm.Refresh();
+
+        _realm.Write(() =>
+        {
+            level.Difficulty = CalculateLevelDifficulty(level);
+        });
+    }
+    public void AddDeathsToLevel(GameUser user, GameLevel level, int deaths)
+    {
+        _realm.Write(() =>
+        {
+            level.TotalDeaths += deaths;
+            user.Deaths += deaths;
+        });
+    }
+    
     public GameLevel? GetLevelWithId(string id) => _realm.All<GameLevel>().FirstOrDefault(l => l.Id == id);
 
     private IQueryable<GameLevel> GetLevelsWithIds(IEnumerable<string> ids)
     {
         List<GameLevel> levels = new ();
         
+        // ReSharper disable once LoopCanBeConvertedToQuery
         foreach (string levelId in ids) 
         {
             GameLevel? level = GetLevelWithId(levelId);
@@ -248,7 +287,7 @@ public partial class GameDatabaseContext
         if (filters.InDaily == true)
         {
             IQueryable<DailyLevel> dailyLevelObjects =
-                GetDailyLevelObjects(DailyLevelOrderType.Date, true, new DailyLevelFilters());
+                GetDailyLevels(DailyLevelOrderType.Date, true, new DailyLevelFilters());
 
             IEnumerable<GameLevel> filteredLevels = new List<GameLevel>();
             
@@ -269,7 +308,7 @@ public partial class GameDatabaseContext
         if (filters.InDaily == false)
         {
             IQueryable<DailyLevel> dailyLevelObjects =
-                GetDailyLevelObjects(DailyLevelOrderType.Date, true, new DailyLevelFilters());
+                GetDailyLevels(DailyLevelOrderType.Date, true, new DailyLevelFilters());
 
             IEnumerable<GameLevel> filteredLevels = new List<GameLevel>();
             
@@ -289,7 +328,7 @@ public partial class GameDatabaseContext
         
         if (filters.InDailyDate != null || filters.InLatestDaily == true)
         {
-            IQueryable<DailyLevel> dailyLevelObjects = GetDailyLevelObjects(DailyLevelOrderType.Date, true, new DailyLevelFilters(filters.InDailyDate, filters.InLatestDaily));
+            IQueryable<DailyLevel> dailyLevelObjects = GetDailyLevels(DailyLevelOrderType.Date, true, new DailyLevelFilters(filters.InDailyDate, filters.InLatestDaily));
 
             List<GameLevel> tempResponse = new ();
 
@@ -349,6 +388,8 @@ public partial class GameDatabaseContext
         
         return response;
     }
+
+    #region Level Ordering
 
     private IQueryable<GameLevel> OrderLevels(IQueryable<GameLevel> levels, LevelOrderType order, bool descending)
     {
@@ -520,41 +561,5 @@ public partial class GameDatabaseContext
         return levels.OrderBy(l => l.UniqueCompletionsCount);
     }    
 
-    public void AddCompletionToLevel(GameUser user, GameLevel level)
-    {
-        if (!level.UniqueCompletions.Contains(user)) AddUniqueCompletion(user, level);
-        
-        _realm.Write(() =>
-        {
-            level.CompletionCount++;
-        });
-    }
-
-    private void AddUniqueCompletion(GameUser user, GameLevel level)
-    {
-        _realm.Write(() =>
-        {
-            level.UniqueCompletions.Add(user);
-            level.UniqueCompletionsCount = level.UniqueCompletions.Count;
-            user.CompletedLevelsCount = user.CompletedLevels.Count();
-        });
-    }
-    
-    public void SetLevelDifficulty(GameLevel level)
-    {
-        _realm.Refresh();
-
-        _realm.Write(() =>
-        {
-            level.Difficulty = CalculateLevelDifficulty(level);
-        });
-    }
-    public void AddDeathsToLevel(GameUser user, GameLevel level, int deaths)
-    {
-        _realm.Write(() =>
-        {
-            level.TotalDeaths += deaths;
-            user.Deaths += deaths;
-        });
-    }
+    #endregion
 }

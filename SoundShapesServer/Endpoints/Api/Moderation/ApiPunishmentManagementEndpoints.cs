@@ -24,7 +24,7 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
 
         if (userToPunish.Id == user.Id) return HttpStatusCode.MethodNotAllowed;
         
-        Punishment createdPunishment = database.PunishUser(user, userToPunish, body);
+        Punishment createdPunishment = database.CreatePunishment(user, userToPunish, body);
         return new Response(new ApiPunishmentResponse(createdPunishment), ContentType.Json, HttpStatusCode.Created);
     }
 
@@ -83,7 +83,7 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
         bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
 
         PunishmentFilters filters = new (author, recipient, revoked);
-        (Punishment[] punishments, int totalPunishments) = database.GetPunishments(descending, filters, from, count);
+        (Punishment[] punishments, int totalPunishments) = database.GetPunishments(PunishmentOrderType.Issued, descending, filters, from, count);
 
         return new ApiPunishmentsWrapper(punishments, totalPunishments);
     }

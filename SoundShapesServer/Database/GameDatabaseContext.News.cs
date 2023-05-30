@@ -12,73 +12,6 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public (NewsEntry[], int) GetNews(NewsOrderType order, bool descending, NewsFilters filters, int from, int count)
-    {
-        IQueryable<NewsEntry> orderedNews = order switch
-        {
-            NewsOrderType.CreationDate => NewsOrderedByCreationDate(descending),
-            NewsOrderType.ModificationDate => NewsOrderedByModificationDate(descending),
-            NewsOrderType.CharacterCount => NewsOrderedByLength(descending),
-            _ => NewsOrderedByCreationDate(descending)
-        };
-
-        IQueryable<NewsEntry> filteredNews = FilterNews(orderedNews, filters);
-        NewsEntry[] paginatedNews = PaginationHelper.PaginateNews(filteredNews, from, count);
-
-        return (paginatedNews, filteredNews.Count());
-    }
-    
-    private IQueryable<NewsEntry> FilterNews(IQueryable<NewsEntry> entries, NewsFilters filters)
-    {
-        IQueryable<NewsEntry> response = entries;
-
-        if (filters.Language != null)
-        {
-            response = response.Where(e => e.Language == filters.Language);
-        }
-
-        if (filters.Authors != null)
-        {
-            IEnumerable<NewsEntry> tempResponse = new List<NewsEntry>();
-
-            // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (GameUser author in filters.Authors)
-            {
-                tempResponse = tempResponse.Concat(response.Where(e=> e.Author == author));
-            }
-
-            response = tempResponse.AsQueryable();
-        }
-
-        return response;
-    }
-
-    private IQueryable<NewsEntry> NewsOrderedByCreationDate(bool descending)
-    {
-        if (descending) return _realm.All<NewsEntry>().OrderByDescending(e => e.CreationDate);
-        return _realm.All<NewsEntry>().OrderBy(e => e.CreationDate);
-    }
-    
-    private IQueryable<NewsEntry> NewsOrderedByModificationDate(bool descending)
-    {
-        if (descending) return _realm.All<NewsEntry>().OrderByDescending(e => e.ModificationDate);
-        return _realm.All<NewsEntry>().OrderBy(e => e.ModificationDate);
-    }
-    
-    private IQueryable<NewsEntry> NewsOrderedByLength(bool descending)
-    {
-        if (descending)
-            return _realm.All<NewsEntry>()
-                .OrderByDescending(e => e.CharacterCount);
-        return _realm.All<NewsEntry>()
-            .OrderBy(e => e.CharacterCount);
-    }
-
-    public NewsEntry? GetNewsEntryWithId(string id)
-    {
-        return _realm.All<NewsEntry>().FirstOrDefault(e => e.Id == id);
-    }
-
     public NewsEntry CreateNewsEntry(ApiCreateNewsEntryRequest request, GameUser user)
     {
         NewsEntry entry = new (user, request);
@@ -132,4 +65,82 @@ public partial class GameDatabaseContext
             _realm.Remove(entry);
         });
     }
+    
+    public NewsEntry? GetNewsEntryWithId(string id)
+    {
+        return _realm.All<NewsEntry>().FirstOrDefault(e => e.Id == id);
+    }
+    
+    public (NewsEntry[], int) GetNews(NewsOrderType order, bool descending, NewsFilters filters, int from, int count)
+    {
+        IQueryable<NewsEntry> entries = _realm.All<NewsEntry>();
+
+        IQueryable<NewsEntry> filteredEntries = FilterNews(entries, filters);
+        IQueryable<NewsEntry> orderedEntries = OrderNews(filteredEntries, order, descending);
+        
+        NewsEntry[] paginatedNews = PaginationHelper.PaginateNews(orderedEntries, from, count);
+
+        return (paginatedNews, filteredEntries.Count());
+    }
+    
+    private IQueryable<NewsEntry> FilterNews(IQueryable<NewsEntry> entries, NewsFilters filters)
+    {
+        IQueryable<NewsEntry> response = entries;
+
+        if (filters.Language != null)
+        {
+            response = response.Where(e => e.Language == filters.Language);
+        }
+
+        if (filters.Authors != null)
+        {
+            IEnumerable<NewsEntry> tempResponse = new List<NewsEntry>();
+
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (GameUser author in filters.Authors)
+            {
+                tempResponse = tempResponse.Concat(response.Where(e=> e.Author == author));
+            }
+
+            response = tempResponse.AsQueryable();
+        }
+
+        return response;
+    }
+
+    #region News Ordering
+    
+    private IQueryable<NewsEntry> OrderNews(IQueryable<NewsEntry> entries, NewsOrderType order, bool descending)
+    {
+        return order switch
+        {
+            NewsOrderType.CreationDate => OrderNewsByCreationDate(entries, descending),
+            NewsOrderType.ModificationDate => OrderNewsByModificationDate(entries, descending),
+            NewsOrderType.CharacterCount => OrderNewsByLength(entries, descending),
+            _ => OrderNewsByCreationDate(entries, descending)
+        };
+    }
+
+    private static IQueryable<NewsEntry> OrderNewsByCreationDate(IQueryable<NewsEntry> entries, bool descending)
+    {
+        if (descending) return entries.OrderByDescending(e => e.CreationDate);
+        return entries.OrderBy(e => e.CreationDate);
+    }
+    
+    private static IQueryable<NewsEntry> OrderNewsByModificationDate(IQueryable<NewsEntry> entries, bool descending)
+    {
+        if (descending) return entries.OrderByDescending(e => e.ModificationDate);
+        return entries.OrderBy(e => e.ModificationDate);
+    }
+    
+    private static IQueryable<NewsEntry> OrderNewsByLength(IQueryable<NewsEntry> entries, bool descending)
+    {
+        if (descending)
+            return entries
+                .OrderByDescending(e => e.CharacterCount);
+        return entries
+            .OrderBy(e => e.CharacterCount);
+    }
+    
+    #endregion
 }

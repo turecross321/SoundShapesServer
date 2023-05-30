@@ -8,16 +8,46 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
+    private void CreateEvent(GameUser actor, EventType eventType, GameUser? user = null, GameLevel? level = null, LeaderboardEntry? leaderboardEntry = null)
+    {
+        GameEvent eventObject = new (actor, user, level, leaderboardEntry, eventType);
+        
+        GameEvent? previousEvent = _realm
+            .All<GameEvent>()
+            .AsEnumerable()
+            .Where(e => e.Actor.Id == eventObject.Actor.Id)
+            .FirstOrDefault(e => 
+                e.EventType == eventObject.EventType 
+                && Equals(e.ContentUser, user) 
+                && Equals(e.ContentLevel, level) 
+                && Equals(e.ContentLeaderboardEntry, leaderboardEntry));
+
+        if (previousEvent != null) return;
+        
+        _realm.Write(() =>
+        {
+            _realm.Add(eventObject);
+        });
+    }
+
+    public void RemoveEvent(GameEvent eventObject)
+    {
+        _realm.Write(() => _realm.Remove(eventObject));
+    }
+    
+    public GameEvent? GetEventWithId(string id)
+    {
+        return _realm.All<GameEvent>().FirstOrDefault(e => e.Id == id);
+    }
+    
     public (GameEvent[], int) GetEvents(EventOrderType order, bool descending,  EventFilters filters, int from, int count)
     {
-        IQueryable<GameEvent> orderedEvents = order switch
-        {
-            EventOrderType.Date => EventsOrderedByDate(descending),
-            _ => EventsOrderedByDate(descending)
-        };
+        IQueryable<GameEvent> events = _realm.All<GameEvent>();
 
-        IQueryable<GameEvent> filteredEvents = FilterEvents(orderedEvents, filters);
-        GameEvent[] paginatedEvents = PaginationHelper.PaginateEvents(filteredEvents, from, count);
+        IQueryable<GameEvent> filteredEvents = FilterEvents(events, filters);
+        IQueryable<GameEvent> orderedEvents = OrderEvents(events, order, descending);
+        
+        GameEvent[] paginatedEvents = PaginationHelper.PaginateEvents(orderedEvents, from, count);
 
         return (paginatedEvents, filteredEvents.Count());
     }
@@ -65,41 +95,22 @@ public partial class GameDatabaseContext
         return response;
     }
 
-    private IQueryable<GameEvent> EventsOrderedByDate(bool descending)
-    {
-        if (descending) return _realm.All<GameEvent>().OrderByDescending(e => e.Date);
-        return _realm.All<GameEvent>().OrderBy(e => e.Date);
-    }
+    #region Event Ordering
 
-    private void CreateEvent(GameUser actor, EventType eventType, GameUser? user = null, GameLevel? level = null, LeaderboardEntry? leaderboardEntry = null)
+    private IQueryable<GameEvent> OrderEvents(IQueryable<GameEvent> events, EventOrderType order, bool descending)
     {
-        GameEvent eventObject = new (actor, user, level, leaderboardEntry, eventType);
-        
-        GameEvent? previousEvent = _realm
-            .All<GameEvent>()
-            .AsEnumerable()
-            .Where(e => e.Actor.Id == eventObject.Actor.Id)
-            .FirstOrDefault(e => 
-                e.EventType == eventObject.EventType 
-                && Equals(e.ContentUser, user) 
-                && Equals(e.ContentLevel, level) 
-                && Equals(e.ContentLeaderboardEntry, leaderboardEntry));
-
-        if (previousEvent != null) return;
-        
-        _realm.Write(() =>
+        return order switch
         {
-            _realm.Add(eventObject);
-        });
-    }
-
-    public GameEvent? GetEventWithId(string id)
-    {
-        return _realm.All<GameEvent>().FirstOrDefault(e => e.Id == id);
+            EventOrderType.Date => OrderEventsByDate(events, descending),
+            _ => OrderEventsByDate(events, descending)
+        };
     }
     
-    public void RemoveEvent(GameEvent eventObject)
+    private IQueryable<GameEvent> OrderEventsByDate(IQueryable<GameEvent> events, bool descending)
     {
-        _realm.Write(() => _realm.Remove(eventObject));
+        if (descending) return events.OrderByDescending(e => e.Date);
+        return events.OrderBy(e => e.Date);
     }
+
+    #endregion
 }

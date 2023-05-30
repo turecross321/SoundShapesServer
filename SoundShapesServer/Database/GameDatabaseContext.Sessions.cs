@@ -51,16 +51,6 @@ public partial class GameDatabaseContext
         return session;
     }
 
-    public GameSession? GetSessionWithSessionId(string sessionId)
-    {
-        _realm.All<GameSession>();
-        GameSession? session = _realm.All<GameSession>()
-            .AsEnumerable()
-            .FirstOrDefault(s => s.Id == sessionId);
-        
-        return session;
-    }
-
     private GameSession[] GetSessionsWithIp(IpAuthorization ip)
     {
         return _realm.All<GameSession>().Where(s => s.Ip == ip).ToArray();
@@ -81,5 +71,15 @@ public partial class GameDatabaseContext
         {
             RemoveSession(session);
         }
+    }
+    
+    public GameSession? GetSessionWithSessionId(string sessionId)
+    {
+        _realm.All<GameSession>();
+        GameSession? session = _realm.All<GameSession>()
+            .AsEnumerable()
+            .FirstOrDefault(s => s.Id == sessionId);
+        
+        return session;
     }
 }

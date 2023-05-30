@@ -11,11 +11,6 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public CommunityTab[] GetCommunityTabs()
-    {
-        return _realm.All<CommunityTab>().ToArray();
-    }
-
     public CommunityTab? GetCommunityTabWithId(string id)
     {
         return _realm.All<CommunityTab>().FirstOrDefault(t => t.Id == id);
@@ -84,5 +79,10 @@ public partial class GameDatabaseContext
         {
             _realm.Remove(communityTab);
         });
+    }
+    
+    public CommunityTab[] GetCommunityTabs()
+    {
+        return _realm.All<CommunityTab>().ToArray();
     }
 }

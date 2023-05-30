@@ -7,49 +7,7 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public (Punishment[], int) GetPunishments(bool descending, PunishmentFilters filters, int from, int count)
-    {
-        IQueryable<Punishment> orderedPunishments = PunishmentsOrderedByDate(descending);
-        IQueryable<Punishment> filteredPunishments = FilterPunishments(orderedPunishments, filters);
-
-        Punishment[] paginatedPunishments = PaginationHelper.PaginatePunishments(filteredPunishments, from, count);
-        return (paginatedPunishments, filteredPunishments.Count());
-    }
-    
-    private IQueryable<Punishment> FilterPunishments(IQueryable<Punishment> punishments, PunishmentFilters filters)
-    {
-        IQueryable<Punishment> response = punishments;
-
-        if (filters.Author != null)
-        {
-            response = response.Where(p => p.Author == filters.Author);
-        }
-
-        if (filters.Recipient != null)
-        {
-            response = response.Where(p => p.Recipient == filters.Recipient);
-        }
-
-        if (filters.Revoked != null)
-        {
-            response = response.Where(p => p.Revoked == filters.Revoked);
-        }
-
-        return response;
-    }
-
-    private IQueryable<Punishment> PunishmentsOrderedByDate(bool descending)
-    {
-        if (descending) return _realm.All<Punishment>().OrderByDescending(p => p.IssuedAt);
-        return _realm.All<Punishment>().OrderBy(p => p.IssuedAt);
-    }
-
-    public Punishment? GetPunishmentWithId(string id)
-    {
-        return _realm.All<Punishment>().FirstOrDefault(p => p.Id == id);
-    }
-    
-    public Punishment PunishUser(GameUser issuer, GameUser recipient, ApiPunishRequest request)
+    public Punishment CreatePunishment(GameUser issuer, GameUser recipient, ApiPunishRequest request)
     {
         if (request.PunishmentType == (int)PunishmentType.Ban)
         {
@@ -94,5 +52,59 @@ public partial class GameDatabaseContext
         {
             punishment.Revoked = true;
         });
+    }
+    
+    public Punishment? GetPunishmentWithId(string id)
+    {
+        return _realm.All<Punishment>().FirstOrDefault(p => p.Id == id);
+    }
+    
+    public (Punishment[], int) GetPunishments(PunishmentOrderType order, bool descending, PunishmentFilters filters, int from, int count)
+    {
+        IQueryable<Punishment> punishments = _realm.All<Punishment>();
+        
+        IQueryable<Punishment> filteredPunishments = FilterPunishments(punishments, filters);
+        IQueryable<Punishment> orderedPunishments = OrderPunishments(filteredPunishments, order, descending);
+
+        Punishment[] paginatedPunishments = PaginationHelper.PaginatePunishments(orderedPunishments, from, count);
+        return (paginatedPunishments, filteredPunishments.Count());
+    }
+    
+    private static IQueryable<Punishment> FilterPunishments(IQueryable<Punishment> punishments, PunishmentFilters filters)
+    {
+        IQueryable<Punishment> response = punishments;
+
+        if (filters.Author != null)
+        {
+            response = response.Where(p => p.Author == filters.Author);
+        }
+
+        if (filters.Recipient != null)
+        {
+            response = response.Where(p => p.Recipient == filters.Recipient);
+        }
+
+        if (filters.Revoked != null)
+        {
+            response = response.Where(p => p.Revoked == filters.Revoked);
+        }
+
+        return response;
+    }
+
+    private IQueryable<Punishment> OrderPunishments(IQueryable<Punishment> punishments, PunishmentOrderType order,
+        bool descending)
+    {
+        return order switch
+        {
+            PunishmentOrderType.Issued => OrderPunishmentsByDate(punishments, descending),
+            _ => punishments
+        };
+    }
+    
+    private static IQueryable<Punishment> OrderPunishmentsByDate(IQueryable<Punishment> punishments, bool descending)
+    {
+        if (descending) return punishments.OrderByDescending(p => p.IssuedAt);
+        return punishments.OrderBy(p => p.IssuedAt);
     }
 }
