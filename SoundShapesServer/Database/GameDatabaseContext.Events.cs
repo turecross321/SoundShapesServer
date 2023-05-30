@@ -45,7 +45,7 @@ public partial class GameDatabaseContext
         IQueryable<GameEvent> events = _realm.All<GameEvent>();
 
         IQueryable<GameEvent> filteredEvents = FilterEvents(events, filters);
-        IQueryable<GameEvent> orderedEvents = OrderEvents(events, order, descending);
+        IQueryable<GameEvent> orderedEvents = OrderEvents(filteredEvents, order, descending);
         
         GameEvent[] paginatedEvents = PaginationHelper.PaginateEvents(orderedEvents, from, count);
 

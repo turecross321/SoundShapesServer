@@ -69,7 +69,7 @@ public partial class GameDatabaseContext
         IQueryable<Report> reports = _realm.All<Report>();
         
         IQueryable<Report> filteredReports = FilterReports(reports, filters);
-        IQueryable<Report> orderedReports = OrderReports(reports, order, descending);
+        IQueryable<Report> orderedReports = OrderReports(filteredReports, order, descending);
 
         Report[] paginatedReports = PaginateReports(orderedReports, from, count);
         return (paginatedReports, filteredReports.Count());
