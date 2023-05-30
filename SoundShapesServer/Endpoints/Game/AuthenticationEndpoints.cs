@@ -51,17 +51,17 @@ public class AuthenticationEndpoints : EndpointGroup
             // If user hasn't finished registration, or if their IP isn't authorized, give them an unauthorized Session
             if (user.HasFinishedRegistration == false || ip.Authorized == false)
             {
-                sessionType = SessionType.Unauthorized;
+                sessionType = SessionType.GameUnAuthorized;
             }
         }
         
-        if (IsUserBanned(user) != null) sessionType = SessionType.Banned;
+        if (IsUserBanned(user) != null) sessionType = SessionType.GameBanned;
 
         PlatformType? platformType = PlatformHelper.GetPlatformType(ticket);
         if (platformType == null) return HttpStatusCode.BadRequest;
 
         sessionType ??= SessionType.Game;
-        GameSession session = database.CreateSession(context, user, (SessionType)sessionType, 14400, null, platformType); // 4 hours
+        GameSession session = database.CreateSession(user, (SessionType)sessionType, 14400, null, platformType, ip); // 4 hours
 
         Debug.Assert(session.Ip != null, "session.Ip != null");
         if (session.Ip.OneTimeUse) database.UseOneTimeIpAddress(session.Ip);
@@ -113,8 +113,10 @@ public class AuthenticationEndpoints : EndpointGroup
 
         if (user.HasFinishedRegistration == false)
         {
+            IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
+
             string emailSessionId = GenerateEmailSessionId(database);
-            database.CreateSession(context, user, SessionType.SetEmail, 600, emailSessionId); // 10 minutes
+            database.CreateSession(user, SessionType.SetEmail, 600, emailSessionId, (PlatformType?)session.PlatformType, ip); // 10 minutes
             return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}/register\nYour email code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
         }
 

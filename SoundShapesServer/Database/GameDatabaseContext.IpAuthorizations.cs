@@ -37,7 +37,7 @@ public partial class GameDatabaseContext
             ip.Authorized = true;
             ip.OneTimeUse = oneTime;
 
-            foreach (GameSession session in ip.Sessions.Where(s=>s.SessionType == (int)SessionType.Unauthorized))
+            foreach (GameSession session in ip.Sessions.Where(s=>s.SessionType == (int)SessionType.GameUnAuthorized))
             {
                 session.SessionType = (int)SessionType.Game;
             }

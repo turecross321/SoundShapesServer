@@ -34,7 +34,7 @@ public class LevelEndpoints : EndpointGroup
         }
         if (session.SessionType != (int)SessionType.Game)
         {
-            if (session.SessionType != (int)SessionType.Unauthorized || searchString != "tagged3")
+            if (session.SessionType != (int)SessionType.GameUnAuthorized || searchString != "tagged3")
                 return HttpStatusCode.Forbidden;
         }
 

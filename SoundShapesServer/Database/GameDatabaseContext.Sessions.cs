@@ -8,17 +8,12 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    private const int DefaultTokenExpirySeconds = 86400; // 1 day
+    public const int DefaultSessionExpirySeconds = 86400; // 1 day
     private const int SessionLimit = 3; // limit of how many sessions of one SessionType you can have
 
-    public GameSession CreateSession(RequestContext context, GameUser user, SessionType sessionType, int? expirationSeconds = null, string? id = null, PlatformType? platformType = null)
+    public GameSession CreateSession(GameUser user, SessionType sessionType, int? expirationSeconds = null, string? id = null, PlatformType? platformType = null, IpAuthorization? ip = null)
     {
-        IpAuthorization? ip = null;
-        
-        if (sessionType is SessionType.Game or SessionType.Unauthorized)
-            ip = IpHelper.GetIpAuthorizationFromRequestContext(context, this, user);
-
-        double sessionExpirationSeconds = expirationSeconds ?? DefaultTokenExpirySeconds;
+        double sessionExpirationSeconds = expirationSeconds ?? DefaultSessionExpirySeconds;
         id ??= GenerateGuid();
         
         GameSession session = new()
