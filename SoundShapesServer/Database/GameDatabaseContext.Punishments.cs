@@ -92,7 +92,7 @@ public partial class GameDatabaseContext
         return response;
     }
 
-    private IQueryable<Punishment> OrderPunishments(IQueryable<Punishment> punishments, PunishmentOrderType order,
+    private static IQueryable<Punishment> OrderPunishments(IQueryable<Punishment> punishments, PunishmentOrderType order,
         bool descending)
     {
         return order switch

@@ -110,7 +110,7 @@ public partial class GameDatabaseContext
 
     #region News Ordering
     
-    private IQueryable<NewsEntry> OrderNews(IQueryable<NewsEntry> entries, NewsOrderType order, bool descending)
+    private static IQueryable<NewsEntry> OrderNews(IQueryable<NewsEntry> entries, NewsOrderType order, bool descending)
     {
         return order switch
         {

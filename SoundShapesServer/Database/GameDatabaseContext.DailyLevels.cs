@@ -96,7 +96,7 @@ public partial class GameDatabaseContext
 
     #region Daily Level Ordering
 
-    private IQueryable<DailyLevel> OrderDailyLevels(IQueryable<DailyLevel> dailyLevels, DailyLevelOrderType order,
+    private static IQueryable<DailyLevel> OrderDailyLevels(IQueryable<DailyLevel> dailyLevels, DailyLevelOrderType order,
         bool descending)
     {
         return order switch

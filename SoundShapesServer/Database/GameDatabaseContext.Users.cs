@@ -179,7 +179,7 @@ public partial class GameDatabaseContext
         return (paginatedUsers, filteredUsers.Count());
     }
     
-    private IQueryable<GameUser> FilterUsers(IQueryable<GameUser> users, UserFilters filters)
+    private static IQueryable<GameUser> FilterUsers(IQueryable<GameUser> users, UserFilters filters)
     {
         IQueryable<GameUser> response = users;
         

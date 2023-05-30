@@ -85,7 +85,7 @@ public partial class GameDatabaseContext
         return (paginatedAddresses, filteredAddresses.Count());
     }
 
-    private IQueryable<IpAuthorization> FilterIpAddresses(IQueryable<IpAuthorization> addresses,
+    private static IQueryable<IpAuthorization> FilterIpAddresses(IQueryable<IpAuthorization> addresses,
         bool? authorized)
     {
         IQueryable<IpAuthorization> response = addresses;

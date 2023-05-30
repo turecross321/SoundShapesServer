@@ -105,7 +105,7 @@ public partial class GameDatabaseContext
 
     #region Leaderboard Ordering
 
-    private IQueryable<LeaderboardEntry> OrderLeaderboard(IQueryable<LeaderboardEntry> entries,
+    private static IQueryable<LeaderboardEntry> OrderLeaderboard(IQueryable<LeaderboardEntry> entries,
         LeaderboardOrderType order, bool descending)
     {
         return order switch

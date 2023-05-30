@@ -52,7 +52,7 @@ public partial class GameDatabaseContext
         return (paginatedEvents, filteredEvents.Count());
     }
     
-    private IQueryable<GameEvent> FilterEvents(IQueryable<GameEvent> events, EventFilters filters)
+    private static IQueryable<GameEvent> FilterEvents(IQueryable<GameEvent> events, EventFilters filters)
     {
         IQueryable<GameEvent> response = events;
 

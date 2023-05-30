@@ -109,7 +109,7 @@ public partial class GameDatabaseContext
 
     #region Album Ordering
 
-    private IQueryable<GameAlbum> OrderAlbums(IQueryable<GameAlbum> albums, AlbumOrderType order, bool descending)
+    private static IQueryable<GameAlbum> OrderAlbums(IQueryable<GameAlbum> albums, AlbumOrderType order, bool descending)
     {
         return order switch
         {

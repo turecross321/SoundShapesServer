@@ -74,7 +74,7 @@ public partial class GameDatabaseContext
         Report[] paginatedReports = PaginateReports(orderedReports, from, count);
         return (paginatedReports, filteredReports.Count());
     }
-    private IQueryable<Report> FilterReports(IQueryable<Report> reports, ReportFilters filters)
+    private static IQueryable<Report> FilterReports(IQueryable<Report> reports, ReportFilters filters)
     {
         IQueryable<Report> response = reports;
 
@@ -108,7 +108,7 @@ public partial class GameDatabaseContext
 
     #region Report Ordering
 
-    private IQueryable<Report> OrderReports(IQueryable<Report> reports, ReportOrderType order, bool descending)
+    private static IQueryable<Report> OrderReports(IQueryable<Report> reports, ReportOrderType order, bool descending)
     {
         return order switch
         {
