@@ -57,7 +57,7 @@ public partial class GameDatabaseContext
         IQueryable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>();
 
         IQueryable<LeaderboardEntry> filteredEntries = FilterLeaderboard(entries, filters);
-        IQueryable<LeaderboardEntry> orderedEntries = OrderLeaderboard(entries, order, descending);
+        IQueryable<LeaderboardEntry> orderedEntries = OrderLeaderboard(filteredEntries, order, descending);
         
         LeaderboardEntry[] paginatedEntries = PaginateLeaderboardEntries(orderedEntries, from, count);
 
