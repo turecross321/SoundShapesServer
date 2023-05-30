@@ -78,13 +78,8 @@ public class LevelEndpoints : EndpointGroup
         return new Response(new LevelsWrapper(levels, user, totalLevels, from, count), ContentType.Json);
     }
     
-
-    // Game only uses data from the queued response
-    //[GameEndpoint("~identity:{userId}/~like:*.page", ContentType.Json)]
-    //public LevelsWrapper? Liked(RequestContext context, GameDatabaseContext database, GameUser user, string userId) {}
-
     [GameEndpoint("~identity:{userId}/~queued:*.page", ContentType.Json)]
-    [Authentication(false)]
+    [GameEndpoint("~identity:{userId}/~like:*.page", ContentType.Json)]
     public RelationLevelsWrapper? QueuedAndLiked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
     {
         int count = int.Parse(context.QueryString["count"] ?? "9");
