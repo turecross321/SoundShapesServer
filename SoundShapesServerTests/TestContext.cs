@@ -37,10 +37,10 @@ public class TestContext : IDisposable
             _ => null
         };
 
-        GameSession session = this.Database.CreateSession(user, type, tokenExpirySeconds, platformType:platformType);
+        GameSession session = Database.CreateSession(user, type, tokenExpirySeconds, platformType:platformType);
         sessionId = session.Id;
         
-        HttpClient client = this.Listener.GetClient();
+        HttpClient client = Listener.GetClient();
 
         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
         if (type is SessionType.Game or SessionType.GameBanned or SessionType.GameUnAuthorized)
@@ -63,6 +63,10 @@ public class TestContext : IDisposable
 
     public void Dispose()
     {
-        throw new NotImplementedException();
+        Database.Dispose();
+        Http.Dispose();
+        Listener.Dispose();
+        
+        GC.SuppressFinalize(this);
     }
 }

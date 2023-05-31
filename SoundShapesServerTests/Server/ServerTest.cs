@@ -16,7 +16,7 @@ public class ServerTest
     }
     
     // ReSharper disable once MemberCanBeMadeStatic.Global
-    protected TestContext GetServer()
+    protected TestContext GetServer(bool startServer = true)
     {
         DirectHttpListener listener = new();
         HttpClient client = listener.GetClient();
@@ -33,6 +33,8 @@ public class ServerTest
             return server;
         });
 
+        if (startServer) _ = gameServer.Value;
+        
         return new TestContext(gameServer, provider.GetContext(), client, listener);
     }
 }
