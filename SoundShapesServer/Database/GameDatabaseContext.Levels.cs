@@ -20,7 +20,7 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public GameLevel CreateLevel(PublishLevelRequest request, GameUser user, bool createEvent = true, string? levelId = null)
+    public GameLevel CreateLevel(GameUser user, PublishLevelRequest request, bool createEvent = true, string? levelId = null)
     {
         levelId ??= GenerateLevelId();
         GameLevel level = new(levelId, user, AdhereToLevelNameCharacterLimit(request.Name), request.Language, request.FileSize, request.Created);

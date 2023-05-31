@@ -29,7 +29,7 @@ public class LevelPublishingEndpoints : EndpointGroup
             int.Parse(parser.GetParameterValue("sce_np_language")));
         
         publishLevelRequest.Name = profanity.CensorSentence(publishLevelRequest.Name); // Censor any potential profanity
-        GameLevel publishedLevel = database.CreateLevel(publishLevelRequest, user);
+        GameLevel publishedLevel = database.CreateLevel(user, publishLevelRequest);
         
         Response uploadedResources = UploadLevelResources(database, dataStore, parser, publishedLevel);
         if (uploadedResources.StatusCode != HttpStatusCode.Created) return uploadedResources;

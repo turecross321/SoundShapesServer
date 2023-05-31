@@ -24,7 +24,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
         if (IsUserAdmin(user) == false) return HttpStatusCode.Unauthorized;
 
         body.Name = profanity.CensorSentence(body.Name); // Censor any potential profanity
-        GameLevel publishedLevel = database.CreateLevel(new PublishLevelRequest(body), user);
+        GameLevel publishedLevel = database.CreateLevel(user, new PublishLevelRequest(body));
         return new Response(new ApiLevelFullResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
 

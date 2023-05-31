@@ -1,6 +1,8 @@
 using Bunkum.CustomHttpListener.Listeners.Direct;
 using SoundShapesServer.Database;
+using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using SoundShapesServerTests.Server;
@@ -25,6 +27,13 @@ public class TestContext : IDisposable
     private int _users;
     private int UserIncrement => _users++;
 
+    public HttpClient GetAuthenticatedClient(SessionType type,
+        GameUser? user = null,
+        int tokenExpirySeconds = GameDatabaseContext.DefaultSessionExpirySeconds)
+    {
+        return GetAuthenticatedClient(type, out _, user, tokenExpirySeconds);
+    }
+    
     public HttpClient GetAuthenticatedClient(SessionType type, out string sessionId,
         GameUser? user = null,
         int tokenExpirySeconds = GameDatabaseContext.DefaultSessionExpirySeconds)
@@ -59,6 +68,12 @@ public class TestContext : IDisposable
     {
         username ??= UserIncrement.ToString();
         return Database.CreateUser(username);
+    }
+    
+    public GameLevel CreateLevel(GameUser author, string title = "Level")
+    {
+        PublishLevelRequest request = new (title, 0);
+        return Database.CreateLevel(author, request);
     }
 
     public void Dispose()

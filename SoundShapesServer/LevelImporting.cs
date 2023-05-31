@@ -72,7 +72,7 @@ public static class LevelImporting
         return levels;
     }
 
-    private static void UploadLevels(Dictionary<string, List<ImportedLevelDependency>> levels, GameDatabaseContext database, IDataStore dataStore, GameUser serverUser)
+    private static void UploadLevels(Dictionary<string, List<ImportedLevelDependency>> levels, GameDatabaseContext database, IDataStore dataStore, GameUser adminUser)
     {
         foreach (string key in levels.Keys)
         {
@@ -117,7 +117,7 @@ public static class LevelImporting
 
             string levelId = LevelHelper.GenerateLevelId();
             PublishLevelRequest request = new ($"Imported Level ({levelId})", 0, levelCreationDate);
-            GameLevel publishedLevel = database.CreateLevel(request, serverUser, false, levelId);
+            GameLevel publishedLevel = database.CreateLevel(adminUser, request, false, levelId);
             
             database.UploadLevelResources(dataStore, publishedLevel, levelBytes, thumbnailBytes, soundBytes);
             
