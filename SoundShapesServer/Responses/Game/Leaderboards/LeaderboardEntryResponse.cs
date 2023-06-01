@@ -12,6 +12,8 @@ public class LeaderboardEntryResponse
         Entrant = new UserResponse(entry.User);
         Score = entry.Score;
     }
+    
+    public LeaderboardEntryResponse() { }
 
     [JsonProperty("position")] public int Position { get; set; }
     [JsonProperty("entrant")] public UserResponse? Entrant { get; set; }

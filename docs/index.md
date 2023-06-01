@@ -1257,7 +1257,7 @@ Should be a PNG
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/albums/id/{albumId}/completed
+> {ip}:10061/api/v1/albums/id/{albumId}/completion
 > ```
 
 ### Response: 200

@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
+using Newtonsoft.Json.Linq;
 using SoundShapesServer.Responses.Api.Levels;
+using SoundShapesServer.Responses.Game.Leaderboards;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
@@ -12,10 +14,11 @@ namespace SoundShapesServerTests.Tests;
 public class LeaderboardTests: ServerTest
 {
     [Test]
-    public async Task LeaderboardFetchingWorks()
+    public async Task ApiLeaderboardFetchingWorks()
     {
-        const int firstAmount = 10;
-        const int secondAmount = 20;
+        const int firstUserAmount = 10;
+        const int secondUserAmount = 20;
+        const int scoresPerUser = 2;
         
         using TestContext context = GetServer();
         
@@ -24,21 +27,21 @@ public class LeaderboardTests: ServerTest
         GameLevel firstLevel = context.CreateLevel(user);
         GameLevel secondLevel = context.CreateLevel(user);
 
-        context.FillLeaderboard(firstLevel, firstAmount);
-        context.FillLeaderboard(secondLevel, secondAmount);
+        context.FillLeaderboard(firstLevel, firstUserAmount, scoresPerUser);
+        context.FillLeaderboard(secondLevel, secondUserAmount, scoresPerUser);
         
         context.Database.Refresh();
         
         using HttpClient client = context.GetAuthenticatedClient(SessionType.Api, user);
         
         // Filtering
-        string payload = $"/api/v1/scores?onLevel={firstLevel.Id}";
+        string payload = $"/api/v1/scores?onLevel={firstLevel.Id}&onlyBest=true";
         ApiLeaderboardEntriesWrapper? response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
-        Assert.That(response?.Count, Is.EqualTo(firstAmount));
+        Assert.That(response?.Count, Is.EqualTo(firstUserAmount));
         
-        payload = $"/api/v1/scores?onLevel={secondLevel.Id}";
+        payload = $"/api/v1/scores?onLevel={secondLevel.Id}&onlyBest=false";
         response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
-        Assert.That(response?.Count, Is.EqualTo(secondAmount));
+        Assert.That(response?.Count, Is.EqualTo(secondUserAmount * scoresPerUser));
         
         // Ordering
         payload = $"/api/v1/scores?orderBy=score&descending=true";
@@ -48,6 +51,35 @@ public class LeaderboardTests: ServerTest
         payload = $"/api/v1/scores?orderBy=score&descending=false";
         response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
         Assert.That(response != null && response.Entries[0].Score <= response.Entries[1].Score);
+    }
+    
+    [Test]
+    public async Task LeaderboardFetchingWorks()
+    {
+        // WARNING: Can't be more than 9
+        const int firstUserAmount = 5;
+        const int secondUserAmount = 7;
+        const int scoresPerUser = 2;
+        
+        using TestContext context = GetServer();
+        
+        GameUser user = context.CreateUser();
+        
+        GameLevel firstLevel = context.CreateLevel(user);
+        GameLevel secondLevel = context.CreateLevel(user);
+
+        context.FillLeaderboard(firstLevel, firstUserAmount, scoresPerUser);
+        context.FillLeaderboard(secondLevel, secondUserAmount, scoresPerUser);
+        
+        context.Database.Refresh();
+        
+        using HttpClient client = context.GetAuthenticatedClient(SessionType.Game, user);
+        
+        // Fetching
+        string payload = $"/otg/~level:{firstLevel.Id}/~leaderboard.page";
+        JObject response = JObject.Parse(await client.GetStringAsync(payload));
+        
+        Assert.That(response.GetValue("items")?.ToArray().Length, Is.EqualTo(firstUserAmount));
     }
     
     [Test]
@@ -82,7 +114,7 @@ public class LeaderboardTests: ServerTest
         GameUser user = context.CreateUser();
         GameLevel level = context.CreateLevel(user);
 
-        context.FillLeaderboard(level, amount);
+        context.FillLeaderboard(level, amount, 2);
         LeaderboardEntry entry = context.SubmitLeaderboardEntry(score, level, user);
 
         LeaderboardFilters filters = new(onLevel:level.Id);

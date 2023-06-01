@@ -17,7 +17,11 @@ public class LeaderboardEntriesWrapper
         }
         
         (PreviousToken, NextToken) = PaginationHelper.GetPageTokens(allEntries.Count(), from, count);
-    }        
+    }
+    
+#pragma warning disable CS8618
+    public LeaderboardEntriesWrapper() {}
+#pragma warning restore CS8618
 
     [JsonProperty("items")] public LeaderboardEntryResponse[] Entries { get; set; }
     [JsonProperty("previousToken", NullValueHandling=NullValueHandling.Ignore)] public int? PreviousToken { get; set; }

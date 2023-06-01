@@ -77,12 +77,15 @@ public class TestContext : IDisposable
         return Database.CreateLevel(author, request);
     }
     
-    public void FillLeaderboard(GameLevel level, int amount)
+    public void FillLeaderboard(GameLevel level, int userAmount, int scoresPerUser)
     {
-        for (int i = amount; i > 0; i--)
+        for (int i = userAmount; i > 0; i--)
         {
             GameUser scoreUser = Database.CreateUser("score" + i);
-            SubmitLeaderboardEntry(i, level, scoreUser);
+            for (int j = 0; j < scoresPerUser; j++)
+            {
+                SubmitLeaderboardEntry(i, level, scoreUser);
+            }
         }
     }
     

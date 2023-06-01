@@ -44,7 +44,7 @@ public class ApiAlbumEndpoints : EndpointGroup
         return new ApiAlbumsWrapper(albums, totalAlbums);
     }
 
-    [ApiEndpoint("albums/id/{id}/completed")]
+    [ApiEndpoint("albums/id/{id}/completion")]
     public ApiAlbumCompletionResponse? GetAlbumCompletion(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameAlbum? album = database.GetAlbumWithId(id);

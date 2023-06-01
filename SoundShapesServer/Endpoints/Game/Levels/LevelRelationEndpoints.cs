@@ -39,6 +39,8 @@ public class LevelRelationEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return new Response(HttpStatusCode.NotFound);
         
+        if (requestType == "put") return QueueLevel(database, user, level);
+        if (requestType == "get") return CheckIfUserHasQueuedLevel(database, user, level);
         if (requestType == "delete") return UnQueueLevel(database, user, level);
 
         return new Response(HttpStatusCode.NotFound);
@@ -48,9 +50,7 @@ public class LevelRelationEndpoints : EndpointGroup
     {
         if (database.HasUserLikedLevel(user, level))
         {
-            // Returning an empty class because this doesn't actually need any data. It just needs a response and some sort of object
-            LevelLikeResponse response = new();
-
+            LevelRelationResponse response = new();
             return new Response(response, ContentType.Json);
         }
 
@@ -66,6 +66,23 @@ public class LevelRelationEndpoints : EndpointGroup
     {
         if (database.UnLikeLevel(user, level)) return new Response(HttpStatusCode.OK);
         return new Response(HttpStatusCode.BadRequest);
+    }
+    
+    private Response QueueLevel(GameDatabaseContext database, GameUser user, GameLevel level)
+    {
+        if (database.QueueLevel(user, level)) return new Response(HttpStatusCode.OK);
+        return new Response(HttpStatusCode.BadRequest);
+    }
+    
+    private Response CheckIfUserHasQueuedLevel(GameDatabaseContext database, GameUser user, GameLevel level)
+    {
+        if (database.HasUserQueuedLevel(user, level))
+        {
+            LevelRelationResponse response = new();
+            return new Response(response, ContentType.Json);
+        }
+
+        return new Response(HttpStatusCode.NotFound);
     }
 
     private Response UnQueueLevel(GameDatabaseContext database, GameUser user, GameLevel level)
