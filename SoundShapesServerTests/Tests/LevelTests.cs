@@ -10,7 +10,7 @@ namespace SoundShapesServerTests.Tests;
 public class LevelTests: ServerTest
 {
     [Test]
-    public async Task LevelFilteringWorks()
+    public async Task LevelFetchingWorks()
     {
         using TestContext context = GetServer();
         
@@ -22,13 +22,25 @@ public class LevelTests: ServerTest
         context.Database.Refresh();
         
         using HttpClient client = context.GetAuthenticatedClient(SessionType.Api, user);
+
+        // Filtration
+        string payload = $"/api/v1/levels?search={firstLevel.Name}";
+        ApiLevelsWrapper? response = await client.GetFromJsonAsync<ApiLevelsWrapper>(payload);
+        Assert.That(response?.Count, Is.EqualTo(1));
         
-        string firstPayload = $"/api/v1/levels?search={firstLevel.Name}";
-        ApiLevelsWrapper? firstResponse = await client.GetFromJsonAsync<ApiLevelsWrapper>(firstPayload);
-        Assert.That(firstResponse?.Count, Is.EqualTo(1));
+        payload = $"/api/v1/levels?search={secondLevel.Name}";
+        response = await client.GetFromJsonAsync<ApiLevelsWrapper>(payload);
+        Assert.That(response?.Count, Is.EqualTo(1));
         
-        string secondPayload = $"/api/v1/levels?search={secondLevel.Name}";
-        ApiLevelsWrapper? secondResponse = await client.GetFromJsonAsync<ApiLevelsWrapper>(secondPayload);
-        Assert.That(secondResponse?.Count, Is.EqualTo(1));
+        // Ordering
+        payload = $"/api/v1/levels?orderBy=creationDate&descending=true";
+        response = await client.GetFromJsonAsync<ApiLevelsWrapper>(payload);
+        
+        Assert.That(response != null && response.Levels[0].CreationDate > response.Levels[1].CreationDate);
+        
+        payload = $"/api/v1/levels?orderBy=creationDate&descending=false";
+        response = await client.GetFromJsonAsync<ApiLevelsWrapper>(payload);
+        
+        Assert.That(response != null && response.Levels[0].CreationDate < response.Levels[1].CreationDate);
     }
 }

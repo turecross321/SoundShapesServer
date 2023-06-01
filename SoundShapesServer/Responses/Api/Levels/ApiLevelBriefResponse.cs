@@ -17,6 +17,10 @@ public class ApiLevelBriefResponse
         Likes = level.Likes.Count();
         Difficulty = level.Difficulty;
     }
+    
+#pragma warning disable CS8618
+    public ApiLevelBriefResponse() {}
+#pragma warning restore CS8618
 
     public string Id { get; set; }
     public string Name { get; set; }

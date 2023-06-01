@@ -9,6 +9,10 @@ public class ApiLevelsWrapper
         Levels = levels.Select(l=> new ApiLevelBriefResponse(l)).ToArray();
         Count = count;
     }
+    
+#pragma warning disable CS8618
+    public ApiLevelsWrapper() {}
+#pragma warning restore CS8618
 
     public ApiLevelBriefResponse[] Levels { get; set; }
     public int Count { get; set; }

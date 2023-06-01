@@ -60,9 +60,6 @@ public class Server
         SetUpConfiguration();
         SetUpServices();
         SetUpMiddlewares();
-
-        SetUpAdminUser();
-        ImportLevels();
     }
 
     protected virtual void SetUpConfiguration()
@@ -84,7 +81,7 @@ public class Server
         _server.AddMiddleware<WebsiteMiddleware>();
     }
 
-    private void SetUpAdminUser()
+    public void SetUpAdminUser()
     {
         GameDatabaseContext database = _databaseProvider.GetContext();
         
@@ -117,7 +114,7 @@ public class Server
         }
     }
 
-    private void ImportLevels()
+    public void ImportLevels()
     {
         LevelImporting.ImportLevels(_databaseProvider.GetContext(), _dataStore);
     }

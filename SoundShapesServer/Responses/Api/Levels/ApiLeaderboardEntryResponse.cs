@@ -11,6 +11,7 @@ public class ApiLeaderboardEntryResponse
         LevelId = entry.LevelId;
         Position = position;
         User = new ApiUserBriefResponse(entry.User);
+        Score = entry.Score;
         PlayTime = entry.PlayTime;
         Tokens = entry.Tokens;
         Deaths = entry.Deaths;
@@ -23,9 +24,10 @@ public class ApiLeaderboardEntryResponse
 #pragma warning restore CS8618
 
     public string Id { get; set; }
-    public string LevelId { get; set; }
+    public string LevelId { get; set; } // Not a BriefLevelResponse because it should support campaign levels too
     public int Position { get; set; }
     public ApiUserBriefResponse User { get; set; }
+    public long Score { get; set; }
     public long PlayTime { get; set; }
     public int Tokens { get; set; }
     public int Deaths { get; set; }

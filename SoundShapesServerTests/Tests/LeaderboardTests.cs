@@ -1,10 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
-using Newtonsoft.Json.Linq;
-using Realms.Sync;
 using SoundShapesServer.Responses.Api.Levels;
-using SoundShapesServer.Responses.Game.Leaderboards;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
@@ -15,6 +11,45 @@ namespace SoundShapesServerTests.Tests;
 
 public class LeaderboardTests: ServerTest
 {
+    [Test]
+    public async Task LeaderboardFetchingWorks()
+    {
+        const int firstAmount = 10;
+        const int secondAmount = 20;
+        
+        using TestContext context = GetServer();
+        
+        GameUser user = context.CreateUser();
+        
+        GameLevel firstLevel = context.CreateLevel(user);
+        GameLevel secondLevel = context.CreateLevel(user);
+
+        context.FillLeaderboard(firstLevel, firstAmount);
+        context.FillLeaderboard(secondLevel, secondAmount);
+        
+        context.Database.Refresh();
+        
+        using HttpClient client = context.GetAuthenticatedClient(SessionType.Api, user);
+        
+        // Filtering
+        string payload = $"/api/v1/scores?onLevel={firstLevel.Id}";
+        ApiLeaderboardEntriesWrapper? response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
+        Assert.That(response?.Count, Is.EqualTo(firstAmount));
+        
+        payload = $"/api/v1/scores?onLevel={secondLevel.Id}";
+        response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
+        Assert.That(response?.Count, Is.EqualTo(secondAmount));
+        
+        // Ordering
+        payload = $"/api/v1/scores?orderBy=score&descending=true";
+        response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
+        Assert.That(response != null && response.Entries[0].Score >= response.Entries[1].Score);
+        
+        payload = $"/api/v1/scores?orderBy=score&descending=false";
+        response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
+        Assert.That(response != null && response.Entries[0].Score <= response.Entries[1].Score);
+    }
+    
     [Test]
     public async Task SubmitsLeaderboardEntry()
     {
@@ -71,34 +106,5 @@ public class LeaderboardTests: ServerTest
         const int score = expectedIndex;
         
         LeaderboardSegmentTest(expectedIndex, amount, score);
-    }
-
-    [Test]
-    public async Task LeaderboardFilteringWorks()
-    {
-        const int firstAmount = 10;
-        const int secondAmount = 20;
-        
-        using TestContext context = GetServer();
-        
-        GameUser user = context.CreateUser();
-        
-        GameLevel firstLevel = context.CreateLevel(user);
-        GameLevel secondLevel = context.CreateLevel(user);
-
-        context.FillLeaderboard(firstLevel, firstAmount);
-        context.FillLeaderboard(secondLevel, secondAmount);
-        
-        context.Database.Refresh();
-        
-        using HttpClient client = context.GetAuthenticatedClient(SessionType.Api, user);
-        
-        string firstPayload = $"/api/v1/scores?onLevel={firstLevel.Id}";
-        ApiLeaderboardEntriesWrapper? firstResponse = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(firstPayload);
-        Assert.That(firstResponse?.Count, Is.EqualTo(firstAmount));
-        
-        string secondPayload = $"/api/v1/scores?onLevel={secondLevel.Id}";
-        ApiLeaderboardEntriesWrapper? secondResponse = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(secondPayload);
-        Assert.That(secondResponse?.Count, Is.EqualTo(secondAmount));
     }
 }
