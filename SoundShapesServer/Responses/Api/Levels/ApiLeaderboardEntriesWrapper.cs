@@ -3,9 +3,9 @@ using static SoundShapesServer.Helpers.LeaderboardHelper;
 
 namespace SoundShapesServer.Responses.Api.Levels;
 
-public class ApiLeaderboardEntryWrapper
+public class ApiLeaderboardEntriesWrapper
 {
-    public ApiLeaderboardEntryWrapper(IReadOnlyList<LeaderboardEntry> paginatedEntries, int totalEntries, int from, bool descending)
+    public ApiLeaderboardEntriesWrapper(IReadOnlyList<LeaderboardEntry> paginatedEntries, int totalEntries, int from, bool descending)
     {
         Entries = new ApiLeaderboardEntryResponse[paginatedEntries.Count];
         
@@ -15,7 +15,11 @@ public class ApiLeaderboardEntryWrapper
         }
 
         Count = totalEntries;
-    }     
+    }
+    
+#pragma warning disable CS8618
+    public ApiLeaderboardEntriesWrapper() {}
+#pragma warning restore CS8618
 
     public ApiLeaderboardEntryResponse[] Entries { get; set; }
     public int Count { get; set; }

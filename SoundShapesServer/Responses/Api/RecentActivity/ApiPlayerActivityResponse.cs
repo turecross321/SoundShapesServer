@@ -19,7 +19,7 @@ public class ApiPlayerActivityResponse
         if (eventObject.ContentLevel != null)
             ContentLevel = new ApiLevelBriefResponse(eventObject.ContentLevel);
         if (eventObject.ContentLeaderboardEntry != null)
-            ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(eventObject.ContentLeaderboardEntry, database.GetEntryPlacement(eventObject.ContentLeaderboardEntry));
+            ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(eventObject.ContentLeaderboardEntry, database.GetLeaderboardEntryPosition(eventObject.ContentLeaderboardEntry));
         
         Date = eventObject.Date;
     }

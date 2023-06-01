@@ -17,6 +17,10 @@ public class ApiLeaderboardEntryResponse
         Completed = entry.Completed;
         Date = entry.Date;
     }
+    
+#pragma warning disable CS8618
+    public ApiLeaderboardEntryResponse() {}
+#pragma warning restore CS8618
 
     public string Id { get; set; }
     public string LevelId { get; set; }

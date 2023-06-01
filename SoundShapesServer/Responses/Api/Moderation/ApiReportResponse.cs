@@ -16,7 +16,7 @@ public class ApiReportResponse
         if (report.ContentLevel != null)
             ContentLevel = new ApiLevelBriefResponse(report.ContentLevel);
         if (report.ContentLeaderboardEntry != null)
-            ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(report.ContentLeaderboardEntry, database.GetEntryPlacement(report.ContentLeaderboardEntry));
+            ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(report.ContentLeaderboardEntry, database.GetLeaderboardEntryPosition(report.ContentLeaderboardEntry));
         ContentType = report.ContentType;
         ReasonType = report.ReasonType;
         Date = report.Date;

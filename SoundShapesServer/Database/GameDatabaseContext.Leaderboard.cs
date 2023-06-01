@@ -9,7 +9,7 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public void CreateLeaderboardEntry(LeaderboardSubmissionRequest request, GameUser user, string levelId)
+    public LeaderboardEntry CreateLeaderboardEntry(LeaderboardSubmissionRequest request, GameUser user, string levelId)
     {
         LeaderboardEntry entry = new (GenerateGuid(), user, levelId, request);
 
@@ -24,9 +24,10 @@ public partial class GameDatabaseContext
         if (level != null) SetLevelPlayTime(level);
         
         SetUserPlayTime(user);
+        return entry;
     }
 
-    public int GetEntryPlacement(LeaderboardEntry entry)
+    public int GetLeaderboardEntryPosition(LeaderboardEntry entry)
     {
         IQueryable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>();
         

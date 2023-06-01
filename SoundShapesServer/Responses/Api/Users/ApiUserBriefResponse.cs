@@ -13,6 +13,11 @@ public class ApiUserBriefResponse
         FollowersCount = user.Followers.Count();
     }
 
+#pragma warning disable CS8618
+    public ApiUserBriefResponse() {}
+#pragma warning restore CS8618
+
+
     public string Id { get; set; }
     public string Username { get; set; }
     public int PermissionsType { get; set; }

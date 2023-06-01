@@ -2,6 +2,7 @@ using Bunkum.CustomHttpListener.Listeners.Direct;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
@@ -74,6 +75,27 @@ public class TestContext : IDisposable
     {
         PublishLevelRequest request = new (title, 0);
         return Database.CreateLevel(author, request);
+    }
+    
+    public void FillLeaderboard(GameLevel level, int amount)
+    {
+        for (int i = amount; i > 0; i--)
+        {
+            GameUser scoreUser = Database.CreateUser("score" + i);
+            SubmitLeaderboardEntry(i, level, scoreUser);
+        }
+    }
+    
+    public LeaderboardEntry SubmitLeaderboardEntry(int score, GameLevel level, GameUser user)
+    {
+        LeaderboardSubmissionRequest request = new()
+        {
+            Score = score
+        };
+
+        LeaderboardEntry entry = Database.CreateLeaderboardEntry(request, user, level.Id);
+
+        return entry;
     }
 
     public void Dispose()

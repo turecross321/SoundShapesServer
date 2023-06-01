@@ -11,7 +11,7 @@ public class ApiLeaderboardEndpoints : EndpointGroup
 {
     [ApiEndpoint("scores")]
     [Authentication(false)]
-    public ApiLeaderboardEntryWrapper GetLeaderboard(RequestContext context, GameDatabaseContext database, string id)
+    public ApiLeaderboardEntriesWrapper GetLeaderboard(RequestContext context, GameDatabaseContext database, string id)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
@@ -42,6 +42,6 @@ public class ApiLeaderboardEndpoints : EndpointGroup
         (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) =
             database.GetLeaderboardEntries(order, descending, filters, from, count);
 
-        return new ApiLeaderboardEntryWrapper(paginatedEntries, allEntries.Count(), from, descending);
+        return new ApiLeaderboardEntriesWrapper(paginatedEntries, allEntries.Count(), from, descending);
     }
 }

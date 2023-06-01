@@ -69,6 +69,6 @@ public class LeaderboardEndpoints : EndpointGroup
         const bool descending = false;
         (IQueryable<LeaderboardEntry> _, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, 0, 1);
         
-        return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e, database.GetEntryPlacement(e) + 1)).ToArray();
+        return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e, database.GetLeaderboardEntryPosition(e) + 1)).ToArray();
     }
 }
