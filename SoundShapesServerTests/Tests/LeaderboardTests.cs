@@ -74,7 +74,7 @@ public class LeaderboardTests: ServerTest
     }
 
     [Test]
-    public async Task LeaderboardFetchingWorks()
+    public async Task LeaderboardFilteringWorks()
     {
         const int firstAmount = 10;
         const int secondAmount = 20;
