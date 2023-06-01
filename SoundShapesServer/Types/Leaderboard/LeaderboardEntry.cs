@@ -15,7 +15,7 @@ public class LeaderboardEntry : RealmObject
         PlayTime = Math.Max(request.PlayTime, 0);
         Deaths = Math.Max(request.Deaths, 0);
         Golded = request.Golded;
-        Tokens = request.Tokens;
+        Notes = request.Notes;
         Completed = request.Completed;
         Date = DateTimeOffset.UtcNow;
     }
@@ -33,7 +33,7 @@ public class LeaderboardEntry : RealmObject
     public long PlayTime { get; set; }
     public int Deaths { get; set; }
     public int Golded { get; set; }
-    public int Tokens { get; set; } // TODO: RENAME TO TOKEN COUNT
+    public int Notes { get; set; }
     public bool Completed { get; set; }
     public DateTimeOffset Date { get; set; }
 }

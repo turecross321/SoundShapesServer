@@ -113,7 +113,7 @@ public partial class GameDatabaseContext
         {
             LeaderboardOrderType.Score => OrderLeaderboardByScore(entries, descending),
             LeaderboardOrderType.PlayTime => OrderLeaderboardByPlayTime(entries, descending),
-            LeaderboardOrderType.TokenCount => OrderLeaderboardByTokenCount(entries, descending),
+            LeaderboardOrderType.Notes => OrderLeaderboardByTokenCount(entries, descending),
             LeaderboardOrderType.Date => OrderLeaderboardByDate(entries, descending),
             _ => OrderLeaderboardByScore(entries, descending),
         };
@@ -133,8 +133,8 @@ public partial class GameDatabaseContext
     
     private static IQueryable<LeaderboardEntry> OrderLeaderboardByTokenCount(IQueryable<LeaderboardEntry> entries, bool descending)
     {
-        if (descending) return entries.OrderByDescending(e => e.Tokens);
-        return entries.OrderBy(e => e.Tokens);
+        if (descending) return entries.OrderByDescending(e => e.Notes);
+        return entries.OrderBy(e => e.Notes);
     }
     
     private static IQueryable<LeaderboardEntry> OrderLeaderboardByDate(IQueryable<LeaderboardEntry> entries, bool descending)

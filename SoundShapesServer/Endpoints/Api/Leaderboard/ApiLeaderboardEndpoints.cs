@@ -33,7 +33,7 @@ public class ApiLeaderboardEndpoints : EndpointGroup
         {
             "score" => LeaderboardOrderType.Score,
             "playTime" => LeaderboardOrderType.PlayTime,
-            "tokenCount" => LeaderboardOrderType.TokenCount,
+            "notes" => LeaderboardOrderType.Notes,
             "date" => LeaderboardOrderType.Date,
             _ => LeaderboardOrderType.Score
         };

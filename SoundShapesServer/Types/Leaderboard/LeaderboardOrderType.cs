@@ -4,6 +4,6 @@ public enum LeaderboardOrderType
 {
     Score,
     PlayTime,
-    TokenCount,
+    Notes,
     Date
 }

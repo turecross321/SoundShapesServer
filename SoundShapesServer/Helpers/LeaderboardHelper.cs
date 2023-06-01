@@ -28,7 +28,7 @@ public static class LeaderboardHelper
                     response.Golded = int.Parse(value);
                     break;
                 case "tokenCount":
-                    response.Tokens = int.Parse(value);
+                    response.Notes = int.Parse(value);
                     break;
                 case "score":
                     response.Score = long.Parse(value);

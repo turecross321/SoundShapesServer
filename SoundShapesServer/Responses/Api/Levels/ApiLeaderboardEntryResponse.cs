@@ -13,7 +13,7 @@ public class ApiLeaderboardEntryResponse
         User = new ApiUserBriefResponse(entry.User);
         Score = entry.Score;
         PlayTime = entry.PlayTime;
-        Tokens = entry.Tokens;
+        Notes = entry.Notes;
         Deaths = entry.Deaths;
         Completed = entry.Completed;
         Date = entry.Date;
@@ -29,7 +29,7 @@ public class ApiLeaderboardEntryResponse
     public ApiUserBriefResponse User { get; set; }
     public long Score { get; set; }
     public long PlayTime { get; set; }
-    public int Tokens { get; set; }
+    public int Notes { get; set; }
     public int Deaths { get; set; }
     public bool Completed { get; set; }
     public DateTimeOffset Date { get; set; }

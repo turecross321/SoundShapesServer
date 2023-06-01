@@ -16,7 +16,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 28;
+    protected override ulong SchemaVersion => 29;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -52,10 +52,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 
             if (oldVersion < 25)
             {
-                string userId = oldRelation.Liker.Id;
-                GameUser user = migration.NewRealm.All<GameUser>().First(u => u.Id == userId);
-                
-                newRelation.User = user;
+                newRelation.User = (GameUser)oldRelation.Liker;
             }
         }
         
@@ -72,6 +69,20 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                 {
                     gameEvent.EventType += 1;
                 }
+            }
+        }
+        
+        IQueryable<dynamic> oldLeaderboardEntries = migration.OldRealm.DynamicApi.All("LeaderboardEntry");
+        IQueryable<LeaderboardEntry> newLeaderboardEntries = migration.NewRealm.All<LeaderboardEntry>();
+        for (int i = 0; i < newLeaderboardEntries.Count(); i++)
+        {
+            dynamic oldEntry = oldLeaderboardEntries.ElementAt(i);
+            LeaderboardEntry newEntry = newLeaderboardEntries.ElementAt(i);
+
+            if (oldVersion < 29)
+            {
+                // Renamed Tokens to Notes
+                newEntry.Notes = (int)oldEntry.Tokens;
             }
         }
     }

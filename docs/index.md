@@ -1438,7 +1438,7 @@ Should be a PNG
 | ------------------ |
 | score              |
 | playTime           |
-| tokenCount         |
+| notes              |
 | date               |
 
 ### Response: 200
@@ -1458,7 +1458,7 @@ Should be a PNG
         "FollowersCount": 0
       },
       "PlayTime": 255397,
-      "Tokens": 53,
+      "Notes": 53,
       "Deaths": 3,
       "Completed": false,
       "Date": "2023-05-13T08:11:50.2710058+00:00"
@@ -1475,7 +1475,7 @@ Should be a PNG
         "FollowersCount": 0
       },
       "PlayTime": 93431,
-      "Tokens": 41,
+      "Notes": 41,
       "Deaths": 0,
       "Completed": true,
       "Date": "2023-05-13T08:06:37.2545837+00:00"
@@ -1492,7 +1492,7 @@ Should be a PNG
         "FollowersCount": 0
       },
       "PlayTime": 7033,
-      "Tokens": 1,
+      "Notes": 1,
       "Deaths": 0,
       "Completed": true,
       "Date": "2023-05-16T15:06:47.2878822+00:00"
@@ -1509,7 +1509,7 @@ Should be a PNG
         "FollowersCount": 0
       },
       "PlayTime": 7283,
-      "Tokens": 1,
+      "Notes": 1,
       "Deaths": 0,
       "Completed": true,
       "Date": "2023-05-16T15:07:19.2745572+00:00"
@@ -1526,7 +1526,7 @@ Should be a PNG
         "FollowersCount": 0
       },
       "PlayTime": 7299,
-      "Tokens": 1,
+      "Notes": 1,
       "Deaths": 0,
       "Completed": true,
       "Date": "2023-05-16T15:27:42.9384007+00:00"
@@ -1543,7 +1543,7 @@ Should be a PNG
         "FollowersCount": 0
       },
       "PlayTime": 7333,
-      "Tokens": 1,
+      "Notes": 1,
       "Deaths": 0,
       "Completed": true,
       "Date": "2023-05-16T15:27:56.1172208+00:00"
@@ -1560,7 +1560,7 @@ Should be a PNG
         "FollowersCount": 0
       },
       "PlayTime": 8149,
-      "Tokens": 1,
+      "Notes": 1,
       "Deaths": 0,
       "Completed": true,
       "Date": "2023-05-13T08:17:27.037232+00:00"
@@ -2135,7 +2135,7 @@ Should be a PNG
           "FollowersCount": 0
         },
         "PlayTime": 7333,
-        "Tokens": 1,
+        "Notes": 1,
         "Deaths": 0,
         "Completed": true,
         "Date": "2023-05-16T15:27:56.1172208+00:00"
@@ -2164,7 +2164,7 @@ Should be a PNG
           "FollowersCount": 0
         },
         "PlayTime": 7299,
-        "Tokens": 1,
+        "Notes": 1,
         "Deaths": 0,
         "Completed": true,
         "Date": "2023-05-16T15:27:42.9384007+00:00"
@@ -2193,7 +2193,7 @@ Should be a PNG
           "FollowersCount": 0
         },
         "PlayTime": 7283,
-        "Tokens": 1,
+        "Notes": 1,
         "Deaths": 0,
         "Completed": true,
         "Date": "2023-05-16T15:07:19.2745572+00:00"
@@ -2222,7 +2222,7 @@ Should be a PNG
           "FollowersCount": 0
         },
         "PlayTime": 7033,
-        "Tokens": 1,
+        "Notes": 1,
         "Deaths": 0,
         "Completed": true,
         "Date": "2023-05-16T15:06:47.2878822+00:00"
@@ -2318,7 +2318,7 @@ Should be a PNG
           "FollowersCount": 0
         },
         "PlayTime": 8149,
-        "Tokens": 1,
+        "Notes": 1,
         "Deaths": 0,
         "Completed": true,
         "Date": "2023-05-13T08:17:27.037232+00:00"
