@@ -23,7 +23,7 @@ public class ApiCommunityTabsManagementEndpoints : EndpointGroup
 
         CommunityTab? createdCommunityTab = database.CreateCommunityTab(body, user);
         if (createdCommunityTab == null) 
-            return new Response("There can't be more than 7 community tabs at a time.", ContentType.Plaintext, HttpStatusCode.Conflict);
+            return new Response("There can't be more than 4 custom community tabs at a time.", ContentType.Plaintext, HttpStatusCode.Conflict);
         
         return new Response(new ApiCommunityTabResponse(createdCommunityTab), ContentType.Json, HttpStatusCode.Created);
     }
