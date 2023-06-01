@@ -14,9 +14,7 @@ public class FileSizeMiddleware : IMiddleware
         if (context.InputStream.Length >= FileSizeLimit)
         {
             Console.WriteLine("User attempted to upload a file that exceeded 4 megabytes. Denying request.");
-            
-            context.ResponseCode = HttpStatusCode.BadRequest;
-            context.ResponseStream.Write("File size exceeded 4 megabytes!"u8);
+            context.ResponseCode = HttpStatusCode.RequestEntityTooLarge;
             return;
         }
 
