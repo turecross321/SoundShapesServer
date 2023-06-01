@@ -69,7 +69,7 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(body.LevelId);
         if (level == null) return HttpStatusCode.NotFound;
 
-        DailyLevel createdDailyLevel = database.EditDailyLevel(dailyLevel, level, body.Date);
+        DailyLevel createdDailyLevel = database.EditDailyLevel(dailyLevel, user, level, body.Date);
         return new Response(new ApiDailyLevelResponse(createdDailyLevel), ContentType.Json, HttpStatusCode.Created);
     }
     

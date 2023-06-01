@@ -23,10 +23,11 @@ public partial class GameDatabaseContext
         return dailyLevel;
     }
 
-    public DailyLevel EditDailyLevel(DailyLevel daily, GameLevel level, DateTimeOffset date)
+    public DailyLevel EditDailyLevel(DailyLevel daily, GameUser user, GameLevel level, DateTimeOffset date)
     {
         _realm.Write(() =>
         {
+            daily.Author = user;
             daily.Date = date;
             daily.Level = level;
         });
