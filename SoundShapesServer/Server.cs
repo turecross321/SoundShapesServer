@@ -61,8 +61,8 @@ public class Server
         SetUpServices();
         SetUpMiddlewares();
 
-        //SetUpAdminUser();
-        //ImportLevels();
+        SetUpAdminUser();
+        ImportLevels();
     }
 
     protected virtual void SetUpConfiguration()
