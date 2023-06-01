@@ -14,9 +14,9 @@ public class DailyLevel : RealmObject
     }
     
     // Realm cries if this doesn't exist
-    #pragma warning disable CS8618
+#pragma warning disable CS8618
     public DailyLevel() {}
-    #pragma warning restore CS8618
+#pragma warning restore CS8618
 
     [PrimaryKey] [Required] public string Id { get; init; }
     public GameLevel Level { get; set; }

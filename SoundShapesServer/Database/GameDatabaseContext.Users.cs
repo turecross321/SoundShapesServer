@@ -76,7 +76,7 @@ public partial class GameDatabaseContext
     
     public GameUser CreateUser(string username)
     {
-        GameUser user = new ()
+        GameUser user = new()
         {
             Id = GenerateGuid(),
             Username = username,
@@ -187,7 +187,7 @@ public partial class GameDatabaseContext
         {
             IQueryable<FollowRelation> relations = filters.IsFollowingUser.Followers;
 
-            List<GameUser> tempResponse = new ();
+            List<GameUser> tempResponse = new();
 
             foreach (FollowRelation relation in relations)
             {
@@ -203,7 +203,7 @@ public partial class GameDatabaseContext
         {
             IQueryable<FollowRelation> relations = filters.FollowedByUser.Following;
 
-            List<GameUser> tempResponse = new ();
+            List<GameUser> tempResponse = new();
 
             foreach (FollowRelation relation in relations)
             {

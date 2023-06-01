@@ -14,7 +14,7 @@ public partial class GameDatabaseContext
             RemoveAllSessionsWithUser(recipient);
         }
         
-        Punishment newPunishment = new ()
+        Punishment newPunishment = new()
         {
             Id = GenerateGuid(),
             PunishmentType = request.PunishmentType,

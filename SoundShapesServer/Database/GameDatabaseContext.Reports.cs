@@ -41,7 +41,7 @@ public partial class GameDatabaseContext
     public void CreateReport(GameUser reporter, ReportContentType contentType, ReportReasonType reportReasonType, 
         GameUser? contentUser = null, GameLevel? contentLevel = null, LeaderboardEntry? contentLeaderboardEntry = null)
     {
-        Report report = new ()
+        Report report = new()
         {
             Id = GenerateGuid(),            
             Issuer = reporter,

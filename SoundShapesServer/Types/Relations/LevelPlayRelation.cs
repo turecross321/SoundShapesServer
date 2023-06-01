@@ -14,9 +14,9 @@ public class LevelPlayRelation : RealmObject
     }
 
     // Realm cries if this doesn't exist
-    #pragma warning disable CS8618
+#pragma warning disable CS8618
     public LevelPlayRelation() {}
-    #pragma warning restore CS8618
+#pragma warning restore CS8618
     
     public GameUser User { get; set; }
     public GameLevel Level { get; set; }

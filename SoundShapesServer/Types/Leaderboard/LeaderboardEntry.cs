@@ -21,9 +21,9 @@ public class LeaderboardEntry : RealmObject
     }
 
     // Realm cries if this doesn't exist
-    #pragma warning disable CS8618
+#pragma warning disable CS8618
     public LeaderboardEntry() { }
-    #pragma warning restore CS8618
+#pragma warning restore CS8618
 
     [PrimaryKey]
     [Required] public string Id { get; set; }

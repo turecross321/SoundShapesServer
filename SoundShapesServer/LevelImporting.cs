@@ -29,7 +29,7 @@ public static class LevelImporting
             return;
         }
 
-        Stopwatch stopwatch = new ();
+        Stopwatch stopwatch = new();
         stopwatch.Start();
         
         Dictionary<string, List<ImportedLevelDependency>> levels = GetLevelsInDirectory();
@@ -44,7 +44,7 @@ public static class LevelImporting
 
     private static Dictionary<string, List<ImportedLevelDependency>> GetLevelsInDirectory()
     {
-        Dictionary<string, List<ImportedLevelDependency>> levels = new ();
+        Dictionary<string, List<ImportedLevelDependency>> levels = new();
         
         string[] files = Directory.GetFiles(ImportPath, "*", SearchOption.AllDirectories);
         foreach (string filePath in files)

@@ -21,7 +21,7 @@ public partial class GameDatabaseContext
         // More than 4 community tabs will cause performance issues
         if (_realm.All<CommunityTab>().Count() >= 4) return null;
         
-        CommunityTab communityTab = new ()
+        CommunityTab communityTab = new()
         {
             Id = GenerateGuid(),
             Title = request.Title,

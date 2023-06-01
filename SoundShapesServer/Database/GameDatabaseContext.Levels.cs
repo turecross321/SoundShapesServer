@@ -218,7 +218,7 @@ public partial class GameDatabaseContext
 
     private IQueryable<GameLevel> GetLevelsWithIds(IEnumerable<string> ids)
     {
-        List<GameLevel> levels = new ();
+        List<GameLevel> levels = new();
         
         // ReSharper disable once LoopCanBeConvertedToQuery
         foreach (string levelId in ids) 
@@ -273,7 +273,7 @@ public partial class GameDatabaseContext
 
         if (filters.InAlbum != null)
         {
-            List<GameLevel> tempResponse = new ();
+            List<GameLevel> tempResponse = new();
 
             foreach (GameLevel level in filters.InAlbum.Levels)
             {
@@ -330,7 +330,7 @@ public partial class GameDatabaseContext
         {
             IQueryable<DailyLevel> dailyLevelObjects = GetDailyLevels(DailyLevelOrderType.Date, true, new DailyLevelFilters(filters.InDailyDate, filters.InLatestDaily));
 
-            List<GameLevel> tempResponse = new ();
+            List<GameLevel> tempResponse = new();
 
             foreach (DailyLevel dailyLevelObject in dailyLevelObjects)
             {
@@ -350,7 +350,7 @@ public partial class GameDatabaseContext
 
         if (filters.CompletedBy != null)
         {            
-            List<GameLevel> tempResponse = new ();
+            List<GameLevel> tempResponse = new();
             
             foreach (GameLevel level in filters.CompletedBy.CompletedLevels)
             {

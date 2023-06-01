@@ -21,9 +21,9 @@ public class GameEvent : RealmObject
     }
     
     // Realm cries if this doesn't exist
-    #pragma warning disable CS8618
+#pragma warning disable CS8618
     public GameEvent() {}
-    #pragma warning restore CS8618
+#pragma warning restore CS8618
 
     [PrimaryKey] [Required] public string Id { get; set; }
     public int EventType { get; set; }

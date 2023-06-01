@@ -86,9 +86,9 @@ public partial class GameDatabaseContext
         
         if (filters.OnlyBest)
         {
-            List<LeaderboardEntry> bestEntries = new ();
+            List<LeaderboardEntry> bestEntries = new();
 
-            List<string> previousUserIds = new ();
+            List<string> previousUserIds = new();
             // The lower "Score", the higher the score actually is because scores don't start from 0, and they decrease.
             foreach (LeaderboardEntry entry in response.OrderBy(e=>e.Score))
             {

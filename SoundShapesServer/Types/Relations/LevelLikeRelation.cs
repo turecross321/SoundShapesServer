@@ -14,9 +14,9 @@ public class LevelLikeRelation : RealmObject
     }
     
     // Realm cries if this doesn't exist
-    #pragma warning disable CS8618
+#pragma warning disable CS8618
     public LevelLikeRelation() {}
-    #pragma warning restore CS8618
+#pragma warning restore CS8618
 
     public DateTimeOffset Date { get; set; }
     public GameUser User { get; set; }

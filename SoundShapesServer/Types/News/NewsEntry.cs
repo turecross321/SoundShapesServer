@@ -21,7 +21,7 @@ public class NewsEntry : RealmObject
     }
     
     // Realm cries of this doesn't exist
-    #pragma warning disable CS8618
+#pragma warning disable CS8618
     public NewsEntry()
     {
         Title = "News";
@@ -29,7 +29,7 @@ public class NewsEntry : RealmObject
         FullText = "There are no news yet.";
         Url = "0.0.0.0";
     }
-    #pragma warning restore CS8618
+#pragma warning restore CS8618
 
     [PrimaryKey] [Required] public string Id { get; init; }
     public DateTimeOffset CreationDate { get; init; }

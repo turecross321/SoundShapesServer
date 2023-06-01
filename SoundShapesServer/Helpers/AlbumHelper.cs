@@ -8,10 +8,10 @@ public static class AlbumHelper
 {
     public static LinerNoteResponse[] HtmlToLinerNotes(string html)
     {
-        HtmlDocument document = new ();
+        HtmlDocument document = new();
         document.LoadHtml(html);
 
-        List<LinerNoteResponse> linerNotes = new ();
+        List<LinerNoteResponse> linerNotes = new();
 
         IEnumerable<HtmlNode> openingNodes = document.DocumentNode.DescendantsAndSelf().Where(n => n.NodeType == HtmlNodeType.Element);
 
