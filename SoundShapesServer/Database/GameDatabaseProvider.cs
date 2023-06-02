@@ -41,6 +41,12 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 
     protected override string Filename => "database.realm";
 
+    public override void Warmup()
+    {
+        using GameDatabaseContext context = GetContext();
+        _ = context.GetAdminUser();
+    }
+
     protected override void Migrate(Migration migration, ulong oldVersion)
     {
         IQueryable<dynamic> oldLikeRelations = migration.OldRealm.DynamicApi.All("LevelLikeRelation");
