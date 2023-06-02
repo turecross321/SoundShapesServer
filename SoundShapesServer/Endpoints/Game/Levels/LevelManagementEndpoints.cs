@@ -17,7 +17,7 @@ using static SoundShapesServer.Helpers.ResourceHelper;
 namespace SoundShapesServer.Endpoints.Game.Levels;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class LevelPublishingEndpoints : EndpointGroup
+public class LevelManagementEndpoints : EndpointGroup
 {
     // Gets called by Endpoints.cs
     public static Response CreateLevel(GameServerConfig config, IDataStore dataStore, ProfanityService profanity, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user)
