@@ -475,7 +475,8 @@ o7
 
 ```json
 {
-  "Following": false
+  "Following": false,
+  "Followed": false
 }
 ```
 

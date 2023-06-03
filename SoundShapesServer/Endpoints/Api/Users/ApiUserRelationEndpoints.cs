@@ -23,7 +23,8 @@ public class ApiUserRelationEndpoints : EndpointGroup
 
         return new ApiUserRelationResponse
         {
-            Following = database.IsUserFollowingOtherUser(actor, recipient)
+            Following = database.IsUserFollowingOtherUser(actor, recipient),
+            Followed = database.IsUserFollowingOtherUser(recipient, actor)
         };
     }
 
