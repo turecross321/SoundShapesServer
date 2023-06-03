@@ -18,9 +18,9 @@ namespace SoundShapesServer;
 
 public class Server
 {
-    protected readonly BunkumHttpServer _server;
-    protected readonly GameDatabaseProvider _databaseProvider;
-    protected readonly IDataStore _dataStore;
+    protected readonly BunkumHttpServer ServerInstance;
+    protected readonly GameDatabaseProvider DatabaseProvider;
+    protected readonly IDataStore DataStore;
 
     public Server(BunkumHttpListener? listener = null,
         GameDatabaseProvider? databaseProvider = null,
@@ -28,34 +28,35 @@ public class Server
         IDataStore? dataStore = null)
     {
         databaseProvider ??= new GameDatabaseProvider();
+        // ReSharper disable once RedundantAssignment
         authProvider ??= new SessionProvider();
         dataStore ??= new FileSystemDataStore();
 
-        _databaseProvider = databaseProvider;
-        _dataStore = dataStore;
+        DatabaseProvider = databaseProvider;
+        DataStore = dataStore;
 
-        _server = listener == null ? new BunkumHttpServer() : new BunkumHttpServer(listener);
+        ServerInstance = listener == null ? new BunkumHttpServer() : new BunkumHttpServer(listener);
         
-        _server.UseDatabaseProvider(databaseProvider);
-        _server.AddStorageService(dataStore);
-        _server.AddAuthenticationService(new SessionProvider(), true);
+        ServerInstance.UseDatabaseProvider(databaseProvider);
+        ServerInstance.AddStorageService(dataStore);
+        ServerInstance.AddAuthenticationService(new SessionProvider(), true);
         
-        _server.DiscoverEndpointsFromAssembly(Assembly.GetExecutingAssembly());
+        ServerInstance.DiscoverEndpointsFromAssembly(Assembly.GetExecutingAssembly());
     }
     
     public Task StartAndBlockAsync()
     {
-        return _server.StartAndBlockAsync();
+        return ServerInstance.StartAndBlockAsync();
     }
     
     public void Start()
     {
-        _server.Start();
+        ServerInstance.Start();
     }
 
     public void Initialize()
     {
-        _databaseProvider.Initialize();
+        DatabaseProvider.Initialize();
         
         SetUpConfiguration();
         SetUpServices();
@@ -64,26 +65,26 @@ public class Server
 
     protected virtual void SetUpConfiguration()
     {
-        _server.UseJsonConfig<GameServerConfig>("gameServer.json");
+        ServerInstance.UseJsonConfig<GameServerConfig>("gameServer.json");
     }
 
     protected virtual void SetUpServices()
     {
-        _server.AddRateLimitService(new RateLimitSettings(30, 400, 0)); // Todo: figure out a good balance here between security and usability
-        _server.AddService<EmailService>();
-        _server.AddProfanityService();
+        ServerInstance.AddRateLimitService(new RateLimitSettings(30, 400, 0)); // Todo: figure out a good balance here between security and usability
+        ServerInstance.AddService<EmailService>();
+        ServerInstance.AddProfanityService();
     }
 
     protected virtual void SetUpMiddlewares()
     {
-        _server.AddMiddleware<CrossOriginMiddleware>();
-        _server.AddMiddleware<FileSizeMiddleware>();
-        _server.AddMiddleware<WebsiteMiddleware>();
+        ServerInstance.AddMiddleware<CrossOriginMiddleware>();
+        ServerInstance.AddMiddleware<FileSizeMiddleware>();
+        ServerInstance.AddMiddleware<WebsiteMiddleware>();
     }
 
     public void SetUpAdminUser()
     {
-        GameDatabaseContext database = _databaseProvider.GetContext();
+        GameDatabaseContext database = DatabaseProvider.GetContext();
         
         GameUser adminUser = database.GetAdminUser();
         if (string.IsNullOrEmpty(adminUser.Email))
@@ -116,6 +117,6 @@ public class Server
 
     public void ImportLevels()
     {
-        LevelImporting.ImportLevels(_databaseProvider.GetContext(), _dataStore);
+        LevelImporting.ImportLevels(DatabaseProvider.GetContext(), DataStore);
     }
 }

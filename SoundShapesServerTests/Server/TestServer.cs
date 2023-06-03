@@ -11,11 +11,11 @@ public class TestServer: SoundShapesServer.Server
     public TestServer(BunkumHttpListener listener, GameDatabaseProvider provider) : base(listener, provider, null, new InMemoryDataStore())
     {}
 
-    public BunkumHttpServer BunkumServer => _server;
-    public GameDatabaseProvider DatabaseProvider => _databaseProvider;
+    public BunkumHttpServer BunkumServerInstance => ServerInstance;
+    public new GameDatabaseProvider DatabaseProvider => base.DatabaseProvider;
 
     protected override void SetUpConfiguration()
     {
-        _server.UseConfig(new GameServerConfig());
+        ServerInstance.UseConfig(new GameServerConfig());
     }
 }

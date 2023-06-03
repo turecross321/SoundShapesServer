@@ -247,7 +247,7 @@ o7
 ### Method: GET
 
 > ```
-> {ip}:10061/api/v1/ip/addresses
+> {ip}:10061/api/v1/ip
 > ```
 
 ### Query Params
@@ -266,7 +266,9 @@ o7
     {
       "IpAddress": "192.168.1.134",
       "Authorized": false,
-      "OneTimeUse": false
+      "OneTimeUse": false,
+      "CreationDate": "2023-06-03T11:02:31.758+00:00",
+      "ModificationDate": "2023-06-03T11:02:31.758+00:00"
     }
   ],
   "Count": 1
@@ -305,7 +307,7 @@ o7
 ### Method: POST
 
 > ```
-> {ip}:10061/api/v1/ip/{ipAddress}/remove
+> {ip}:10061/api/v1/ip/address/{ipAddress}/remove
 > ```
 
 ### Response: 200

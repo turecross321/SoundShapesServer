@@ -9,7 +9,7 @@ public partial class GameDatabaseContext
 {
     private IpAuthorization CreateIpAddress(GameUser user, string ipAddress)
     {
-        IpAuthorization ip = new() { IpAddress = ipAddress, User = user};
+        IpAuthorization ip = new(ipAddress, user);
         
         _realm.Write(() =>
         {
@@ -24,9 +24,7 @@ public partial class GameDatabaseContext
         _realm.Refresh();
         
         IpAuthorization? ip = user.IpAddresses.FirstOrDefault(i => i.IpAddress == ipAddress);
-        if (ip == null) ip = CreateIpAddress(user, ipAddress);
-        
-        return ip;
+        return ip ?? CreateIpAddress(user, ipAddress);
     }
     public bool AuthorizeIpAddress(IpAuthorization ip, bool oneTime)
     {
@@ -36,6 +34,7 @@ public partial class GameDatabaseContext
         {
             ip.Authorized = true;
             ip.OneTimeUse = oneTime;
+            ip.ModificationDate = DateTimeOffset.UtcNow;
 
             foreach (GameSession session in ip.Sessions.Where(s=>s.SessionType == (int)SessionType.GameUnAuthorized))
             {
@@ -72,6 +71,7 @@ public partial class GameDatabaseContext
         {
             ip.Authorized = false;
             ip.OneTimeUse = false;
+            ip.ModificationDate = DateTimeOffset.UtcNow;
         });
     }
 

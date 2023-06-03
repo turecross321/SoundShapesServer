@@ -19,7 +19,7 @@ public class LevelTests: ServerTest
         GameUser user = context.CreateUser();
         
         GameLevel firstLevel = context.CreateLevel(user, "First Level");
-        GameLevel secondLevel = context.CreateLevel(user, "Second Level");
+        context.CreateLevel(user, "Second Level");
 
         context.Database.Refresh();
         
@@ -50,7 +50,7 @@ public class LevelTests: ServerTest
         GameUser user = context.CreateUser();
         
         GameLevel firstLevel = context.CreateLevel(user, "First Level");
-        GameLevel secondLevel = context.CreateLevel(user, "Second Level");
+        context.CreateLevel(user, "Second Level");
 
         context.Database.Refresh();
         

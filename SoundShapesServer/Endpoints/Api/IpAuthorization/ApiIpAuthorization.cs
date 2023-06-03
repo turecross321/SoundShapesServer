@@ -23,7 +23,7 @@ public class ApiIpAuthorization : EndpointGroup
 
         return HttpStatusCode.Conflict;
     }
-    [ApiEndpoint("ip/{address}/remove", Method.Post)]
+    [ApiEndpoint("ip/address/{address}/remove", Method.Post)]
     public Response UnAuthorizeIpAddress(RequestContext context, GameDatabaseContext database, string address, GameUser user)
     {
         Types.IpAuthorization ip = database.GetIpFromAddress(user, address);
@@ -32,7 +32,7 @@ public class ApiIpAuthorization : EndpointGroup
         return HttpStatusCode.OK;
     }
 
-    [ApiEndpoint("ip/addresses")]
+    [ApiEndpoint("ip")]
     public ApiIpAddressesWrapper GetAddresses(RequestContext context, GameDatabaseContext database, GameUser user)
     {
         int from = int.Parse(context.QueryString["from"] ?? "0");
