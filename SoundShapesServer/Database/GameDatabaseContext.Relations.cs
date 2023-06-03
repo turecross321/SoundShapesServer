@@ -45,25 +45,28 @@ public partial class GameDatabaseContext
         return true;
     }
 
-    public bool LikeLevel(GameUser liker, GameLevel level)
+    public bool LikeLevel(GameUser user, GameLevel level)
     { 
-        LevelLikeRelation relation = new(DateTimeOffset.UtcNow, liker, level);
+        if (HasUserLikedLevel(user, level)) return false;
+        
+        LevelLikeRelation relation = new(DateTimeOffset.UtcNow, user, level);
         
         _realm.Write(() =>
         {
             _realm.Add(relation);
-            liker.LikedLevelsCount = liker.LikedLevels.Count();
+            user.LikedLevelsCount = user.LikedLevels.Count();
         });
         
-        CreateEvent(liker, EventType.Like, null, level);
+        CreateEvent(user, EventType.Like, null, level);
 
         return true;
     }
     
     public bool UnLikeLevel(GameUser user, GameLevel level)
     {
+        if (!HasUserLikedLevel(user, level)) return false;
+        
         LevelLikeRelation? relation = _realm.All<LevelLikeRelation>().FirstOrDefault(l => l.User == user && l.Level == level);
-
         if (relation == null) return false;
         
         _realm.Write(() =>
@@ -83,6 +86,8 @@ public partial class GameDatabaseContext
     
     public bool QueueLevel(GameUser user, GameLevel level)
     {
+        if (HasUserQueuedLevel(user, level)) return false;
+        
         LevelQueueRelation relation = new(DateTimeOffset.UtcNow, user, level);
         
         _realm.Write(() =>
@@ -98,6 +103,8 @@ public partial class GameDatabaseContext
     
     public bool UnQueueLevel(GameUser user, GameLevel level)
     {
+        if (!HasUserQueuedLevel(user, level)) return false;
+        
         LevelQueueRelation? relation = _realm.All<LevelQueueRelation>().FirstOrDefault(l => l.User == user && l.Level == level);
 
         if (relation == null) return false;
