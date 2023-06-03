@@ -39,7 +39,7 @@ public class AuthenticationEndpoints : EndpointGroup
         
         if (!UserHelper.IsUsernameLegal(ticket.Username)) return HttpStatusCode.BadRequest;
 
-        GameUser? user = database.GetUserWithUsername(ticket.Username);
+        GameUser? user = database.GetUserWithUsername(ticket.Username, true);
         user ??= database.CreateUser(ticket.Username);
         
         IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
@@ -48,14 +48,12 @@ public class AuthenticationEndpoints : EndpointGroup
         
         if (config.ApiAuthentication)
         {
-            // If user hasn't finished registration, or if their IP isn't authorized, give them an unauthorized Session
             if (user.HasFinishedRegistration == false || ip.Authorized == false)
-            {
                 sessionType = SessionType.GameUnAuthorized;
-            }
         }
         
         if (GetActiveUserBans(user).Any()) sessionType = SessionType.Banned;
+        if (user.Deleted) sessionType = SessionType.GameUnAuthorized;
 
         PlatformType? platformType = PlatformHelper.GetPlatformType(ticket);
         if (platformType == null) return HttpStatusCode.BadRequest;
@@ -92,41 +90,40 @@ public class AuthenticationEndpoints : EndpointGroup
     }
     
     [GameEndpoint("{platform}/{publisher}/{language}/~eula.get", ContentType.Json)]
-    public string? Eula(RequestContext context, GameServerConfig config, GameDatabaseContext database, string platform, string publisher, string language, GameSession session, GameUser user)
+    public string Eula(RequestContext context, GameServerConfig config, GameDatabaseContext database, string platform, string publisher, string language, GameSession session, GameUser user)
     {
         if (session.SessionType == (int)SessionType.Game)
             return EulaEndpoint.NormalEula(config);
 
-        if (user.Deleted)
-        {
-            return $"The account attached to your username ({user.Username}) has been deleted, and is no longer available.";
-        }
-
+        string? eula = null;
+        
         IQueryable<Punishment> bans = GetActiveUserBans(user);
-            
-        if (bans.Any())
+        
+        if (user.Deleted)
+            eula = $"The account attached to your username ({user.Username}) has been deleted, and is no longer available.";
+        else if (bans.Any())
         {
             Punishment longestBan = bans.Last();
             
-            string banString = "You are banned. Expires at " + longestBan.ExpiresAt.Date + ".\n" +
-                               "Reason: " + longestBan.Reason;
-            return banString;
+            eula = "You are banned. Expires at " + longestBan.ExpiresAt.Date 
+                                                 + ".\n" 
+                                                 + "Reason: " + longestBan.Reason;
         }
-
-        if (user.HasFinishedRegistration == false)
+        else if (user.HasFinishedRegistration == false)
         {
             IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
 
             string emailSessionId = GenerateEmailSessionId(database);
             database.CreateSession(user, SessionType.SetEmail, 600, emailSessionId, (PlatformType?)session.PlatformType, ip); // 10 minutes
-            return $"Your account is not registered. To proceed, you will have to register an account at {config.WebsiteUrl}/register\nYour email code is: {emailSessionId}\n-\n{DateTime.UtcNow}";
+            eula = $"Your account is not registered. " +
+                   $"To proceed, you will have to register an account at {config.WebsiteUrl}/register\n" +
+                   $"Your email code is: {emailSessionId}";
         }
+        else if (session.Ip is { Authorized: false })
+            return $"Your IP Address has not been authorized. " +
+                   $"To proceed, you will have to log in to your account at {config.WebsiteUrl}/authorization " +
+                   $"and authorize the following IP Address: {session.Ip.IpAddress}";
 
-        Debug.Assert(session.Ip != null, "session.Ip != null");
-        if (session.Ip.Authorized == false)
-            return $"Your IP Address has not been authorized. To proceed, you will have to log in to your account at {config.WebsiteUrl}/authorization and authorize the following IP Address: {session.Ip.IpAddress}\n-\n{DateTime.UtcNow}";
-
-        return null;
+        return eula + $"\n-\n{DateTime.UtcNow}";;
     }
-    
 }

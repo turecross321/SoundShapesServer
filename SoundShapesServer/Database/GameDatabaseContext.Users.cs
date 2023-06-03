@@ -152,24 +152,26 @@ public partial class GameDatabaseContext
         });
     }
     
-    public GameUser? GetUserWithUsername(string username)
+    public GameUser? GetUserWithUsername(string username, bool includeDeleted = false)
     {
-        return _realm.All<GameUser>().FirstOrDefault(u => u.Username == username);
+        return _realm.All<GameUser>().FirstOrDefault(u =>  (!u.Deleted || u.Deleted == includeDeleted) && u.Username == username);
     }
 
-    public GameUser? GetUserWithEmail(string email)
+    public GameUser? GetUserWithEmail(string email, bool includeDeleted = false)
     {
-        return _realm.All<GameUser>().FirstOrDefault(u => u.Email == email);
+        return _realm.All<GameUser>().FirstOrDefault(u =>  (!u.Deleted || u.Deleted == includeDeleted) && u.Email == email);
     }
 
-    public GameUser? GetUserWithId(string? id)
+    public GameUser? GetUserWithId(string id, bool includeDeleted = false)
     {
-        return id == null ? null : _realm.All<GameUser>().FirstOrDefault(u => u.Id == id);
+        return _realm.All<GameUser>().FirstOrDefault(u => (!u.Deleted || u.Deleted == includeDeleted) && u.Id == id);
     }
 
-    public (GameUser[], int) GetUsers(UserOrderType order, bool descending, UserFilters filters, int from, int count)
+    public (GameUser[], int) GetUsers(UserOrderType order, bool descending, UserFilters filters, int from, int count, 
+        bool includeDeleted = false)
     {
-        IQueryable<GameUser> users = _realm.All<GameUser>();
+        // Including Deleted is not a filter because it should only be accessible in internal server stuff
+        IQueryable<GameUser> users = _realm.All<GameUser>().Where(u=>!u.Deleted || u.Deleted == includeDeleted);
 
         IQueryable<GameUser> filteredUsers = FilterUsers(users, filters);
         IQueryable<GameUser> orderedUsers = OrderUsers(filteredUsers, order, descending);
