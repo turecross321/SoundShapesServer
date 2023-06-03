@@ -40,6 +40,8 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             _realm.Remove(relation);
+            follower.FollowingCount = follower.Following.Count();
+            recipient.FollowersCount = recipient.Followers.Count();
         });
         
         return true;
@@ -55,6 +57,7 @@ public partial class GameDatabaseContext
         {
             _realm.Add(relation);
             user.LikedLevelsCount = user.LikedLevels.Count();
+            level.LikesCount = level.Likes.Count();
         });
         
         CreateEvent(user, EventType.Like, null, level);
@@ -73,6 +76,7 @@ public partial class GameDatabaseContext
         {
             _realm.Remove(relation);
             user.LikedLevelsCount = user.LikedLevels.Count();
+            level.LikesCount = level.Likes.Count();
         });
         
         return true;
@@ -94,6 +98,7 @@ public partial class GameDatabaseContext
         {
             _realm.Add(relation);
             user.QueuedLevelsCount = user.QueuedLevels.Count();
+            level.QueuesCount = level.Queues.Count();
         });
         
         CreateEvent(user, EventType.Queue, null, level);
@@ -113,6 +118,7 @@ public partial class GameDatabaseContext
         {
             _realm.Remove(relation);
             user.QueuedLevelsCount = user.QueuedLevels.Count();
+            level.QueuesCount = level.Queues.Count();
         });
         
         return true;
