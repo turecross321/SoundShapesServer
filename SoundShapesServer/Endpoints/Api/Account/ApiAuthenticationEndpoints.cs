@@ -26,10 +26,10 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 
         if (!database.ValidatePassword(user, body.PasswordSha512)) return _invalidCredentialsResponse;
 
-        Punishment? ban = IsUserBanned(user);
-        GameSession session = database.CreateSession(user, ban == null ? SessionType.Api : SessionType.GameBanned);
+        IQueryable<Punishment> activeBans = GetActiveUserBans(user);
+        GameSession session = database.CreateSession(user, activeBans.Any() ? SessionType.Banned : SessionType.Api);
         
-        return new Response(new ApiSessionResponse(session, ban), ContentType.Json);
+        return new Response(new ApiSessionResponse(session, activeBans), ContentType.Json);
     }
 
     [ApiEndpoint("account/logout", Method.Post)]

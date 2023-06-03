@@ -11,10 +11,12 @@ public static class PunishmentHelper
         return user.Punishments.AsEnumerable().Where(p=>p.ExpiresAt > now && !p.Revoked).AsQueryable();
     }
 
-    public static Punishment? IsUserBanned(GameUser user)
+    public static IQueryable<Punishment> GetActiveUserBans(GameUser user)
     {
-        return user.Punishments.AsEnumerable()
-            .Where(p=>p is { PunishmentType: (int)PunishmentType.Ban, Revoked: false })
-            .MaxBy(p => p.ExpiresAt);
+        DateTimeOffset utcNow = DateTimeOffset.UtcNow;
+        
+        return user.Punishments
+            .Where(p=> p.PunishmentType == (int)PunishmentType.Ban && !p.Revoked && p.ExpiresAt > utcNow)
+            .OrderByDescending(p=>p.ExpiresAt);
     }
 }

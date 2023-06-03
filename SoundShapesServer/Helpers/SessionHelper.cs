@@ -32,7 +32,7 @@ public static class SessionHelper
             Regex.IsMatch(uriPath, $"^{GameEndpointAttribute.BaseRoute}[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$")
            )
         {
-            if (session.SessionType is (int)SessionType.GameUnAuthorized or (int)SessionType.GameBanned) return true;
+            if (session.SessionType is (int)SessionType.GameUnAuthorized or (int)SessionType.Banned) return true;
         }
         if (uriPath.StartsWith(GameEndpointAttribute.BaseRoute) || uriPath.StartsWith("/identity/"))
         {
@@ -70,7 +70,7 @@ public static class SessionHelper
 
         if (uriPath == ApiEndpointAttribute.BaseRoute + "account/sendRemovalSession")
         {
-            if (session.SessionType == (int)SessionType.GameBanned)
+            if (session.SessionType == (int)SessionType.Banned)
                 return true;
         }
 

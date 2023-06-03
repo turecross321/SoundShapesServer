@@ -53,7 +53,7 @@ public class TestContext : IDisposable
         HttpClient client = Listener.GetClient();
 
         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-        if (type is SessionType.Game or SessionType.GameBanned or SessionType.GameUnAuthorized)
+        if (type is SessionType.Game or SessionType.Banned or SessionType.GameUnAuthorized)
         {
             client.DefaultRequestHeaders.TryAddWithoutValidation("X-OTG-Identity-SessionId", session.Id);
         }

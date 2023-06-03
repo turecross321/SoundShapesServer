@@ -55,7 +55,7 @@ public class AuthenticationEndpoints : EndpointGroup
             }
         }
         
-        if (IsUserBanned(user) != null) sessionType = SessionType.GameBanned;
+        if (GetActiveUserBans(user).Any()) sessionType = SessionType.Banned;
 
         PlatformType? platformType = PlatformHelper.GetPlatformType(ticket);
         if (platformType == null) return HttpStatusCode.BadRequest;
@@ -102,12 +102,14 @@ public class AuthenticationEndpoints : EndpointGroup
             return $"The account attached to your username ({user.Username}) has been deleted, and is no longer available.";
         }
 
-        Punishment? ban = IsUserBanned(user);
+        IQueryable<Punishment> bans = GetActiveUserBans(user);
             
-        if (ban != null)
+        if (bans.Any())
         {
-            string banString = "You are banned. Expires at " + ban.ExpiresAt.Date + ".\n" +
-                               "Reason: " + ban.Reason;
+            Punishment longestBan = bans.Last();
+            
+            string banString = "You are banned. Expires at " + longestBan.ExpiresAt.Date + ".\n" +
+                               "Reason: " + longestBan.Reason;
             return banString;
         }
 

@@ -47,18 +47,16 @@ Date is always UTC, and is always formatted like `YYYY-MM-DD`.
 
 ```json
 {
-  "Id": "9a6ec128-9a69-4cdb-9aef-a9b06f159a5a",
-  "ExpiresAt": "2023-06-04T12:51:44.6276848+00:00",
+  "Id": "d9067897-25e0-48d9-9215-cfd75d914ec0",
+  "ExpiresAt": "2023-06-04T15:58:07.5276544+00:00",
   "User": {
-    "Id": "00000000-0000-0000-0000-000000000000",
-    "Username": "admin",
-    "PermissionsType": 2,
-    "PublishedLevels": 72932,
-    "Followers": 0
+    "Id": "c479afbc-84da-4b74-8077-012e3eed7aec",
+    "Username": "turecross321",
+    "PermissionsType": 0,
+    "PublishedLevels": 3,
+    "Followers": 2
   },
-  "IsBanned": false,
-  "BanReason": null,
-  "BanExpiresAt": null
+  "ActivePunishments": []
 }
 ```
 

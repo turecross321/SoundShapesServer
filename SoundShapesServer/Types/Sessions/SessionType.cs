@@ -7,5 +7,5 @@ public enum SessionType
     SetEmail = 3,
     RemoveAccount = 4,
     GameUnAuthorized = 5,
-    GameBanned = 6
+    Banned = 6
 }
