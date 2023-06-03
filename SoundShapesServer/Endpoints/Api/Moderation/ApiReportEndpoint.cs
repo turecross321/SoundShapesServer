@@ -28,16 +28,16 @@ public class ApiReportEndpoint : EndpointGroup
         
         switch (contentType)
         {
-            case ReportContentType.Level:
-            {
-                level = database.GetLevelWithId(body.ContentId);
-                if (level == null) return HttpStatusCode.NotFound;
-                break;
-            }
             case ReportContentType.User:
             {
                 userBeingReported = database.GetUserWithId(body.ContentId);
                 if (userBeingReported == null) return HttpStatusCode.NotFound;
+                break;
+            }
+            case ReportContentType.Level:
+            {
+                level = database.GetLevelWithId(body.ContentId);
+                if (level == null) return HttpStatusCode.NotFound;
                 break;
             }
             case ReportContentType.LeaderboardEntry:

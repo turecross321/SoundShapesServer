@@ -229,13 +229,13 @@ public partial class GameDatabaseContext
     {
         return order switch
         {
-            UserOrderType.FollowersCount => OrderUsersByFollowers(users, descending),
-            UserOrderType.FollowingCount => OrderUsersByFollowing(users, descending),
-            UserOrderType.LevelsCount => OrderUsersByLevels(users, descending),
-            UserOrderType.LikedLevelsCount => OrderUsersByLikedLevels(users, descending),
+            UserOrderType.Followers => OrderUsersByFollowers(users, descending),
+            UserOrderType.Following => OrderUsersByFollowing(users, descending),
+            UserOrderType.PublishedLevels => OrderUsersByLevels(users, descending),
+            UserOrderType.LikedLevels => OrderUsersByLikedLevels(users, descending),
             UserOrderType.CreationDate => OrderUsersByCreationDate(users, descending),
-            UserOrderType.PlayedLevelsCount => OrderUsersByPlayedLevels(users, descending),
-            UserOrderType.CompletedLevelsCount => OrderUsersByCompletedLevels(users, descending),
+            UserOrderType.PlayedLevels => OrderUsersByPlayedLevels(users, descending),
+            UserOrderType.CompletedLevels => OrderUsersByCompletedLevels(users, descending),
             UserOrderType.Deaths => OrderUsersByDeaths(users, descending),
             UserOrderType.TotalPlayTime => OrderUsersByPlayTime(users, descending),
             _ => users

@@ -10,12 +10,13 @@ public class ApiUserFullResponse
         Username = user.Username;
         PermissionsType = user.PermissionsType;
         CreationDate = user.CreationDate;
-        FollowersCount = user.Followers.Count();
-        FollowingCount = user.Following.Count();
-        LikedLevelsCount = user.LikedLevels.Count();
-        PublishedLevelsCount = user.Levels.Count();
-        ActivitiesCount = user.Events.Count();
-        PlayedLevelsCount = user.PlayedLevels.Count();
+        Followers = user.Followers.Count();
+        Following = user.Following.Count();
+        LikedLevels = user.LikedLevels.Count();
+        QueuedLevels = user.QueuedLevels.Count();
+        PublishedLevels = user.Levels.Count();
+        Activities = user.Events.Count();
+        PlayedLevels = user.PlayedLevels.Count();
         TotalDeaths = user.Deaths;
         TotalPlayTime = user.TotalPlayTime;
     }
@@ -24,12 +25,13 @@ public class ApiUserFullResponse
     public string Username { get; set; }
     public int PermissionsType { get; set; }
     public DateTimeOffset CreationDate { get; set; }
-    public int FollowersCount { get; set; }
-    public int FollowingCount { get; set; }
-    public int LikedLevelsCount { get; set; }
-    public int PublishedLevelsCount { get; set; }
-    public int ActivitiesCount { get; set; }
-    public int PlayedLevelsCount { get; set; }
+    public int Followers { get; set; }
+    public int Following { get; set; }
+    public int LikedLevels { get; set; }
+    public int QueuedLevels { get; set; }
+    public int PublishedLevels { get; set; }
+    public int Activities { get; set; }
+    public int PlayedLevels { get; set; }
     public int TotalDeaths { get; set; }
     public long TotalPlayTime { get; set; }
 }

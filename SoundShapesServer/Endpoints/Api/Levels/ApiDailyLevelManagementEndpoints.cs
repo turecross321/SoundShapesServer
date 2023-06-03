@@ -14,38 +14,6 @@ namespace SoundShapesServer.Endpoints.Api.Levels;
 
 public class ApiDailyLevelManagementEndpoints : EndpointGroup
 {
-    [ApiEndpoint("daily")]
-    public Response GetDailyLevelObjects(RequestContext context, GameDatabaseContext database, GameUser user)
-    {
-        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
-        
-        int count = int.Parse(context.QueryString["count"] ?? "9");
-        int from = int.Parse(context.QueryString["from"] ?? "0");
-        
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
-        
-        string? dateString = context.QueryString["date"];
-        DateTimeOffset? date = null;
-        if (dateString != null) date = DateTimeOffset.Parse(dateString).Date;
-        
-        bool? lastDate = null;
-        if (bool.TryParse(context.QueryString["lastDate"], out bool lastDateTemp)) lastDate = lastDateTemp;
-
-        DailyLevelFilters filters = new (date, lastDate);
-        
-        string? orderString = context.QueryString["orderBy"];
-        DailyLevelOrderType order = orderString switch
-        {
-            "date" => DailyLevelOrderType.Date,
-            _ => DailyLevelOrderType.Date
-        };
-
-        IQueryable<DailyLevel> dailyLevels = database.GetDailyLevels(order, descending, filters);
-        DailyLevel[] paginatedDailyLevels = PaginationHelper.PaginateDailyLevels(dailyLevels, from, count);
-        
-        return new Response(new ApiDailyLevelsWrapper(paginatedDailyLevels, dailyLevels.Count()), ContentType.Json);
-    }
-    
     [ApiEndpoint("daily/create", Method.Post)]
     public Response AddDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiAddDailyLevelRequest body)
     {

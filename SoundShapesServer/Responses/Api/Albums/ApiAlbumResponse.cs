@@ -1,4 +1,5 @@
 using SoundShapesServer.Types.Albums;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace SoundShapesServer.Responses.Api.Albums;
 

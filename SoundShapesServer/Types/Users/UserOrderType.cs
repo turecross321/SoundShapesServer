@@ -2,13 +2,13 @@ namespace SoundShapesServer.Types.Users;
 
 public enum UserOrderType
 {
-    FollowersCount,
-    FollowingCount,
-    LevelsCount,
-    LikedLevelsCount,
+    Followers,
+    Following,
+    PublishedLevels,
+    LikedLevels,
     CreationDate,
-    PlayedLevelsCount,
-    CompletedLevelsCount,
+    PlayedLevels,
+    CompletedLevels,
     Deaths,
     TotalPlayTime,
     DoNotOrder

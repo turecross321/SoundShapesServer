@@ -7,21 +7,21 @@ public class UserMetadataResponse
 {
     public UserMetadataResponse(GameUser user)
     {
-        DisplayName = user.Username;
-        FollowingCount = user.Following.Count();
-        FollowersCount = user.Followers.Count();
-        LevelCount = user.Levels.Count();
-        LikedAndQueuedLevelsCount = user.LikedLevels.Count() + user.QueuedLevels.Count();
+        Username = user.Username;
+        Following = user.Following.Count();
+        Followers = user.Followers.Count();
+        Levels = user.Levels.Count();
+        LikedAndQueuedLevels = user.LikedLevels.Count() + user.QueuedLevels.Count();
     }
 
     public UserMetadataResponse()
     {
-        DisplayName = "";
+        Username = "";
     }
 
-    [JsonProperty("displayName")] public string DisplayName { get; set; }
-    [JsonProperty("follows_by_ever_count")] public int FollowingCount { get; set; }
-    [JsonProperty("follows_of_ever_count")] public int FollowersCount { get; }
-    [JsonProperty("levels_by_ever_count")] public int LevelCount { get; set; }
-    [JsonProperty("likes_by_ever_count")] public int LikedAndQueuedLevelsCount { get; set; }
+    [JsonProperty("displayName")] public string Username { get; set; }
+    [JsonProperty("follows_by_ever_count")] public int Following { get; set; }
+    [JsonProperty("follows_of_ever_count")] public int Followers { get; }
+    [JsonProperty("levels_by_ever_count")] public int Levels { get; set; }
+    [JsonProperty("likes_by_ever_count")] public int LikedAndQueuedLevels { get; set; }
 }

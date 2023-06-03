@@ -15,6 +15,7 @@ public class ApiLevelBriefResponse
         TotalPlays = level.PlaysCount;
         UniquePlays = level.UniquePlaysCount;
         Likes = level.Likes.Count();
+        Queues = level.Queues.Count();
         Difficulty = level.Difficulty;
     }
     
@@ -30,5 +31,6 @@ public class ApiLevelBriefResponse
     public int TotalPlays { get; set; }
     public int UniquePlays { get; set; }
     public int Likes { get; set; }
+    public int Queues { get; set; }
     public float Difficulty { get; set; }
 }

@@ -6,7 +6,7 @@ public enum AlbumOrderType
     ModificationDate,
     Plays,
     UniquePlays,
-    LevelsCount,
+    Levels,
     FileSize,
     Difficulty
 }

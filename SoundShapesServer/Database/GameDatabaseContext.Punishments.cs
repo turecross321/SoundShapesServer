@@ -33,10 +33,11 @@ public partial class GameDatabaseContext
         return newPunishment;
     }
 
-    public Punishment EditPunishment(Punishment punishment, GameUser recipient, ApiPunishRequest request)
+    public Punishment EditPunishment(GameUser author, Punishment punishment, GameUser recipient, ApiPunishRequest request)
     {
         _realm.Write(() =>
         {
+            punishment.Author = author;
             punishment.Recipient = recipient;
             punishment.PunishmentType = request.PunishmentType;
             punishment.Reason = request.Reason;

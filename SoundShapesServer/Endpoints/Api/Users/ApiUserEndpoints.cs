@@ -49,13 +49,13 @@ public class ApiUserEndpoints : EndpointGroup
 
         UserOrderType order = orderString switch
         {
-            "followersCount" => UserOrderType.FollowersCount,
-            "followingCount" => UserOrderType.FollowingCount,
-            "levelsCount" => UserOrderType.LevelsCount,
-            "likedLevelsCount" => UserOrderType.LikedLevelsCount,
+            "followers" => UserOrderType.Followers,
+            "following" => UserOrderType.Following,
+            "publishedLevels" => UserOrderType.PublishedLevels,
+            "likedLevels" => UserOrderType.LikedLevels,
             "creationDate" => UserOrderType.CreationDate,
-            "playedLevelsCount" => UserOrderType.PlayedLevelsCount,
-            "completedLevelsCount" => UserOrderType.CompletedLevelsCount,
+            "playedLevels" => UserOrderType.PlayedLevels,
+            "completedLevels" => UserOrderType.CompletedLevels,
             "totalDeaths" => UserOrderType.Deaths,
             "totalPlayTime" => UserOrderType.TotalPlayTime,
             _ => UserOrderType.CreationDate

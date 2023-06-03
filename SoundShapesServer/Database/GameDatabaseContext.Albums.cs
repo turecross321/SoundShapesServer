@@ -117,7 +117,7 @@ public partial class GameDatabaseContext
             AlbumOrderType.ModificationDate => OrderAlbumsByModificationDate(albums, descending),
             AlbumOrderType.Plays => OrderAlbumsByPlays(albums, descending),
             AlbumOrderType.UniquePlays => OrderAlbumsByUniquePlays(albums, descending),
-            AlbumOrderType.LevelsCount => OrderAlbumsByLevelsCount(albums, descending),
+            AlbumOrderType.Levels => OrderAlbumsByLevelsCount(albums, descending),
             AlbumOrderType.FileSize => OrderAlbumsByFileSize(albums, descending),
             AlbumOrderType.Difficulty => OrderAlbumsByDifficulty(albums, descending),
             _ => OrderAlbumsByCreationDate(albums, descending)

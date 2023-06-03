@@ -42,7 +42,7 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
         
         if (userToPunish.Id == user.Id) return HttpStatusCode.MethodNotAllowed;
 
-        Punishment editedPunishment = database.EditPunishment(punishment, userToPunish, body);
+        Punishment editedPunishment = database.EditPunishment(user, punishment, userToPunish, body);
         return new Response(new ApiPunishmentResponse(editedPunishment), ContentType.Json, HttpStatusCode.Created);
     }
 
