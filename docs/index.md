@@ -351,6 +351,7 @@ o7
 | completedLevels    |
 | totalDeaths        |
 | totalPlayTime      |
+| lastGameLogin      |
 
 ### Response: 200
 
@@ -413,19 +414,20 @@ o7
 
 ```json
 {
-  "Id": "c479afbc-84da-4b74-8077-012e3eed7aec",
-  "Username": "turecross321",
-  "PermissionsType": 0,
-  "CreationDate": "2023-05-28T16:51:17.2734067+00:00",
-  "Followers": 1,
-  "Following": 0,
-  "LikedLevels": 2,
+  "Id": "00000000-0000-0000-0000-000000000000",
+  "Username": "admin",
+  "PermissionsType": 2,
+  "CreationDate": "0001-01-01T00:00:00+00:00",
+  "LastGameLogin": "1970-01-01T00:00:00+00:00",
+  "Followers": 0,
+  "Following": 1,
+  "LikedLevels": 1,
   "QueuedLevels": 3,
-  "PublishedLevels": 3,
-  "Activities": 28,
-  "PlayedLevels": 4,
+  "PublishedLevels": 72932,
+  "Activities": 9,
+  "PlayedLevels": 0,
   "TotalDeaths": 0,
-  "TotalPlayTime": 64479
+  "TotalPlayTime": 0
 }
 ```
 
@@ -445,19 +447,20 @@ o7
 
 ```json
 {
-  "Id": "c479afbc-84da-4b74-8077-012e3eed7aec",
-  "Username": "turecross321",
-  "PermissionsType": 0,
-  "CreationDate": "2023-05-28T16:51:17.2734067+00:00",
-  "Followers": 1,
-  "Following": 0,
-  "LikedLevels": 2,
+  "Id": "00000000-0000-0000-0000-000000000000",
+  "Username": "admin",
+  "PermissionsType": 2,
+  "CreationDate": "0001-01-01T00:00:00+00:00",
+  "LastGameLogin": "1970-01-01T00:00:00+00:00",
+  "Followers": 0,
+  "Following": 1,
+  "LikedLevels": 1,
   "QueuedLevels": 3,
-  "PublishedLevels": 3,
-  "Activities": 28,
-  "PlayedLevels": 4,
+  "PublishedLevels": 72932,
+  "Activities": 9,
+  "PlayedLevels": 0,
   "TotalDeaths": 0,
-  "TotalPlayTime": 64479
+  "TotalPlayTime": 0
 }
 ```
 

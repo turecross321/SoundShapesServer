@@ -37,6 +37,8 @@ public partial class GameDatabaseContext
             }
             
             _realm.Add(session);
+            if (sessionType == SessionType.Game) 
+                user.LastGameLogin = DateTimeOffset.UtcNow;
         });
 
         _realm.Refresh();

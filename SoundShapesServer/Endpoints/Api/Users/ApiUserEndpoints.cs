@@ -58,6 +58,7 @@ public class ApiUserEndpoints : EndpointGroup
             "completedLevels" => UserOrderType.CompletedLevels,
             "totalDeaths" => UserOrderType.Deaths,
             "totalPlayTime" => UserOrderType.TotalPlayTime,
+            "lastGameLogin" => UserOrderType.LastGameLogin,
             _ => UserOrderType.CreationDate
         };
 

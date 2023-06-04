@@ -11,5 +11,6 @@ public enum UserOrderType
     CompletedLevels,
     Deaths,
     TotalPlayTime,
+    LastGameLogin,
     DoNotOrder
 }
