@@ -11,7 +11,6 @@ public static class RecentActivityHelper
             EventType.Publish => "publish",
             EventType.Follow => "follow",
             EventType.Like => "like",
-            EventType.Queue => "queued",
             _ => EventEnumToGameString(EventType.Publish)
         };
     }
