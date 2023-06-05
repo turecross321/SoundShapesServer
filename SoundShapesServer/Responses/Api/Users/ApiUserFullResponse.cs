@@ -11,6 +11,7 @@ public class ApiUserFullResponse
         PermissionsType = user.PermissionsType;
         CreationDate = user.CreationDate;
         LastGameLogin = user.LastGameLogin;
+        LastActivityDate = user.Events.Last().Date;
         Followers = user.Followers.Count();
         Following = user.Following.Count();
         LikedLevels = user.LikedLevels.Count();
@@ -27,6 +28,7 @@ public class ApiUserFullResponse
     public int PermissionsType { get; set; }
     public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset LastGameLogin { get; set; }
+    public DateTimeOffset LastActivityDate { get; set; }
     public int Followers { get; set; }
     public int Following { get; set; }
     public int LikedLevels { get; set; }
