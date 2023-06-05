@@ -105,9 +105,9 @@ public class AuthenticationEndpoints : EndpointGroup
         {
             Punishment longestBan = bans.Last();
             
-            eula = "You are banned. Expires at " + longestBan.ExpiresAt.Date 
-                                                 + ".\n" 
-                                                 + "Reason: " + longestBan.Reason;
+            eula = "You are banned.\n" +
+                   "Expires at " + longestBan.ExpiresAt.Date + ".\n" + 
+                   "Reason: \"" + longestBan.Reason + "\"";
         }
         else if (user.HasFinishedRegistration == false)
         {
