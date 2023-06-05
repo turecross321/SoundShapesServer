@@ -29,7 +29,7 @@ public class LevelRelationEndpoints : EndpointGroup
         return new Response(HttpStatusCode.NotFound);
     }
     
-    [Endpoint("/otg/~identity:{userId}/~queued:%2F~level%3A{arguments}")]
+    [GameEndpoint("~identity:{userId}/~queued:%2F~level%3A{arguments}")]
     public Response LevelQueueRequests(RequestContext context, GameDatabaseContext database, GameUser user, string arguments)
     {
         string[] argumentArray = arguments.Split("."); // This is to separate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
