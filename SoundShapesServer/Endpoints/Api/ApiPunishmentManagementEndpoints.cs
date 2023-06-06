@@ -55,7 +55,7 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
         if (punishment == null) return HttpStatusCode.NotFound;
         
         database.RevokePunishment(punishment);
-        return HttpStatusCode.OK;
+        return new Response(new ApiPunishmentResponse(punishment), ContentType.Json);
     }
     
     [ApiEndpoint("punishments")]

@@ -2590,26 +2590,26 @@ Should be a PNG
 {
   "Punishments": [
     {
-      "Id": "ed43c3e6-a4d6-4d26-ab1e-8c43fcfe2030",
+      "Id": "530f2529-b125-4b44-94e5-7d81cd3e39b7",
       "Recipient": {
-        "Id": "f6c4f990-003e-4a9a-8b83-8fee60e9775c",
-        "Username": "turecross123",
+        "Id": "c479afbc-84da-4b74-8077-012e3eed7aec",
+        "Username": "turecross321",
         "PermissionsType": 0,
-        "PublishedLevelsCount": 0,
-        "FollowersCount": 0
+        "PublishedLevels": 2,
+        "Followers": 3
       },
       "PunishmentType": 0,
-      "Reason": "Still Not Good...",
-      "Revoked": true,
+      "Reason": "GET YALLS BATT OUT OF HERE...",
+      "Revoked": false,
       "Author": {
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
-        "PublishedLevelsCount": 72961,
-        "FollowersCount": 0
+        "PublishedLevels": 72932,
+        "Followers": 1
       },
-      "CreationDate": "2023-05-15T19:13:01.052509+00:00",
-      "ExpiryDate": "2030-06-02T09:58:43.5485486+00:00",
+      "CreationDate": "2023-06-06T14:40:38.6286938+00:00",
+      "ExpiryDate": "2023-06-07T00:00:00+00:00",
       "RevokeDate": null
     }
   ],
@@ -2692,10 +2692,10 @@ Should be a PNG
 
 ```json
 {
-  "UserId": "{userId}",
+  "UserId": "c479afbc-84da-4b74-8077-012e3eed7aec",
   "PunishmentType": 0,
-  "Reason": "Still Not Good...",
-  "ExpiryDate": "2030-06-02T09:58:43.5485486+00:00"
+  "Reason": "GET YALLS BATT OUT OF HERE... PLEASE!",
+  "ExpiryDate": "2023-06-08"
 }
 ```
 
@@ -2703,26 +2703,27 @@ Should be a PNG
 
 ```json
 {
-  "Id": "0d14c242-ff0e-4db2-b8c4-3bdd2d36bb4c",
+  "Id": "530f2529-b125-4b44-94e5-7d81cd3e39b7",
   "Recipient": {
     "Id": "c479afbc-84da-4b74-8077-012e3eed7aec",
     "Username": "turecross321",
     "PermissionsType": 0,
-    "PublishedLevels": 3,
-    "Followers": 1
+    "PublishedLevels": 2,
+    "Followers": 3
   },
   "PunishmentType": 0,
-  "Reason": "STILL NOT GOOD...",
+  "Reason": "GET YALLS BATT OUT OF HERE... PLEASE!",
   "Revoked": false,
   "Author": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
     "PublishedLevels": 72932,
-    "Followers": 0
+    "Followers": 1
   },
-  "CreationDate": "2023-06-03T13:08:16.5167122+00:00",
-  "ExpiryDate": "2023-06-04T22:00:00+00:00"
+  "CreationDate": "2023-06-06T14:40:38.6286938+00:00",
+  "ExpiryDate": "2023-06-07T22:00:00+00:00",
+  "RevokeDate": null
 }
 ```
 
@@ -2741,7 +2742,29 @@ Should be a PNG
 ### Response: 200
 
 ```json
-
+{
+  "Id": "530f2529-b125-4b44-94e5-7d81cd3e39b7",
+  "Recipient": {
+    "Id": "c479afbc-84da-4b74-8077-012e3eed7aec",
+    "Username": "turecross321",
+    "PermissionsType": 0,
+    "PublishedLevels": 2,
+    "Followers": 3
+  },
+  "PunishmentType": 0,
+  "Reason": "GET YALLS BATT OUT OF HERE... PLEASE!",
+  "Revoked": true,
+  "Author": {
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "PublishedLevels": 72932,
+    "Followers": 1
+  },
+  "CreationDate": "2023-06-06T14:40:38.6286938+00:00",
+  "ExpiryDate": "2023-06-07T22:00:00+00:00",
+  "RevokeDate": "2023-06-06T14:58:40.0585106+00:00"
+}
 ```
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
