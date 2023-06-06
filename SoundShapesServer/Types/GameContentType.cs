@@ -3,15 +3,15 @@ namespace SoundShapesServer.Types;
 
 public enum GameContentType
 {
-    Identity = 0,
+    User = 0,
     Level = 1,
-    Album = 2,
-    Activity = 3,
-    Alias = 4,
+    Event = 2,
+    Album = 3,
+    RemovedLevelAuthor = 4, // Type that is assigned to the Author UserResponse when the author's level has been removed 
     Like = 5,
     Queued = 6,
     Follow = 7,
     Link = 8,
     Version = 9,
-    Upload = 10
+    PublishedLevel = 10 // Game gets when it just published a level
 }

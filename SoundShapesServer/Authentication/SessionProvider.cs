@@ -42,7 +42,7 @@ public class SessionProvider : IAuthenticationProvider<GameUser, GameSession>
         GameSession? session = database.GetSessionWithSessionId(sessionId);
         if (session == null) return null;
 
-        if (session.ExpiresAt < DateTimeOffset.UtcNow)
+        if (session.ExpiryDate < DateTimeOffset.UtcNow)
         {
             database.RemoveSession(session);
             return null;

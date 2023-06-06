@@ -2,6 +2,6 @@ namespace SoundShapesServer.Types.Punishments;
 
 public enum PunishmentOrderType
 {
-    Issued
+    CreationDate
     // TODO: add expires and allat shit
 }

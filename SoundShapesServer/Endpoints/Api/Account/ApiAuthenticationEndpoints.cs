@@ -19,7 +19,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 {
     private readonly Response _invalidCredentialsResponse = new ("The email address or password was incorrect.", ContentType.Plaintext, HttpStatusCode.Forbidden);
     
-    [ApiEndpoint("account/login", Method.Post)]
+    [ApiEndpoint("account/logIn", Method.Post)]
     [Authentication(false)]
     public Response Login(RequestContext context, GameDatabaseContext database, ApiLoginRequest body)
     {
@@ -35,7 +35,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         return new Response(new ApiSessionResponse(session, activeBans), ContentType.Json);
     }
 
-    [ApiEndpoint("account/logout", Method.Post)]
+    [ApiEndpoint("account/logOut", Method.Post)]
     public Response Logout(RequestContext context, GameDatabaseContext database, GameSession session)
     {
         database.RemoveSession(session);

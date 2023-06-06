@@ -8,17 +8,17 @@ public static class ContentHelper
     {
         return contentType switch
         {
-            GameContentType.Identity => "identity",
+            GameContentType.User => "identity",
             GameContentType.Level => "level",
             GameContentType.Album => "album",
-            GameContentType.Upload => "upload",
-            GameContentType.Alias => "alias",
+            GameContentType.PublishedLevel => "upload",
+            GameContentType.RemovedLevelAuthor => "alias",
             GameContentType.Like => "like",
             GameContentType.Queued => "queued",
             GameContentType.Follow => "follow",
             GameContentType.Link => "link",
             GameContentType.Version => "version",
-            GameContentType.Activity => "activity",
+            GameContentType.Event => "activity",
             _ => throw new ArgumentOutOfRangeException()
         };
     }

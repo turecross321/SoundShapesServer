@@ -16,7 +16,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 38;
+    protected override ulong SchemaVersion => 40;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -69,7 +69,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             dynamic oldSession = oldSessions.ElementAt(i);
             GameSession newSession = newSessions.ElementAt(i);
 
-            if (oldVersion < 36)
+            if (oldVersion < 40)
             {
                 migration.NewRealm.Remove(newSession);
             }
@@ -136,6 +136,13 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             {
                 newPunishment._PunishmentType = (int)oldPunishment.PunishmentType;
             }
+            
+            if (oldVersion < 40)
+            {
+                newPunishment.CreationDate = (DateTimeOffset)oldPunishment.IssuedAt;
+                newPunishment.ExpiryDate = (DateTimeOffset)oldPunishment.ExpiresAt;
+                newPunishment.RevokeDate = (DateTimeOffset)oldPunishment.RevokedAt;
+            }
         }
         
         IQueryable<dynamic> oldReports = migration.OldRealm.DynamicApi.All("Report");
@@ -149,6 +156,13 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             {
                 newReport._ContentType = (int)oldReport.ContentType;
                 newReport._ReasonType = (int)oldReport.ReasonType;
+            }
+
+            if (oldVersion < 40)
+            {
+                string authorId = (string)oldReport.Issuer.Id;
+                newReport.Author = migration.NewRealm.All<GameUser>().First(u => u.Id == authorId);
+                newReport.CreationDate = (DateTimeOffset)oldReport.Date;
             }
         }
     }

@@ -10,13 +10,13 @@ public class ApiSessionResponse
     public ApiSessionResponse(GameSession session, IEnumerable<Punishment> activePunishments)
     {
         Id = session.Id;
-        ExpiresAt = session.ExpiresAt;
+        ExpiryDate = session.ExpiryDate;
         User = new ApiUserBriefResponse(session.User);
         ActivePunishments = activePunishments.Select(p => new ApiPunishmentResponse(p)).ToArray();
     }
 
     public string Id { get; }
-    public DateTimeOffset ExpiresAt { get; }
+    public DateTimeOffset ExpiryDate { get; }
     public ApiUserBriefResponse User { get; set; }
     public ApiPunishmentResponse[] ActivePunishments { get; set; }
 }

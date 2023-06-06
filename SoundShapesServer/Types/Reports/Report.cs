@@ -2,6 +2,7 @@ using Realms;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
+#pragma warning disable CS8618
 
 namespace SoundShapesServer.Types.Reports;
 
@@ -29,6 +30,6 @@ public class Report : RealmObject
         get => (ReportReasonType)_ReasonType;
         set => _ReasonType = (int)value;
     }
-    public DateTimeOffset Date { get; init; }
-    public GameUser Issuer { get; init; } = new();
+    public DateTimeOffset CreationDate { get; set; }
+    public GameUser Author { get; set; }
 }

@@ -44,13 +44,13 @@ public partial class GameDatabaseContext
         Report report = new()
         {
             Id = GenerateGuid(),            
-            Issuer = reporter,
+            Author = reporter,
             ContentType = contentType,
             ContentUser = contentUser,
             ContentLevel = contentLevel,
             ContentLeaderboardEntry = contentLeaderboardEntry,
             ReasonType = reportReasonType,
-            Date = DateTimeOffset.UtcNow
+            CreationDate = DateTimeOffset.UtcNow
         };
         
         _realm.Write(() =>
@@ -119,8 +119,8 @@ public partial class GameDatabaseContext
     
     private static IQueryable<Report> OrderReportsByDate(IQueryable<Report> reports, bool descending)
     {
-        if (descending) return reports.OrderByDescending(r => r.Date);
-        return reports.OrderBy(r => r.Date);
+        if (descending) return reports.OrderByDescending(r => r.CreationDate);
+        return reports.OrderBy(r => r.CreationDate);
     }
     
     #endregion

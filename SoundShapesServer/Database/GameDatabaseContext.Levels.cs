@@ -41,7 +41,6 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             level.Name = AdhereToLevelNameCharacterLimit(updatedPublishLevel.Name);
-            level.Language = updatedPublishLevel.Language;
             level.ModificationDate = DateTimeOffset.UtcNow;
         });
 

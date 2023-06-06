@@ -1,14 +1,8 @@
+#pragma warning disable CS8618
 namespace SoundShapesServer.Requests.Api;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ApiEditLevelRequest
 {
-    public ApiEditLevelRequest(int language, string name)
-    {
-        Language = language;
-        Name = name;
-    }
-
     public string Name { get; set; }
-    public int Language { get; }
 }

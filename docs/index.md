@@ -17,7 +17,7 @@ Date is always UTC, and is always formatted like `YYYY-MM-DD`.
 | [/leaderboard](#Leaderboard)     |
 | [/daily](#Daily)                 |
 | [/news](#News)                   |
-| [/events](#Events)       |
+| [/events](#Events)               |
 | [/reports](#Reports)             |
 | [/punishments](#Punishments)     |
 | [/communityTabs](#CommunityTabs) |
@@ -31,7 +31,7 @@ Date is always UTC, and is always formatted like `YYYY-MM-DD`.
 ### Method: POST
 
 > ```
-> {ip}/api/v1/account/login
+> {ip}/api/v1/account/logIn
 > ```
 
 ### Body (**raw**)
@@ -47,14 +47,14 @@ Date is always UTC, and is always formatted like `YYYY-MM-DD`.
 
 ```json
 {
-  "Id": "d9067897-25e0-48d9-9215-cfd75d914ec0",
-  "ExpiresAt": "2023-06-04T15:58:07.5276544+00:00",
+  "Id": "4aaa94e7-0728-44b7-8bc8-d534a7047c9d",
+  "ExpiryDate": "2023-06-07T13:52:14.8652596+00:00",
   "User": {
-    "Id": "c479afbc-84da-4b74-8077-012e3eed7aec",
-    "Username": "turecross321",
-    "PermissionsType": 0,
-    "PublishedLevels": 3,
-    "Followers": 2
+    "Id": "00000000-0000-0000-0000-000000000000",
+    "Username": "admin",
+    "PermissionsType": 2,
+    "PublishedLevels": 72932,
+    "Followers": 1
   },
   "ActivePunishments": []
 }
@@ -67,7 +67,7 @@ Date is always UTC, and is always formatted like `YYYY-MM-DD`.
 ### Method: POST
 
 > ```
-> {ip}/api/v1/account/logout
+> {ip}/api/v1/account/logOut
 > ```
 
 ### Response: 200
@@ -414,21 +414,21 @@ o7
 
 ```json
 {
-  "Id": "00000000-0000-0000-0000-000000000000",
-  "Username": "admin",
-  "PermissionsType": 2,
-  "CreationDate": "0001-01-01T00:00:00+00:00",
-  "LastGameLogin": "1970-01-01T00:00:00+00:00",
-  "LastEventDate": "2023-06-03T22:16:28.4601439+00:00",
+  "Id": "d95980b4-ba6b-4c68-93ca-1a2c710ef419",
+  "Username": "jvyden420",
+  "PermissionsType": 0,
+  "CreationDate": "2023-05-29T23:37:42.4915544+00:00",
+  "LastGameLogin": "2023-05-29T23:38:22.6324251+00:00",
+  "LastEventDate": "2023-05-29T23:50:01.4971192+00:00",
   "Followers": 0,
-  "Following": 1,
-  "LikedLevels": 1,
-  "QueuedLevels": 3,
-  "PublishedLevels": 72932,
+  "Following": 0,
+  "LikedLevels": 0,
+  "QueuedLevels": 0,
+  "PublishedLevels": 0,
   "Events": 9,
-  "PlayedLevels": 0,
-  "TotalDeaths": 0,
-  "TotalPlayTime": 0
+  "PlayedLevels": 2,
+  "TotalDeaths": 8,
+  "TotalPlayTime": 132128
 }
 ```
 
@@ -448,21 +448,21 @@ o7
 
 ```json
 {
-  "Id": "00000000-0000-0000-0000-000000000000",
-  "Username": "admin",
-  "PermissionsType": 2,
-  "CreationDate": "0001-01-01T00:00:00+00:00",
-  "LastGameLogin": "1970-01-01T00:00:00+00:00",
-  "LastEventDate": "2023-06-03T22:16:28.4601439+00:00",
+  "Id": "d95980b4-ba6b-4c68-93ca-1a2c710ef419",
+  "Username": "jvyden420",
+  "PermissionsType": 0,
+  "CreationDate": "2023-05-29T23:37:42.4915544+00:00",
+  "LastGameLogin": "2023-05-29T23:38:22.6324251+00:00",
+  "LastEventDate": "2023-05-29T23:50:01.4971192+00:00",
   "Followers": 0,
-  "Following": 1,
-  "LikedLevels": 1,
-  "QueuedLevels": 3,
-  "PublishedLevels": 72932,
+  "Following": 0,
+  "LikedLevels": 0,
+  "QueuedLevels": 0,
+  "PublishedLevels": 0,
   "Events": 9,
-  "PlayedLevels": 0,
-  "TotalDeaths": 0,
-  "TotalPlayTime": 0
+  "PlayedLevels": 2,
+  "TotalDeaths": 8,
+  "TotalPlayTime": 132128
 }
 ```
 
@@ -984,8 +984,7 @@ x�ݝ[���
 
 ```json
 {
-  "Name": "This is an updated level name",
-  "Language": 4
+  "Name": "This is an updated level name"
 }
 ```
 
@@ -2438,7 +2437,7 @@ Should be a PNG
       "ContentType": 1,
       "ReasonType": 1,
       "Date": "2023-06-03T13:05:58.8086011+00:00",
-      "Issuer": {
+      "Author": {
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
@@ -2489,7 +2488,7 @@ Should be a PNG
   "ContentType": 1,
   "ReasonType": 1,
   "Date": "2023-06-03T13:05:58.8086011+00:00",
-  "Issuer": {
+  "Author": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
@@ -2609,8 +2608,9 @@ Should be a PNG
         "PublishedLevelsCount": 72961,
         "FollowersCount": 0
       },
-      "IssuedAt": "2023-05-15T19:13:01.052509+00:00",
-      "ExpiresAt": "2030-06-02T09:58:43.5485486+00:00"
+      "CreationDate": "2023-05-15T19:13:01.052509+00:00",
+      "ExpiryDate": "2030-06-02T09:58:43.5485486+00:00",
+      "RevokeDate": null
     }
   ],
   "Count": 1
@@ -2639,8 +2639,8 @@ Should be a PNG
 {
   "UserId": "{userId}",
   "PunishmentType": 0,
-  "Reason": "NOT GOOD...",
-  "ExpiresAt": "2023-06-05"
+  "Reason": "GET YALLS BATT OUT OF HERE...",
+  "ExpiryDate": "2023-06-07"
 }
 ```
 
@@ -2648,26 +2648,27 @@ Should be a PNG
 
 ```json
 {
-  "Id": "0d14c242-ff0e-4db2-b8c4-3bdd2d36bb4c",
+  "Id": "530f2529-b125-4b44-94e5-7d81cd3e39b7",
   "Recipient": {
     "Id": "c479afbc-84da-4b74-8077-012e3eed7aec",
     "Username": "turecross321",
     "PermissionsType": 0,
-    "PublishedLevels": 3,
-    "Followers": 1
+    "PublishedLevels": 2,
+    "Followers": 3
   },
   "PunishmentType": 0,
-  "Reason": "NOT GOOD...",
+  "Reason": "GET YALLS BATT OUT OF HERE...",
   "Revoked": false,
   "Author": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
     "PublishedLevels": 72932,
-    "Followers": 0
+    "Followers": 1
   },
-  "IssuedAt": "2023-06-03T13:08:16.5167122+00:00",
-  "ExpiresAt": "2023-06-04T22:00:00+00:00"
+  "CreationDate": "2023-06-06T14:40:38.6286938+00:00",
+  "ExpiryDate": "2023-06-07T00:00:00+00:00",
+  "RevokeDate": null
 }
 ```
 
@@ -2694,7 +2695,7 @@ Should be a PNG
   "UserId": "{userId}",
   "PunishmentType": 0,
   "Reason": "Still Not Good...",
-  "ExpiresAt": "2030-06-02T09:58:43.5485486+00:00"
+  "ExpiryDate": "2030-06-02T09:58:43.5485486+00:00"
 }
 ```
 
@@ -2720,8 +2721,8 @@ Should be a PNG
     "PublishedLevels": 72932,
     "Followers": 0
   },
-  "IssuedAt": "2023-06-03T13:08:16.5167122+00:00",
-  "ExpiresAt": "2023-06-04T22:00:00+00:00"
+  "CreationDate": "2023-06-03T13:08:16.5167122+00:00",
+  "ExpiryDate": "2023-06-04T22:00:00+00:00"
 }
 ```
 
@@ -2755,29 +2756,70 @@ Should be a PNG
 > {ip}/api/v1/communityTabs
 > ```
 
+| Value | Content Type |
+| ----- | ------------ |
+| 0     | Users        |
+| 1     | Levels       |
+| 2     | Events       |
+
 ### Response: 200
 
 ```json
 {
   "CommunityTabs": [
     {
-      "Id": "89c70faf-f45a-4679-8d83-7d7e267ae82b",
-      "Title": "Wacha Wam",
-      "Description": "This Sh*t is what it's all about. Check this out...",
-      "ButtonLabel": "GOOD SHIT",
-      "Query": "orderBy=totalScreens&hasExplodingCar=true",
+      "Id": "0c208c04-33d4-4703-a878-6d6aed107f1a",
+      "ContentType": 0,
+      "Title": "User Example",
+      "Description": "Users!",
+      "ButtonLabel": "User Example",
+      "Query": "orderBy=lastGameLogin",
       "Author": {
         "Id": "00000000-0000-0000-0000-000000000000",
         "Username": "admin",
         "PermissionsType": 2,
         "PublishedLevels": 72932,
-        "Followers": 0
+        "Followers": 1
       },
-      "CreationDate": "2023-05-26T14:14:48.6946975+00:00",
-      "ModificationDate": "2023-05-26T14:17:54.1203037+00:00"
+      "CreationDate": "2023-05-28T21:00:08.9981183+00:00",
+      "ModificationDate": "2023-05-28T21:00:08.9981833+00:00"
+    },
+    {
+      "Id": "8614e7ba-f3c8-4794-89e0-b583f2924373",
+      "ContentType": 1,
+      "Title": "Level Example",
+      "Description": "Levels!",
+      "ButtonLabel": "Level Example",
+      "Query": "orderBy=fileSize",
+      "Author": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "PublishedLevels": 72932,
+        "Followers": 1
+      },
+      "CreationDate": "2023-05-28T21:02:35.8707509+00:00",
+      "ModificationDate": "2023-05-28T21:02:35.8707512+00:00"
+    },
+    {
+      "Id": "e7f24386-4b12-4a33-b9c2-10237a329f92",
+      "ContentType": 2,
+      "Title": "Event Example",
+      "Description": "Events!",
+      "ButtonLabel": "Event Example",
+      "Query": "eventTypes=0",
+      "Author": {
+        "Id": "00000000-0000-0000-0000-000000000000",
+        "Username": "admin",
+        "PermissionsType": 2,
+        "PublishedLevels": 72932,
+        "Followers": 1
+      },
+      "CreationDate": "2023-05-28T23:11:44.7594895+00:00",
+      "ModificationDate": "2023-05-28T23:11:44.7595407+00:00"
     }
   ],
-  "Count": 1
+  "Count": 3
 }
 ```
 
@@ -2791,24 +2833,31 @@ Should be a PNG
 > {ip}/api/v1/communityTabs/id/{communityTabId}
 > ```
 
+| Value | Content Type |
+| ----- | ------------ |
+| 0     | Users        |
+| 1     | Levels       |
+| 2     | Events       |
+
 ### Response: 200
 
 ```json
 {
-  "Id": "89c70faf-f45a-4679-8d83-7d7e267ae82b",
-  "Title": "Wacha Wam",
-  "Description": "This Sh*t is what it's all about. Check this out...",
-  "ButtonLabel": "GOOD SHIT",
-  "Query": "orderBy=totalScreens&hasExplodingCar=true",
+  "Id": "e7f24386-4b12-4a33-b9c2-10237a329f92",
+  "ContentType": 2,
+  "Title": "Event Example",
+  "Description": "Events!",
+  "ButtonLabel": "Event Example",
+  "Query": "eventTypes=0",
   "Author": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
     "PublishedLevels": 72932,
-    "Followers": 0
+    "Followers": 1
   },
-  "CreationDate": "2023-05-26T14:14:48.6946975+00:00",
-  "ModificationDate": "2023-05-26T14:17:54.1203037+00:00"
+  "CreationDate": "2023-05-28T23:11:44.7594895+00:00",
+  "ModificationDate": "2023-05-28T23:11:44.7595407+00:00"
 }
 ```
 
@@ -2824,12 +2873,19 @@ Should be a PNG
 > {ip}/api/v1/communityTabs/create
 > ```
 
-### Note: The Query Parameter should contain `levels` parameters.
+| Value | Content Type |
+| ----- | ------------ |
+| 0     | Users        |
+| 1     | Levels       |
+| 2     | Events       |
+
+## Note: Both API and game query works, but it's recomended that you use API query.
 
 ### Body (**raw**)
 
 ```json
 {
+  "ContentType": 1,
   "ButtonLabel": "GOOD SHIT",
   "Title": "Wacha Wam",
   "Description": "This Sh*t is what it's all about. Check this out...",
@@ -2841,7 +2897,8 @@ Should be a PNG
 
 ```json
 {
-  "Id": "89c70faf-f45a-4679-8d83-7d7e267ae82b",
+  "Id": "54e0bcc3-9e30-420a-b9a0-90b1d74f39d2",
+  "ContentType": 1,
   "Title": "Wacha Wam",
   "Description": "This Sh*t is what it's all about. Check this out...",
   "ButtonLabel": "GOOD SHIT",
@@ -2851,10 +2908,10 @@ Should be a PNG
     "Username": "admin",
     "PermissionsType": 2,
     "PublishedLevels": 72932,
-    "Followers": 0
+    "Followers": 1
   },
-  "CreationDate": "2023-05-26T14:14:48.6946975+00:00",
-  "ModificationDate": "2023-05-26T14:14:48.6946975+00:00"
+  "CreationDate": "2023-06-06T14:52:32.9890583+00:00",
+  "ModificationDate": "2023-06-06T14:52:32.989151+00:00"
 }
 ```
 
@@ -2874,10 +2931,11 @@ Should be a PNG
 
 ```json
 {
-  "ButtonLabel": "EXTREMELY GOOD SHIT",
-  "Title": "Kacha Wacha Wam Bam",
-  "Description": "This Sh*t is what everyone's talking about. Check this out...",
-  "Query": "orderBy=totalScreens&scaleIndex=2"
+  "ContentType": 1,
+  "ButtonLabel": "VERY GOOD SHIT",
+  "Title": "Wacha Wam BAM KACHAM",
+  "Description": "This Sh*t is what they're all talking about. Check this out...",
+  "Query": "orderBy=totalScreens&hasExplodingCar=true"
 }
 ```
 
@@ -2885,20 +2943,21 @@ Should be a PNG
 
 ```json
 {
-  "Id": "89c70faf-f45a-4679-8d83-7d7e267ae82b",
-  "Title": "Kacha Wacha Wam Bam",
-  "Description": "This Sh*t is what everyone's talking about. Check this out...",
-  "ButtonLabel": "EXTREMELY GOOD SHIT",
-  "Query": "orderBy=totalScreens&scaleIndex=2",
+  "Id": "54e0bcc3-9e30-420a-b9a0-90b1d74f39d2",
+  "ContentType": 1,
+  "Title": "Wacha Wam BAM KACHAM",
+  "Description": "This Sh*t is what they're all talking about. Check this out...",
+  "ButtonLabel": "VERY GOOD SHIT",
+  "Query": "orderBy=totalScreens&hasExplodingCar=true",
   "Author": {
     "Id": "00000000-0000-0000-0000-000000000000",
     "Username": "admin",
     "PermissionsType": 2,
     "PublishedLevels": 72932,
-    "Followers": 0
+    "Followers": 1
   },
-  "CreationDate": "2023-05-26T14:14:48.6946975+00:00",
-  "ModificationDate": "2023-05-26T14:34:10.2373146+00:00"
+  "CreationDate": "2023-06-06T14:52:32.9890583+00:00",
+  "ModificationDate": "2023-06-06T14:53:21.1224357+00:00"
 }
 ```
 

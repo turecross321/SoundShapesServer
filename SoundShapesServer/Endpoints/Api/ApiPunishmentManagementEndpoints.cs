@@ -10,12 +10,12 @@ using SoundShapesServer.Responses.Api.Moderation;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Endpoints.Api.Moderation;
+namespace SoundShapesServer.Endpoints.Api;
 
 public class ApiPunishmentManagementEndpoints : EndpointGroup
 {
     [ApiEndpoint("punishments/create", Method.Post)]
-    public Response PunishUser(RequestContext context, GameDatabaseContext database, GameUser user, ApiPunishRequest body)
+    public Response CreatePunishment(RequestContext context, GameDatabaseContext database, GameUser user, ApiPunishRequest body)
     {
         if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
 
@@ -83,7 +83,7 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
         bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
 
         PunishmentFilters filters = new (author, recipient, revoked);
-        (Punishment[] punishments, int totalPunishments) = database.GetPunishments(PunishmentOrderType.Issued, descending, filters, from, count);
+        (Punishment[] punishments, int totalPunishments) = database.GetPunishments(PunishmentOrderType.CreationDate, descending, filters, from, count);
 
         return new ApiPunishmentsWrapper(punishments, totalPunishments);
     }

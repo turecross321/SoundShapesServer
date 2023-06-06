@@ -45,7 +45,7 @@ public class EventResponse
     
     [JsonProperty("actor")] public UserTargetResponse Actor { get; set; }
     
-    [JsonProperty("type")] public string Type = ContentHelper.GetContentTypeString(GameContentType.Activity);
+    [JsonProperty("type")] public string Type = ContentHelper.GetContentTypeString(GameContentType.Event);
     [JsonProperty("object")] public object? Content { get; set; }
     [JsonProperty("verb")] public string EventType { get; set; }
     [JsonProperty("timestamp")] public string Timestamp { get; set; }

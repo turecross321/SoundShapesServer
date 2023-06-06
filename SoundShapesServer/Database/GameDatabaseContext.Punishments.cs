@@ -7,7 +7,7 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public Punishment CreatePunishment(GameUser issuer, GameUser recipient, ApiPunishRequest request)
+    public Punishment CreatePunishment(GameUser author, GameUser recipient, ApiPunishRequest request)
     {
         if (request.PunishmentType == PunishmentType.Ban)
         {
@@ -20,9 +20,9 @@ public partial class GameDatabaseContext
             PunishmentType = request.PunishmentType,
             Recipient = recipient,
             Reason = request.Reason,
-            ExpiresAt = request.ExpiresAt,
-            IssuedAt = DateTimeOffset.UtcNow,
-            Author = issuer
+            ExpiryDate = request.ExpiryDate,
+            CreationDate = DateTimeOffset.UtcNow,
+            Author = author
         };
         
         _realm.Write(() =>
@@ -41,7 +41,7 @@ public partial class GameDatabaseContext
             punishment.Recipient = recipient;
             punishment.PunishmentType = request.PunishmentType;
             punishment.Reason = request.Reason;
-            punishment.ExpiresAt = request.ExpiresAt;
+            punishment.ExpiryDate = request.ExpiryDate;
         });
 
         return punishment;
@@ -52,6 +52,7 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             punishment.Revoked = true;
+            punishment.RevokeDate = DateTimeOffset.UtcNow;
         });
     }
     
@@ -98,14 +99,14 @@ public partial class GameDatabaseContext
     {
         return order switch
         {
-            PunishmentOrderType.Issued => OrderPunishmentsByDate(punishments, descending),
+            PunishmentOrderType.CreationDate => OrderPunishmentsByCreationDate(punishments, descending),
             _ => punishments
         };
     }
     
-    private static IQueryable<Punishment> OrderPunishmentsByDate(IQueryable<Punishment> punishments, bool descending)
+    private static IQueryable<Punishment> OrderPunishmentsByCreationDate(IQueryable<Punishment> punishments, bool descending)
     {
-        if (descending) return punishments.OrderByDescending(p => p.IssuedAt);
-        return punishments.OrderBy(p => p.IssuedAt);
+        if (descending) return punishments.OrderByDescending(p => p.CreationDate);
+        return punishments.OrderBy(p => p.CreationDate);
     }
 }

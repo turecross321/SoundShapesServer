@@ -70,7 +70,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
         database.RemoveSession(session);
         
         if (!user.HasFinishedRegistration)
-            return SendPasswordSession(context, database, new ApiPasswordSessionRequest(body.NewEmail), emailService);
+            return SendPasswordSession(context, database, new ApiPasswordSessionRequest {Email = body.NewEmail}, emailService);
 
         return HttpStatusCode.Created;
     }

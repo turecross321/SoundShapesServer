@@ -11,7 +11,7 @@ public class UserTargetResponse
     {
         if (user == null)
         {
-            Type = ContentHelper.GetContentTypeString(GameContentType.Alias);
+            Type = ContentHelper.GetContentTypeString(GameContentType.RemovedLevelAuthor);
         }
         
         Id = IdFormatter.FormatUserId(user?.Id ?? "");
@@ -27,7 +27,7 @@ public class UserTargetResponse
     }
 
     [JsonProperty("id")] public string Id { get; set; }
-    [JsonProperty("type")] public string Type { get; set; } = ContentHelper.GetContentTypeString(GameContentType.Identity);
+    [JsonProperty("type")] public string Type { get; set; } = ContentHelper.GetContentTypeString(GameContentType.User);
 
     [JsonProperty("displayName")] public string DisplayName { get; set; }
 

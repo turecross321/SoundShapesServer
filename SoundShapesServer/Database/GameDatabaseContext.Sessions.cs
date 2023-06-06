@@ -21,7 +21,7 @@ public partial class GameDatabaseContext
             SessionType = sessionType,
             PlatformType = platformType,
             Ip = ip,
-            ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(sessionExpirationSeconds)
+            ExpiryDate = DateTimeOffset.UtcNow.AddSeconds(sessionExpirationSeconds)
         };
 
         IEnumerable<GameSession> sessionsToDelete = _realm.All<GameSession>()

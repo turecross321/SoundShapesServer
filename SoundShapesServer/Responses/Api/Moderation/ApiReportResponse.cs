@@ -19,8 +19,8 @@ public class ApiReportResponse
             ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(report.ContentLeaderboardEntry, database.GetLeaderboardEntryPosition(report.ContentLeaderboardEntry));
         ContentType = report.ContentType;
         ReasonType = report.ReasonType;
-        Date = report.Date;
-        Issuer = new ApiUserBriefResponse(report.Issuer);
+        CreationDate = report.CreationDate;
+        Author = new ApiUserBriefResponse(report.Author);
     }
 
     public string Id { get; set; }
@@ -30,6 +30,6 @@ public class ApiReportResponse
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLeaderboardEntryResponse? ContentLeaderboardEntry { get; set; }
     public ReportContentType ContentType { get; set; }
     public ReportReasonType ReasonType { get; set; }
-    public DateTimeOffset Date { get; set; }
-    public ApiUserBriefResponse Issuer { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
+    public ApiUserBriefResponse Author { get; set; }
 }

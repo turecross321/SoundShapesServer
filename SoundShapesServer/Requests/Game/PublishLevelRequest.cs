@@ -23,7 +23,6 @@ public class PublishLevelRequest
     public PublishLevelRequest(ApiEditLevelRequest request)
     {
         Name = request.Name;
-        Language = request.Language;
     }
 
     public string Name { get; set; }
