@@ -1,20 +1,19 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Responses.Game.Following;
+namespace SoundShapesServer.Responses.Game.Users;
 
-public class FollowingUserResponse
+public class UserBriefResponse
 {
-    public FollowingUserResponse(GameUser follower, GameUser recipient)
+    public UserBriefResponse(GameUser follower, GameUser recipient)
     {
         Id = IdFormatter.FormatFollowId(follower.Id, recipient.Id);
-        User = new UserResponse(recipient);
+        UserTarget = new UserTargetResponse(recipient);
     }
 
     [JsonProperty("id")] public string Id { get; set; }
     [JsonProperty("type")] public string Type { get; } = ContentHelper.GetContentTypeString(GameContentType.Follow);
-    [JsonProperty("target")] public UserResponse User { get; set; }
+    [JsonProperty("target")] public UserTargetResponse UserTarget { get; set; }
 }

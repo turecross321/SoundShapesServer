@@ -12,7 +12,7 @@ using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Endpoints.Game.Albums;
+namespace SoundShapesServer.Endpoints.Game;
 
 public class AlbumEndpoints : EndpointGroup
 {

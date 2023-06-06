@@ -10,7 +10,7 @@ public class LevelPublishResponse
     public LevelPublishResponse(GameLevel level)
     {
         Id = IdFormatter.FormatLevelPublishId(level.Id, level.CreationDate.ToUnixTimeMilliseconds());
-        Author = new UserResponse(level.Author);
+        Author = new UserTargetResponse(level.Author);
         Title = level.Name;
         Dependencies = new List<string>();
         Visibility = "EVERYONE";
@@ -21,7 +21,7 @@ public class LevelPublishResponse
 
     [JsonProperty("id")] public string Id { get; set; }
     [JsonProperty("type")] public string Type = ContentHelper.GetContentTypeString(GameContentType.Upload);
-    [JsonProperty("author")] public UserResponse Author { get; set; }
+    [JsonProperty("author")] public UserTargetResponse Author { get; set; }
     [JsonProperty("title")] public string Title { get; set; }
     [JsonProperty("dependencies")] public IList<string> Dependencies { get; set; }
     [JsonProperty("visibility")] public string Visibility { get; set; }

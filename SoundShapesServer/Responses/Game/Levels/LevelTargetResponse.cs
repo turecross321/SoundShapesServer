@@ -13,7 +13,7 @@ public class LevelTargetResponse
     public LevelTargetResponse(GameLevel level, GameUser user)
     {
         Id = FormatLevelId(level.Id);
-        Author = new UserResponse(level.Author);
+        Author = new UserTargetResponse(level.Author);
         LatestVersion = new LevelVersionResponse(level);
         Completed = level.UniqueCompletions.Contains(user);
         Liked = level.Likes.AsEnumerable().Select(r=>r.User).Contains(user);
@@ -21,7 +21,7 @@ public class LevelTargetResponse
     }
 
     [JsonProperty("id")] public string Id { get; }
-    [JsonProperty("author")] public UserResponse Author { get;  }
+    [JsonProperty("author")] public UserTargetResponse Author { get;  }
     [JsonProperty("latestVersion", NullValueHandling = NullValueHandling.Ignore)] public LevelVersionResponse LatestVersion { get; }
     [JsonProperty("type")] public string Type = ContentHelper.GetContentTypeString(GameContentType.Level);
     [JsonProperty("completed")] public bool Completed { get; }

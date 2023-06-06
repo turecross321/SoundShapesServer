@@ -37,8 +37,10 @@ public static class ResourceHelper
     public static FileType GetFileTypeFromFilePart(FilePart file)
     {
         if (file.ContentType == "image/png") return FileType.Image;
+        // ReSharper disable StringLiteralTypo
         if (file.ContentType == "application/vnd.soundshapes.level") return FileType.Level;
         if (file.ContentType == "application/vnd.soundshapes.sound") return FileType.Sound;
+        // ReSharper restore StringLiteralTypo
             
         return FileType.Unknown;
     }
@@ -80,14 +82,14 @@ public static class ResourceHelper
         return HashFile(bytes);
     }
 
-    public static string HashFile(byte[] file)
+    private static string HashFile(byte[] file)
     {
         using SHA512 hash = SHA512.Create();
         byte[] hashedInputBytes = hash.ComputeHash(file);
 
         // Convert to text
         // StringBuilder Capacity is 128, because 512 bits / 8 bits in byte * 2 symbols for byte 
-        StringBuilder hashedInputStringBuilder = new StringBuilder(128);
+        StringBuilder hashedInputStringBuilder = new (128);
         foreach (byte b in hashedInputBytes)
             hashedInputStringBuilder.Append(b.ToString("X2"));
         return hashedInputStringBuilder.ToString();
@@ -112,7 +114,8 @@ public static class ResourceHelper
             FileType.Level => path + "-level",
             FileType.Image => path + "-thumbnail",
             FileType.Sound => path + "-sound",
-            _ => throw new ArgumentOutOfRangeException()
+            FileType.Unknown => throw new ArgumentOutOfRangeException(nameof(fileType), fileType, null),
+            _ => throw new ArgumentOutOfRangeException(nameof(fileType), fileType, null)
         };
     }
 
@@ -123,13 +126,13 @@ public static class ResourceHelper
         {
             AlbumResourceType.Thumbnail => $"{AlbumsPath}/{albumId}-thumbnail",
             AlbumResourceType.SidePanel => $"{AlbumsPath}/{albumId}-sidePanel",
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(resourceType), resourceType, null)
         };
     }
 
-    public static string GetAlbumResourceUrl(string albumId, AlbumResourceType type)
+    public static string GetAlbumResourceUrl(string albumId, AlbumResourceType resourceType)
     {
-        return $"otg/~album:{albumId}/~content:{type.ToString()}/data.get";
+        return $"otg/~album:{albumId}/~content:{AlbumHelper.GetStringFromAlbumResourceType(resourceType)}/data.get";
     }
 
     private const string CommunityTabsPath = "communityTabs";

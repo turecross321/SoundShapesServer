@@ -12,7 +12,7 @@ public class EventResponse
 {
     public EventResponse(GameEvent gameEventObject)
     {
-        Actor = new UserResponse(gameEventObject.Actor);
+        Actor = new UserTargetResponse(gameEventObject.Actor);
         
         switch ((EventType)gameEventObject.EventType)
         {
@@ -27,7 +27,7 @@ public class EventResponse
                 break;
                 
             case Types.Events.EventType.Follow:
-                Content = new UserResponse(gameEventObject.ContentUser ?? new GameUser());
+                Content = new UserTargetResponse(gameEventObject.ContentUser ?? new GameUser());
                 Timestamp = gameEventObject.Date.ToString();
                 break;
             case Types.Events.EventType.ScoreSubmission:
@@ -43,7 +43,7 @@ public class EventResponse
     }
     
     
-    [JsonProperty("actor")] public UserResponse Actor { get; set; }
+    [JsonProperty("actor")] public UserTargetResponse Actor { get; set; }
     
     [JsonProperty("type")] public string Type = ContentHelper.GetContentTypeString(GameContentType.Activity);
     [JsonProperty("object")] public object? Content { get; set; }

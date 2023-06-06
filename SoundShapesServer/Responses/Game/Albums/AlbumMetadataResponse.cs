@@ -4,9 +4,9 @@ using SoundShapesServer.Types.Albums;
 
 namespace SoundShapesServer.Responses.Game.Albums;
 
-public class AlbumMetadata
+public class AlbumMetadataResponse
 {
-    public AlbumMetadata(GameAlbum album)
+    public AlbumMetadataResponse(GameAlbum album)
     {
         LinerNotesWrapper linerNoteWrapper = new (AlbumHelper.HtmlToLinerNotes(album.LinerNotes));
         string linerNotesString = JsonConvert.SerializeObject(linerNoteWrapper);

@@ -9,13 +9,13 @@ public class LeaderboardEntryResponse
     public LeaderboardEntryResponse(LeaderboardEntry entry, int position)
     {
         Position = position;
-        Entrant = new UserResponse(entry.User);
+        Entrant = new UserTargetResponse(entry.User);
         Score = entry.Score;
     }
     
     public LeaderboardEntryResponse() { }
 
     [JsonProperty("position")] public int Position { get; set; }
-    [JsonProperty("entrant")] public UserResponse? Entrant { get; set; }
+    [JsonProperty("entrant")] public UserTargetResponse? Entrant { get; set; }
     [JsonProperty("score")] public long Score { get; set; }
 }

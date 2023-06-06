@@ -13,11 +13,11 @@ public class AlbumLevelInfoResponse
     {
         Id = IdFormatter.FormatAlbumLinkId(album.Id, level.Id);
         Timestamp = level.ModificationDate.ToUnixTimeMilliseconds();
-        Target = new AlbumLevelInfoTarget(level, user);
+        TargetResponse = new AlbumLevelInfoTargetResponse(level, user);
     }
 
     [JsonProperty("id")] public string Id { get; set; }
     [JsonProperty("type")] public string Type { get; } = ContentHelper.GetContentTypeString(GameContentType.Link);
     [JsonProperty("timestamp")] public long Timestamp { get; set; }
-    [JsonProperty("target")] public AlbumLevelInfoTarget Target { get; set; }
+    [JsonProperty("target")] public AlbumLevelInfoTargetResponse TargetResponse { get; set; }
 }

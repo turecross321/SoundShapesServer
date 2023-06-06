@@ -2,9 +2,9 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Responses.Api.Levels;
 
-public class ApiLevelAnalysis
+public class ApiLevelAnalysisResponse
 {
-    public ApiLevelAnalysis(GameLevel level)
+    public ApiLevelAnalysisResponse(GameLevel level)
     {
         FileSize = level.FileSize;
         Bpm = level.Bpm;

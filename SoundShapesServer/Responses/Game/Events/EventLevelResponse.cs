@@ -13,11 +13,11 @@ public class EventLevelResponse
         Id = level.Id;
         LatestEventLevelVersionResponse = new EventLevelVersionResponse(FormatLevelIdAndVersion(level.Id, level.ModificationDate.ToUnixTimeSeconds()));
         Metadata = new LevelMetadataResponse(level);
-        Author = new UserResponse(level.Author);
+        Author = new UserTargetResponse(level.Author);
     }
 
     [JsonProperty("id")] public string Id { get; set; }
     [JsonProperty("latestVersion")] public EventLevelVersionResponse LatestEventLevelVersionResponse { get; set; }
     [JsonProperty("metadata")] public LevelMetadataResponse Metadata { get; set; }
-    [JsonProperty("author")] public UserResponse Author { get; set; }
+    [JsonProperty("author")] public UserTargetResponse Author { get; set; }
 }

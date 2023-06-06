@@ -31,4 +31,24 @@ public static class AlbumHelper
 
         return linerNotes.ToArray();
     }
+
+    public static AlbumResourceType GetAlbumResourceTypeFromString(string resourceTypeString)
+    {
+        return resourceTypeString switch
+        {
+            "thumbnail" => AlbumResourceType.Thumbnail,
+            "sidePanel" => AlbumResourceType.SidePanel,
+            _ => throw new ArgumentOutOfRangeException(nameof(resourceTypeString), resourceTypeString, null)
+        };
+    }
+
+    public static string GetStringFromAlbumResourceType(AlbumResourceType resourceType)
+    {
+        return resourceType switch
+        {
+            AlbumResourceType.Thumbnail => "thumbnail",
+            AlbumResourceType.SidePanel => "sidePanel",
+            _ => throw new ArgumentOutOfRangeException(nameof(resourceType), resourceType, null)
+        };
+    }
 }

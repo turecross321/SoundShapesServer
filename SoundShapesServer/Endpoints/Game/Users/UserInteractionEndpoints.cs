@@ -4,7 +4,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
-using SoundShapesServer.Responses.Game.Following;
+using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Users;
@@ -31,11 +31,11 @@ public class UserInteractionEndpoints : EndpointGroup
         };
     }
     
-    private FollowResponse? CheckIfUserIsFollowed(GameUser follower, GameUser recipient, GameDatabaseContext database)
+    private UserFullResponse? CheckIfUserIsFollowed(GameUser follower, GameUser recipient, GameDatabaseContext database)
     {
         if (database.IsUserFollowingOtherUser(follower, recipient))
         {
-            return new FollowResponse(recipient);
+            return new UserFullResponse(recipient);
         }
 
         return null;

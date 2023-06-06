@@ -6,9 +6,9 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Albums.LevelInfo;
 
-public class AlbumLevelInfoTarget
+public class AlbumLevelInfoTargetResponse
 {
-    public AlbumLevelInfoTarget(GameLevel level, GameUser user)
+    public AlbumLevelInfoTargetResponse(GameLevel level, GameUser user)
     {
         Id = IdFormatter.FormatLevelId(level.Id);
         Type = ContentHelper.GetContentTypeString(GameContentType.Level);

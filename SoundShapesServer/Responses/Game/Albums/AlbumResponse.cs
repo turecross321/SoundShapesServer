@@ -11,11 +11,11 @@ public class AlbumResponse
     {
         Id = album.Id;
         CreationDate = album.CreationDate.ToUnixTimeMilliseconds().ToString();
-        Target = new AlbumTarget(album);
+        TargetResponse = new AlbumTargetResponse(album);
     }
 
     [JsonProperty("id")] public string Id { get; set; }
     [JsonProperty("type")] public string Type = ContentHelper.GetContentTypeString(GameContentType.Link);
     [JsonProperty("timestamp")] public string CreationDate { get; set; }
-    [JsonProperty("target")] public AlbumTarget Target { get; set; }
+    [JsonProperty("target")] public AlbumTargetResponse TargetResponse { get; set; }
 }

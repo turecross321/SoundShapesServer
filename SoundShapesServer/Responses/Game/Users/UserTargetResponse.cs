@@ -5,9 +5,9 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Users;
 
-public class UserResponse
+public class UserTargetResponse
 {
-    public UserResponse(GameUser? user)
+    public UserTargetResponse(GameUser? user)
     {
         if (user == null)
         {
@@ -19,7 +19,7 @@ public class UserResponse
         Metadata = user != null ? new UserMetadataResponse(user) : new UserMetadataResponse();
     }
 
-    public UserResponse()
+    public UserTargetResponse()
     {
         Id = "";
         DisplayName = "";

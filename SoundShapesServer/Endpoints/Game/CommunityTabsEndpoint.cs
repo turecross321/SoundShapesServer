@@ -4,7 +4,7 @@ using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 
-namespace SoundShapesServer.Endpoints.Game.CommunityTabs;
+namespace SoundShapesServer.Endpoints.Game;
 
 public class CommunityTabsEndpoint : EndpointGroup
 {

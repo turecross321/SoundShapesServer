@@ -5,15 +5,15 @@ using SoundShapesServer.Types.Albums;
 
 namespace SoundShapesServer.Responses.Game.Albums;
 
-public class AlbumTarget
+public class AlbumTargetResponse
 {
-    public AlbumTarget(GameAlbum album)
+    public AlbumTargetResponse(GameAlbum album)
     {
         Id = IdFormatter.FormatAlbumId(album.Id);
-        Metadata = new AlbumMetadata(album);
+        MetadataResponse = new AlbumMetadataResponse(album);
     }
 
     [JsonProperty("id")] public string Id { get; set; }
     [JsonProperty("type")] public string Type = ContentHelper.GetContentTypeString(GameContentType.Album);
-    [JsonProperty("metadata")] public AlbumMetadata Metadata { get; set; }
+    [JsonProperty("metadata")] public AlbumMetadataResponse MetadataResponse { get; set; }
 }
