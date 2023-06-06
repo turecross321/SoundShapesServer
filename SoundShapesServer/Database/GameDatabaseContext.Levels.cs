@@ -117,13 +117,17 @@ public partial class GameDatabaseContext
         if (fileType == FileType.Image && !IsByteArrayPng(file))
             return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
 
+        if (fileType == FileType.Level)
+        {
+            if (!SetLevelInfo(level, file))
+                return HttpStatusCode.BadRequest;
+        }
+        
         string key = GetLevelResourceKey(level, fileType);
         dataStore.WriteToStore(key, file);
         
         SetLevelFilePath(level, fileType, key);
-
-        if (fileType != FileType.Level) return HttpStatusCode.Created;
-        return !SetLevelInfo(level, file) ? HttpStatusCode.BadRequest : HttpStatusCode.Created;
+        return HttpStatusCode.Created;
     }
 
     private void SetLevelFilePath(GameLevel level, FileType fileType, string path)
