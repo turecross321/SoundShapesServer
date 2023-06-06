@@ -25,8 +25,7 @@ public partial class GameDatabaseContext
         };
 
         IEnumerable<GameSession> sessionsToDelete = _realm.All<GameSession>()
-            .AsEnumerable()
-            .Where(s => s.User.Id == user.Id && s.SessionType == sessionType)
+            .Where(s => s.User.Id == user.Id && s._SessionType == (int)sessionType)
             .TakeLast(SessionLimit - 1);
 
         _realm.Write(() =>
@@ -72,7 +71,6 @@ public partial class GameDatabaseContext
     {
         _realm.All<GameSession>();
         GameSession? session = _realm.All<GameSession>()
-            .AsEnumerable()
             .FirstOrDefault(s => s.Id == sessionId);
         
         return session;

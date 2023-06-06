@@ -95,12 +95,12 @@ public partial class GameDatabaseContext
 
         if (filters.ContentType != null)
         {
-            response = response.Where(r => r.ContentType == filters.ContentType);
+            response = response.Where(r => r._ContentType == (int)filters.ContentType);
         }
 
         if (filters.ReasonType != null)
         {
-            response = response.Where(r => r.ReasonType == filters.ReasonType);
+            response = response.Where(r => r._ReasonType == (int)filters.ReasonType);
         }
 
         return response;
