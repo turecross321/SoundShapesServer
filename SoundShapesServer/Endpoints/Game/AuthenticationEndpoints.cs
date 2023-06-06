@@ -22,6 +22,7 @@ namespace SoundShapesServer.Endpoints.Game;
 
 public class AuthenticationEndpoints : EndpointGroup
 {
+    [GameEndpoint("login", ContentType.Json, Method.Post)]
     [Endpoint("/identity/login/token/psn", ContentType.Json, Method.Post)]
     [Authentication(false)]
     public Response? Login(RequestContext context, GameDatabaseContext database, Stream body, GameServerConfig config)

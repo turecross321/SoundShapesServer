@@ -15,6 +15,8 @@ public static class SessionHelper
     public static string GenerateAccountRemovalSessionId(GameDatabaseContext database) => GenerateSimpleSessionId(database,
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789", 8);
     // ReSharper restore StringLiteralTypo
+    // This is used for occasions where the user has to type the session id manually, and giving them a
+    // SHA512 would be pretty inconvenient
     private static string GenerateSimpleSessionId(GameDatabaseContext database, string idCharacters, int idLength)
     {
         Random r = new();
@@ -31,8 +33,8 @@ public static class SessionHelper
     public static bool IsSessionAllowedToAccessEndpoint(GameSession session, string uriPath)
     {
         if (uriPath == GameEndpointAttribute.BaseRoute + "~identity:*.hello" ||
-            Regex.IsMatch(uriPath, $"^{GameEndpointAttribute.BaseRoute}[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$")
-           )
+            // This is for the EULA endpoint, and we use regex here to support all platforms and languages
+            Regex.IsMatch(uriPath, $"^{GameEndpointAttribute.BaseRoute}[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$"))
         {
             if (session.SessionType is SessionType.GameUnAuthorized or SessionType.Banned) return true;
         }

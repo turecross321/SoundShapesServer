@@ -1,4 +1,3 @@
-using SoundShapesServer.Types.Punishments;
 // ReSharper disable UnassignedGetOnlyAutoProperty
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 #pragma warning disable CS8618
@@ -9,7 +8,7 @@ namespace SoundShapesServer.Requests.Api;
 public class ApiPunishRequest
 {
     public string UserId { get; set; }
-    public PunishmentType PunishmentType { get; set; }
+    public int PunishmentType { get; set; }
     public string Reason { get; set; }
     public DateTimeOffset ExpiryDate { get; set; }
 }
