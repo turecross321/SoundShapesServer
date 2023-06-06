@@ -24,7 +24,7 @@ public partial class GameDatabaseContext
         CommunityTab communityTab = new()
         {
             Id = GenerateGuid(),
-            ContentType = (GameContentType)request.ContentType,
+            ContentType = request.ContentType,
             Title = request.Title,
             Description = request.Description,
             ButtonLabel = request.ButtonLabel,
@@ -46,7 +46,7 @@ public partial class GameDatabaseContext
     {
         _realm.Write(() =>
         {
-            communityTab._ContentType = request.ContentType;
+            communityTab.ContentType = request.ContentType;
             communityTab.Title = request.Title;
             communityTab.Description = request.Description;
             communityTab.ButtonLabel = request.ButtonLabel;

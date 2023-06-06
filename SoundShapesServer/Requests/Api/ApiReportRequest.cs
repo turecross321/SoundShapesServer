@@ -1,16 +1,13 @@
+using SoundShapesServer.Types.Reports;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+#pragma warning disable CS8618
+
 namespace SoundShapesServer.Requests.Api;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ApiReportRequest
 {
-    public ApiReportRequest(int contentType, string contentId, int reasonType)
-    {
-        ContentType = contentType;
-        ContentId = contentId;
-        ReasonType = reasonType;
-    }
-    
-    public int ContentType { get; set; }
+    public ReportContentType ContentType { get; set; }
     public string ContentId { get; set; }
-    public int ReasonType { get; }
+    public ReportReasonType ReasonType { get; set; }
 }

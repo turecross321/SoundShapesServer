@@ -17,16 +17,11 @@ public class ApiReportEndpoint : EndpointGroup
     [ApiEndpoint("reports/create", Method.Post)]
     public Response CreateReport(RequestContext context, GameDatabaseContext database, GameUser user, ApiReportRequest body)
     {
-        ReportContentType contentType = Enum.Parse<ReportContentType>(body.ContentType.ToString());
-        
-        if (body.ReasonType > Enum.GetNames(typeof(ReportReasonType)).Length || body.ReasonType < 0) return HttpStatusCode.BadRequest; // WHY DOES THE PARSER NOT DO THIS
-        ReportReasonType reportReasonType = Enum.Parse<ReportReasonType>(body.ReasonType.ToString());
-        
         GameUser? userBeingReported = null;
         GameLevel? level = null;
         LeaderboardEntry? leaderboardEntry = null;
         
-        switch (contentType)
+        switch (body.ContentType)
         {
             case ReportContentType.User:
             {
@@ -50,7 +45,7 @@ public class ApiReportEndpoint : EndpointGroup
                 return HttpStatusCode.BadRequest;
         }
 
-        database.CreateReport(user, contentType, reportReasonType, userBeingReported, level, leaderboardEntry);
+        database.CreateReport(user, body.ContentType, body.ReasonType, userBeingReported, level, leaderboardEntry);
         return HttpStatusCode.Created;
     }
 }
