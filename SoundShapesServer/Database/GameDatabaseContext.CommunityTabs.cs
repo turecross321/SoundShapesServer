@@ -46,6 +46,7 @@ public partial class GameDatabaseContext
     {
         _realm.Write(() =>
         {
+            communityTab._ContentType = request.ContentType;
             communityTab.Title = request.Title;
             communityTab.Description = request.Description;
             communityTab.ButtonLabel = request.ButtonLabel;
