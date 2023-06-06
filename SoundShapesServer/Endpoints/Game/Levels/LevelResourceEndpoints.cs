@@ -15,19 +15,6 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 
 public class LevelResourceEndpoints : EndpointGroup
 {
-    private static Response GetResource(IDataStore dataStore, string fileName)
-    {
-        if (!dataStore.ExistsInStore(fileName))
-            return HttpStatusCode.NotFound;
-
-        if (!dataStore.TryGetDataFromStore(fileName, out byte[]? data))
-            return HttpStatusCode.InternalServerError;
-
-        Debug.Assert(data != null);
-
-        return new Response(data, ContentType.BinaryData);
-    }
-
     [GameEndpoint("~level:{levelId}/~version:{versionId}/~content:{file}/data.get")]
     public Response GetLevelResource
         (RequestContext context, IDataStore dataStore, GameDatabaseContext database, GameUser user, string levelId, string versionId, string file)
@@ -46,8 +33,9 @@ public class LevelResourceEndpoints : EndpointGroup
             _ => null
         };
         
+        if (key == null) return HttpStatusCode.NotFound;
+        if (!dataStore.ExistsInStore(key)) return HttpStatusCode.Gone;
 
-
-        return key == null ? HttpStatusCode.NotFound : GetResource(dataStore, key);
+        return new Response(dataStore.GetDataFromStore(key), ContentType.BinaryData);
     }
 }
