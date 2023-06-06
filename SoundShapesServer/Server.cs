@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Bunkum.AutoDiscover.Extensions;
 using Bunkum.CustomHttpListener;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Authentication;
@@ -61,6 +62,7 @@ public class Server
         SetUpConfiguration();
         SetUpServices();
         SetUpMiddlewares();
+        ServerInstance.AddAutoDiscover(serverBrand: "SoundShapes", baseEndpoint: "/otg");
     }
 
     protected virtual void SetUpConfiguration()
