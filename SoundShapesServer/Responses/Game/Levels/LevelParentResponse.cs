@@ -12,5 +12,5 @@ public class LevelParentResponse
     }
 
     public string Id { get; set; }
-    public string Type = GameContentType.level.ToString();
+    public string Type = ContentHelper.GetContentTypeString(GameContentType.Level);
 }

@@ -1,11 +1,11 @@
 using Newtonsoft.Json;
 
-namespace SoundShapesServer.Responses.Game.RecentActivity;
+namespace SoundShapesServer.Responses.Game.Events;
 
-public class Version
+public class EventLevelVersionResponse
 {
     // This is only used with recent activity levels
-    public Version(string id)
+    public EventLevelVersionResponse(string id)
     {
         Id = id;
     }

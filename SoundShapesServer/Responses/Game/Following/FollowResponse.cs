@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Users;
@@ -14,6 +15,6 @@ public class FollowResponse
     }
 
     [JsonProperty("id")] public string Id { get; set; }
-    [JsonProperty("type")] public string Type { get; } = GameContentType.follow.ToString();
+    [JsonProperty("type")] public string Type { get; } = ContentHelper.GetContentTypeString(GameContentType.Follow);
     [JsonProperty("target")] public UserResponse User { get; set; }
 }

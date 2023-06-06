@@ -1,6 +1,6 @@
+using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Database;

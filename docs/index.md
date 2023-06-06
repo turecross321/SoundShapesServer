@@ -17,7 +17,7 @@ Date is always UTC, and is always formatted like `YYYY-MM-DD`.
 | [/leaderboard](#Leaderboard)     |
 | [/daily](#Daily)                 |
 | [/news](#News)                   |
-| [/activities](#Activities)       |
+| [/events](#Events)       |
 | [/reports](#Reports)             |
 | [/punishments](#Punishments)     |
 | [/communityTabs](#CommunityTabs) |
@@ -419,13 +419,13 @@ o7
   "PermissionsType": 2,
   "CreationDate": "0001-01-01T00:00:00+00:00",
   "LastGameLogin": "1970-01-01T00:00:00+00:00",
-  "LastActivityDate": "2023-06-03T22:16:28.4601439+00:00",
+  "LastEventDate": "2023-06-03T22:16:28.4601439+00:00",
   "Followers": 0,
   "Following": 1,
   "LikedLevels": 1,
   "QueuedLevels": 3,
   "PublishedLevels": 72932,
-  "Activities": 9,
+  "Events": 9,
   "PlayedLevels": 0,
   "TotalDeaths": 0,
   "TotalPlayTime": 0
@@ -453,13 +453,13 @@ o7
   "PermissionsType": 2,
   "CreationDate": "0001-01-01T00:00:00+00:00",
   "LastGameLogin": "1970-01-01T00:00:00+00:00",
-  "LastActivityDate": "2023-06-03T22:16:28.4601439+00:00",
+  "LastEventDate": "2023-06-03T22:16:28.4601439+00:00",
   "Followers": 0,
   "Following": 1,
   "LikedLevels": 1,
   "QueuedLevels": 3,
   "PublishedLevels": 72932,
-  "Activities": 9,
+  "Events": 9,
   "PlayedLevels": 0,
   "TotalDeaths": 0,
   "TotalPlayTime": 0
@@ -2058,16 +2058,16 @@ Should be a PNG
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
-# 📁 Recent Activity {#Activities}
+# 📁 Events (Recent Activity) {#Events}
 
-## End-point: Get Activities
+## End-point: Get Events
 
 ### 🔑 This does not require the `Authorization` header.
 
 ### Method: GET
 
 > ```
-> {ip}/api/v1/activities
+> {ip}/api/v1/events
 > ```
 
 ### Query Params
@@ -2110,7 +2110,7 @@ Should be a PNG
 
 ```json
 {
-  "Activities": [
+  "Events": [
     {
       "Id": "10b1d061-9b92-420b-93cd-79e10581e293",
       "EventType": 1,
@@ -2352,14 +2352,14 @@ Should be a PNG
 
 ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃ ⁃
 
-## End-point: Remove Activity
+## End-point: Remove Event
 
 ### ⚠️ This requires moderator (or higher) permissions.
 
 ### Method: POST
 
 > ```
-> {ip}/api/v1/activities/id/{activityId}/remove
+> {ip}/api/v1/events/id/{eventId}/remove
 > ```
 
 ### Response: 200

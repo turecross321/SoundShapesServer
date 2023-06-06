@@ -13,5 +13,5 @@ public class LevelVersionResponse
     }
 
     [JsonProperty("id")] public string Id { get; }
-    [JsonProperty("type")] public string Type { get; } = GameContentType.version.ToString();
+    [JsonProperty("type")] public string Type { get; } = ContentHelper.GetContentTypeString(GameContentType.Version);
 }

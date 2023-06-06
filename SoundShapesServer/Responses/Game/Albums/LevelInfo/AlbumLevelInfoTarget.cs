@@ -11,7 +11,7 @@ public class AlbumLevelInfoTarget
     public AlbumLevelInfoTarget(GameLevel level, GameUser user)
     {
         Id = IdFormatter.FormatLevelId(level.Id);
-        Type = GameContentType.level.ToString();
+        Type = ContentHelper.GetContentTypeString(GameContentType.Level);
         Completed = level.UniqueCompletions.Contains(user);
     }
 

@@ -8,6 +8,7 @@ public class ApiCommunityTabResponse
     public ApiCommunityTabResponse(CommunityTab communityTab)
     {
         Id = communityTab.Id;
+        ContentType = communityTab.ContentType;
         Title = communityTab.Title;
         Description = communityTab.Description;
         ButtonLabel = communityTab.ButtonLabel;
@@ -18,6 +19,7 @@ public class ApiCommunityTabResponse
     }
 
     public string Id { get; set; }
+    public GameContentType ContentType { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
     public string ButtonLabel { get; set; }

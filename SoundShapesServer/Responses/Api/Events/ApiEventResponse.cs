@@ -2,13 +2,13 @@ using Newtonsoft.Json;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Responses.Api.Users;
-using SoundShapesServer.Types.PlayerActivity;
+using SoundShapesServer.Types.Events;
 
-namespace SoundShapesServer.Responses.Api.RecentActivity;
+namespace SoundShapesServer.Responses.Api.Events;
 
-public class ApiPlayerActivityResponse
+public class ApiEventResponse
 {
-    public ApiPlayerActivityResponse(GameDatabaseContext database, GameEvent eventObject)
+    public ApiEventResponse(GameDatabaseContext database, GameEvent eventObject)
     {
         Id = eventObject.Id;
         EventType = eventObject.EventType;

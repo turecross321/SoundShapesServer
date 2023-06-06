@@ -56,8 +56,10 @@ public static class LevelHelper
         return name[..Math.Min(name.Length, LevelNameCharacterLimit)];
     }
 
-    public static LevelOrderType GetLevelOrderType(string? orderString)
+    public static LevelOrderType GetLevelOrderType(RequestContext context)
     {
+        string? orderString = context.QueryString["orderBy"];
+        
         return orderString switch
         {
             "creationDate" => LevelOrderType.CreationDate,

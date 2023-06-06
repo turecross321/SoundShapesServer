@@ -39,7 +39,7 @@ public class AlbumResourceEndpoints : EndpointGroup
         };
 
         if (key == null) return HttpStatusCode.NotFound;
-        if (!dataStore.ExistsInStore(key)) return HttpStatusCode.Gone;
+        if (!dataStore.ExistsInStore(key)) return HttpStatusCode.NotFound;
         
         return GetResource(dataStore, key);
     }

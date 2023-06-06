@@ -17,11 +17,9 @@ public class ApiLevelEndpoints: EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
         
         bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
-        
-        string? orderString = context.QueryString["orderBy"];
 
-        LevelOrderType order = LevelHelper.GetLevelOrderType(orderString);
         LevelFilters filters = LevelHelper.GetLevelFilters(context, database);
+        LevelOrderType order = LevelHelper.GetLevelOrderType(context);
 
         (GameLevel[] levels, int levelCount) = database.GetLevels(order, descending, filters, from, count);
         

@@ -20,7 +20,7 @@ public class LevelPublishResponse
     }
 
     [JsonProperty("id")] public string Id { get; set; }
-    [JsonProperty("type")] public string Type = GameContentType.upload.ToString();
+    [JsonProperty("type")] public string Type = ContentHelper.GetContentTypeString(GameContentType.Upload);
     [JsonProperty("author")] public UserResponse Author { get; set; }
     [JsonProperty("title")] public string Title { get; set; }
     [JsonProperty("dependencies")] public IList<string> Dependencies { get; set; }

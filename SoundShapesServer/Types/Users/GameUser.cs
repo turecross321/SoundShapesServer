@@ -1,8 +1,8 @@
 using Bunkum.HttpServer.RateLimit;
 using Realms;
+using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Sessions;

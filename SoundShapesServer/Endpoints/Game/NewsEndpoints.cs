@@ -2,12 +2,12 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
-using SoundShapesServer.Responses.Game.RecentActivity;
+using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Sessions;
 
-namespace SoundShapesServer.Endpoints.Game.RecentActivity;
+namespace SoundShapesServer.Endpoints.Game;
 
 public class NewsEndpoints : EndpointGroup
 {

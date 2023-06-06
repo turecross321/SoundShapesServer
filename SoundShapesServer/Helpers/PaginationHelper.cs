@@ -1,9 +1,9 @@
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
+using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.News;
-using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Reports;
 using SoundShapesServer.Types.Users;

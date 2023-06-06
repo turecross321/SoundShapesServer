@@ -1,25 +1,26 @@
 using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
-using SoundShapesServer.Responses.Api.RecentActivity;
+using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Endpoints.Api.PlayerActivity;
+namespace SoundShapesServer.Helpers;
 
-public class ApiPlayerActivityEndpoint : EndpointGroup
+public static class EventHelper
 {
-    [ApiEndpoint("activities")]
-    [Authentication(false)]
-    public ApiPlayerActivitiesWrapper GetActivities(RequestContext context, GameDatabaseContext database)
+    public static string EventEnumToGameString(EventType type)
     {
-        int from = int.Parse(context.QueryString["from"] ?? "0");
-        int count = int.Parse(context.QueryString["count"] ?? "9");
-        
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
-        string? orderString = context.QueryString["orderBy"];
-        
+        return type switch
+        {
+            EventType.Publish => "publish",
+            EventType.Follow => "follow",
+            EventType.Like => "like",
+            _ => EventEnumToGameString(EventType.Publish)
+        };
+    }
+
+    public static EventFilters GetEventFilters(RequestContext context, GameDatabaseContext database)
+    {
         string? actorIds = context.QueryString["actors"];
         string? onUserId = context.QueryString["onUser"];
         string? levelIds = context.QueryString["onLevel"];
@@ -60,16 +61,17 @@ public class ApiPlayerActivityEndpoint : EndpointGroup
             eventTypes.AddRange(eventTypesString.Split(",").Select(Enum.Parse<EventType>));
         }
 
-        // I know this is utterly pointless, but I want to stay consistent with the rest of the server.
-        EventOrderType orderType = orderString switch
+        return new EventFilters(actors?.ToArray(), onUser, onLevel, eventTypes?.ToArray());
+    }
+
+    public static EventOrderType GetEventOrder(RequestContext context)
+    {
+        string? orderString = context.QueryString["orderBy"];
+        
+        return orderString switch
         {
             "date" => EventOrderType.Date,
             _ => EventOrderType.Date
         };
-
-        EventFilters filters = new (actors?.ToArray(), onUser, onLevel, eventTypes?.ToArray());
-        (GameEvent[] events, int totalEvents) = database.GetEvents(orderType, descending, filters, from, count);
-        
-        return new ApiPlayerActivitiesWrapper(database, events, totalEvents);
     }
 }

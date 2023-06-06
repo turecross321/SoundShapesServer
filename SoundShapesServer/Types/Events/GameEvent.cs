@@ -3,7 +3,7 @@ using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Types.PlayerActivity;
+namespace SoundShapesServer.Types.Events;
 
 public class GameEvent : RealmObject
 {

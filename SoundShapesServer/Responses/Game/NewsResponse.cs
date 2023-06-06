@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Types.News;
 
-namespace SoundShapesServer.Responses.Game.RecentActivity;
+namespace SoundShapesServer.Responses.Game;
 
 public class NewsResponse
 {

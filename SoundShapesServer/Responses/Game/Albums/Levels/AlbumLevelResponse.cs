@@ -18,7 +18,7 @@ public class AlbumLevelResponse
     }
 
     [JsonProperty("id")] public string Id { get; set; }
-    [JsonProperty("type")] public string Type = GameContentType.link.ToString();
+    [JsonProperty("type")] public string Type = ContentHelper.GetContentTypeString(GameContentType.Link);
     [JsonProperty("timestamp")] public long Timestamp { get; set; }
     [JsonProperty("target")] public LevelTargetResponse Target { get; set; }
 }

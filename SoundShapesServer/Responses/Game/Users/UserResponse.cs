@@ -11,7 +11,7 @@ public class UserResponse
     {
         if (user == null)
         {
-            Type = GameContentType.alias.ToString();
+            Type = ContentHelper.GetContentTypeString(GameContentType.Alias);
         }
         
         Id = IdFormatter.FormatUserId(user?.Id ?? "");
@@ -27,7 +27,7 @@ public class UserResponse
     }
 
     [JsonProperty("id")] public string Id { get; set; }
-    [JsonProperty("type")] public string Type { get; set; } = GameContentType.identity.ToString();
+    [JsonProperty("type")] public string Type { get; set; } = ContentHelper.GetContentTypeString(GameContentType.Identity);
 
     [JsonProperty("displayName")] public string DisplayName { get; set; }
 

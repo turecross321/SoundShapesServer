@@ -7,7 +7,7 @@ using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Database;
 using SoundShapesServer.Types.News;
 
-namespace SoundShapesServer.Endpoints.Game.RecentActivity;
+namespace SoundShapesServer.Endpoints.Game;
 
 public class NewsResourceEndpoints : EndpointGroup
 {

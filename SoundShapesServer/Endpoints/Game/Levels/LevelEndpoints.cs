@@ -19,7 +19,6 @@ public class LevelEndpoints : EndpointGroup
     [Authentication(false)]
     public Response LevelsEndpoint(RequestContext context, GameDatabaseContext database, GameUser? user, GameSession? session)
     {
-        string? orderString = context.QueryString["orderBy"];
         string? query = context.QueryString["query"];
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
@@ -69,8 +68,8 @@ public class LevelEndpoints : EndpointGroup
                 break;
         }
 
-        order ??= LevelHelper.GetLevelOrderType(orderString);
         filters ??= LevelHelper.GetLevelFilters(context, database);
+        order ??= LevelHelper.GetLevelOrderType(context);
 
         (GameLevel[] levels, int totalLevels) = database.GetLevels((LevelOrderType)order, descending, filters, from, count);
 

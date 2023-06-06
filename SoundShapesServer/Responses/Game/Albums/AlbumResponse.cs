@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 
@@ -14,7 +15,7 @@ public class AlbumResponse
     }
 
     [JsonProperty("id")] public string Id { get; set; }
-    [JsonProperty("type")] public string Type = GameContentType.link.ToString();
+    [JsonProperty("type")] public string Type = ContentHelper.GetContentTypeString(GameContentType.Link);
     [JsonProperty("timestamp")] public string CreationDate { get; set; }
     [JsonProperty("target")] public AlbumTarget Target { get; set; }
 }

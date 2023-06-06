@@ -2,10 +2,10 @@ using Bunkum.RealmDatabase;
 using Realms;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
+using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.News;
-using SoundShapesServer.Types.PlayerActivity;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Reports;
@@ -16,7 +16,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 31;
+    protected override ulong SchemaVersion => 33;
 
     protected override List<Type> SchemaTypes => new()
     {

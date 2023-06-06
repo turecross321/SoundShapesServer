@@ -24,6 +24,7 @@ public partial class GameDatabaseContext
         CommunityTab communityTab = new()
         {
             Id = GenerateGuid(),
+            ContentType = request.ContentType,
             Title = request.Title,
             Description = request.Description,
             ButtonLabel = request.ButtonLabel,

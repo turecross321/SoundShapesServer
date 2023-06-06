@@ -1,7 +1,7 @@
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.News;
 
-namespace SoundShapesServer.Responses.Api.RecentActivity;
+namespace SoundShapesServer.Responses.Api.News;
 
 public class ApiNewsResponse
 {

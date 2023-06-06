@@ -1,6 +1,6 @@
 using Realms;
 using SoundShapesServer.Types.Albums;
-using SoundShapesServer.Types.PlayerActivity;
+using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
 #pragma warning disable CS8618

@@ -1,6 +1,7 @@
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.Users;
 
@@ -32,35 +33,9 @@ public class ApiUserEndpoints : EndpointGroup
         int count = int.Parse(context.QueryString["count"] ?? "9");
 
         bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
-        string? orderString = context.QueryString["orderBy"];
 
-        string? isFollowingId = context.QueryString["isFollowing"]; 
-        string? followedById = context.QueryString["followedBy"];
-
-        string? searchQuery = context.QueryString["search"];
-        
-        GameUser? isFollowing = null;
-        GameUser? followedBy = null;
-        
-        if (isFollowingId != null) isFollowing = database.GetUserWithId(isFollowingId);
-        if (followedById != null) followedBy = database.GetUserWithId(followedById);
-
-        UserFilters filters = new (isFollowing, followedBy, searchQuery);
-
-        UserOrderType order = orderString switch
-        {
-            "followers" => UserOrderType.Followers,
-            "following" => UserOrderType.Following,
-            "publishedLevels" => UserOrderType.PublishedLevels,
-            "likedLevels" => UserOrderType.LikedLevels,
-            "creationDate" => UserOrderType.CreationDate,
-            "playedLevels" => UserOrderType.PlayedLevels,
-            "completedLevels" => UserOrderType.CompletedLevels,
-            "totalDeaths" => UserOrderType.Deaths,
-            "totalPlayTime" => UserOrderType.TotalPlayTime,
-            "lastGameLogin" => UserOrderType.LastGameLogin,
-            _ => UserOrderType.CreationDate
-        };
+        UserFilters filters = UserHelper.GetUserFilters(context, database);
+        UserOrderType order = UserHelper.GetUserOrderType(context);
 
         (GameUser[] users, int totalUsers) = database.GetUsers(order, descending, filters, from, count);
         return new ApiUsersWrapper(users, totalUsers);

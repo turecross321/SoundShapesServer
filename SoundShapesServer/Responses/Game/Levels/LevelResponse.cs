@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
@@ -23,7 +24,7 @@ public class LevelResponse
     [JsonProperty("author")] public UserResponse Author { get;  }
     [JsonProperty("latestVersion", NullValueHandling = NullValueHandling.Ignore)] public string LatestVersion { get; }
     [JsonProperty("title")] public string Title { get; set; }
-    [JsonProperty("type")] public string Type = GameContentType.level.ToString();
+    [JsonProperty("type")] public string Type = ContentHelper.GetContentTypeString(GameContentType.Level);
     [JsonProperty("completed")] public bool Completed { get; }
     [JsonProperty("metadata")] public LevelMetadataResponse Metadata { get; }
 }
