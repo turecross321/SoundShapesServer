@@ -28,8 +28,8 @@ public class ApiReportResponse
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiUserBriefResponse? ContentUser { get; set; }
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLevelBriefResponse? ContentLevel { get; set; }
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLeaderboardEntryResponse? ContentLeaderboardEntry { get; set; }
-    public int ContentType { get; set; }
-    public int ReasonType { get; set; }
+    public ReportContentType ContentType { get; set; }
+    public ReportReasonType ReasonType { get; set; }
     public DateTimeOffset Date { get; set; }
     public ApiUserBriefResponse Issuer { get; set; }
 }

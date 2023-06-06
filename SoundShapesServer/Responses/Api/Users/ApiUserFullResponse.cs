@@ -1,4 +1,6 @@
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Users;
+// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace SoundShapesServer.Responses.Api.Users;
 
@@ -25,7 +27,7 @@ public class ApiUserFullResponse
 
     public string Id { get; set; }
     public string Username { get; set; }
-    public int PermissionsType { get; set; }
+    public PermissionsType PermissionsType { get; set; }
     public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset LastGameLogin { get; set; }
     public DateTimeOffset LastEventDate { get; set; }

@@ -25,7 +25,7 @@ public class ApiEventResponse
     }
 
     public string Id { get; set; }
-    public int EventType { get; set; }
+    public EventType EventType { get; set; }
     public ApiUserBriefResponse Actor { get; set; }
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiUserBriefResponse? ContentUser { get; set; }
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLevelBriefResponse? ContentLevel { get; set; }

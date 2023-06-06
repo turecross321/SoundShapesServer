@@ -7,11 +7,11 @@ public static class PermissionHelper
 {
     public static bool IsUserAdmin(GameUser user)
     {
-        return user.PermissionsType == (int)PermissionsType.Administrator;
+        return user.PermissionsType == PermissionsType.Administrator;
     }
 
     public static bool IsUserModeratorOrMore(GameUser user)
     {
-        return user.PermissionsType >= (int)PermissionsType.Moderator;
+        return user.PermissionsType >= PermissionsType.Moderator;
     }
 }

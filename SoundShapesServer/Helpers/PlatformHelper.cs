@@ -8,7 +8,7 @@ namespace SoundShapesServer.Helpers;
 [SuppressMessage("ReSharper", "StringLiteralTypo")]
 public static class PlatformHelper
 {
-    public static PlatformType? GetPlatformType(Ticket ticket)
+    public static PlatformType GetPlatformType(Ticket ticket)
     {
         bool rpcn = ticket.IssuerId switch
         {
@@ -20,14 +20,13 @@ public static class PlatformHelper
         return GetPlatformFromTitleId(ticket.TitleId, rpcn);
     }
 
-    private static PlatformType? GetPlatformFromTitleId(string titleId, bool rpcn)
+    private static PlatformType GetPlatformFromTitleId(string titleId, bool rpcn)
     {
         if (rpcn) return PlatformType.Rpcs3;
         if (PsvIds.Contains(titleId)) return PlatformType.PsVita;
         if (Ps3Ids.Contains(titleId)) return PlatformType.Ps3;
         if (Ps4Ids.Contains(titleId)) return PlatformType.Ps4;
-
-        return null;
+        throw new InvalidOperationException();
     }
 
     private static readonly string[] Ps3Ids =

@@ -22,7 +22,7 @@ public class NewsEndpoints : EndpointGroup
         NewsEntry? entry = entries.LastOrDefault();
 
         // News images make the vita version crash, so this is a workaround that only lets non-vita view them
-        bool isUserOnVita = session.PlatformType == (int)PlatformType.PsVita;
+        bool isUserOnVita = session.PlatformType == PlatformType.PsVita;
         return new NewsResponse(entry, !isUserOnVita);
     }
 }

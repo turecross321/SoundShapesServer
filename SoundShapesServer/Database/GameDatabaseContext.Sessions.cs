@@ -9,7 +9,7 @@ public partial class GameDatabaseContext
     public const int DefaultSessionExpirySeconds = 86400; // 1 day
     private const int SessionLimit = 3; // limit of how many sessions of one SessionType you can have
 
-    public GameSession CreateSession(GameUser user, SessionType sessionType, int? expirationSeconds = null, string? id = null, PlatformType? platformType = null, IpAuthorization? ip = null)
+    public GameSession CreateSession(GameUser user, SessionType sessionType, PlatformType platformType, int? expirationSeconds = null, string? id = null, IpAuthorization? ip = null)
     {
         double sessionExpirationSeconds = expirationSeconds ?? DefaultSessionExpirySeconds;
         id ??= GenerateGuid();
@@ -18,15 +18,15 @@ public partial class GameDatabaseContext
         {
             Id = id,
             User = user,
-            SessionType = (int)sessionType,
-            PlatformType = (int?)platformType,
+            SessionType = sessionType,
+            PlatformType = platformType,
             Ip = ip,
             ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(sessionExpirationSeconds)
         };
 
         IEnumerable<GameSession> sessionsToDelete = _realm.All<GameSession>()
             .AsEnumerable()
-            .Where(s => s.User.Id == user.Id && s.SessionType == (int)sessionType)
+            .Where(s => s.User.Id == user.Id && s.SessionType == sessionType)
             .TakeLast(SessionLimit - 1);
 
         _realm.Write(() =>

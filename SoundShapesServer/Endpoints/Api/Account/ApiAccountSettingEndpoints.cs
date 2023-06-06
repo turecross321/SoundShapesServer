@@ -10,6 +10,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api.Account;
 using SoundShapesServer.Services;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.SessionHelper;
@@ -40,7 +41,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
     public Response SendEmailSession(RequestContext context, GameDatabaseContext database, GameUser user, ApiEmailSessionRequest body, EmailService emailService)
     {
         string emailSessionId = GenerateEmailSessionId(database);
-        GameSession emailSession = database.CreateSession(user, SessionType.SetEmail, 600, emailSessionId); // 10 minutes
+        GameSession emailSession = database.CreateSession(user, SessionType.SetEmail, PlatformType.Api, 600, emailSessionId); // 10 minutes
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your new email code: " + emailSession.Id + "\n" +
@@ -82,7 +83,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
         if (user == null) return HttpStatusCode.Created; // trol
 
         string passwordSessionId = GeneratePasswordSessionId(database);
-        GameSession passwordSession = database.CreateSession(user, SessionType.SetPassword, 600, passwordSessionId); // 10 minutes
+        GameSession passwordSession = database.CreateSession(user, SessionType.SetPassword, PlatformType.Api, 600, passwordSessionId); // 10 minutes
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your password code: " + passwordSession.Id + "\n" +
@@ -117,7 +118,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
                 ContentType.Plaintext, HttpStatusCode.Forbidden);
         
         string removalSessionId = GenerateAccountRemovalSessionId(database);
-        GameSession removalSession = database.CreateSession(user, SessionType.RemoveAccount, 600, removalSessionId); // 10 minutes
+        GameSession removalSession = database.CreateSession(user, SessionType.RemoveAccount, PlatformType.Api, 600, removalSessionId); // 10 minutes
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your account removal code: " + removalSession.Id + "\n" +

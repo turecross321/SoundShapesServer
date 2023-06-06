@@ -31,9 +31,9 @@ public class LevelEndpoints : EndpointGroup
             if (searchString == "tagged3") return new Response(new LevelsWrapper(), ContentType.Json);
             return HttpStatusCode.Forbidden;
         }
-        if (session.SessionType != (int)SessionType.Game)
+        if (session.SessionType != SessionType.Game)
         {
-            if (session.SessionType != (int)SessionType.GameUnAuthorized || searchString != "tagged3")
+            if (session.SessionType != SessionType.GameUnAuthorized || searchString != "tagged3")
                 return HttpStatusCode.Forbidden;
         }
 

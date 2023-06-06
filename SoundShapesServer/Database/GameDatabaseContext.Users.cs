@@ -20,7 +20,7 @@ public partial class GameDatabaseContext
         {
             Id = new Guid().ToString(), // 00000000-0000-0000-0000-000000000000
             Username = AdminUsername,
-            PermissionsType = (int)PermissionsType.Administrator,
+            PermissionsType = PermissionsType.Administrator,
             HasFinishedRegistration = true
         };
         
@@ -66,11 +66,11 @@ public partial class GameDatabaseContext
         });
     }
 
-    public void SetUserPermissions(GameUser user, PermissionsType type)
+    public void SetUserPermissions(GameUser user, PermissionsType permissionsType)
     {
         _realm.Write(() =>
         {
-            user.PermissionsType = (int)type;
+            user.PermissionsType = permissionsType;
         });
     }
     

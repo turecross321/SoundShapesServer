@@ -55,11 +55,10 @@ public class AuthenticationEndpoints : EndpointGroup
         if (GetActiveUserBans(user).Any()) sessionType = SessionType.Banned;
         if (user.Deleted) sessionType = SessionType.GameUnAuthorized;
 
-        PlatformType? platformType = PlatformHelper.GetPlatformType(ticket);
-        if (platformType == null) return HttpStatusCode.BadRequest;
+        PlatformType platformType = PlatformHelper.GetPlatformType(ticket);
 
         sessionType ??= SessionType.Game;
-        GameSession session = database.CreateSession(user, (SessionType)sessionType, 14400, null, platformType, ip); // 4 hours
+        GameSession session = database.CreateSession(user, (SessionType)sessionType, platformType, 14400, null, ip); // 4 hours
 
         Debug.Assert(session.Ip != null, "session.Ip != null");
         if (session.Ip.OneTimeUse) database.UseOneTimeIpAddress(session.Ip);
@@ -92,7 +91,7 @@ public class AuthenticationEndpoints : EndpointGroup
     [GameEndpoint("{platform}/{publisher}/{language}/~eula.get", ContentType.Json)]
     public string Eula(RequestContext context, GameServerConfig config, GameDatabaseContext database, string platform, string publisher, string language, GameSession session, GameUser user)
     {
-        if (session.SessionType == (int)SessionType.Game)
+        if (session.SessionType == SessionType.Game)
             return EulaEndpoint.NormalEula(config);
 
         string? eula = null;
@@ -114,7 +113,7 @@ public class AuthenticationEndpoints : EndpointGroup
             IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
 
             string emailSessionId = GenerateEmailSessionId(database);
-            database.CreateSession(user, SessionType.SetEmail, 600, emailSessionId, (PlatformType?)session.PlatformType, ip); // 10 minutes
+            database.CreateSession(user, SessionType.SetEmail, session.PlatformType, 600, emailSessionId, ip); // 10 minutes
             eula = $"Your account is not registered. " +
                    $"To proceed, you will have to register an account at {config.WebsiteUrl}/register\n" +
                    $"Your email code is: {emailSessionId}";
@@ -124,6 +123,6 @@ public class AuthenticationEndpoints : EndpointGroup
                    $"To proceed, you will have to log in to your account at {config.WebsiteUrl}/authorization " +
                    $"and authorize the following IP Address: {session.Ip.IpAddress}";
 
-        return eula + $"\n-\n{DateTime.UtcNow}";;
+        return eula + $"\n-\n{DateTime.UtcNow}";
     }
 }

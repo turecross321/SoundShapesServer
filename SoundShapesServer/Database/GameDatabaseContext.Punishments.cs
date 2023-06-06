@@ -9,7 +9,7 @@ public partial class GameDatabaseContext
 {
     public Punishment CreatePunishment(GameUser issuer, GameUser recipient, ApiPunishRequest request)
     {
-        if (request.PunishmentType == (int)PunishmentType.Ban)
+        if (request.PunishmentType == PunishmentType.Ban)
         {
             RemoveAllSessionsWithUser(recipient);
         }

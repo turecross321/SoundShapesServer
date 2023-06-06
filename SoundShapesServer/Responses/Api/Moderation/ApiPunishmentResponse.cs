@@ -20,7 +20,7 @@ public class ApiPunishmentResponse
 
     public string Id { get; }
     public ApiUserBriefResponse Recipient { get; set; }
-    public int PunishmentType { get; set; }
+    public PunishmentType PunishmentType { get; set; }
     public string Reason { get; set; }
     public bool Revoked { get; set; }
     public ApiUserBriefResponse Author { get; set; }

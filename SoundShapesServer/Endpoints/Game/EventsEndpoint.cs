@@ -28,6 +28,7 @@ public class EventsEndpoint : EndpointGroup
         bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
 
         EventFilters filters = EventHelper.GetEventFilters(context, database);
+        filters.EventTypes = _gameEventTypes;
         EventOrderType order = EventHelper.GetEventOrder(context);
         
         (GameEvent[] events, int totalEvents) = database.GetEvents(order, descending, filters, from, count);

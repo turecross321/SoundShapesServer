@@ -16,7 +16,7 @@ public class GameEvent : RealmObject
         ContentLevel = level;
         ContentLeaderboardEntry = leaderboardEntry;
         
-        EventType = (int)eventType;
+        EventType = eventType;
         Date = DateTimeOffset.UtcNow;
     }
     
@@ -26,10 +26,18 @@ public class GameEvent : RealmObject
 #pragma warning restore CS8618
 
     [PrimaryKey] [Required] public string Id { get; set; }
-    public int EventType { get; set; }
-    public GameUser Actor { get; init; }
     
-    // This is not very clean, but I can't think of any other way to do it.
+    // Realm can't store enums, use recommended workaround
+    // ReSharper disable once InconsistentNaming (can't fix due to conflict with TokenType)
+    // ReSharper disable once MemberCanBePrivate.Global
+    internal int _EventType { get; set; }
+    public EventType EventType
+    {
+        get => (EventType)_EventType;
+        set => _EventType = (int)value;
+    }
+    
+    public GameUser Actor { get; init; }
     public GameUser? ContentUser { get; init; }
     public GameLevel? ContentLevel { get; init; }
     

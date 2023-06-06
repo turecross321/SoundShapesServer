@@ -3,9 +3,11 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
+using Realms.Sync;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api.Account;
 using SoundShapesServer.Responses.Api;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
@@ -27,7 +29,8 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         if (!database.ValidatePassword(user, body.PasswordSha512)) return _invalidCredentialsResponse;
 
         IQueryable<Punishment> activeBans = GetActiveUserBans(user);
-        GameSession session = database.CreateSession(user, activeBans.Any() ? SessionType.Banned : SessionType.Api);
+        SessionType sessionType = activeBans.Any() ? SessionType.Banned : SessionType.Api;
+        GameSession session = database.CreateSession(user, sessionType, PlatformType.Api);
         
         return new Response(new ApiSessionResponse(session, activeBans), ContentType.Json);
     }

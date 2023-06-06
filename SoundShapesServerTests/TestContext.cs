@@ -41,13 +41,15 @@ public class TestContext : IDisposable
     {
         user ??= CreateUser();
 
-        PlatformType? platformType = type switch
+        // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
+        PlatformType platformType = type switch
         {
             SessionType.Game => PlatformType.PsVita,
-            _ => null
+            SessionType.Api => PlatformType.Api,
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
 
-        GameSession session = Database.CreateSession(user, type, tokenExpirySeconds, platformType:platformType);
+        GameSession session = Database.CreateSession(user, type, platformType, tokenExpirySeconds);
         sessionId = session.Id;
         
         HttpClient client = Listener.GetClient();

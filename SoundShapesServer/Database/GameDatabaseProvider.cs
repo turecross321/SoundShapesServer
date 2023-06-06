@@ -16,7 +16,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 33;
+    protected override ulong SchemaVersion => 38;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -49,6 +49,32 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 
     protected override void Migrate(Migration migration, ulong oldVersion)
     {
+        IQueryable<dynamic> oldUsers = migration.OldRealm.DynamicApi.All("GameUser");
+        IQueryable<GameUser> newUsers = migration.NewRealm.All<GameUser>();
+        for (int i = 0; i < newUsers.Count(); i++)
+        {
+            dynamic oldUser = oldUsers.ElementAt(i);
+            GameUser newUser = newUsers.ElementAt(i);
+
+            if (oldVersion < 34)
+            {
+                newUser._PermissionsType = (int)oldUser.PermissionsType;
+            }
+        }
+        
+        IQueryable<dynamic> oldSessions = migration.OldRealm.DynamicApi.All("GameSession");
+        IQueryable<GameSession> newSessions = migration.NewRealm.All<GameSession>();
+        for (int i = 0; i < newSessions.Count(); i++)
+        {
+            dynamic oldSession = oldSessions.ElementAt(i);
+            GameSession newSession = newSessions.ElementAt(i);
+
+            if (oldVersion < 36)
+            {
+                migration.NewRealm.Remove(newSession);
+            }
+        }
+        
         IQueryable<dynamic> oldLikeRelations = migration.OldRealm.DynamicApi.All("LevelLikeRelation");
         IQueryable<LevelLikeRelation> newLikeRelations = migration.NewRealm.All<LevelLikeRelation>();
         for (int i = 0; i < newLikeRelations.Count(); i++)
@@ -62,19 +88,26 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             }
         }
         
+        IQueryable<dynamic> oldEvents = migration.OldRealm.DynamicApi.All("GameEvent");
         IQueryable<GameEvent> events = migration.NewRealm.All<GameEvent>();
 
         for (int i = 0; i < events.Count(); i++)
         {
-            GameEvent gameEvent = events.ElementAt(i);
-            
+            dynamic oldEvent = oldEvents.ElementAt(i);
+            GameEvent newEvent = events.ElementAt(i);
+
             // v28 added the Queue event type
             if (oldVersion < 28)
             {
-                if (gameEvent.EventType >= (int)EventType.Queue)
+                if (newEvent.EventType >= EventType.Queue)
                 {
-                    gameEvent.EventType += 1;
+                    newEvent.EventType += 1;
                 }
+            }
+
+            if (oldVersion < 35)
+            {
+                newEvent._EventType = (int)oldEvent.EventType;
             }
         }
         
@@ -89,6 +122,33 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             {
                 // Renamed Tokens to Notes
                 newEntry.Notes = (int)oldEntry.Tokens;
+            }
+        }
+        
+        IQueryable<dynamic> oldPunishments = migration.OldRealm.DynamicApi.All("Punishment");
+        IQueryable<Punishment> newPunishments = migration.NewRealm.All<Punishment>();
+        for (int i = 0; i < newPunishments.Count(); i++)
+        {
+            dynamic oldPunishment = oldPunishments.ElementAt(i);
+            Punishment newPunishment = newPunishments.ElementAt(i);
+
+            if (oldVersion < 37)
+            {
+                newPunishment._PunishmentType = (int)oldPunishment.PunishmentType;
+            }
+        }
+        
+        IQueryable<dynamic> oldReports = migration.OldRealm.DynamicApi.All("Report");
+        IQueryable<Report> newReports = migration.NewRealm.All<Report>();
+        for (int i = 0; i < newReports.Count(); i++)
+        {
+            dynamic oldReport = oldReports.ElementAt(i);
+            Report newReport = newReports.ElementAt(i);
+
+            if (oldVersion < 38)
+            {
+                newReport._ContentType = (int)oldReport.ContentType;
+                newReport._ReasonType = (int)oldReport.ReasonType;
             }
         }
     }

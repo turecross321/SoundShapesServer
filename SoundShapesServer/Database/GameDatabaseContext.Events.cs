@@ -86,7 +86,7 @@ public partial class GameDatabaseContext
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (EventType eventType in filters.EventTypes)
             {
-                tempResponse = tempResponse.Concat(response.Where(e=> e.EventType == (int)eventType));
+                tempResponse = tempResponse.Concat(response.Where(e=> e.EventType == eventType));
             }
 
             response = tempResponse.AsQueryable();

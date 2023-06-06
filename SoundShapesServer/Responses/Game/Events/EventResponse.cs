@@ -14,7 +14,7 @@ public class EventResponse
     {
         Actor = new UserTargetResponse(gameEventObject.Actor);
         
-        switch ((EventType)gameEventObject.EventType)
+        switch (gameEventObject.EventType)
         {
             case Types.Events.EventType.Publish:
                 Content = new EventLevelResponse(gameEventObject.ContentLevel ?? new GameLevel());
@@ -39,7 +39,7 @@ public class EventResponse
         }
 
         Timestamp ??= 0.ToString();
-        EventType = EventHelper.EventEnumToGameString((EventType)gameEventObject.EventType);
+        EventType = EventHelper.EventEnumToGameString(gameEventObject.EventType);
     }
     
     

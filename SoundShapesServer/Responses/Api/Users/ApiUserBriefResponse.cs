@@ -8,7 +8,7 @@ public class ApiUserBriefResponse
     {
         Id = user.Id;
         Username = user.Username;
-        PermissionsType = user.PermissionsType;
+        PermissionsType = (int)user.PermissionsType;
         PublishedLevels = user.Levels.Count();
         Followers = user.Followers.Count();
     }

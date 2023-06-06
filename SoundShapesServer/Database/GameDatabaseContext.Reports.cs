@@ -45,11 +45,11 @@ public partial class GameDatabaseContext
         {
             Id = GenerateGuid(),            
             Issuer = reporter,
-            ContentType = (int)contentType,
+            ContentType = contentType,
             ContentUser = contentUser,
             ContentLevel = contentLevel,
             ContentLeaderboardEntry = contentLeaderboardEntry,
-            ReasonType = (int)reportReasonType,
+            ReasonType = reportReasonType,
             Date = DateTimeOffset.UtcNow
         };
         
@@ -95,12 +95,12 @@ public partial class GameDatabaseContext
 
         if (filters.ContentType != null)
         {
-            response = response.Where(r => r.ContentType == (int)filters.ContentType);
+            response = response.Where(r => r.ContentType == filters.ContentType);
         }
 
         if (filters.ReasonType != null)
         {
-            response = response.Where(r => r.ReasonType == (int)filters.ReasonType);
+            response = response.Where(r => r.ReasonType == filters.ReasonType);
         }
 
         return response;

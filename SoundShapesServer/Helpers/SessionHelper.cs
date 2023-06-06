@@ -9,10 +9,12 @@ public static class SessionHelper
 {
     public static string GenerateEmailSessionId(GameDatabaseContext database) =>
         GenerateSimpleSessionId(database, "123456789", 8);
+    // ReSharper disable StringLiteralTypo    
     public static string GeneratePasswordSessionId(GameDatabaseContext database) =>
         GenerateSimpleSessionId(database, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 8);
     public static string GenerateAccountRemovalSessionId(GameDatabaseContext database) => GenerateSimpleSessionId(database,
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789", 8);
+    // ReSharper restore StringLiteralTypo
     private static string GenerateSimpleSessionId(GameDatabaseContext database, string idCharacters, int idLength)
     {
         Random r = new();
@@ -32,45 +34,35 @@ public static class SessionHelper
             Regex.IsMatch(uriPath, $"^{GameEndpointAttribute.BaseRoute}[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$")
            )
         {
-            if (session.SessionType is (int)SessionType.GameUnAuthorized or (int)SessionType.Banned) return true;
+            if (session.SessionType is SessionType.GameUnAuthorized or SessionType.Banned) return true;
         }
         if (uriPath.StartsWith(GameEndpointAttribute.BaseRoute) || uriPath.StartsWith("/identity/"))
         {
             // If Session is a Game Session, let it only access Game endpoints
-            if (session.SessionType == (int)SessionType.Game) return true;
+            if (session.SessionType == SessionType.Game) return true;
         }
-        if (uriPath == ApiEndpointAttribute.BaseRoute + "account/setEmail")
+        switch (uriPath)
         {
             // If Session is a SetEmail Session, let it only access the setEmail endpoint
-            if (session.SessionType == (int)SessionType.SetEmail) return true;
-
-            return false;
-        }
-
-        if (uriPath == ApiEndpointAttribute.BaseRoute + "account/setPassword")
-        {
+            case ApiEndpointAttribute.BaseRoute + "account/setEmail" when session.SessionType == SessionType.SetEmail:
+                return true;
             // If Session is a SetPassword Session, let it only access the SetPassword endpoint
-            if (session.SessionType == (int)SessionType.SetPassword) return true;
-
-            return false;
-        }
-
-        if (uriPath == ApiEndpointAttribute.BaseRoute + "account/remove")
-        {
+            case ApiEndpointAttribute.BaseRoute + "account/setPassword" when session.SessionType == SessionType.SetPassword:
+                return true;
             // If Session is a RemoveAccount Session, let it only access the Remove endpoint
-            if (session.SessionType == (int)SessionType.RemoveAccount) return true;
-
-            return false;
+            case ApiEndpointAttribute.BaseRoute + "account/remove" when session.SessionType == SessionType.RemoveAccount:
+                return true;
         }
+
         if (uriPath.StartsWith(ApiEndpointAttribute.BaseRoute))
         {
             // If Session is an API Session, let it only access api endpoints
-            if (session.SessionType == (int)SessionType.Api) return true;
+            if (session.SessionType == SessionType.Api) return true;
         }
 
         if (uriPath == ApiEndpointAttribute.BaseRoute + "account/sendRemovalSession")
         {
-            if (session.SessionType == (int)SessionType.Banned)
+            if (session.SessionType == SessionType.Banned)
                 return true;
         }
 
