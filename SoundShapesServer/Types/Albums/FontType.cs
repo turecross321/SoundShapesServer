@@ -4,6 +4,6 @@ namespace SoundShapesServer.Types.Albums;
 public enum FontType
 {
     Title,
-    Heading,
+    Header,
     Normal
 }

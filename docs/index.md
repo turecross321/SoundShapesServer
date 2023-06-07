@@ -1217,7 +1217,7 @@ Should be a PNG
       "Id": "a603d25f-4324-41df-b573-c143679bb7f2",
       "Author": "DJ Khaled the Second",
       "Name": "We Not The Best",
-      "LinerNotes": "<html><h1>This is still a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
+      "LinerNotes": "<linerNotes><title>This is a title!</title><header>This is a header!</header><normal>This is normal text</normal></linerNotes>",
       "TotalLevels": 2,
       "CreationDate": "2023-05-02T20:24:32.7037593+00:00",
       "ModificationDate": "2023-05-02T20:24:59.0157425+00:00"
@@ -1246,7 +1246,7 @@ Should be a PNG
   "Id": "a603d25f-4324-41df-b573-c143679bb7f2",
   "Author": "DJ Khaled the Second",
   "Name": "We Not The Best",
-  "LinerNotes": "<html><h1>This is still a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
+  "LinerNotes": "<linerNotes><title>This is still a title!</title><header>This is a header!</header><normal>This is normal text</normal></linerNotes>",
   "TotalLevels": 2,
   "CreationDate": "2023-05-02T20:24:32.7037593+00:00",
   "ModificationDate": "2023-05-02T20:24:59.0157425+00:00"
@@ -1330,13 +1330,21 @@ Should be a PNG
 > {ip}/api/v1/albums/create
 > ```
 
+# Note: LinerNotes should be an XML document.
+
+| LinerNote Element Types |
+| ----------------------- |
+| title                   |
+| header                  |
+| normal                  |
+
 ### Body (**raw**)
 
 ```json
 {
   "Name": "We The Best",
   "Author": "DJ Khaled",
-  "LinerNotes": "<html><h1>This is a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
+  "LinerNotes": "<linerNotes><title>This is a title!</title><header>This is a header!</header><normal>This is normal text</normal></linerNotes>",
   "LevelIds": ["{levelId}", "{otherLevelId}"]
 }
 ```
@@ -1348,7 +1356,7 @@ Should be a PNG
   "Id": "a603d25f-4324-41df-b573-c143679bb7f2",
   "Author": "DJ Khaled",
   "Name": "We The Best",
-  "LinerNotes": "<html><h1>This is a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
+  "LinerNotes": "<linerNotes><title>This is a title!</title><header>This is a header!</header><normal>This is normal text</normal></linerNotes>",
   "TotalLevels": 2,
   "CreationDate": "2023-05-02T20:24:32.7037593+00:00",
   "ModificationDate": "2023-05-02T20:24:32.7037593+00:00"
@@ -1367,13 +1375,21 @@ Should be a PNG
 > {ip}/api/v1/albums/id/{albumId}/edit
 > ```
 
+# Note: LinerNotes should be an XML document.
+
+| LinerNote Element Types |
+| ----------------------- |
+| title                   |
+| header                  |
+| normal                  |
+
 ### Body (**raw**)
 
 ```json
 {
   "Name": "We Not The Best",
   "Author": "DJ Khaled the Second",
-  "LinerNotes": "<html><h1>This is still a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
+  "LinerNotes": "<linerNotes><title>This is still a title!</title><header>This is a header!</header><normal>This is normal text</normal></linerNotes>",
   "LevelIds": ["{levelId}", "{levelId2}"]
 }
 ```
@@ -1385,7 +1401,7 @@ Should be a PNG
   "Id": "a603d25f-4324-41df-b573-c143679bb7f2",
   "Author": "DJ Khaled the Second",
   "Name": "We Not The Best",
-  "LinerNotes": "<html><h1>This is still a Title!</h1><h2>This is a header!</h2><p>This is a paragraph!</p></html>",
+  "LinerNotes": "<linerNotes><title>This is still a title!</title><header>This is a header!</header><normal>This is normal text</normal></linerNotes>",
   "TotalLevels": 2,
   "CreationDate": "2023-05-02T20:24:32.7037593+00:00",
   "ModificationDate": "2023-05-02T20:24:59.0157425+00:00"

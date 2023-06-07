@@ -8,7 +8,7 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    private void CreateEvent(GameUser actor, EventType eventType, GameUser user, GameLevel? level = null, LeaderboardEntry? leaderboardEntry = null)
+    private void CreateEvent(GameUser actor, EventType eventType, GameUser? user = null, GameLevel? level = null, LeaderboardEntry? leaderboardEntry = null)
     {
         GameEvent eventObject = new (actor, user, level, leaderboardEntry, eventType);
         
@@ -27,7 +27,7 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             _realm.Add(eventObject);
-            user.EventsCount = user.Events.Count();
+            actor.EventsCount = actor.Events.Count();
         });
     }
 

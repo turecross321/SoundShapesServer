@@ -10,7 +10,7 @@ public class LinerNoteResponse
         Font = fontType switch
         {
             FontType.Title => "title",
-            FontType.Heading => "heading",
+            FontType.Header => "heading",
             FontType.Normal => "normal",
             _ => "normal"
         };

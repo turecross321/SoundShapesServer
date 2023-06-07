@@ -1,3 +1,7 @@
+using System.Diagnostics;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 using HtmlAgilityPack;
 using SoundShapesServer.Responses.Game.Albums;
 using SoundShapesServer.Types.Albums;
@@ -6,27 +10,32 @@ namespace SoundShapesServer.Helpers;
 
 public static class AlbumHelper
 {
-    public static LinerNoteResponse[] HtmlToLinerNotes(string html)
+    public static LinerNoteResponse[] XmlToLinerNotes(string xmlString)
     {
-        HtmlDocument document = new();
-        document.LoadHtml(html);
+        List<LinerNoteResponse> linerNotes = new ();
 
-        List<LinerNoteResponse> linerNotes = new();
+        XmlDocument xmlDoc = new ();
+        xmlDoc.LoadXml(xmlString);
 
-        IEnumerable<HtmlNode> openingNodes = document.DocumentNode.DescendantsAndSelf().Where(n => n.NodeType == HtmlNodeType.Element);
-
-        foreach (HtmlNode node in openingNodes)
+        if (xmlDoc.DocumentElement == null) return linerNotes.ToArray();
+        
+        XmlNodeList elements = xmlDoc.DocumentElement.ChildNodes;
+        
+        foreach (XmlNode element in elements)
         {
-            if (node.ChildNodes.Any(n => n.NodeType != HtmlNodeType.Text)) continue;
-
-            FontType fontType = node.Name switch
+            FontType? fontType = element.Name switch
             {
-                "h1" => FontType.Title,
-                "h2" => FontType.Heading,
-                _ => FontType.Normal
+                "title" => FontType.Title,
+                "header" => FontType.Header,
+                "normal" => FontType.Normal,
+                _ => null
             };
-                
-            linerNotes.Add(new LinerNoteResponse(fontType, node.InnerText));
+            
+            if (fontType == null) continue;
+            
+            LinerNoteResponse linerNote = new ((FontType)fontType, element.InnerText);
+
+            linerNotes.Add(linerNote);
         }
 
         return linerNotes.ToArray();

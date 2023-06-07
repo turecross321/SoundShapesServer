@@ -16,7 +16,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 42;
+    protected override ulong SchemaVersion => 44;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -64,6 +64,20 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             if (oldVersion < 42)
             {
                 newUser.EventsCount = newUser.Events.Count();
+            }
+        }
+        
+        IQueryable<dynamic> oldAlbums = migration.OldRealm.DynamicApi.All("GameAlbum");
+        IQueryable<GameAlbum> newAlbums = migration.NewRealm.All<GameAlbum>();
+        for (int i = 0; i < newAlbums.Count(); i++)
+        {
+            dynamic oldAlbum = oldAlbums.ElementAt(i);
+            GameAlbum newAlbum = newAlbums.ElementAt(i);
+            
+            if (oldVersion < 44)
+            {
+                // just make it empty because i cant be bothered making a html to xml thing just for a migration
+                newAlbum.LinerNotes = "<linerNotes></linerNotes>";
             }
         }
         
