@@ -12,6 +12,34 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 
 public class LevelRelationEndpoints : EndpointGroup
 {
+    [GameEndpoint("~identity:{userId}/~queued:*.page", ContentType.Json)]
+    public RelationLevelsWrapper? QueuedAndLiked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
+    {
+        int count = int.Parse(context.QueryString["count"] ?? "9");
+        int from = int.Parse(context.QueryString["from"] ?? "0");
+        
+        GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
+        if (userToGetLevelsFrom == null) return null;
+        
+        (GameLevel[] levels, int totalLevels) = database.GetLevels(LevelOrderType.DoNotOrder, true, new LevelFilters(likedOrQueuedByUser: userToGetLevelsFrom), from, count);
+        
+        return new RelationLevelsWrapper(levels, user, totalLevels, from, count);
+    }
+    
+    [GameEndpoint("~identity:{userId}/~like:*.page", ContentType.Json)]
+    public RelationLevelsWrapper? Liked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
+    {
+        int count = int.Parse(context.QueryString["count"] ?? "9");
+        int from = int.Parse(context.QueryString["from"] ?? "0"); 
+        
+        GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
+        if (userToGetLevelsFrom == null) return null;
+        
+        (GameLevel[] levels, int totalLevels) = database.GetLevels(LevelOrderType.DoNotOrder, true, new LevelFilters(likedByUser: userToGetLevelsFrom), from, count);
+        
+        return new RelationLevelsWrapper(levels, user, totalLevels, from, count);
+    }
+    
     [GameEndpoint("~identity:{userId}/~like:%2F~level%3A{arguments}", ContentType.Json)]
     public Response LevelLikeRequests(RequestContext context, GameDatabaseContext database, GameUser user, string userId, string arguments)
     {
@@ -39,7 +67,8 @@ public class LevelRelationEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return new Response(HttpStatusCode.NotFound);
         
-        if (requestType == "put") return QueueLevel(database, user, level);
+        // There is no queue button, and this is always called when the like button is pressed, so ignore it.
+        if (requestType == "put") return HttpStatusCode.NotFound;
         if (requestType == "get") return CheckIfUserHasQueuedLevel(database, user, level);
         if (requestType == "delete") return UnQueueLevel(database, user, level);
 
@@ -67,13 +96,7 @@ public class LevelRelationEndpoints : EndpointGroup
         if (database.UnLikeLevel(user, level)) return new Response(HttpStatusCode.OK);
         return new Response(HttpStatusCode.BadRequest);
     }
-    
-    private Response QueueLevel(GameDatabaseContext database, GameUser user, GameLevel level)
-    {
-        if (database.QueueLevel(user, level)) return new Response(HttpStatusCode.OK);
-        return new Response(HttpStatusCode.BadRequest);
-    }
-    
+
     private Response CheckIfUserHasQueuedLevel(GameDatabaseContext database, GameUser user, GameLevel level)
     {
         if (database.HasUserQueuedLevel(user, level))
