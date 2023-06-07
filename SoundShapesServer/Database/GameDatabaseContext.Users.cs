@@ -241,6 +241,7 @@ public partial class GameDatabaseContext
             UserOrderType.Deaths => OrderUsersByDeaths(users, descending),
             UserOrderType.TotalPlayTime => OrderUsersByPlayTime(users, descending),
             UserOrderType.LastGameLogin => OrderUsersByLastGameLogin(users, descending),
+            UserOrderType.Events => OrderUsersByEvents(users, descending),
             _ => users
         };
     }
@@ -303,6 +304,12 @@ public partial class GameDatabaseContext
     {
         if (descending) return users.OrderByDescending(u => u.LastGameLogin);
         return users.OrderBy(u => u.LastGameLogin);
+    }
+    
+    private static IQueryable<GameUser> OrderUsersByEvents(IQueryable<GameUser> users, bool descending)
+    {
+        if (descending) return users.OrderByDescending(u => u.EventsCount);
+        return users.OrderBy(u => u.EventsCount);
     }
     
     #endregion

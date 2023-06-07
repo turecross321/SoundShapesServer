@@ -352,6 +352,7 @@ o7
 | totalDeaths        |
 | totalPlayTime      |
 | lastGameLogin      |
+| events             |
 
 ### Response: 200
 

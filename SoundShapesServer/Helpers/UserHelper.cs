@@ -29,6 +29,7 @@ public static class UserHelper
             "totalDeaths" => UserOrderType.Deaths,
             "totalPlayTime" => UserOrderType.TotalPlayTime,
             "lastGameLogin" => UserOrderType.LastGameLogin,
+            "events" => UserOrderType.Events,
             _ => UserOrderType.CreationDate
         };
     }

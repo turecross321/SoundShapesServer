@@ -55,6 +55,7 @@ public class GameUser : RealmObject, IRateLimitUser
     [Backlink(nameof(Punishment.Recipient))] public IQueryable<Punishment> Punishments { get; }
     [Backlink(nameof(LeaderboardEntry.User))] public IQueryable<LeaderboardEntry> LeaderboardEntries { get; }
     [Backlink(nameof(GameEvent.Actor))] public IQueryable<GameEvent> Events { get; }
+    public int EventsCount { get; set; }
     [Backlink(nameof(GameEvent.ContentUser))] public IQueryable<GameEvent> EventsWhereUserIsRecipient { get; }
     public int Deaths { get; set; }
     public long TotalPlayTime { get; set; }
