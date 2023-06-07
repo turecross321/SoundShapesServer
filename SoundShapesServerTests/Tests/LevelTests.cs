@@ -142,9 +142,9 @@ public class LevelTests: ServerTest
         Assert.That(response.IsSuccessStatusCode);
         
         // Queueing
-        payload = $"/otg/~identity:{user.Id}/~queued:%2F~level%3A{level.Id}.put";
-        response = await client.GetAsync(payload);
-        Assert.That(response.IsSuccessStatusCode);
+        
+        // you can't queue levels through the game, hence this not being done through the HTTP client
+        context.Database.QueueLevel(user, level);
         
         payload = $"/otg/~identity:{user.Id}/~queued:%2F~level%3A{level.Id}.get";
         response = await client.GetAsync(payload);
