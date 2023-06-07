@@ -3,7 +3,6 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
-using Realms.Sync;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api.Account;
 using SoundShapesServer.Responses.Api;

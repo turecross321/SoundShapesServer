@@ -9,7 +9,7 @@ public partial class GameDatabaseContext
 {
     public Punishment CreatePunishment(GameUser author, GameUser recipient, ApiPunishRequest request)
     {
-        if ((PunishmentType)request.PunishmentType == PunishmentType.Ban)
+        if (request.PunishmentType == PunishmentType.Ban)
         {
             RemoveAllSessionsWithUser(recipient);
         }
@@ -17,7 +17,7 @@ public partial class GameDatabaseContext
         Punishment newPunishment = new()
         {
             Id = GenerateGuid(),
-            PunishmentType = (PunishmentType)request.PunishmentType,
+            PunishmentType = request.PunishmentType,
             Recipient = recipient,
             Reason = request.Reason,
             ExpiryDate = request.ExpiryDate,
@@ -39,7 +39,7 @@ public partial class GameDatabaseContext
         {
             punishment.Author = author;
             punishment.Recipient = recipient;
-            punishment.PunishmentType = (PunishmentType)request.PunishmentType;
+            punishment.PunishmentType = request.PunishmentType;
             punishment.Reason = request.Reason;
             punishment.ExpiryDate = request.ExpiryDate;
         });

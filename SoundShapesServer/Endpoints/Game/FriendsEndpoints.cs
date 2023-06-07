@@ -30,6 +30,6 @@ public class FriendsEndpoints : EndpointGroup
     [GameEndpoint("identity/person/", ContentType.Json, Method.Post)]
     public Response GetPerson(RequestContext context)
     {
-        return new Response(HttpStatusCode.OK);
+        return new Response(HttpStatusCode.OK); // todo: i dont think this is used? requires a little more testing
     }
 }

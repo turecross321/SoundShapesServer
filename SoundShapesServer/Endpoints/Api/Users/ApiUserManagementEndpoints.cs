@@ -38,7 +38,7 @@ public class ApiUserManagementEndpoints : EndpointGroup
 
         if (Enum.TryParse(body.PermissionsType.ToString(), out PermissionsType type) == false) 
             return HttpStatusCode.BadRequest;
-        if ((PermissionsType)body.PermissionsType > user.PermissionsType || userToSetPermissionsOf.PermissionsType >= user.PermissionsType) 
+        if (body.PermissionsType > user.PermissionsType || userToSetPermissionsOf.PermissionsType >= user.PermissionsType) 
             return HttpStatusCode.Unauthorized;
         
         

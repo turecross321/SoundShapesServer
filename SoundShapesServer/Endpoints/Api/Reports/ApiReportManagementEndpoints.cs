@@ -11,7 +11,7 @@ using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Reports;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Endpoints.Api.Moderation;
+namespace SoundShapesServer.Endpoints.Api.Reports;
 
 public class ApiReportManagementEndpoints : EndpointGroup
 {
