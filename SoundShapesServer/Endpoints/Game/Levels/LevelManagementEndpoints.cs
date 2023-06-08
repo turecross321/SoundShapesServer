@@ -101,7 +101,7 @@ public class LevelManagementEndpoints : EndpointGroup
     }
     
     // Gets called by Endpoints.cs
-    public static Response UnPublishLevel(IDataStore dataStore, GameDatabaseContext database, GameUser user, GameLevel level)
+    public static Response RemoveLevel(IDataStore dataStore, GameDatabaseContext database, GameUser user, GameLevel level)
     {
         if (level.Author.Id != user.Id) return new Response(HttpStatusCode.Forbidden);
         

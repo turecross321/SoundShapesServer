@@ -8,7 +8,7 @@ public class LevelParentResponse
 {
     public LevelParentResponse(GameLevel level)
     {
-        Id = IdFormatter.FormatLevelId(level.Id);
+        Id = IdHelper.FormatLevelId(level.Id);
     }
 
     public string Id { get; set; }

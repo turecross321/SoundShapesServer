@@ -23,7 +23,7 @@ public class ReportEndpoints : EndpointGroup
         ReportReasonType reportReasonType = Enum.Parse<ReportReasonType>(reportReasonIdString);
 
         string formattedLevelId = parser.GetParameterValue("item");
-        string levelId = IdFormatter.DeFormatLevelIdAndVersion(formattedLevelId);
+        string levelId = IdHelper.DeFormatLevelIdAndVersion(formattedLevelId);
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return HttpStatusCode.NotFound;
 

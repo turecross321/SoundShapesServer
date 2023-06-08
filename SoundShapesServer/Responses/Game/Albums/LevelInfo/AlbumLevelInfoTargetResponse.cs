@@ -10,7 +10,7 @@ public class AlbumLevelInfoTargetResponse
 {
     public AlbumLevelInfoTargetResponse(GameLevel level, GameUser user)
     {
-        Id = IdFormatter.FormatLevelId(level.Id);
+        Id = IdHelper.FormatLevelId(level.Id);
         Type = ContentHelper.GetContentTypeString(GameContentType.Level);
         Completed = level.UniqueCompletions.Contains(user);
     }

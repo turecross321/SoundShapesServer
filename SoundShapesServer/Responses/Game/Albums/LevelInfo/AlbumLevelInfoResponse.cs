@@ -11,7 +11,7 @@ public class AlbumLevelInfoResponse
 {
     public AlbumLevelInfoResponse(GameUser user, GameAlbum album, GameLevel level)
     {
-        Id = IdFormatter.FormatAlbumLinkId(album.Id, level.Id);
+        Id = IdHelper.FormatAlbumLinkId(album.Id, level.Id);
         Timestamp = level.ModificationDate.ToUnixTimeMilliseconds();
         TargetResponse = new AlbumLevelInfoTargetResponse(level, user);
     }

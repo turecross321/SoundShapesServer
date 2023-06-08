@@ -4,7 +4,7 @@ using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.IdFormatter;
+using static SoundShapesServer.Helpers.IdHelper;
 
 namespace SoundShapesServer.Responses.Game.Levels;
 

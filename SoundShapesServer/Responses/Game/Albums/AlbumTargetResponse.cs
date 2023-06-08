@@ -9,7 +9,7 @@ public class AlbumTargetResponse
 {
     public AlbumTargetResponse(GameAlbum album)
     {
-        Id = IdFormatter.FormatAlbumId(album.Id);
+        Id = IdHelper.FormatAlbumId(album.Id);
         MetadataResponse = new AlbumMetadataResponse(album);
     }
 

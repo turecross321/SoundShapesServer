@@ -9,7 +9,7 @@ public class UserBriefResponse
 {
     public UserBriefResponse(GameUser follower, GameUser recipient)
     {
-        Id = IdFormatter.FormatFollowId(follower.Id, recipient.Id);
+        Id = IdHelper.FormatFollowId(follower.Id, recipient.Id);
         UserTarget = new UserTargetResponse(recipient);
     }
 

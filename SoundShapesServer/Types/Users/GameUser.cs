@@ -52,6 +52,7 @@ public class GameUser : RealmObject, IRateLimitUser
     [Backlink(nameof(GameSession.User))] public IQueryable<GameSession> Sessions { get; }
     [Backlink(nameof(GameLevel.Author))] public IQueryable<GameLevel> Levels { get; }
     public int LevelsCount { get; set; }
+    public GameLevel? FeaturedLevel { get; set; }
     [Backlink(nameof(Punishment.Recipient))] public IQueryable<Punishment> Punishments { get; }
     [Backlink(nameof(LeaderboardEntry.User))] public IQueryable<LeaderboardEntry> LeaderboardEntries { get; }
     [Backlink(nameof(GameEvent.Actor))] public IQueryable<GameEvent> Events { get; }

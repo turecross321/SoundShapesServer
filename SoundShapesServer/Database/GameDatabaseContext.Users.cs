@@ -152,6 +152,14 @@ public partial class GameDatabaseContext
         });
     }
     
+    public void SetFeaturedLevel(GameUser user, GameLevel level)
+    {
+        _realm.Write(() =>
+        {
+            user.FeaturedLevel = level;
+        });
+    }
+    
     public GameUser? GetUserWithUsername(string username, bool includeDeleted = false)
     {
         return _realm.All<GameUser>().FirstOrDefault(u =>  (!u.Deleted || u.Deleted == includeDeleted) && u.Username == username);

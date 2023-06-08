@@ -4,7 +4,7 @@ using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.IdFormatter;
+using static SoundShapesServer.Helpers.IdHelper;
 
 namespace SoundShapesServer.Responses.Game.Levels;
 
@@ -14,7 +14,7 @@ public class LevelResponse
     {
         Id = FormatLevelId(level.Id);
         Author = new UserTargetResponse(level.Author);
-        LatestVersion = FormatLevelIdAndVersion(level.Id, level.ModificationDate.ToUnixTimeMilliseconds());
+        LatestVersion = FormatLevelIdAndVersion(level);
         Title = level.Name;
         Completed = level.UniqueCompletions.Contains(user);
         Metadata = new LevelMetadataResponse(level);

@@ -17,7 +17,7 @@ public class LevelEndpoints : EndpointGroup
     [GameEndpoint("~index:*.page", ContentType.Json)]
     [GameEndpoint("~index:level.page", ContentType.Json)]
     [Authentication(false)]
-    public Response LevelsEndpoint(RequestContext context, GameDatabaseContext database, GameUser? user, GameSession? session)
+    public Response GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user, GameSession? session)
     {
         string? query = context.QueryString["query"];
         int from = int.Parse(context.QueryString["from"] ?? "0");
@@ -74,5 +74,21 @@ public class LevelEndpoints : EndpointGroup
         (GameLevel[] levels, int totalLevels) = database.GetLevels((LevelOrderType)order, descending, filters, from, count);
 
         return new Response(new LevelsWrapper(levels, user, totalLevels, from, count), ContentType.Json);
+    }
+
+    [GameEndpoint("~level:{levelId}/~metadata:{args}", ContentType.Plaintext)]
+    public string? GetFeaturedLevel(RequestContext context, GameDatabaseContext database, GameUser user, string levelId, string args)
+    {
+        // Using args in the endpoints here because Bunkum doesn't support . as a separator
+        string[] arguments = args.Split('.');
+        
+        string action = arguments[1];
+
+        if (action != "get") return null;
+        
+        GameLevel? level = user.FeaturedLevel;
+        if (level == null) return null;
+
+        return IdHelper.FormatLevelIdAndVersion(level);
     }
 }

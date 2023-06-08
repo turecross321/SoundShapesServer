@@ -8,13 +8,13 @@ using Bunkum.ProfanityFilter;
 using HttpMultipartParser;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
 
-// Doing this because Bunkum doesn't support . as a seperator
 public class Endpoints : EndpointGroup
 {
     [GameEndpoint("~level:{args}")]
@@ -31,7 +31,7 @@ public class Endpoints : EndpointGroup
 
         return action switch
         {
-            "delete" => LevelManagementEndpoints.UnPublishLevel(dataStore, database, user, level),
+            "delete" => LevelManagementEndpoints.RemoveLevel(dataStore, database, user, level),
             "latest" => new Response(new LevelResponse(level, user), ContentType.Json),
             _ => new Response(HttpStatusCode.NotFound)
         };

@@ -1,13 +1,17 @@
+using SoundShapesServer.Types.Levels;
+
 namespace SoundShapesServer.Helpers;
 
-public static class IdFormatter
+public static class IdHelper
 {
     public static string FormatLevelId(string id)
     {
         return $"/~level:{id}";
     }
-    public static string FormatLevelIdAndVersion(string id, long version)
+    public static string FormatLevelIdAndVersion(GameLevel level)
     {
+        string id = level.Id;
+        long version = level.ModificationDate.ToUnixTimeMilliseconds();
         return $"/~level:{id}/~version:{version}";
     }
 

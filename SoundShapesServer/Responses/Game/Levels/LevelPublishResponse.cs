@@ -9,7 +9,7 @@ public class LevelPublishResponse
 {
     public LevelPublishResponse(GameLevel level)
     {
-        Id = IdFormatter.FormatLevelPublishId(level.Id, level.CreationDate.ToUnixTimeMilliseconds());
+        Id = IdHelper.FormatLevelPublishId(level.Id, level.CreationDate.ToUnixTimeMilliseconds());
         Author = new UserTargetResponse(level.Author);
         Title = level.Name;
         Dependencies = new List<string>();

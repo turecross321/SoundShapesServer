@@ -10,7 +10,7 @@ public class RelationLevelResponse
 {
     public RelationLevelResponse(GameUser user, GameLevel level)
     {
-        Id = IdFormatter.FormatRelationLevelId(user.Id, level.Id);
+        Id = IdHelper.FormatRelationLevelId(user.Id, level.Id);
         
         DateTimeOffset likeDate = level.Likes.FirstOrDefault(r => r.User == user && r.Level == level)?.Date ?? DateTimeOffset.UnixEpoch;
         DateTimeOffset queueDate = level.Queues.FirstOrDefault(r => r.User == user && r.Level == level)?.Date ?? DateTimeOffset.UnixEpoch;

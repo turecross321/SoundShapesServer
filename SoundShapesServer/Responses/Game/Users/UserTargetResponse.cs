@@ -14,7 +14,7 @@ public class UserTargetResponse
             Type = ContentHelper.GetContentTypeString(GameContentType.RemovedLevelAuthor);
         }
         
-        Id = IdFormatter.FormatUserId(user?.Id ?? "");
+        Id = IdHelper.FormatUserId(user?.Id ?? "");
         DisplayName = user?.Username ?? "";
         Metadata = user != null ? new UserMetadataResponse(user) : new UserMetadataResponse();
     }
