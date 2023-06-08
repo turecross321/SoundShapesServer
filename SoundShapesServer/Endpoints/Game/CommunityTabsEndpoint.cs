@@ -10,6 +10,7 @@ public class CommunityTabsEndpoint : EndpointGroup
 {
     [GameEndpoint("global/featured/~metadata:*.get", ContentType.Plaintext)]
     [GameEndpoint("global/featured/{language}/~metadata:*.get", ContentType.Plaintext)]
+    [Authentication(false)]
     public string GlobalFeatured(RequestContext context, GameDatabaseContext database, string? language)
     {
         return CommunityTabHelper.SerializeCommunityTabs(database.GetCommunityTabs());
