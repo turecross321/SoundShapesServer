@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.News;
 
 namespace SoundShapesServer.Responses.Game;
@@ -13,7 +14,7 @@ public class NewsResponse
         Summary = entry.Summary;
         FullText = entry.FullText;
         Url = string.IsNullOrEmpty(Url) ? "0.0.0.0" : entry.Url; // An empty url crashes the Vita version
-        if (includeImageUrl) ImageUrl = $"otg/~news:{entry.Id}/~content:thumbnail/data.get";
+        if (includeImageUrl) ImageUrl = ResourceHelper.GetNewsThumbnailUrl(entry.Id);
     }
 
     public NewsResponse()

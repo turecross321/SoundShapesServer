@@ -159,4 +159,9 @@ public static class ResourceHelper
     {
         return $"{NewsPath}/{id}-thumbnail";
     }
+    
+    public static string GetNewsThumbnailUrl(string id)
+    {
+        return $"~news:{id}/~content:thumbnail/data";
+    }
 }
