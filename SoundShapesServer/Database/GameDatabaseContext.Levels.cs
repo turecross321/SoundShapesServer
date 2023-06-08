@@ -163,7 +163,6 @@ public partial class GameDatabaseContext
     public void RemoveLevel(GameLevel level, IDataStore dataStore)
     {
         RemoveLevelResources(level, dataStore);
-
         RemoveAllReportsWithContentLevel(level);
         
         _realm.Write(() =>
