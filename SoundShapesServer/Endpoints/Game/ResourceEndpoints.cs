@@ -77,6 +77,7 @@ public class ResourceEndpoints : EndpointGroup
     }
     
     [GameEndpoint("~communityTab:{id}/~content:thumbnail/data.get")]
+    [Authentication(false)]
     public Response GetCommunityTabThumbnail(RequestContext context, IDataStore dataStore, GameDatabaseContext database, string id)
     {
         CommunityTab? communityTab = database.GetCommunityTabWithId(id);
