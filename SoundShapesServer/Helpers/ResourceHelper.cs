@@ -132,7 +132,7 @@ public static class ResourceHelper
 
     public static string GetAlbumResourceUrl(string albumId, AlbumResourceType resourceType)
     {
-        return $"~album:{albumId}/~content:{AlbumHelper.GetStringFromAlbumResourceType(resourceType)}/data.get";
+        return $"~album:{albumId}/~content:{AlbumHelper.GetStringFromAlbumResourceType(resourceType)}/data";
     }
 
     private const string CommunityTabsPath = "communityTabs";
@@ -143,7 +143,7 @@ public static class ResourceHelper
     }
     public static string GetCommunityTabThumbnailUrl(string id)
     {
-        return $"~communityTab:{id}/~content:thumbnail/data.get";
+        return $"~communityTab:{id}/~content:thumbnail/data";
     }
     
     private const string SavesPath = "saves";
