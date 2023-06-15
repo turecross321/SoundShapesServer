@@ -5,7 +5,7 @@ using SoundShapesServer.Types.Sessions;
 
 namespace SoundShapesServer.Helpers;
 
-public static class SessionHelper
+public static partial class SessionHelper
 {
     public static string GenerateEmailSessionId(GameDatabaseContext database) =>
         GenerateSimpleSessionId(database, "123456789", 8);
@@ -26,15 +26,18 @@ public static class SessionHelper
             id += idCharacters[r.Next(idCharacters.Length - 1)];
         }
 
-        if (database.GetSessionWithSessionId(id) == null) return id; // Return if Id has not been used before
+        if (database.GetSessionWithId(id) == null) return id; // Return if Id has not been used before
         return GenerateSimpleSessionId(database, idCharacters, idLength); // Generate new Id if it already exists   
     }
 
+    [GeneratedRegex("^/otg/[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$")]
+    private static partial Regex EulaRegex();
+    
     public static bool IsSessionAllowedToAccessEndpoint(GameSession session, string uriPath)
     {
         if (uriPath == GameEndpointAttribute.BaseRoute + "~identity:*.hello" ||
             // This is for the EULA endpoint, and we use regex here to support all platforms and languages
-            Regex.IsMatch(uriPath, $"^{GameEndpointAttribute.BaseRoute}[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$"))
+            EulaRegex().IsMatch(uriPath))
         {
             if (session.SessionType is SessionType.GameUnAuthorized or SessionType.Banned) return true;
         }

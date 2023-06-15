@@ -17,10 +17,11 @@ using static SoundShapesServer.Helpers.SessionHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Account;
 
-public class ApiAccountManagementEndpoints : EndpointGroup
+public partial class ApiAccountManagementEndpoints : EndpointGroup
 {
-    private const string Sha512Pattern = "^[a-f0-9]{128}$";
-
+    [GeneratedRegex("^[a-f0-9]{128}$")]
+    private static partial Regex Sha512Regex();
+    
     [ApiEndpoint("account/setUsername", Method.Post)]
     public Response SetUsername(RequestContext context, GameDatabaseContext database, GameUser user, ApiSetUsernameRequest body)
     {
@@ -98,7 +99,7 @@ public class ApiAccountManagementEndpoints : EndpointGroup
     {
         GameUser user = session.User;
 
-        if (body.NewPasswordSha512.Length != 128 || !Regex.IsMatch(body.NewPasswordSha512, Sha512Pattern))
+        if (body.NewPasswordSha512.Length != 128 || !Sha512Regex().IsMatch(body.NewPasswordSha512))
             return new Response("Password is definitely not SHA512. Please hash the password.",
                 ContentType.Plaintext, HttpStatusCode.BadRequest);
 

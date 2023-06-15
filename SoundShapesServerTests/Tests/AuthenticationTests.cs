@@ -17,7 +17,7 @@ public class AuthenticationTests : ServerTest
 
         HttpClient authedClient = context.GetAuthenticatedClient(SessionType.Game, out string sessionId);
         
-        GameSession? session = context.Database.GetSessionWithSessionId(sessionId);
+        GameSession? session = context.Database.GetSessionWithId(sessionId);
         Assert.That(session, Is.Not.Null);
         Assert.That(session?.User, Is.Not.Null);
 
@@ -35,7 +35,7 @@ public class AuthenticationTests : ServerTest
 
         HttpClient authedClient = context.GetAuthenticatedClient(SessionType.Api, out string sessionId);
         
-        GameSession? session = context.Database.GetSessionWithSessionId(sessionId);
+        GameSession? session = context.Database.GetSessionWithId(sessionId);
         Assert.That(session, Is.Not.Null);
         Assert.That(session?.User, Is.Not.Null);
 

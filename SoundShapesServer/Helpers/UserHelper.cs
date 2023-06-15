@@ -5,14 +5,15 @@ using static System.Text.RegularExpressions.Regex;
 
 namespace SoundShapesServer.Helpers;
 
-public static class UserHelper
+public static partial class UserHelper
 {
-    private const string UsernameRegex = "^[A-Za-z][A-Za-z0-9-_]{2,15}$";
     public static bool IsUsernameLegal(string username)
     {
-        return IsMatch(username, UsernameRegex);
+        return UsernameRegex().IsMatch(username);
     }
-
+    [System.Text.RegularExpressions.GeneratedRegex("^[A-Za-z][A-Za-z0-9-_]{2,15}$")]
+    private static partial System.Text.RegularExpressions.Regex UsernameRegex();
+    
     public static UserOrderType GetUserOrderType(RequestContext context)
     {
         string? orderString = context.QueryString["orderBy"];

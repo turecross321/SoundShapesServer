@@ -39,7 +39,7 @@ public class SessionProvider : IAuthenticationProvider<GameUser, GameSession>
         GameDatabaseContext database = (GameDatabaseContext)db.Value;
         Debug.Assert(database != null);
 
-        GameSession? session = database.GetSessionWithSessionId(sessionId);
+        GameSession? session = database.GetSessionWithId(sessionId);
         if (session == null) return null;
 
         if (session.ExpiryDate < DateTimeOffset.UtcNow)

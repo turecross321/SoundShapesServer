@@ -69,7 +69,7 @@ public partial class GameDatabaseContext
         }
     }
     
-    public GameSession? GetSessionWithSessionId(string sessionId)
+    public GameSession? GetSessionWithId(string sessionId)
     {
         _realm.All<GameSession>();
         GameSession? session = _realm.All<GameSession>()
