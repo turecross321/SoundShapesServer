@@ -17,7 +17,7 @@ using static SoundShapesServer.Helpers.SessionHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Account;
 
-public class ApiAccountSettingEndpoints : EndpointGroup
+public class ApiAccountManagementEndpoints : EndpointGroup
 {
     private const string Sha512Pattern = "^[a-f0-9]{128}$";
 
@@ -58,13 +58,12 @@ public class ApiAccountSettingEndpoints : EndpointGroup
 
         // Check if user has sent a valid mail address
         if (MailAddress.TryCreate(body.NewEmail, out MailAddress? _) == false)
-        {
-            return new Response("Invalid Email.", ContentType.Json, HttpStatusCode.BadRequest);
-        }
+            return new Response("Invalid Email.", ContentType.Plaintext, HttpStatusCode.BadRequest);
         
         // Check if mail address has been used before
         GameUser? userWithEmail = database.GetUserWithEmail(body.NewEmail);
-        if (userWithEmail != null && userWithEmail.Id != user.Id) return new Response("Email is already in use.", ContentType.Json, HttpStatusCode.Forbidden);
+        if (userWithEmail != null && userWithEmail.Id != user.Id) 
+            return new Response("Email is already in use.", ContentType.Plaintext, HttpStatusCode.Forbidden);
 
         database.SetUserEmail(user, body.NewEmail);
         database.RemoveSession(session);
@@ -103,7 +102,7 @@ public class ApiAccountSettingEndpoints : EndpointGroup
             return new Response("Password is definitely not SHA512. Please hash the password.",
                 ContentType.Plaintext, HttpStatusCode.BadRequest);
 
-        if (!database.SetUserPassword(user, body.NewPasswordSha512)) return HttpStatusCode.InternalServerError;
+        database.SetUserPassword(user, body.NewPasswordSha512);
         database.RemoveSession(session);
 
         return HttpStatusCode.Created;

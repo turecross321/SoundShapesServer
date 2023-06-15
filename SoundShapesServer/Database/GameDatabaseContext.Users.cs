@@ -96,12 +96,12 @@ public partial class GameDatabaseContext
     {
         if (BCrypt.Net.BCrypt.PasswordNeedsRehash(user.PasswordBcrypt, WorkFactor))
         {
-            SetUserPassword(user, BCrypt.Net.BCrypt.HashPassword(hash, WorkFactor));
+            SetUserPassword(user, BCrypt.Net.BCrypt.HashPassword(hash.ToLower(), WorkFactor));
         }
 
         return BCrypt.Net.BCrypt.Verify(hash.ToLower(), user.PasswordBcrypt);
     }
-    public bool SetUserPassword(GameUser user, string hash)
+    public void SetUserPassword(GameUser user, string hash)
     {
         string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(hash.ToLower(), WorkFactor);
         
@@ -115,7 +115,6 @@ public partial class GameDatabaseContext
         CreateEvent(user, EventType.AccountRegistration, user);
 
         _realm.Refresh();
-        return true;
     }
     
     public void SetUserEmail(GameUser user, string email)
