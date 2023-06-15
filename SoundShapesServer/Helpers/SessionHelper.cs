@@ -43,29 +43,31 @@ public static class SessionHelper
             // If Session is a Game Session, let it only access Game endpoints
             if (session.SessionType == SessionType.Game) return true;
         }
-        switch (uriPath)
-        {
-            // If Session is a SetEmail Session, let it only access the setEmail endpoint
-            case ApiEndpointAttribute.BaseRoute + "account/setEmail" when session.SessionType == SessionType.SetEmail:
-                return true;
-            // If Session is a SetPassword Session, let it only access the SetPassword endpoint
-            case ApiEndpointAttribute.BaseRoute + "account/setPassword" when session.SessionType == SessionType.SetPassword:
-                return true;
-            // If Session is a RemoveAccount Session, let it only access the Remove endpoint
-            case ApiEndpointAttribute.BaseRoute + "account/remove" when session.SessionType == SessionType.RemoveAccount:
-                return true;
-        }
 
+        if (uriPath.StartsWith(ApiEndpointAttribute.BaseRoute + "account/"))
+        {
+            switch (uriPath)
+            {
+                case ApiEndpointAttribute.BaseRoute + "account/setEmail":
+                    if (session.SessionType == SessionType.SetEmail) return true;
+                    return false;
+                case ApiEndpointAttribute.BaseRoute + "account/setPassword":
+                    if (session.SessionType == SessionType.SetPassword) return true;
+                    return false;
+                case ApiEndpointAttribute.BaseRoute + "account/remove":
+                    if (session.SessionType == SessionType.RemoveAccount) return true;
+                    return false;
+                case ApiEndpointAttribute.BaseRoute + "account/sendRemovalSession":
+                    if (session.SessionType == SessionType.Banned)
+                        return true;
+                    // no return false here because you don't have to be banned to remove an account
+                    break;
+            }
+        }
+        
         if (uriPath.StartsWith(ApiEndpointAttribute.BaseRoute))
         {
-            // If Session is an API Session, let it only access api endpoints
             if (session.SessionType == SessionType.Api) return true;
-        }
-
-        if (uriPath == ApiEndpointAttribute.BaseRoute + "account/sendRemovalSession")
-        {
-            if (session.SessionType == SessionType.Banned)
-                return true;
         }
 
         return false;
