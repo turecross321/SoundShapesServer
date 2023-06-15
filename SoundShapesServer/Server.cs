@@ -40,7 +40,7 @@ public class Server
         
         ServerInstance.UseDatabaseProvider(databaseProvider);
         ServerInstance.AddStorageService(dataStore);
-        ServerInstance.AddAuthenticationService(new SessionProvider(), true);
+        ServerInstance.AddAuthenticationService(authProvider, true);
         
         ServerInstance.DiscoverEndpointsFromAssembly(Assembly.GetExecutingAssembly());
     }

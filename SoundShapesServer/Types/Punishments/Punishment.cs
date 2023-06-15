@@ -10,7 +10,7 @@ public class Punishment : RealmObject
     public GameUser Recipient { get; set; }
     
     // Realm can't store enums, use recommended workaround
-    // ReSharper disable once InconsistentNaming (can't fix due to conflict with TokenType)
+    // ReSharper disable once InconsistentNaming (can't fix due to conflict with PunishmentType)
     // ReSharper disable once MemberCanBePrivate.Global
     internal int _PunishmentType { get; set; }
     public PunishmentType PunishmentType

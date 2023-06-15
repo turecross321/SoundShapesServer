@@ -48,9 +48,7 @@ public class SessionProvider : IAuthenticationProvider<GameUser, GameSession>
             return null;
         }
         
-        string uriPath = request.Uri.AbsolutePath;
-
-        bool allowed = IsSessionAllowedToAccessEndpoint(session, uriPath);
-        return allowed ? session : null;
+        if (!IsSessionAllowedToAccessEndpoint(session, request.Uri.AbsolutePath)) return null;
+        return session;
     }
 }

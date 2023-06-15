@@ -11,7 +11,7 @@ public class Report : RealmObject
     [PrimaryKey] [Required] public string Id { get; init; } = "";
     
     // Realm can't store enums, use recommended workaround
-    // ReSharper disable once InconsistentNaming (can't fix due to conflict with TokenType)
+    // ReSharper disable once InconsistentNaming (can't fix due to conflict with ContentType)
     // ReSharper disable once MemberCanBePrivate.Global
     internal int _ContentType { get; set; }
     public ReportContentType ContentType
@@ -22,7 +22,7 @@ public class Report : RealmObject
     public GameUser? ContentUser { get; set; }
     public GameLevel? ContentLevel { get; set; }
     public LeaderboardEntry? ContentLeaderboardEntry { get; set; }
-    // ReSharper disable once InconsistentNaming (can't fix due to conflict with TokenType)
+    // ReSharper disable once InconsistentNaming (can't fix due to conflict with ReasonType)
     // ReSharper disable once MemberCanBePrivate.Global
     internal int _ReasonType { get; set; }
     public ReportReasonType ReasonType

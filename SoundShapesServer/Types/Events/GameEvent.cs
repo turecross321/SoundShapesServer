@@ -28,7 +28,7 @@ public class GameEvent : RealmObject
     [PrimaryKey] [Required] public string Id { get; set; }
     
     // Realm can't store enums, use recommended workaround
-    // ReSharper disable once InconsistentNaming (can't fix due to conflict with TokenType)
+    // ReSharper disable once InconsistentNaming (can't fix due to conflict with EventType)
     // ReSharper disable once MemberCanBePrivate.Global
     internal int _EventType { get; set; }
     public EventType EventType

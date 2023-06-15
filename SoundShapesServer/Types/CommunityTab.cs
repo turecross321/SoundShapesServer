@@ -10,7 +10,7 @@ public class CommunityTab : RealmObject
     [PrimaryKey] public string Id { get; init; }
     
     // Realm can't store enums, use recommended workaround
-    // ReSharper disable once InconsistentNaming (can't fix due to conflict with TokenType)
+    // ReSharper disable once InconsistentNaming (can't fix due to conflict with ContentType)
     // ReSharper disable once MemberCanBePrivate.Global
     internal int _ContentType { get; set; }
 

@@ -11,7 +11,7 @@ public class GameSession : RealmObject, IToken
     public GameUser User { get; init; }
     
     // Realm can't store enums, use recommended workaround
-    // ReSharper disable once InconsistentNaming (can't fix due to conflict with TokenType)
+    // ReSharper disable once InconsistentNaming (can't fix due to conflict with SessionType)
     // ReSharper disable once MemberCanBePrivate.Global
     internal int _SessionType { get; set; }
     public SessionType SessionType
@@ -20,7 +20,7 @@ public class GameSession : RealmObject, IToken
         set => _SessionType = (int)value;
     }
     
-    // ReSharper disable once InconsistentNaming (can't fix due to conflict with TokenType)
+    // ReSharper disable once InconsistentNaming (can't fix due to conflict with PlatformType)
     // ReSharper disable once MemberCanBePrivate.Global
     internal int _PlatformType { get; set; }
     public PlatformType PlatformType
