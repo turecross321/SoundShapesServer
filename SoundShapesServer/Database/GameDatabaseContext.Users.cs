@@ -166,7 +166,7 @@ public partial class GameDatabaseContext
 
     public GameUser? GetUserWithEmail(string email, bool includeDeleted = false)
     {
-        return _realm.All<GameUser>().FirstOrDefault(u =>  (!u.Deleted || u.Deleted == includeDeleted) && u.Email == email);
+        return _realm.All<GameUser>().FirstOrDefault(u =>  (!u.Deleted || u.Deleted == includeDeleted) && u.Email == email.ToLower());
     }
 
     public GameUser? GetUserWithId(string id, bool includeDeleted = false)
