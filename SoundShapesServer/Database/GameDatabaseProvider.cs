@@ -16,7 +16,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 45;
+    protected override ulong SchemaVersion => 46;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -69,6 +69,11 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             if (oldVersion < 45)
             {
                 newUser.FeaturedLevel = newUser.Levels.LastOrDefault();
+            }
+
+            if (oldVersion < 46)
+            {
+                newUser.Email = newUser.Email?.ToLower();
             }
         }
         
