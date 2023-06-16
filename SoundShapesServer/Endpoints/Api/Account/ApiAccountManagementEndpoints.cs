@@ -19,7 +19,7 @@ namespace SoundShapesServer.Endpoints.Api.Account;
 
 public partial class ApiAccountManagementEndpoints : EndpointGroup
 {
-    [GeneratedRegex("^[a-f0-9]{128}$")]
+    [GeneratedRegex("^[a-fA-F0-9]{128}$")]
     private static partial Regex Sha512Regex();
     
     [ApiEndpoint("account/setUsername", Method.Post)]
@@ -46,7 +46,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your new email code: " + emailSession.Id + "\n" +
-                           "If this wasn't you, change your password immediately. Code expires in 10 minutes.";
+                           "If this wasn't you, feel free to ignore this email. Code expires in 10 minutes.";
         emailService.SendEmail(body.NewEmail, "Sound Shapes New Email Code", emailBody);
 
         return HttpStatusCode.Created;
@@ -99,7 +99,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     {
         GameUser user = session.User;
 
-        if (body.NewPasswordSha512.Length != 128 || !Sha512Regex().IsMatch(body.NewPasswordSha512))
+        if (!Sha512Regex().IsMatch(body.NewPasswordSha512))
             return new Response("Password is definitely not SHA512. Please hash the password.",
                 ContentType.Plaintext, HttpStatusCode.BadRequest);
 
