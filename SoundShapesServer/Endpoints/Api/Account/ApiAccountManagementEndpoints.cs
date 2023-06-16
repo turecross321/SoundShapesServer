@@ -39,15 +39,16 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("account/sendEmailSession", Method.Post)]
-    public Response SendEmailSession(RequestContext context, GameDatabaseContext database, GameUser user, ApiEmailSessionRequest body, EmailService emailService)
+    public Response SendEmailSession(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
     {
         string emailSessionId = GenerateEmailSessionId(database);
         GameSession emailSession = database.CreateSession(user, SessionType.SetEmail, PlatformType.Api, 600, emailSessionId); // 10 minutes
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your new email code: " + emailSession.Id + "\n" +
-                           "If this wasn't you, feel free to ignore this email. Code expires in 10 minutes.";
-        emailService.SendEmail(body.NewEmail, "Sound Shapes New Email Code", emailBody);
+                           "If this wasn't you, change your password immediately. Code expires in 10 minutes.";
+        
+        emailService.SendEmail(user.Email!, "Sound Shapes New Email Code", emailBody);
 
         return HttpStatusCode.Created;
     }

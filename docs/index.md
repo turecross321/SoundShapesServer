@@ -112,14 +112,6 @@ Date is always UTC, and is always formatted like `YYYY-MM-DD`.
 > {ip}/api/v1/account/sendEmailSession
 > ```
 
-### Body (**raw**)
-
-```json
-{
-  "NewEmail": "{email}"
-}
-```
-
 ### Response: 201
 
 ```json
