@@ -36,7 +36,7 @@ public partial class GameDatabaseContext
             ip.OneTimeUse = oneTime;
             ip.ModificationDate = DateTimeOffset.UtcNow;
 
-            foreach (GameSession session in ip.Sessions.Where(s=>s.SessionType == SessionType.GameUnAuthorized))
+            foreach (GameSession session in ip.Sessions.Where(s=>s._SessionType == (int)SessionType.GameUnAuthorized))
             {
                 session.SessionType = SessionType.Game;
             }
