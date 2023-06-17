@@ -161,12 +161,17 @@ public partial class GameDatabaseContext
     
     public GameUser? GetUserWithUsername(string username, bool includeDeleted = false)
     {
-        return _realm.All<GameUser>().FirstOrDefault(u =>  (!u.Deleted || u.Deleted == includeDeleted) && u.Username == username);
+        return _realm.All<GameUser>().FirstOrDefault(u => 
+            (!u.Deleted || u.Deleted == includeDeleted) 
+            && u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
     }
 
     public GameUser? GetUserWithEmail(string email, bool includeDeleted = false)
     {
-        return _realm.All<GameUser>().FirstOrDefault(u =>  (!u.Deleted || u.Deleted == includeDeleted) && u.Email == email.ToLower());
+        return _realm.All<GameUser>().FirstOrDefault(u => 
+            (!u.Deleted || u.Deleted == includeDeleted) 
+            && u.Email != null 
+            && u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
     }
 
     public GameUser? GetUserWithId(string id, bool includeDeleted = false)
