@@ -11,7 +11,7 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api.IpAuthorization;
 
-public class ApiIpAuthorization : EndpointGroup
+public class ApiIpAuthorizationEndpoints : EndpointGroup
 {
     [ApiEndpoint("ip/authorize", Method.Post)]
     public Response AuthorizeIpAddress(RequestContext context, GameDatabaseContext database, ApiAuthorizeIpRequest body, GameUser user)
