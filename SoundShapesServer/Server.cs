@@ -50,9 +50,14 @@ public class Server
         return ServerInstance.StartAndBlockAsync();
     }
     
-    public void Start()
+    public virtual void Start()
     {
         ServerInstance.Start();
+    }
+
+    public void Stop()
+    {
+        ServerInstance.Stop();
     }
 
     public void Initialize()
