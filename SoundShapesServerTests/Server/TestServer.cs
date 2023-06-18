@@ -6,7 +6,7 @@ using SoundShapesServer.Database;
 
 namespace SoundShapesServerTests.Server;
 
-public class TestServer: SoundShapesServer.Server
+public class TestServer : SoundShapesServer.Server
 {
     public TestServer(BunkumHttpListener listener, GameDatabaseProvider provider) : base(listener, provider, null, new InMemoryDataStore())
     {}
@@ -17,5 +17,10 @@ public class TestServer: SoundShapesServer.Server
     protected override void SetUpConfiguration()
     {
         ServerInstance.UseConfig(new GameServerConfig());
+    }
+    
+    public override void Start()
+    {
+        ServerInstance.Start(1);
     }
 }
