@@ -1,7 +1,7 @@
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.Leaderboard;
 
-namespace SoundShapesServer.Responses.Api.Levels;
+namespace SoundShapesServer.Responses.Api.Leaderboard;
 
 public class ApiLeaderboardEntryResponse
 {
@@ -16,7 +16,7 @@ public class ApiLeaderboardEntryResponse
         Notes = entry.Notes;
         Deaths = entry.Deaths;
         Completed = entry.Completed;
-        Date = entry.Date;
+        CreationDate = entry.CreationDate.ToUnixTimeSeconds();
     }
     
 #pragma warning disable CS8618
@@ -32,5 +32,5 @@ public class ApiLeaderboardEntryResponse
     public int Notes { get; set; }
     public int Deaths { get; set; }
     public bool Completed { get; set; }
-    public DateTimeOffset Date { get; set; }
+    public long CreationDate { get; set; }
 }

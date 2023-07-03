@@ -23,6 +23,7 @@ public class Punishment : RealmObject
     public bool Revoked { get; set; }
     public GameUser Author { get; set; }
     public DateTimeOffset CreationDate { get; set; }
+    public DateTimeOffset ModificationDate { get; set; }    
     public DateTimeOffset ExpiryDate { get; set; }
     public DateTimeOffset? RevokeDate { get; set; }
 }

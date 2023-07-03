@@ -15,19 +15,19 @@ namespace SoundShapesServer.Endpoints.Api.Levels;
 public class ApiDailyLevelManagementEndpoints : EndpointGroup
 {
     [ApiEndpoint("daily/create", Method.Post)]
-    public Response AddDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiAddDailyLevelRequest body)
+    public Response AddDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiCreateDailyLevelRequest body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
         GameLevel? level = database.GetLevelWithId(body.LevelId);
         if (level == null) return HttpStatusCode.NotFound;
 
-        DailyLevel createdDailyLevel = database.CreateDailyLevel(user, level, body.Date);
+        DailyLevel createdDailyLevel = database.CreateDailyLevel(user, level, DateTimeOffset.FromUnixTimeSeconds(body.Date));
         return new Response(new ApiDailyLevelResponse(createdDailyLevel), ContentType.Json, HttpStatusCode.Created);
     }
     
     [ApiEndpoint("daily/id/{id}/edit", Method.Post)]
-    public Response EditDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id, ApiAddDailyLevelRequest body)
+    public Response EditDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id, ApiCreateDailyLevelRequest body)
     {
         if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
 
@@ -37,7 +37,7 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(body.LevelId);
         if (level == null) return HttpStatusCode.NotFound;
 
-        DailyLevel createdDailyLevel = database.EditDailyLevel(dailyLevel, user, level, body.Date);
+        DailyLevel createdDailyLevel = database.EditDailyLevel(dailyLevel, user, level, DateTimeOffset.FromUnixTimeSeconds(body.Date));
         return new Response(new ApiDailyLevelResponse(createdDailyLevel), ContentType.Json, HttpStatusCode.Created);
     }
     

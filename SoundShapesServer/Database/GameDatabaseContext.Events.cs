@@ -113,8 +113,8 @@ public partial class GameDatabaseContext
     
     private IQueryable<GameEvent> OrderEventsByDate(IQueryable<GameEvent> events, bool descending)
     {
-        if (descending) return events.OrderByDescending(e => e.Date);
-        return events.OrderBy(e => e.Date);
+        if (descending) return events.OrderByDescending(e => e.CreationDate);
+        return events.OrderBy(e => e.CreationDate);
     }
 
     #endregion

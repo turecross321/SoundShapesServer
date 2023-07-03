@@ -12,8 +12,8 @@ public class ApiLevelFullResponse
         Id = level.Id;
         Name = level.Name;
         Author = new ApiUserBriefResponse(level.Author);
-        CreationDate = level.CreationDate;
-        ModificationDate = level.ModificationDate;
+        CreationDate = level.CreationDate.ToUnixTimeSeconds();
+        ModificationDate = level.ModificationDate.ToUnixTimeSeconds();
         TotalPlays = level.PlaysCount;
         UniquePlays = level.UniquePlaysCount;
         TotalCompletions = level.CompletionCount;
@@ -32,8 +32,8 @@ public class ApiLevelFullResponse
     public string Id { get; set; }
     public string Name { get; set; }
     public ApiUserBriefResponse Author { get; set; }
-    public DateTimeOffset CreationDate { get; set; }
-    public DateTimeOffset ModificationDate { get; set; }
+    public long CreationDate { get; set; }
+    public long ModificationDate { get; set; }
     public int TotalPlays { get; set; }
     public int UniquePlays { get; set; }
     public int TotalCompletions { get; set; }

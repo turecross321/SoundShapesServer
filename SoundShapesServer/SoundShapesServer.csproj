@@ -20,4 +20,8 @@
       <PackageReference Include="SharpZipLib" Version="1.4.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Responses\Api\Leaderboar\" />
+    </ItemGroup>
+
 </Project>

@@ -8,13 +8,13 @@ public class ApiIpAddressResponse
         IpAddress = ip.IpAddress;
         Authorized = ip.Authorized;
         OneTimeUse = ip.OneTimeUse;
-        CreationDate = ip.CreationDate;
-        ModificationDate = ip.ModificationDate;
+        CreationDate = ip.CreationDate.ToUnixTimeSeconds();
+        ModificationDate = ip.ModificationDate.ToUnixTimeSeconds();
     }
 
     public string IpAddress { get; set; }
     public bool Authorized { get; set; }
     public bool OneTimeUse { get; set; }
-    public DateTimeOffset CreationDate { get; set; }
-    public DateTimeOffset ModificationDate { get; set; }
+    public long CreationDate { get; set; }
+    public long ModificationDate { get; set; }
 }

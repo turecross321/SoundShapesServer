@@ -17,7 +17,7 @@ public class LeaderboardEntry : RealmObject
         Golded = request.Golded;
         Notes = request.Notes;
         Completed = request.Completed;
-        Date = DateTimeOffset.UtcNow;
+        CreationDate = DateTimeOffset.UtcNow;
     }
 
     // Realm cries if this doesn't exist
@@ -35,5 +35,5 @@ public class LeaderboardEntry : RealmObject
     public int Golded { get; set; }
     public int Notes { get; set; }
     public bool Completed { get; set; }
-    public DateTimeOffset Date { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
 }

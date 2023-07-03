@@ -38,15 +38,14 @@ public static partial class UserHelper
     public static UserFilters GetUserFilters(RequestContext context, GameDatabaseContext database)
     {
         string? isFollowingId = context.QueryString["isFollowing"]; 
-        string? followedById = context.QueryString["followedBy"];
-
-        string? searchQuery = context.QueryString["search"];
-        
         GameUser? isFollowing = null;
-        GameUser? followedBy = null;
-        
         if (isFollowingId != null) isFollowing = database.GetUserWithId(isFollowingId);
+        
+        string? followedById = context.QueryString["followedBy"];
+        GameUser? followedBy = null;
         if (followedById != null) followedBy = database.GetUserWithId(followedById);
+        
+        string? searchQuery = context.QueryString["search"];
 
         return new UserFilters(isFollowing, followedBy, searchQuery);
     }

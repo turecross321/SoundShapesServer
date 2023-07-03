@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Database;
+using SoundShapesServer.Responses.Api.Leaderboard;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.Events;
@@ -21,7 +22,7 @@ public class ApiEventResponse
         if (eventObject.ContentLeaderboardEntry != null)
             ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(eventObject.ContentLeaderboardEntry, database.GetLeaderboardEntryPosition(eventObject.ContentLeaderboardEntry));
         
-        Date = eventObject.Date;
+        CreationDate = eventObject.CreationDate.ToUnixTimeSeconds();
     }
 
     public string Id { get; set; }
@@ -30,5 +31,5 @@ public class ApiEventResponse
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiUserBriefResponse? ContentUser { get; set; }
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLevelBriefResponse? ContentLevel { get; set; }
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLeaderboardEntryResponse? ContentLeaderboardEntry { get; set; }
-    public DateTimeOffset Date { get; set; }
+    public long CreationDate { get; set; }
 }

@@ -22,9 +22,7 @@ public static class EventHelper
     public static EventFilters GetEventFilters(RequestContext context, GameDatabaseContext database)
     {
         string? actorIds = context.QueryString["actors"];
-        string? onUserId = context.QueryString["onUser"];
-        string? levelIds = context.QueryString["onLevel"];
-        
+
         List<GameUser>? actors = null;
 
         if (actorIds != null)
@@ -39,12 +37,14 @@ public static class EventHelper
             }
         }
 
+        string? onUserId = context.QueryString["onUser"];
         GameUser? onUser = null;
         if (onUserId != null)
         {
             onUser = database.GetUserWithId(onUserId);
         }
         
+        string? levelIds = context.QueryString["onLevel"];
         GameLevel? onLevel = null;
         if (levelIds != null)
         {
@@ -52,7 +52,6 @@ public static class EventHelper
         }
 
         string? eventTypesString = context.QueryString["eventTypes"];
-
         List<EventType>? eventTypes = null;
 
         if (eventTypesString != null)

@@ -1,6 +1,7 @@
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
+using SoundShapesServer.Responses.Api.Leaderboard;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Users;
@@ -34,7 +35,7 @@ public class ApiLeaderboardEndpoints : EndpointGroup
             "score" => LeaderboardOrderType.Score,
             "playTime" => LeaderboardOrderType.PlayTime,
             "notes" => LeaderboardOrderType.Notes,
-            "date" => LeaderboardOrderType.Date,
+            "creationDate" => LeaderboardOrderType.CreationDate,
             _ => LeaderboardOrderType.Score
         };
 

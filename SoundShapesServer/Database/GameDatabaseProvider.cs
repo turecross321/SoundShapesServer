@@ -16,7 +16,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 46;
+    protected override ulong SchemaVersion => 50;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -124,10 +124,10 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         {
             dynamic oldEvent = oldEvents.ElementAt(i);
             GameEvent newEvent = events.ElementAt(i);
-
-            // v28 added the Queue event type
+            
             if (oldVersion < 28)
             {
+                // Added the Queue event type
                 if (newEvent.EventType >= EventType.Queue)
                 {
                     newEvent.EventType += 1;
@@ -137,6 +137,12 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             if (oldVersion < 35)
             {
                 newEvent._EventType = (int)oldEvent.EventType;
+            }
+
+            if (oldVersion < 48)
+            {
+                // Renamed Date to CreationDate
+                newEvent.CreationDate = (DateTimeOffset)oldEvent.Date;
             }
         }
         
@@ -151,6 +157,12 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             {
                 // Renamed Tokens to Notes
                 newEntry.Notes = (int)oldEntry.Tokens;
+            }
+
+            if (oldVersion < 47)
+            {
+                // Renamed Date to CreationDate
+                newEntry.CreationDate = (DateTimeOffset)oldEntry.Date;
             }
         }
         
@@ -172,6 +184,12 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                 newPunishment.ExpiryDate = (DateTimeOffset)oldPunishment.ExpiresAt;
                 newPunishment.RevokeDate = (DateTimeOffset)oldPunishment.RevokedAt;
             }
+
+            if (oldVersion < 50)
+            {
+                // Added ModificationDate
+                newPunishment.ModificationDate = newPunishment.CreationDate;
+            }
         }
         
         IQueryable<dynamic> oldReports = migration.OldRealm.DynamicApi.All("Report");
@@ -192,6 +210,21 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                 string authorId = (string)oldReport.Issuer.Id;
                 newReport.Author = migration.NewRealm.All<GameUser>().First(u => u.Id == authorId);
                 newReport.CreationDate = (DateTimeOffset)oldReport.Date;
+            }
+        }
+        
+        
+        IQueryable<dynamic> oldDailyLevels = migration.OldRealm.DynamicApi.All("DailyLevel");
+        IQueryable<DailyLevel> newDailyLevels = migration.NewRealm.All<DailyLevel>();
+        for (int i = 0; i < newDailyLevels.Count(); i++)
+        {
+            dynamic oldDaily = oldDailyLevels.ElementAt(i);
+            DailyLevel newLevel = newDailyLevels.ElementAt(i);
+
+            if (oldVersion < 49)
+            {
+                newLevel.CreationDate = newLevel.Date;
+                newLevel.ModificationDate = newLevel.Date;
             }
         }
     }

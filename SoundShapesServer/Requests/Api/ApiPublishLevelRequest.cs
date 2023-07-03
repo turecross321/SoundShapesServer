@@ -7,5 +7,5 @@ public class ApiPublishLevelRequest
 {
     public string Name { get; set; }
     public int Language { get; }
-    public DateTimeOffset? ModificationDate { get; set; } 
+    public long? CreationDate { get; set; } 
 }

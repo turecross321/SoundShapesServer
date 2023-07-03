@@ -5,5 +5,5 @@ public enum LeaderboardOrderType
     Score,
     PlayTime,
     Notes,
-    Date
+    CreationDate
 }

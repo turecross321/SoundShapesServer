@@ -12,6 +12,8 @@ public partial class GameDatabaseContext
             Id = GenerateGuid(), 
             Level = level, 
             Date = date.Date,
+            CreationDate = DateTimeOffset.UtcNow,
+            ModificationDate = DateTimeOffset.UtcNow,
             Author = user
         };
 
@@ -30,6 +32,7 @@ public partial class GameDatabaseContext
             daily.Author = user;
             daily.Date = date;
             daily.Level = level;
+            daily.ModificationDate = DateTimeOffset.UtcNow;
         });
 
         return daily;

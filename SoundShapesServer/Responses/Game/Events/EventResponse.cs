@@ -28,7 +28,7 @@ public class EventResponse
                 
             case Types.Events.EventType.Follow:
                 Content = new UserTargetResponse(gameEventObject.ContentUser ?? new GameUser());
-                Timestamp = gameEventObject.Date.ToString();
+                Timestamp = gameEventObject.CreationDate.ToString();
                 break;
             case Types.Events.EventType.ScoreSubmission:
                 break;

@@ -17,7 +17,7 @@ public class GameEvent : RealmObject
         ContentLeaderboardEntry = leaderboardEntry;
         
         EventType = eventType;
-        Date = DateTimeOffset.UtcNow;
+        CreationDate = DateTimeOffset.UtcNow;
     }
     
     // Realm cries if this doesn't exist
@@ -42,5 +42,5 @@ public class GameEvent : RealmObject
     public GameLevel? ContentLevel { get; init; }
     
     public LeaderboardEntry? ContentLeaderboardEntry { get; set; }
-    public DateTimeOffset Date { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
 }

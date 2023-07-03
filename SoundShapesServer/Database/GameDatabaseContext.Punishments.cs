@@ -20,7 +20,7 @@ public partial class GameDatabaseContext
             PunishmentType = request.PunishmentType,
             Recipient = recipient,
             Reason = request.Reason,
-            ExpiryDate = request.ExpiryDate,
+            ExpiryDate = DateTimeOffset.FromUnixTimeSeconds(request.ExpiryDate),
             CreationDate = DateTimeOffset.UtcNow,
             Author = author
         };
@@ -41,7 +41,8 @@ public partial class GameDatabaseContext
             punishment.Recipient = recipient;
             punishment.PunishmentType = request.PunishmentType;
             punishment.Reason = request.Reason;
-            punishment.ExpiryDate = request.ExpiryDate;
+            punishment.ExpiryDate = DateTimeOffset.FromUnixTimeSeconds(request.ExpiryDate);
+            punishment.ModificationDate = DateTimeOffset.UtcNow;
         });
 
         return punishment;

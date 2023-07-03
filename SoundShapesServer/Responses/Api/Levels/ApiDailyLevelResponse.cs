@@ -9,12 +9,16 @@ public class ApiDailyLevelResponse
     {
         Id = dailyLevel.Id;
         Level = new ApiLevelBriefResponse(dailyLevel.Level);
-        Date = dailyLevel.Date;
+        Date = dailyLevel.Date.ToUnixTimeSeconds();
+        CreationDate = dailyLevel.CreationDate.ToUnixTimeSeconds();
+        ModificationDate = dailyLevel.ModificationDate.ToUnixTimeSeconds();
         Author = new ApiUserBriefResponse(dailyLevel.Author);
     }
 
     public string Id { get; }
     public ApiLevelBriefResponse Level { get; }
-    public DateTimeOffset Date { get; }
+    public long Date { get; }
+    public long CreationDate { get; }
+    public long ModificationDate { get; }
     public ApiUserBriefResponse Author { get; set; }
 }

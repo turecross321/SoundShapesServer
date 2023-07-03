@@ -88,23 +88,48 @@ public static class LevelHelper
     public static LevelFilters GetLevelFilters(RequestContext context, GameDatabaseContext database)
     {
         string? byUserId = context.QueryString["createdBy"];
+        GameUser? byUser = null;
+        if (byUserId != null) byUser = database.GetUserWithId(byUserId);
+        
         string? likedByUserId = context.QueryString["likedBy"];
+        GameUser? likedBy = null;
+        if (likedByUserId != null) likedBy = database.GetUserWithId(likedByUserId);
+        
         string? queuedByUserId = context.QueryString["queuedBy"];
+        GameUser? queuedBy = null;
+        if (queuedByUserId != null) queuedBy = database.GetUserWithId(queuedByUserId);
+        
         string? likedOrQueuedByUserId = context.QueryString["likedOrQueuedBy"];
+        GameUser? likedOrQueuedBy = null;
+        if (likedOrQueuedByUserId != null) likedOrQueuedBy = database.GetUserWithId(likedOrQueuedByUserId);
+        
         string? completedByString = context.QueryString["completedBy"];
+        GameUser? completedBy = null;
+        if (completedByString != null) completedBy = database.GetUserWithId(completedByString);
+        
         string? inAlbumId = context.QueryString["inAlbum"];
+        GameAlbum? inAlbum = null;
+        if (inAlbumId != null) inAlbum = database.GetAlbumWithId(inAlbumId);
         
         bool? inDaily = null;
         if (bool.TryParse(context.QueryString["inDaily"], out bool inDailyTemp)) inDaily = inDailyTemp;
+        
         string? inDailyDateString = context.QueryString["inDailyDate"];
+        long? inDailyDateLong = null;
+        if (inDailyDateString != null) inDailyDateLong = long.Parse(inDailyDateString);
+        DateTimeOffset? inDailyDate = null;
+        if (inDailyDateLong != null) inDailyDate = DateTimeOffset.FromUnixTimeSeconds((long)inDailyDateLong);
 
         bool? lastDate = null;
         if (bool.TryParse(context.QueryString["inLastDaily"], out bool lastDateTemp)) lastDate = lastDateTemp;
 
-        string? searchQuery = context.QueryString["search"];
-        
         string? bpmString = context.QueryString["bpm"];
+        int? bpm = null;
+        if (bpmString != null) bpm = int.Parse(bpmString);
+
         string? transposeValueString = context.QueryString["transposeValue"];
+        int? transposeValue = null;
+        if (transposeValueString != null) transposeValue = int.Parse(transposeValueString);
 
         int? scaleIndex = null;
         if (int.TryParse(context.QueryString["scaleIndex"], out int scaleIndexTemp)) scaleIndex = scaleIndexTemp;
@@ -114,27 +139,9 @@ public static class LevelHelper
         
         bool? hasExplodingCar = null;
         if (bool.TryParse(context.QueryString["hasExplodingCar"], out bool hasExplodingCarTemp)) hasExplodingCar = hasExplodingCarTemp;
-
-        GameUser? byUser = null;
-        GameUser? likedBy = null;
-        GameUser? queuedBy = null;
-        GameUser? likedOrQueuedBy = null;
-        GameUser? completedBy = null;
-        GameAlbum? inAlbum = null;
-        DateTimeOffset? inDailyDate = null;
-        int? bpm = null;
-        int? transposeValue = null;
-
-        if (byUserId != null) byUser = database.GetUserWithId(byUserId);
-        if (likedByUserId != null) likedBy = database.GetUserWithId(likedByUserId);
-        if (queuedByUserId != null) queuedBy = database.GetUserWithId(queuedByUserId);
-        if (likedOrQueuedByUserId != null) likedOrQueuedBy = database.GetUserWithId(likedOrQueuedByUserId);
-        if (completedByString != null) completedBy = database.GetUserWithId(completedByString);
-        if (inAlbumId != null) inAlbum = database.GetAlbumWithId(inAlbumId);
-        if (inDailyDateString != null) inDailyDate = DateTimeOffset.Parse(inDailyDateString);
-        if (bpmString != null) bpm = int.Parse(bpmString);
-        if (transposeValueString != null) transposeValue = int.Parse(transposeValueString);
-
+        
+        string? searchQuery = context.QueryString["search"];
+        
         return new LevelFilters(byUser, likedBy, queuedBy, likedOrQueuedBy, inAlbum, inDaily, inDailyDate, lastDate, 
             searchQuery, completedBy, bpm, scaleIndex, transposeValue, hasCar, hasExplodingCar);
     }

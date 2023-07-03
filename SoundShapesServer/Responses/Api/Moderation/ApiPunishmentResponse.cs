@@ -14,9 +14,10 @@ public class ApiPunishmentResponse
         Reason = punishment.Reason;
         Revoked = punishment.Revoked;
         Author = new ApiUserBriefResponse(punishment.Author);
-        CreationDate = punishment.CreationDate;
-        ExpiryDate = punishment.ExpiryDate;
-        RevokeDate = punishment.RevokeDate;
+        CreationDate = punishment.CreationDate.ToUnixTimeSeconds();
+        ModificationDate = punishment.ModificationDate.ToUnixTimeSeconds();
+        ExpiryDate = punishment.ExpiryDate.ToUnixTimeSeconds();
+        RevokeDate = punishment.RevokeDate?.ToUnixTimeSeconds();
     }
 
     public string Id { get; }
@@ -25,7 +26,8 @@ public class ApiPunishmentResponse
     public string Reason { get; set; }
     public bool Revoked { get; set; }
     public ApiUserBriefResponse Author { get; set; }
-    public DateTimeOffset CreationDate { get; }
-    public DateTimeOffset ExpiryDate { get; set; }
-    public DateTimeOffset? RevokeDate { get; set; }
+    public long CreationDate { get; }
+    public long ModificationDate { get; }
+    public long ExpiryDate { get; set; }
+    public long? RevokeDate { get; set; }
 }

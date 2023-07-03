@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Database;
+using SoundShapesServer.Responses.Api.Leaderboard;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.Reports;
@@ -19,7 +20,7 @@ public class ApiReportResponse
             ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(report.ContentLeaderboardEntry, database.GetLeaderboardEntryPosition(report.ContentLeaderboardEntry));
         ContentType = report.ContentType;
         ReasonType = report.ReasonType;
-        CreationDate = report.CreationDate;
+        CreationDate = report.CreationDate.ToUnixTimeSeconds();
         Author = new ApiUserBriefResponse(report.Author);
     }
 
@@ -30,6 +31,6 @@ public class ApiReportResponse
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLeaderboardEntryResponse? ContentLeaderboardEntry { get; set; }
     public ReportContentType ContentType { get; set; }
     public ReportReasonType ReasonType { get; set; }
-    public DateTimeOffset CreationDate { get; set; }
+    public long CreationDate { get; set; }
     public ApiUserBriefResponse Author { get; set; }
 }

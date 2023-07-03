@@ -1,7 +1,7 @@
 using SoundShapesServer.Types.Leaderboard;
 using static SoundShapesServer.Helpers.LeaderboardHelper;
 
-namespace SoundShapesServer.Responses.Api.Levels;
+namespace SoundShapesServer.Responses.Api.Leaderboard;
 
 public class ApiLeaderboardEntriesWrapper
 {
