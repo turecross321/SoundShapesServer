@@ -18,8 +18,8 @@ public class LevelTests: ServerTest
         
         GameUser user = context.CreateUser();
         
-        GameLevel firstLevel = context.CreateLevel(user, "First Level");
-        context.CreateLevel(user, "Second Level");
+        GameLevel firstLevel = context.CreateLevel(user, "First Level", DateTimeOffset.UtcNow);
+        context.CreateLevel(user, "Second Level", DateTimeOffset.UtcNow.AddDays(1));
 
         context.Database.Refresh();
         
@@ -49,8 +49,8 @@ public class LevelTests: ServerTest
         
         GameUser user = context.CreateUser();
         
-        GameLevel firstLevel = context.CreateLevel(user, "First Level");
-        context.CreateLevel(user, "Second Level");
+        GameLevel firstLevel = context.CreateLevel(user, "First Level", DateTimeOffset.UtcNow);
+        context.CreateLevel(user, "Second Level", DateTimeOffset.UtcNow.AddDays(1));
 
         context.Database.Refresh();
         
