@@ -18,11 +18,11 @@ public partial class GameDatabaseContext
             _realm.Add(entry);
         });
         
-        CreateEvent(user, EventType.ScoreSubmission, null, null, entry);
-        
         GameLevel? level = GetLevelWithId(levelId);
         if (level != null) SetLevelPlayTime(level);
         
+        CreateEvent(user, EventType.ScoreSubmission, null, level, entry);
+
         SetUserPlayTime(user);
         return entry;
     }

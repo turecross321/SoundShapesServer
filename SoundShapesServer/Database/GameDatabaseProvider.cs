@@ -16,7 +16,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 50;
+    protected override ulong SchemaVersion => 51;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -136,6 +136,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 
             if (oldVersion < 35)
             {
+                // Renamed EventType to _EventType
                 newEvent._EventType = (int)oldEvent.EventType;
             }
 
@@ -143,6 +144,14 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             {
                 // Renamed Date to CreationDate
                 newEvent.CreationDate = (DateTimeOffset)oldEvent.Date;
+            }
+
+            if (oldVersion < 51)
+            {
+                // Fixed oversight where leaderboard events don't set the ContentLevel
+                if (newEvent.ContentLeaderboardEntry != null)
+                    newEvent.ContentLevel = migration.NewRealm.All<GameLevel>()
+                        .FirstOrDefault(l => l.Id == newEvent.ContentLeaderboardEntry.LevelId);
             }
         }
         

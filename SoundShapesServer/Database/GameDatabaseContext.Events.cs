@@ -10,7 +10,7 @@ public partial class GameDatabaseContext
 {
     private void CreateEvent(GameUser actor, EventType eventType, GameUser? user = null, GameLevel? level = null, LeaderboardEntry? leaderboardEntry = null)
     {
-        GameEvent eventObject = new (actor, user, level, leaderboardEntry, eventType);
+        GameEvent eventObject = new (actor, eventType, user, level, leaderboardEntry);
         
         GameEvent? previousEvent = _realm
             .All<GameEvent>()

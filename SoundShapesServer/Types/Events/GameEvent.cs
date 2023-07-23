@@ -7,7 +7,7 @@ namespace SoundShapesServer.Types.Events;
 
 public class GameEvent : RealmObject
 {
-    public GameEvent(GameUser actor, GameUser? user, GameLevel? level, LeaderboardEntry? leaderboardEntry, EventType eventType)
+    public GameEvent(GameUser actor, EventType eventType, GameUser? user, GameLevel? level, LeaderboardEntry? leaderboardEntry)
     {
         Id = Guid.NewGuid().ToString();
         Actor = actor;
@@ -39,7 +39,7 @@ public class GameEvent : RealmObject
     
     public GameUser Actor { get; init; }
     public GameUser? ContentUser { get; init; }
-    public GameLevel? ContentLevel { get; init; }
+    public GameLevel? ContentLevel { get; set; }
     
     public LeaderboardEntry? ContentLeaderboardEntry { get; set; }
     public DateTimeOffset CreationDate { get; set; }
