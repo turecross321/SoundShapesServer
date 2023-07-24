@@ -104,6 +104,7 @@ public partial class GameDatabaseContext
     public void SetUserPassword(GameUser user, string hash)
     {
         string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(hash.ToLower(), WorkFactor);
+        bool registered = user.HasFinishedRegistration;
         
         _realm.Write(() =>
         {
@@ -112,7 +113,7 @@ public partial class GameDatabaseContext
         });
         
         // Only create the event when the user has finished registration and can actually connect.
-        CreateEvent(user, EventType.AccountRegistration, user);
+        if (!registered) CreateEvent(user, EventType.AccountRegistration, user);
 
         _realm.Refresh();
     }
