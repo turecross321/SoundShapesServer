@@ -23,11 +23,6 @@ public class MinimumPermissionsService : Service
     {
         _authProvider = authProvider;
     }
-    
-    public override void Initialize()
-    {
-        Console.WriteLine("Fucking Shit");
-    }
 
     public override Response? OnRequestHandled(ListenerContext context, MethodInfo method,
         Lazy<IDatabaseContext> database)
@@ -36,7 +31,7 @@ public class MinimumPermissionsService : Service
             method.GetCustomAttribute<MinimumPermissionsAttribute>()?.MinimumPermissions;
         if (minimumPermissions == null) return null;
 
-        GameUser? user = _authProvider.AuthenticateUser(context, database);
+        GameUser? user = _authProvider?.AuthenticateUser(context, database);
         
         if (user?.PermissionsType >= minimumPermissions)
             return null;

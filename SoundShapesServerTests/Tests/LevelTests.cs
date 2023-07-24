@@ -76,7 +76,7 @@ public class LevelTests: ServerTest
         using HttpClient client = context.GetAuthenticatedClient(SessionType.Api, user);
         
         // Check Relation
-        string relationPayload = $"/api/v1/levels/id/{level.Id}/users/id/{user.Id}";
+        string relationPayload = $"/api/v1/levels/id/{level.Id}/relationWith/id/{user.Id}";
         ApiLevelRelationResponse? relationResponse = 
             await client.GetFromJsonAsync<ApiLevelRelationResponse>(relationPayload);
         Assert.That(relationResponse is { Liked: false, Queued:false });
@@ -189,13 +189,13 @@ public class LevelTests: ServerTest
         Assert.That(!response.IsSuccessStatusCode);
         
         // Removing Level
-        payload = $"/api/v1/levels/id/{level.Id}/remove";
-        response = await client.PostAsync(payload, null);
+        payload = $"/api/v1/levels/id/{level.Id}";
+        response = await client.DeleteAsync(payload);
         Assert.That(response.IsSuccessStatusCode);
         
         // Try Removing other user's level
-        payload = $"/api/v1/levels/id/{otherLevel.Id}/remove";
-        response = await client.PostAsync(payload, null);
+        payload = $"/api/v1/levels/id/{otherLevel.Id}";
+        response = await client.DeleteAsync(payload);
         Assert.That(!response.IsSuccessStatusCode);
     } 
 }
