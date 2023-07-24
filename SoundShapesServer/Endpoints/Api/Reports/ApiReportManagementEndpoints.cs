@@ -1,11 +1,15 @@
 using System.Net;
+using AttribDoc.Attributes;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
+using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
+using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Moderation;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Reports;
@@ -15,11 +19,11 @@ namespace SoundShapesServer.Endpoints.Api.Reports;
 
 public class ApiReportManagementEndpoints : EndpointGroup
 {
-    [ApiEndpoint("reports/id/{id}/remove", Method.Post)]
+    [ApiEndpoint("reports/id/{id}", Method.Delete)]
+    [MinimumPermissions(PermissionsType.Moderator)]
+    [DocSummary("Deletes report with specified ID.")]
     public Response RemoveReport(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
-        if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
-
         Report? report = database.GetReportWithId(id);
         if (report == null) return HttpStatusCode.NotFound;
         
@@ -28,10 +32,10 @@ public class ApiReportManagementEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("reports/id/{id}")]
+    [MinimumPermissions(PermissionsType.Moderator)]
+    [DocSummary("Retrieves report with specified ID.")]
     public Response GetReport(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
-        if (PermissionHelper.IsUserModeratorOrMore(user) == false) return HttpStatusCode.Forbidden;
-
         Report? report = database.GetReportWithId(id);
         if (report == null) return HttpStatusCode.NotFound;
 
@@ -39,15 +43,12 @@ public class ApiReportManagementEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("reports")]
-    [NullStatusCode(HttpStatusCode.Forbidden)]
-    public ApiReportsWrapper? GetReports(RequestContext context, GameDatabaseContext database, GameUser user, string id)
+    [DocUsesPageData]
+    [MinimumPermissions(PermissionsType.Moderator)]
+    [DocSummary("Lists reports.")]
+    public ApiReportsWrapper GetReports(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
-        if (PermissionHelper.IsUserModeratorOrMore(user) == false) return null;
-        
-        int count = int.Parse(context.QueryString["count"] ?? "9");
-        int from = int.Parse(context.QueryString["from"] ?? "0");
-        
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
+        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
 
         string? contentTypeString = context.QueryString["contentType"];
         ReportContentType? contentType = null;

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
+using AttribDoc.Attributes;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
@@ -23,6 +24,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     private static partial Regex Sha512Regex();
     
     [ApiEndpoint("account/setUsername", Method.Post)]
+    [DocSummary("Changes your username.")]
     public Response SetUsername(RequestContext context, GameDatabaseContext database, GameUser user, ApiSetUsernameRequest body)
     {
         if (!UserHelper.IsUsernameLegal(body.NewUsername)) return new Response("Not a valid username.", ContentType.Plaintext, HttpStatusCode.BadRequest);
@@ -39,10 +41,11 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("account/sendEmailSession", Method.Post)]
+    [DocSummary("Sends an email containing a session ID that is required to change your email address.")]
     public Response SendEmailSession(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
     {
         string emailSessionId = GenerateEmailSessionId(database);
-        GameSession emailSession = database.CreateSession(user, SessionType.SetEmail, PlatformType.Api, 600, emailSessionId); // 10 minutes
+        GameSession emailSession = database.CreateSession(user, SessionType.SetEmail, PlatformType.Api, Globals.TenMinutesInSeconds, emailSessionId);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your new email code: " + emailSession.Id + "\n" +
@@ -54,6 +57,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     }
     
     [ApiEndpoint("account/setEmail", Method.Post)]
+    [DocSummary("Changes your email address.")]
     public Response SetUserEmail(RequestContext context, GameDatabaseContext database, ApiSetEmailRequest body, GameSession session, EmailService emailService)
     {
         GameUser user = session.User;
@@ -76,15 +80,15 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         return HttpStatusCode.Created;
     }
 
-    [ApiEndpoint("account/sendPasswordSession", Method.Post)]
-    [Authentication(false)]
+    [ApiEndpoint("account/sendPasswordSession", Method.Post), Authentication(false)]
+    [DocSummary("Sends an email containing a session ID that is required to change your password.")]
     public Response SendPasswordSession(RequestContext context, GameDatabaseContext database, ApiPasswordSessionRequest body, EmailService emailService)
     {
         GameUser? user = database.GetUserWithEmail(body.Email);
-        if (user == null) return HttpStatusCode.Created; // trol
+        if (user == null) return HttpStatusCode.Created;
 
         string passwordSessionId = GeneratePasswordSessionId(database);
-        GameSession passwordSession = database.CreateSession(user, SessionType.SetPassword, PlatformType.Api, 600, passwordSessionId); // 10 minutes
+        GameSession passwordSession = database.CreateSession(user, SessionType.SetPassword, PlatformType.Api, Globals.TenMinutesInSeconds, passwordSessionId);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your password code: " + passwordSession.Id + "\n" +
@@ -96,6 +100,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     }
     
     [ApiEndpoint("account/setPassword", Method.Post)]
+    [DocSummary("Changes your password.")]
     public Response SetUserPassword(RequestContext context, GameDatabaseContext database, ApiSetPasswordRequest body, GameSession session)
     {
         GameUser user = session.User;
@@ -111,6 +116,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("account/sendRemovalSession", Method.Post)]
+    [DocSummary("Sends an email containing a session ID that is required to delete your account.")]
     public Response SendUserRemovalSession(RequestContext context, GameDatabaseContext database, GameUser user, GameSession session, EmailService emailService)
     {
         if (user.Email == null)
@@ -119,7 +125,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
                 ContentType.Plaintext, HttpStatusCode.Forbidden);
         
         string removalSessionId = GenerateAccountRemovalSessionId(database);
-        GameSession removalSession = database.CreateSession(user, SessionType.RemoveAccount, PlatformType.Api, 600, removalSessionId); // 10 minutes
+        GameSession removalSession = database.CreateSession(user, SessionType.RemoveAccount, PlatformType.Api, Globals.TenMinutesInSeconds, removalSessionId);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your account removal code: " + removalSession.Id + "\n" +
@@ -130,7 +136,8 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         return HttpStatusCode.Created;
     }
 
-    [ApiEndpoint("account/remove", Method.Post)]
+    [ApiEndpoint("account", Method.Delete)]
+    [DocSummary("Deletes your account.")]
     public Response RemoveAccount(RequestContext context, GameDatabaseContext database, GameUser user, IDataStore dataStore)
     {
         database.RemoveUser(user, dataStore);

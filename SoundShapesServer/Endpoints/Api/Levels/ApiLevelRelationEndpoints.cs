@@ -1,4 +1,5 @@
 using System.Net;
+using AttribDoc.Attributes;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
@@ -12,8 +13,8 @@ namespace SoundShapesServer.Endpoints.Api.Levels;
 
 public class ApiLevelRelationEndpoints : EndpointGroup
 {
-    [ApiEndpoint("levels/id/{levelId}/users/id/{userId}", ContentType.Json)]
-    [Authentication(false)]
+    [ApiEndpoint("levels/id/{levelId}/relationWith/id/{userId}"), Authentication(false)]
+    [DocSummary("Retrieves relation between level and user with specified ID.")]
     public ApiLevelRelationResponse? GetLevelRelation(RequestContext context, GameDatabaseContext database, string levelId, string userId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
@@ -31,6 +32,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("levels/id/{id}/like", Method.Post)]
+    [DocSummary("Likes level with specified ID.")]
     public Response LikeLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);
@@ -42,6 +44,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("levels/id/{id}/unLike", Method.Post)]
+    [DocSummary("Removes like on level with specified ID.")]
     public Response UnLikeLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);
@@ -53,6 +56,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
     }
     
     [ApiEndpoint("levels/id/{id}/queue", Method.Post)]
+    [DocSummary("Queues level with specified ID.")]
     public Response QueueLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);
@@ -64,6 +68,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("levels/id/{id}/unQueue", Method.Post)]
+    [DocSummary("Removes queue on level with specified ID.")]
     public Response UnQueueLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);

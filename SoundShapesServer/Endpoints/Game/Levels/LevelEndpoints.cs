@@ -14,16 +14,15 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 
 public class LevelEndpoints : EndpointGroup
 {
-    [GameEndpoint("~index:*.page", ContentType.Json)]
-    [GameEndpoint("~index:level.page", ContentType.Json)]
+    [GameEndpoint("~index:*.page")]
+    [GameEndpoint("~index:level.page")]
     [Authentication(false)]
     public Response GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user, GameSession? session)
     {
         string? query = context.QueryString["query"];
-        int from = int.Parse(context.QueryString["from"] ?? "0");
-        int count = int.Parse(context.QueryString["count"] ?? "9");
+        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
         string searchString = context.QueryString["search"] ?? "all";
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
+        
         
         // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
         if (session == null || user == null)

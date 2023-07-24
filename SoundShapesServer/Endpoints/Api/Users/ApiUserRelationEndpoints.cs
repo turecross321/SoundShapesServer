@@ -1,4 +1,5 @@
 using System.Net;
+using AttribDoc.Attributes;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
@@ -11,8 +12,8 @@ namespace SoundShapesServer.Endpoints.Api.Users;
 
 public class ApiUserRelationEndpoints : EndpointGroup
 {
-    [ApiEndpoint("users/id/{recipientId}/users/id/{actorId}")]
-    [Authentication(false)]
+    [ApiEndpoint("users/id/{recipientId}/relationWith/id/{actorId}"), Authentication(false)]
+    [DocSummary("Retrieves relation between two users.")]
     public ApiUserRelationResponse? CheckIfFollowingUser(RequestContext context, GameDatabaseContext database, string recipientId, string actorId)
     {
         GameUser? recipient = database.GetUserWithId(recipientId);
@@ -29,6 +30,7 @@ public class ApiUserRelationEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("users/id/{id}/follow", Method.Post)]
+    [DocSummary("Follows user with specified ID.")]
     public Response FollowUser(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameUser? recipient = database.GetUserWithId(id);
@@ -41,6 +43,7 @@ public class ApiUserRelationEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("users/id/{id}/unFollow", Method.Post)]
+    [DocSummary("Unfollows user with specified ID.")]
     public Response UnFollowUser(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameUser? recipient = database.GetUserWithId(id);

@@ -3,10 +3,10 @@ using SoundShapesServer;
 
 BunkumConsole.AllocateConsole();
 
-Server server = new();
-server.Initialize();
-server.SetUpAdminUser();
-server.ImportLevels();
+GameServer gameServer = new();
+gameServer.Initialize();
+gameServer.SetUpAdminUser();
+gameServer.ImportLevels();
 
-server.Start();
+gameServer.Start();
 await Task.Delay(-1);

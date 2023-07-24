@@ -1,8 +1,10 @@
+using AttribDoc.Attributes;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
+using SoundShapesServer.Documentation.Attributes;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Leaderboard;
-using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Users;
 
@@ -10,15 +12,13 @@ namespace SoundShapesServer.Endpoints.Api.Leaderboard;
 
 public class ApiLeaderboardEndpoints : EndpointGroup
 {
-    [ApiEndpoint("scores")]
-    [Authentication(false)]
+    [ApiEndpoint("leaderboard"), Authentication(false)]
+    [DocUsesPageData]
+    [DocSummary("Retrieves leaderboard.")]
     public ApiLeaderboardEntriesWrapper GetLeaderboard(RequestContext context, GameDatabaseContext database, string id)
     {
-        int from = int.Parse(context.QueryString["from"] ?? "0");
-        int count = int.Parse(context.QueryString["count"] ?? "9");
-        
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "false");
-        
+        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+
         string? onLevel = context.QueryString["onLevel"];        
         string? byUserId = context.QueryString["byUser"];
         bool onlyBest = bool.Parse(context.QueryString["onlyBest"] ?? "false");

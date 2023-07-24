@@ -1,6 +1,8 @@
+using AttribDoc.Attributes;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
+using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Levels;
@@ -9,14 +11,12 @@ namespace SoundShapesServer.Endpoints.Api.Levels;
 
 public class ApiLevelEndpoints: EndpointGroup
 {
-    [ApiEndpoint("levels")]
-    [Authentication(false)]
+    [ApiEndpoint("levels"), Authentication(false)]
+    [DocUsesPageData]
+    [DocSummary("Lists levels.")]
     public ApiLevelsWrapper GetLevels(RequestContext context, GameDatabaseContext database)
     {
-        int from = int.Parse(context.QueryString["from"] ?? "0");
-        int count = int.Parse(context.QueryString["count"] ?? "9");
-        
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
+        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
 
         LevelFilters filters = LevelHelper.GetLevelFilters(context, database);
         LevelOrderType order = LevelHelper.GetLevelOrderType(context);
@@ -26,8 +26,8 @@ public class ApiLevelEndpoints: EndpointGroup
         return new ApiLevelsWrapper(levels, levelCount);
     }
 
-    [ApiEndpoint("levels/id/{levelId}")]
-    [Authentication(false)]
+    [ApiEndpoint("levels/id/{levelId}"), Authentication(false)]
+    [DocSummary("Retrieves level with specified ID.")]
     public ApiLevelFullResponse? GetLevelWithId(RequestContext context, GameDatabaseContext database, string levelId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);

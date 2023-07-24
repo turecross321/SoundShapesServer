@@ -1,8 +1,4 @@
-using System.Diagnostics;
 using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
-using HtmlAgilityPack;
 using SoundShapesServer.Responses.Game.Albums;
 using SoundShapesServer.Types.Albums;
 

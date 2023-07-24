@@ -12,12 +12,12 @@ namespace SoundShapesServerTests;
 
 public class TestContext : IDisposable
 {
-    public Lazy<TestServer> Server { get; }
+    public Lazy<TestGameServer> Server { get; }
     public GameDatabaseContext Database { get; }
     public HttpClient Http { get; }
     private DirectHttpListener Listener { get; }
     
-    public TestContext(Lazy<TestServer> server, GameDatabaseContext database, HttpClient http, DirectHttpListener listener)
+    public TestContext(Lazy<TestGameServer> server, GameDatabaseContext database, HttpClient http, DirectHttpListener listener)
     {
         Server = server;
         Database = database;

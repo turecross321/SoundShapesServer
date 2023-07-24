@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="AttribDoc" Version="1.0.1" />
       <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
       <PackageReference Include="Bunkum" Version="3.3.12" />
       <PackageReference Include="Bunkum.AutoDiscover" Version="1.0.0" />
@@ -18,10 +19,6 @@
       <PackageReference Include="NPTicket" Version="3.0.0" />
       <PackageReference Include="Realm" Version="11.2.0" />
       <PackageReference Include="SharpZipLib" Version="1.4.2" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Responses\Api\Leaderboar\" />
     </ItemGroup>
 
 </Project>

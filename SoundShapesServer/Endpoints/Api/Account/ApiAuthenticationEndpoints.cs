@@ -1,4 +1,5 @@
 using System.Net;
+using AttribDoc.Attributes;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
@@ -18,8 +19,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 {
     private readonly Response _invalidCredentialsResponse = new ("The email address or password was incorrect.", ContentType.Plaintext, HttpStatusCode.Forbidden);
     
-    [ApiEndpoint("account/logIn", Method.Post)]
-    [Authentication(false)]
+    [ApiEndpoint("account/logIn", Method.Post), Authentication(false)]
     public Response Login(RequestContext context, GameDatabaseContext database, ApiLoginRequest body)
     {
         GameUser? user = database.GetUserWithEmail(body.Email);
@@ -35,6 +35,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     }
 
     [ApiEndpoint("account/logOut", Method.Post)]
+    [DocSummary("Revokes the session used to make this request.")]
     public Response Logout(RequestContext context, GameDatabaseContext database, GameSession session)
     {
         database.RemoveSession(session);

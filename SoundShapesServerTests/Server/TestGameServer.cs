@@ -6,9 +6,9 @@ using SoundShapesServer.Database;
 
 namespace SoundShapesServerTests.Server;
 
-public class TestServer : SoundShapesServer.Server
+public class TestGameServer : SoundShapesServer.GameServer
 {
-    public TestServer(BunkumHttpListener listener, GameDatabaseProvider provider) : base(listener, provider, null, new InMemoryDataStore())
+    public TestGameServer(BunkumHttpListener listener, GameDatabaseProvider provider) : base(listener, provider, null, new InMemoryDataStore())
     {}
 
     public BunkumHttpServer BunkumServerInstance => ServerInstance;

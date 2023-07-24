@@ -49,7 +49,7 @@ public partial class GameDatabaseContext
 
     public void RemoveIpAddress(IpAuthorization ip)
     {
-        GameSession[] sessionsFromIp = GetSessionsWithIp(ip);
+        IEnumerable<GameSession> sessionsFromIp = GetSessionsWithIp(ip);
         
         _realm.Write(() =>
         {

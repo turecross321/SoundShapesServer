@@ -1,4 +1,5 @@
 using System.Net;
+using AttribDoc.Attributes;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
@@ -15,6 +16,7 @@ namespace SoundShapesServer.Endpoints.Api.Reports;
 public class ApiReportEndpoint : EndpointGroup
 {
     [ApiEndpoint("reports/create", Method.Post)]
+    [DocSummary("Creates report.")]
     public Response CreateReport(RequestContext context, GameDatabaseContext database, GameUser user, ApiReportRequest body)
     {
         GameUser? userBeingReported = null;

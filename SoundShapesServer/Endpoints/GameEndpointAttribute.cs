@@ -7,7 +7,7 @@ public class GameEndpointAttribute : EndpointAttribute
 {
     public const string BaseRoute = "/otg/";
     
-    public GameEndpointAttribute(string route, Method method = Method.Get, ContentType contentType = ContentType.Plaintext)
+    public GameEndpointAttribute(string route, Method method = Method.Get, ContentType contentType = ContentType.Json)
         : base(BaseRoute + route, method, contentType)
     {}
 

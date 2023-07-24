@@ -59,7 +59,7 @@ public class AuthenticationEndpoints : EndpointGroup
         PlatformType platformType = PlatformHelper.GetPlatformType(ticket);
 
         sessionType ??= SessionType.Game;
-        GameSession session = database.CreateSession(user, (SessionType)sessionType, platformType, 14400, null, ip); // 4 hours
+        GameSession session = database.CreateSession(user, (SessionType)sessionType, platformType, Globals.FourHoursInSeconds, null, ip);
 
         Debug.Assert(session.Ip != null, "session.Ip != null");
         if (session.Ip.OneTimeUse) database.UseOneTimeIpAddress(session.Ip);
@@ -82,14 +82,14 @@ public class AuthenticationEndpoints : EndpointGroup
     }
 
     
-    [GameEndpoint("~identity:*.hello", ContentType.Json)]
+    [GameEndpoint("~identity:*.hello")]
     [Authentication(false)]
     public Response Hello(RequestContext context)
     {
         return HttpStatusCode.OK;
     }
     
-    [GameEndpoint("{platform}/{publisher}/{language}/~eula.get", ContentType.Json)]
+    [GameEndpoint("{platform}/{publisher}/{language}/~eula.get")]
     public string Eula(RequestContext context, GameServerConfig config, GameDatabaseContext database, string platform, string publisher, string language, GameSession session, GameUser user)
     {
         if (session.SessionType == SessionType.Game)
@@ -114,7 +114,7 @@ public class AuthenticationEndpoints : EndpointGroup
             IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
 
             string emailSessionId = GenerateEmailSessionId(database);
-            database.CreateSession(user, SessionType.SetEmail, session.PlatformType, 600, emailSessionId, ip); // 10 minutes
+            database.CreateSession(user, SessionType.SetEmail, session.PlatformType, Globals.TenMinutesInSeconds, emailSessionId, ip);
             eula = $"Your account is not registered.\n" +
                    $"To proceed, you will have to register an account at {config.WebsiteUrl}/register\n" +
                    $"Your email code is: {emailSessionId}";

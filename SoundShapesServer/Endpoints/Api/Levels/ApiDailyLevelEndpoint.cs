@@ -1,8 +1,10 @@
+using AttribDoc.Attributes;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
+using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Levels;
@@ -11,15 +13,13 @@ namespace SoundShapesServer.Endpoints.Api.Levels;
 
 public class ApiDailyLevelEndpoint : EndpointGroup
 {
-    [ApiEndpoint("daily")]
-    [Authentication(false)]
+    [ApiEndpoint("daily"), Authentication(false)]
+    [DocUsesPageData]
+    [DocSummary("Lists levels that have been picked as daily levels.")]
     public Response GetDailyLevelObjects(RequestContext context, GameDatabaseContext database)
     {
-        int count = int.Parse(context.QueryString["count"] ?? "9");
-        int from = int.Parse(context.QueryString["from"] ?? "0");
-        
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
-        
+        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+
         string? dateString = context.QueryString["date"];
         DateTimeOffset? date = null;
         if (dateString != null) date = DateTimeOffset.Parse(dateString).Date;

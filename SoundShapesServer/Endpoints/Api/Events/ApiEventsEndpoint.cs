@@ -1,6 +1,8 @@
+using AttribDoc.Attributes;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
+using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Events;
 using SoundShapesServer.Types.Events;
@@ -9,15 +11,13 @@ namespace SoundShapesServer.Endpoints.Api.Events;
 
 public class ApiEventsEndpoint : EndpointGroup
 {
-    [ApiEndpoint("events")]
-    [Authentication(false)]
+    [ApiEndpoint("events"), Authentication(false)]
+    [DocUsesPageData]
+    [DocSummary("Lists events.")]
     public ApiEventsWrapper GetActivities(RequestContext context, GameDatabaseContext database)
     {
-        int from = int.Parse(context.QueryString["from"] ?? "0");
-        int count = int.Parse(context.QueryString["count"] ?? "9");
-        
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
-        
+        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+
         EventFilters filters = EventHelper.GetEventFilters(context, database);
         EventOrderType orderType = EventHelper.GetEventOrder(context);
         

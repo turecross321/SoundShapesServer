@@ -9,6 +9,8 @@ using Bunkum.ProfanityFilter;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
+using SoundShapesServer.Documentation;
+using SoundShapesServer.Endpoints;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Middlewares;
 using SoundShapesServer.Services;
@@ -17,30 +19,30 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer;
 
-public class Server
+public class GameServer
 {
     protected readonly BunkumHttpServer ServerInstance;
     protected readonly GameDatabaseProvider DatabaseProvider;
     protected readonly IDataStore DataStore;
+    private readonly SessionProvider _authProvider;
 
-    public Server(BunkumHttpListener? listener = null,
+    public GameServer(BunkumHttpListener? listener = null,
         GameDatabaseProvider? databaseProvider = null,
         IAuthenticationProvider<GameUser, GameSession>? authProvider = null,
         IDataStore? dataStore = null)
     {
         databaseProvider ??= new GameDatabaseProvider();
-        // ReSharper disable once RedundantAssignment
         authProvider ??= new SessionProvider();
         dataStore ??= new FileSystemDataStore();
 
         DatabaseProvider = databaseProvider;
         DataStore = dataStore;
-
+        _authProvider = (SessionProvider)authProvider;
         ServerInstance = listener == null ? new BunkumHttpServer() : new BunkumHttpServer(listener);
         
         ServerInstance.UseDatabaseProvider(databaseProvider);
         ServerInstance.AddStorageService(dataStore);
-        ServerInstance.AddAuthenticationService(authProvider, true);
+        ServerInstance.AddAuthenticationService(_authProvider, true);
         
         ServerInstance.DiscoverEndpointsFromAssembly(Assembly.GetExecutingAssembly());
     }
@@ -67,7 +69,7 @@ public class Server
         SetUpConfiguration();
         SetUpServices();
         SetUpMiddlewares();
-        ServerInstance.AddAutoDiscover(serverBrand: "SoundShapes", baseEndpoint: "/otg");
+        ServerInstance.AddAutoDiscover(serverBrand: "SoundShapesServer", GameEndpointAttribute.BaseRoute[..^1]);
     }
 
     protected virtual void SetUpConfiguration()
@@ -78,8 +80,10 @@ public class Server
     protected virtual void SetUpServices()
     {
         ServerInstance.AddRateLimitService(new RateLimitSettings(30, 400, 0)); // Todo: figure out a good balance here between security and usability
+        ServerInstance.AddService<DocumentationService>();
         ServerInstance.AddService<EmailService>();
         ServerInstance.AddProfanityService();
+        ServerInstance.AddService<MinimumPermissionsService>(_authProvider);
     }
 
     protected virtual void SetUpMiddlewares()

@@ -1,4 +1,3 @@
-using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
@@ -18,14 +17,11 @@ public class EventsEndpoint : EndpointGroup
         EventType.Follow
     };
     
-    [GameEndpoint("~identity:{id}/~stream:news.page", ContentType.Json)]
-    [GameEndpoint("~index:activity.page", ContentType.Json)]
+    [GameEndpoint("~identity:{id}/~stream:news.page")]
+    [GameEndpoint("~index:activity.page")]
     public EventsWrapper GetEvents(RequestContext context, GameDatabaseContext database, GameUser user)
     {
-        int from = int.Parse(context.QueryString["from"] ?? "0");
-        int count = int.Parse(context.QueryString["count"] ?? "9");
-        
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
+        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
 
         EventFilters filters = EventHelper.GetEventFilters(context, database);
         filters.EventTypes ??= _gameEventTypes;

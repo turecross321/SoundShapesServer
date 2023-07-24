@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http.Json;
 using Newtonsoft.Json.Linq;
 using SoundShapesServer.Responses.Api.Leaderboard;
-using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
@@ -35,20 +34,20 @@ public class LeaderboardTests: ServerTest
         using HttpClient client = context.GetAuthenticatedClient(SessionType.Api, user);
         
         // Filtering
-        string payload = $"/api/v1/scores?onLevel={firstLevel.Id}&onlyBest=true";
+        string payload = $"/api/v1/leaderboard?onLevel={firstLevel.Id}&onlyBest=true";
         ApiLeaderboardEntriesWrapper? response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
         Assert.That(response?.Count, Is.EqualTo(firstUserAmount));
         
-        payload = $"/api/v1/scores?onLevel={secondLevel.Id}&onlyBest=false";
+        payload = $"/api/v1/leaderboard?onLevel={secondLevel.Id}&onlyBest=false";
         response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
         Assert.That(response?.Count, Is.EqualTo(secondUserAmount * scoresPerUser));
         
         // Ordering
-        payload = $"/api/v1/scores?orderBy=score&descending=true";
+        payload = $"/api/v1/leaderboard?orderBy=score&descending=true";
         response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
         Assert.That(response != null && response.Entries[0].Score >= response.Entries[1].Score);
         
-        payload = $"/api/v1/scores?orderBy=score&descending=false";
+        payload = $"/api/v1/leaderboard?orderBy=score&descending=false";
         response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
         Assert.That(response != null && response.Entries[0].Score <= response.Entries[1].Score);
     }

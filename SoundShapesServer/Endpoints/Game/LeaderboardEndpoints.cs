@@ -4,6 +4,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Game.Leaderboards;
 using SoundShapesServer.Types.Leaderboard;
@@ -46,27 +47,26 @@ public class LeaderboardEndpoints : EndpointGroup
         return HttpStatusCode.OK;
     }
 
-    [GameEndpoint("global/~campaign:{levelId}/~leaderboard.page", ContentType.Json)] // campaign levels
-    [GameEndpoint("~level:{levelId}/~leaderboard.page", ContentType.Json)] // community levels
-    [GameEndpoint("{levelId}/~leaderboard.page", ContentType.Json)] // recent activity community levels 
+    [GameEndpoint("global/~campaign:{levelId}/~leaderboard.page")] // campaign levels
+    [GameEndpoint("~level:{levelId}/~leaderboard.page")] // community levels
+    [GameEndpoint("{levelId}/~leaderboard.page")] // recent activity community levels 
     public LeaderboardEntriesWrapper GetLeaderboard(RequestContext context, GameDatabaseContext database, string levelId)
     {
-        int count = int.Parse(context.QueryString["count"] ?? "9");
-        int from = int.Parse(context.QueryString["from"] ?? "0");
-        
+        (int from, int count, bool _) = PaginationHelper.GetPageData(context);
         const bool descending = false;
+        
         (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, descending, new LeaderboardFilters(levelId, onlyBest:true, completed:true), from, count);
         return new LeaderboardEntriesWrapper(allEntries, paginatedEntries, from, count, descending);
     }
 
-    [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near", ContentType.Json)] // campaign levels
-    [GameEndpoint("~level:{levelId}/~leaderboard.near", ContentType.Json)] // community levels
-    [GameEndpoint("{levelId}/~leaderboard.near", ContentType.Json)] // recent activity community levels 
+    [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near")] // campaign levels
+    [GameEndpoint("~level:{levelId}/~leaderboard.near")] // community levels
+    [GameEndpoint("{levelId}/~leaderboard.near")] // recent activity community levels 
     public LeaderboardEntryResponse[] GetLeaderboardNearPlayer(RequestContext context, GameDatabaseContext database, GameUser user, string levelId)
     {
         LeaderboardFilters filters = new (levelId, user, completed:true);
-        
         const bool descending = false;
+        
         (IQueryable<LeaderboardEntry> _, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, 0, 1);
         
         return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e, database.GetLeaderboardEntryPosition(e) + 1)).ToArray();

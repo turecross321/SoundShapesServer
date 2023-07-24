@@ -12,7 +12,7 @@ namespace SoundShapesServer.Endpoints.Game.Users;
 public class UserInteractionEndpoints : EndpointGroup
 {
 
-    [GameEndpoint("~identity:{followerId}/~follow:%2F~identity%3A{arguments}", ContentType.Json)]
+    [GameEndpoint("~identity:{followerId}/~follow:%2F~identity%3A{arguments}")]
     public Response FollowRequests(RequestContext context, GameDatabaseContext database, GameUser user, string followerId, string arguments)
     {
         string[] argumentArray = arguments.Split("."); // This is to separate the .put / .get / delete from the id, which Bunkum currently cannot do by it self

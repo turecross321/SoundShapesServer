@@ -1,4 +1,3 @@
-using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
@@ -11,8 +10,8 @@ namespace SoundShapesServer.Endpoints.Game;
 
 public class NewsEndpoints : EndpointGroup
 {
-    [GameEndpoint("global/news/~metadata:*.get", ContentType.Json)]
-    [GameEndpoint("global/news/{language}/~metadata:*.get", ContentType.Json)]
+    [GameEndpoint("global/news/~metadata:*.get")]
+    [GameEndpoint("global/news/{language}/~metadata:*.get")]
     public NewsResponse GetNews(RequestContext context, GameDatabaseContext database, string? language, GameSession session)
     {
         NewsFilters filters = new (language);
