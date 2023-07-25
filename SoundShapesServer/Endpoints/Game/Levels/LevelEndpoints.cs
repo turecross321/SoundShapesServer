@@ -37,21 +37,23 @@ public class LevelEndpoints : EndpointGroup
 
         LevelOrderType? order = null;
         LevelFilters? filters = null;
-
-        // search
+        
         const string searchQuery = "metadata.displayName:";
+        const string byUserQuery = "author.id:/~identity:";
+        
+        // search
+
         if (query != null && query.StartsWith(searchQuery))
         {
-            filters = new LevelFilters(search: String.Concat(query.Skip(searchQuery.Length)));
+            filters = new LevelFilters(search: string.Concat(query.Skip(searchQuery.Length)));
             order = LevelOrderType.UniquePlays;
         }
         
         // published by user
-        else if (query != null && query.StartsWith("author.id:"))
+        else if (query != null && query.StartsWith(byUserQuery))
         {
-            string id = query.Split(":")[2];
-
-            GameUser? usersToGetLevelsFrom = database.GetUserWithId(id);
+            string byUserId = string.Concat(query.Skip(byUserQuery.Length));
+            GameUser? usersToGetLevelsFrom = database.GetUserWithId(byUserId);
             if (usersToGetLevelsFrom == null) return HttpStatusCode.NotFound;
 
             filters = new LevelFilters(usersToGetLevelsFrom);
