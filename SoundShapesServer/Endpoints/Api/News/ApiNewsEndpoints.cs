@@ -55,7 +55,7 @@ public class ApiNewsEndpoints : EndpointGroup
             _ => NewsOrderType.CreationDate
         };
 
-        (NewsEntry[] entries, int totalEntries) = database.GetNews(order, descending, filters, from, count);
+        (NewsEntry[] entries, int totalEntries) = database.GetPaginatedNews(order, descending, filters, from, count);
         return new ApiListResponse<ApiNewsResponse>(entries.Select(e=>new ApiNewsResponse(e)), totalEntries);
     }
 }

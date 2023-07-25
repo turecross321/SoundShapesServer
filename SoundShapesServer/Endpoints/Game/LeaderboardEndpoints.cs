@@ -56,7 +56,7 @@ public class LeaderboardEndpoints : EndpointGroup
         const bool descending = false;
 
         LeaderboardFilters filters = new (levelId, onlyBest: true, completed: true);
-        (int totalEntries, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, from, count);
+        (int totalEntries, LeaderboardEntry[] paginatedEntries) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, from, count);
 
         List<LeaderboardEntryResponse> responses = 
             paginatedEntries.Select((t, i) => 
@@ -72,7 +72,7 @@ public class LeaderboardEndpoints : EndpointGroup
     {
         LeaderboardFilters filters = new (levelId, user, completed:true);
 
-        (int _, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 1);
+        (int _, LeaderboardEntry[] paginatedEntries) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 1);
         
         return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e, database.GetLeaderboardEntryPosition(e) + 1)).ToArray();
     }

@@ -1,3 +1,4 @@
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 
@@ -50,13 +51,20 @@ public partial class GameDatabaseContext
         return _realm.All<DailyLevel>().FirstOrDefault(d => d.Id == id);
     }
     
-    public IQueryable<DailyLevel> GetDailyLevels(DailyLevelOrderType order, bool descending, DailyLevelFilters filters)
+    public (DailyLevel[], int) GetPaginatedDailyLevels(DailyLevelOrderType order, bool descending, DailyLevelFilters filters, int from, int count)
+    {
+        IQueryable<DailyLevel> orderedDailyLevels = GetDailyLevels(order, descending, filters);
+        DailyLevel[] paginatedDailyLevels = PaginationHelper.PaginateDailyLevels(orderedDailyLevels, from, count);
+        
+        return (paginatedDailyLevels, orderedDailyLevels.Count());
+    }
+
+    private IQueryable<DailyLevel> GetDailyLevels(DailyLevelOrderType order, bool descending, DailyLevelFilters filters)
     {
         IQueryable<DailyLevel> dailyLevels = _realm.All<DailyLevel>();
-
         IQueryable<DailyLevel> filteredDailyLevels = FilterDailyLevels(dailyLevels, filters);
         IQueryable<DailyLevel> orderedDailyLevels = OrderDailyLevels(filteredDailyLevels, order, descending);
-        
+
         return orderedDailyLevels;
     }
 

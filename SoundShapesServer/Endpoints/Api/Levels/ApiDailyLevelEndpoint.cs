@@ -37,9 +37,7 @@ public class ApiDailyLevelEndpoint : EndpointGroup
             _ => DailyLevelOrderType.Date
         };
 
-        IQueryable<DailyLevel> dailyLevels = database.GetDailyLevels(order, descending, filters);
-        DailyLevel[] paginatedDailyLevels = PaginationHelper.PaginateDailyLevels(dailyLevels, from, count);
-        
-        return new ApiListResponse<ApiDailyLevelResponse>(paginatedDailyLevels.Select(d=>new ApiDailyLevelResponse(d)), dailyLevels.Count());
+        (DailyLevel[] dailyLevels, int totalLevels) = database.GetPaginatedDailyLevels(order, descending, filters, from, count);
+        return new ApiListResponse<ApiDailyLevelResponse>(dailyLevels.Select(d=>new ApiDailyLevelResponse(d)), totalLevels);
     }
 }

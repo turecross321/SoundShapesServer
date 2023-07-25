@@ -42,7 +42,7 @@ public class ApiLeaderboardEndpoints : EndpointGroup
 
         LeaderboardFilters filters = new (onLevel, byUser, completed, onlyBest);
         (int totalEntries, LeaderboardEntry[] paginatedEntries) =
-            database.GetLeaderboardEntries(order, descending, filters, from, count);
+            database.GetPaginatedLeaderboardEntries(order, descending, filters, from, count);
         
         List<ApiLeaderboardEntryResponse> responses = 
             paginatedEntries.Select((e, i) => 

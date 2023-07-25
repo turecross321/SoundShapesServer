@@ -28,7 +28,7 @@ public class EventsEndpoint : EndpointGroup
         filters.EventTypes ??= _gameEventTypes;
         EventOrderType order = EventHelper.GetEventOrder(context);
         
-        (GameEvent[] events, int totalEvents) = database.GetEvents(order, descending, filters, from, count);
+        (GameEvent[] events, int totalEvents) = database.GetPaginatedEvents(order, descending, filters, from, count);
         return new ListResponse<EventResponse>(events.Select(e => new EventResponse(e)), totalEvents, from, count);
     }
 }

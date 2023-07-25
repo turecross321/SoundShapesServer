@@ -79,7 +79,7 @@ public class LevelEndpoints : EndpointGroup
         filters ??= LevelHelper.GetLevelFilters(context, database);
         order ??= LevelHelper.GetLevelOrderType(context);
 
-        (GameLevel[] levels, int totalLevels) = database.GetLevels((LevelOrderType)order, descending, filters, from, count);
+        (GameLevel[] levels, int totalLevels) = database.GetPaginatedLevels((LevelOrderType)order, descending, filters, from, count);
 
         return new ListResponse<LevelResponse>(levels.Select(l=>new LevelResponse(l, user)), totalLevels, from, count);
     }

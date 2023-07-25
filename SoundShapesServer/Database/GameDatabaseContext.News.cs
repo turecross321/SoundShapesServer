@@ -71,18 +71,23 @@ public partial class GameDatabaseContext
         return _realm.All<NewsEntry>().FirstOrDefault(e => e.Id == id);
     }
     
-    public (NewsEntry[], int) GetNews(NewsOrderType order, bool descending, NewsFilters filters, int from, int count)
+    public (NewsEntry[], int) GetPaginatedNews(NewsOrderType order, bool descending, NewsFilters filters, int from, int count)
     {
-        IQueryable<NewsEntry> entries = _realm.All<NewsEntry>();
-
-        IQueryable<NewsEntry> filteredEntries = FilterNews(entries, filters);
-        IQueryable<NewsEntry> orderedEntries = OrderNews(filteredEntries, order, descending);
-        
+        IQueryable<NewsEntry> orderedEntries = GetNews(order, descending, filters);
         NewsEntry[] paginatedNews = PaginationHelper.PaginateNews(orderedEntries, from, count);
 
-        return (paginatedNews, filteredEntries.Count());
+        return (paginatedNews, orderedEntries.Count());
     }
-    
+
+    private IQueryable<NewsEntry> GetNews(NewsOrderType order, bool descending, NewsFilters filters)
+    {
+        IQueryable<NewsEntry> entries = _realm.All<NewsEntry>();
+        IQueryable<NewsEntry> filteredEntries = FilterNews(entries, filters);
+        IQueryable<NewsEntry> orderedEntries = OrderNews(filteredEntries, order, descending);
+
+        return orderedEntries;
+    }
+
     private IQueryable<NewsEntry> FilterNews(IQueryable<NewsEntry> entries, NewsFilters filters)
     {
         IQueryable<NewsEntry> response = entries;

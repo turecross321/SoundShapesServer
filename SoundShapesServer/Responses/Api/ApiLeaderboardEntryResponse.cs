@@ -18,10 +18,6 @@ public class ApiLeaderboardEntryResponse : IApiResponse
         Completed = entry.Completed;
         CreationDate = entry.CreationDate.ToUnixTimeSeconds();
     }
-    
-#pragma warning disable CS8618
-    public ApiLeaderboardEntryResponse() {}
-#pragma warning restore CS8618
 
     public string Id { get; set; }
     public string LevelId { get; set; } // Not a BriefLevelResponse because it should support campaign levels too

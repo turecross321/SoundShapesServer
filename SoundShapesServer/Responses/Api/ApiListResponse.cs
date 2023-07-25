@@ -4,10 +4,10 @@ public class ApiListResponse<T> : IApiResponse where T : IApiResponse
 {
     public ApiListResponse(IEnumerable<T> items, int totalItems)
     {
-        Items = items.ToList();
+        Items = items.ToArray();
         Count = totalItems;
     }
 
-    public List<T> Items { get; set; }
+    public T[] Items { get; set; }
     public int Count { get; set; }
 }

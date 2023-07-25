@@ -38,7 +38,7 @@ public class ApiUserEndpoints : EndpointGroup
         UserFilters filters = UserHelper.GetUserFilters(context, database);
         UserOrderType order = UserHelper.GetUserOrderType(context);
 
-        (GameUser[] users, int totalUsers) = database.GetUsers(order, descending, filters, from, count);
+        (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(order, descending, filters, from, count);
         return new ApiListResponse<ApiUserBriefResponse>(users.Select(u=>new ApiUserBriefResponse(u)), totalUsers);
     }
 }

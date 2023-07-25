@@ -22,7 +22,7 @@ public class ApiLevelEndpoints: EndpointGroup
         LevelFilters filters = LevelHelper.GetLevelFilters(context, database);
         LevelOrderType order = LevelHelper.GetLevelOrderType(context);
 
-        (GameLevel[] levels, int levelCount) = database.GetLevels(order, descending, filters, from, count);
+        (GameLevel[] levels, int levelCount) = database.GetPaginatedLevels(order, descending, filters, from, count);
         
         return new ApiListResponse<ApiLevelBriefResponse>(levels.Select(l => new ApiLevelBriefResponse(l)), levelCount);
     }

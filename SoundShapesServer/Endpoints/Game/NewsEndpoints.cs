@@ -17,7 +17,7 @@ public class NewsEndpoints : EndpointGroup
         NewsFilters filters = new (language);
 
         // Game only gets the last news entry
-        (NewsEntry[] entries, int _) = database.GetNews(NewsOrderType.CreationDate, true, filters, 0, 1);
+        (NewsEntry[] entries, int _) = database.GetPaginatedNews(NewsOrderType.CreationDate, true, filters, 0, 1);
         NewsEntry? entry = entries.LastOrDefault();
 
         // News images make the vita version crash, so this is a workaround that only lets non-vita view them

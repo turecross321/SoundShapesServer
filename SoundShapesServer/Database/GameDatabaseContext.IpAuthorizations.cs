@@ -75,14 +75,20 @@ public partial class GameDatabaseContext
         });
     }
 
-    public (IpAuthorization[], int) GetIpAddresses(GameUser user, int from, int count, bool? authorized)
+    public (IpAuthorization[], int) GetPaginatedIps(GameUser user, bool? authorized, int from, int count)
     {
-        IQueryable<IpAuthorization> addresses = _realm.All<IpAuthorization>().Where(i => i.User == user);
-
-        IQueryable<IpAuthorization> filteredAddresses = FilterIpAddresses(addresses, authorized);
+        IQueryable<IpAuthorization> filteredAddresses = GetIps(user, authorized);
         IpAuthorization[] paginatedAddresses = PaginationHelper.PaginateIpAddresses(filteredAddresses, from, count);
 
         return (paginatedAddresses, filteredAddresses.Count());
+    }
+
+    private IQueryable<IpAuthorization> GetIps(GameUser user, bool? authorized)
+    {
+        IQueryable<IpAuthorization> addresses = _realm.All<IpAuthorization>().Where(i => i.User == user);
+        IQueryable<IpAuthorization> filteredAddresses = FilterIpAddresses(addresses, authorized);
+
+        return filteredAddresses;
     }
 
     private static IQueryable<IpAuthorization> FilterIpAddresses(IQueryable<IpAuthorization> addresses,

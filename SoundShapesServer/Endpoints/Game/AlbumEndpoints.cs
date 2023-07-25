@@ -23,7 +23,7 @@ public class AlbumEndpoints : EndpointGroup
     {
         (int from, int count, bool _) = PaginationHelper.GetPageData(context);
 
-        (GameAlbum[] albums, int totalAlbums) = database.GetAlbums(AlbumOrderType.CreationDate, true, from, count);
+        (GameAlbum[] albums, int totalAlbums) = database.GetPaginatedAlbums(AlbumOrderType.CreationDate, true, from, count);
 
         return new ListResponse<AlbumResponse>(albums.Select(a => new AlbumResponse(a)), totalAlbums, from, count);
     }
@@ -39,7 +39,7 @@ public class AlbumEndpoints : EndpointGroup
 
         if (album == null) return HttpStatusCode.NotFound;
 
-        (GameLevel[] levels, int totalLevels) = database.GetLevels(LevelOrderType.Difficulty, true, new LevelFilters(inAlbum: album), from, count);
+        (GameLevel[] levels, int totalLevels) = database.GetPaginatedLevels(LevelOrderType.Difficulty, true, new LevelFilters(inAlbum: album), from, count);
 
         if (order == "time:ascn")
             return new Response(new ListResponse<LevelResponse>(levels.Select(l=>new LevelResponse(l, user)), totalLevels, from, count), ContentType.Json);

@@ -42,7 +42,7 @@ public class ApiAlbumEndpoints : EndpointGroup
             _ => AlbumOrderType.CreationDate
         };
 
-        (GameAlbum[] albums, int totalAlbums) = database.GetAlbums(order, descending, from, count);
+        (GameAlbum[] albums, int totalAlbums) = database.GetPaginatedAlbums(order, descending, from, count);
         
         return new ApiListResponse<ApiAlbumResponse>(albums.Select(a=>new ApiAlbumResponse(a)), totalAlbums);
     }

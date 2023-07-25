@@ -85,7 +85,7 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
         if (bool.TryParse(context.QueryString["revoked"], out bool revokedTemp)) revoked = revokedTemp;
 
         PunishmentFilters filters = new (author, recipient, revoked);
-        (Punishment[] punishments, int totalPunishments) = database.GetPunishments(PunishmentOrderType.CreationDate, descending, filters, from, count);
+        (Punishment[] punishments, int totalPunishments) = database.GetPaginatedPunishments(PunishmentOrderType.CreationDate, descending, filters, from, count);
 
         return new ApiListResponse<ApiPunishmentResponse>(punishments.Select(p=>new ApiPunishmentResponse(p)), totalPunishments);
     }

@@ -21,7 +21,7 @@ public class ApiEventsEndpoint : EndpointGroup
         EventFilters filters = EventHelper.GetEventFilters(context, database);
         EventOrderType orderType = EventHelper.GetEventOrder(context);
         
-        (GameEvent[] events, int totalEvents) = database.GetEvents(orderType, descending, filters, from, count);
+        (GameEvent[] events, int totalEvents) = database.GetPaginatedEvents(orderType, descending, filters, from, count);
         
         return new ApiListResponse<ApiEventResponse>(events.Select(e=>new ApiEventResponse(database, e)), totalEvents);
     }

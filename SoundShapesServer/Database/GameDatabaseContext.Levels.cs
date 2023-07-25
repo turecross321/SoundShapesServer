@@ -232,17 +232,23 @@ public partial class GameDatabaseContext
         return levels.AsQueryable();
     }
 
-    public (GameLevel[], int) GetLevels(LevelOrderType order, bool descending, LevelFilters filters, int from, int count)
+    public (GameLevel[], int) GetPaginatedLevels(LevelOrderType order, bool descending, LevelFilters filters, int from, int count)
+    {
+        IQueryable<GameLevel> orderedLevels = GetLevels(order, descending, filters);
+        GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(orderedLevels, from, count);
+
+        return (paginatedLevels, orderedLevels.Count());
+    }
+
+    public IQueryable<GameLevel> GetLevels(LevelOrderType order, bool descending, LevelFilters filters)
     {
         IQueryable<GameLevel> levels = _realm.All<GameLevel>();
         IQueryable<GameLevel> filteredLevels = FilterLevels(levels, filters);
         IQueryable<GameLevel> orderedLevels = OrderLevels(filteredLevels, order, descending);
-        
-        GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(orderedLevels, from, count);
 
-        return (paginatedLevels, filteredLevels.Count());
+        return orderedLevels;
     }
-    
+
     private IQueryable<GameLevel> FilterLevels(IQueryable<GameLevel> levels, LevelFilters filters)
     {
         IQueryable<GameLevel> response = levels;

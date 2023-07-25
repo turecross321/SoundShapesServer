@@ -48,7 +48,7 @@ public class ApiIpAuthorizationEndpoints : EndpointGroup
         if (bool.TryParse(context.QueryString["authorized"], out bool authorizedTemp)) authorized = authorizedTemp;
         
         (Types.IpAuthorization[] addresses, int totalAddresses) =
-            database.GetIpAddresses(user, from, count, authorized);
+            database.GetPaginatedIps(user, authorized, from, count);
 
         return new ApiListResponse<ApiIpResponse>(addresses.Select(a=>new ApiIpResponse(a)), totalAddresses);
     }

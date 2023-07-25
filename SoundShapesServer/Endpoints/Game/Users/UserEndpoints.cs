@@ -22,7 +22,7 @@ public class UserEndpoints : EndpointGroup
         UserFilters filters = UserHelper.GetUserFilters(context, database);
         UserOrderType order = UserHelper.GetUserOrderType(context);
 
-        (GameUser[] users, int totalUsers) = database.GetUsers(order, descending, filters, from, count);
+        (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(order, descending, filters, from, count);
         return new ListResponse<UserBriefResponse>(users.Select(u => new UserBriefResponse(user, u)), totalUsers, from, count);
     }
     
@@ -41,7 +41,7 @@ public class UserEndpoints : EndpointGroup
         GameUser? followingUser = database.GetUserWithId(id);
         if (followingUser == null) return null;
 
-        (GameUser[] users, int totalUsers) = database.GetUsers(UserOrderType.DoNotOrder, true, new UserFilters(followedByUser:followingUser), from, count);
+        (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(UserOrderType.DoNotOrder, true, new UserFilters(followedByUser:followingUser), from, count);
         return new ListResponse<UserBriefResponse>(users.Select(u=>new UserBriefResponse(user, u)), totalUsers, from, count);
     }
 
@@ -53,7 +53,7 @@ public class UserEndpoints : EndpointGroup
         GameUser? recipient = database.GetUserWithId(id);
         if (recipient == null) return null;
         
-        (GameUser[] users, int totalUsers) = database.GetUsers(UserOrderType.DoNotOrder, true, new UserFilters(isFollowingUser:recipient), from, count);
+        (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(UserOrderType.DoNotOrder, true, new UserFilters(isFollowingUser:recipient), from, count);
         return new ListResponse<UserBriefResponse>(users.Select(u => new UserBriefResponse(user, u)), totalUsers, from, count);
     }
     
