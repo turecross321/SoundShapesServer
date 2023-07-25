@@ -22,8 +22,10 @@ public class ApiDailyLevelEndpoint : EndpointGroup
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
 
         string? dateString = context.QueryString["date"];
+        long? dateLong = null;
+        if (dateString != null) dateLong = long.Parse(dateString);
         DateTimeOffset? date = null;
-        if (dateString != null) date = DateTimeOffset.Parse(dateString).Date;
+        if (dateLong != null) date = DateTimeOffset.FromUnixTimeSeconds((long)dateLong);
         
         bool? lastDate = null;
         if (bool.TryParse(context.QueryString["lastDate"], out bool lastDateTemp)) lastDate = lastDateTemp;
