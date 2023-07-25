@@ -1,5 +1,6 @@
 using System.Net;
 using Bunkum.CustomHttpListener.Parsing;
+using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
@@ -20,7 +21,7 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class LevelManagementEndpoints : EndpointGroup
 {
     // Gets called by Endpoints.cs
-    public static Response CreateLevel(GameServerConfig config, IDataStore dataStore, ProfanityService profanity, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user)
+    public static Response CreateLevel(RequestContext context, GameServerConfig config, IDataStore dataStore, ProfanityService profanity, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user)
     {
         if (user.Levels.Count() >= config.LevelPublishLimit) return HttpStatusCode.Forbidden;
 
@@ -31,14 +32,14 @@ public class LevelManagementEndpoints : EndpointGroup
         publishLevelRequest.Name = profanity.CensorSentence(publishLevelRequest.Name); // Censor any potential profanity
         GameLevel publishedLevel = database.CreateLevel(user, publishLevelRequest);
         
-        Response uploadedResources = UploadLevelResources(database, dataStore, parser, publishedLevel);
+        Response uploadedResources = UploadLevelResources(context, database, dataStore, parser, publishedLevel, user);
         if (uploadedResources.StatusCode != HttpStatusCode.Created) return uploadedResources;
         
         return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
     
     // Gets called by Endpoints.cs
-    public static Response UpdateLevel(IDataStore dataStore, ProfanityService profanity, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user, string levelId)
+    public static Response UpdateLevel(RequestContext context, IDataStore dataStore, ProfanityService profanity, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user, string levelId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
 
@@ -52,15 +53,15 @@ public class LevelManagementEndpoints : EndpointGroup
         publishLevelRequest.Name = profanity.CensorSentence(publishLevelRequest.Name); // Censor any potential profanity
         GameLevel publishedLevel = database.EditLevel(publishLevelRequest, level);
         
-        Response uploadedResources = UploadLevelResources(database, dataStore, parser, publishedLevel);
+        Response uploadedResources = UploadLevelResources(context, database, dataStore, parser, publishedLevel, user);
         if (uploadedResources.StatusCode != HttpStatusCode.Created) return uploadedResources;
         
         return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
     }
 
 
-    private static Response UploadLevelResources(GameDatabaseContext database, IDataStore dataStore, 
-        IMultipartFormDataParser parser, GameLevel level)
+    private static Response UploadLevelResources(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
+        IMultipartFormDataParser parser, GameLevel level, GameUser user)
     {
         byte[]? levelFile = null;
         byte[]? thumbnailFile = null;
@@ -84,14 +85,14 @@ public class LevelManagementEndpoints : EndpointGroup
                     break;
                 case FileType.Unknown:
                 default:
-                    Console.WriteLine("User attempted to upload an illegal file: " + file.ContentType);
+                    context.Logger.LogInfo(BunkumContext.Filter, user.Username + " attempted to upload an illegal file: " + file.ContentType);
                     return HttpStatusCode.BadRequest;
             }
         }
 
         if (levelFile == null || thumbnailFile == null || soundFile == null)
         {
-            Console.WriteLine("User did not upload all the required files.");
+            context.Logger.LogInfo(BunkumContext.Filter, user.Username + " did not upload all the required files.");
             return HttpStatusCode.BadRequest;
         }
 

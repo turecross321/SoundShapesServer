@@ -42,7 +42,6 @@ public class LevelEndpoints : EndpointGroup
         const string byUserQuery = "author.id:/~identity:";
         
         // search
-
         if (query != null && query.StartsWith(searchQuery))
         {
             filters = new LevelFilters(search: string.Concat(query.Skip(searchQuery.Length)));

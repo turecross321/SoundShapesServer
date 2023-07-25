@@ -66,7 +66,7 @@ public class AuthenticationEndpoints : EndpointGroup
         GameSessionResponse sessionResponse = new (session);
         GameSessionWrapper responseWrapper = new (sessionResponse);
 
-        Console.WriteLine($"{sessionResponse.User.Username} has logged in.");
+        context.Logger.LogInfo(BunkumContext.Authentication, $"{sessionResponse.User.Username} has logged in.");
 
         context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={sessionResponse.Id};Version=1;Path=/");
         // ReSharper disable StringLiteralTypo
