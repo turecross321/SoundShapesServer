@@ -38,8 +38,16 @@ public class LevelEndpoints : EndpointGroup
         LevelOrderType? order = null;
         LevelFilters? filters = null;
 
+        // search
+        const string searchQuery = "metadata.displayName:";
+        if (query != null && query.StartsWith(searchQuery))
+        {
+            filters = new LevelFilters(search: String.Concat(query.Skip(searchQuery.Length)));
+            order = LevelOrderType.UniquePlays;
+        }
+        
         // published by user
-        if (query != null && query.Contains("author.id:"))
+        else if (query != null && query.StartsWith("author.id:"))
         {
             string id = query.Split(":")[2];
 
@@ -50,13 +58,6 @@ public class LevelEndpoints : EndpointGroup
             order = LevelOrderType.CreationDate;
         }
 
-        // search
-        else if (query != null && query.Contains("metadata.displayName:"))
-        {
-            filters = new LevelFilters(search: query.Split(":")[1]);
-            order = LevelOrderType.UniquePlays;
-        }
-        
         else switch (searchString)
         {
             case "tagged3":
