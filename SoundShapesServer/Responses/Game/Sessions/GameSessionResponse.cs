@@ -3,7 +3,7 @@ using SoundShapesServer.Types.Sessions;
 
 namespace SoundShapesServer.Responses.Game.Sessions;
 
-public class GameSessionResponse
+public class GameSessionResponse : IResponse
 {
     public GameSessionResponse(GameSession session)
     {

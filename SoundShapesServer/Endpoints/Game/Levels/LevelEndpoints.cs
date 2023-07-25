@@ -4,6 +4,7 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
@@ -16,8 +17,9 @@ public class LevelEndpoints : EndpointGroup
 {
     [GameEndpoint("~index:*.page")]
     [GameEndpoint("~index:level.page")]
+    [NullStatusCode(HttpStatusCode.Forbidden)]
     [Authentication(false)]
-    public Response GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user, GameSession? session)
+    public ListResponse<LevelResponse>? GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user, GameSession? session)
     {
         string? query = context.QueryString["query"];
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
@@ -26,13 +28,15 @@ public class LevelEndpoints : EndpointGroup
         // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
         if (session == null || user == null)
         {
-            if (searchString == "tagged3") return new Response(new LevelsWrapper(), ContentType.Json);
-            return HttpStatusCode.Forbidden;
+            if (searchString == "tagged3") 
+                return new ListResponse<LevelResponse>();
+            
+            return null;
         }
         if (session.SessionType != SessionType.Game)
         {
             if (session.SessionType != SessionType.GameUnAuthorized || searchString != "tagged3")
-                return HttpStatusCode.Forbidden;
+                return null;
         }
 
         LevelOrderType? order = null;
@@ -53,7 +57,7 @@ public class LevelEndpoints : EndpointGroup
         {
             string byUserId = string.Concat(query.Skip(byUserQuery.Length));
             GameUser? usersToGetLevelsFrom = database.GetUserWithId(byUserId);
-            if (usersToGetLevelsFrom == null) return HttpStatusCode.NotFound;
+            if (usersToGetLevelsFrom == null) return new ListResponse<LevelResponse>();
 
             filters = new LevelFilters(usersToGetLevelsFrom);
             order = LevelOrderType.CreationDate;
@@ -77,7 +81,7 @@ public class LevelEndpoints : EndpointGroup
 
         (GameLevel[] levels, int totalLevels) = database.GetLevels((LevelOrderType)order, descending, filters, from, count);
 
-        return new Response(new LevelsWrapper(levels, user, totalLevels, from, count), ContentType.Json);
+        return new ListResponse<LevelResponse>(levels.Select(l=>new LevelResponse(l, user)), totalLevels, from, count);
     }
 
     [GameEndpoint("~level:{levelId}/~metadata:{args}", ContentType.Plaintext)]

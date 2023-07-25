@@ -4,6 +4,7 @@ using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Levels;
 
@@ -14,7 +15,7 @@ public class ApiLevelEndpoints: EndpointGroup
     [ApiEndpoint("levels"), Authentication(false)]
     [DocUsesPageData]
     [DocSummary("Lists levels.")]
-    public ApiLevelsWrapper GetLevels(RequestContext context, GameDatabaseContext database)
+    public ApiListResponse<ApiLevelBriefResponse> GetLevels(RequestContext context, GameDatabaseContext database)
     {
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
 
@@ -23,7 +24,7 @@ public class ApiLevelEndpoints: EndpointGroup
 
         (GameLevel[] levels, int levelCount) = database.GetLevels(order, descending, filters, from, count);
         
-        return new ApiLevelsWrapper(levels, levelCount);
+        return new ApiListResponse<ApiLevelBriefResponse>(levels.Select(l => new ApiLevelBriefResponse(l)), levelCount);
     }
 
     [ApiEndpoint("levels/id/{levelId}"), Authentication(false)]

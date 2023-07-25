@@ -4,6 +4,7 @@ using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Albums;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Users;
@@ -23,7 +24,7 @@ public class ApiAlbumEndpoints : EndpointGroup
     [ApiEndpoint("albums"), Authentication(false)]
     [DocUsesPageData]
     [DocSummary("Lists albums.")]
-    public ApiAlbumsWrapper GetAlbums(RequestContext context, GameDatabaseContext database)
+    public ApiListResponse<ApiAlbumResponse> GetAlbums(RequestContext context, GameDatabaseContext database)
     {
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
         
@@ -43,7 +44,7 @@ public class ApiAlbumEndpoints : EndpointGroup
 
         (GameAlbum[] albums, int totalAlbums) = database.GetAlbums(order, descending, from, count);
         
-        return new ApiAlbumsWrapper(albums, totalAlbums);
+        return new ApiListResponse<ApiAlbumResponse>(albums.Select(a=>new ApiAlbumResponse(a)), totalAlbums);
     }
 
     [ApiEndpoint("albums/id/{albumId}/relationWith/id/{userId}")]

@@ -1,9 +1,9 @@
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types;
 
-namespace SoundShapesServer.Responses.Api.CommunityTabs;
+namespace SoundShapesServer.Responses.Api;
 
-public class ApiCommunityTabResponse
+public class ApiCommunityTabResponse : IApiResponse
 {
     public ApiCommunityTabResponse(CommunityTab communityTab)
     {

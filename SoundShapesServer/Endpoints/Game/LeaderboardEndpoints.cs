@@ -6,7 +6,7 @@ using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
-using SoundShapesServer.Responses.Game.Leaderboards;
+using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
@@ -50,12 +50,19 @@ public class LeaderboardEndpoints : EndpointGroup
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.page")] // campaign levels
     [GameEndpoint("~level:{levelId}/~leaderboard.page")] // community levels
     [GameEndpoint("{levelId}/~leaderboard.page")] // recent activity community levels 
-    public LeaderboardEntriesWrapper GetLeaderboard(RequestContext context, GameDatabaseContext database, string levelId)
+    public ListResponse<LeaderboardEntryResponse> GetLeaderboard(RequestContext context, GameDatabaseContext database, string levelId)
     {
         (int from, int count, bool _) = PaginationHelper.GetPageData(context);
+        const bool descending = false;
 
-        (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, new LeaderboardFilters(levelId, onlyBest:true, completed:true), from, count);
-        return new LeaderboardEntriesWrapper(allEntries, paginatedEntries, from, count, false);
+        LeaderboardFilters filters = new (levelId, onlyBest: true, completed: true);
+        (int totalEntries, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, from, count);
+
+        List<LeaderboardEntryResponse> responses = 
+            paginatedEntries.Select((t, i) => 
+                new LeaderboardEntryResponse(t, CalculateEntryPlacement(totalEntries, from, i, descending, false))).ToList();
+
+        return new ListResponse<LeaderboardEntryResponse>(responses, totalEntries, from, count);
     }
 
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near")] // campaign levels
@@ -65,7 +72,7 @@ public class LeaderboardEndpoints : EndpointGroup
     {
         LeaderboardFilters filters = new (levelId, user, completed:true);
 
-        (IQueryable<LeaderboardEntry> _, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 1);
+        (int _, LeaderboardEntry[] paginatedEntries) = database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 1);
         
         return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e, database.GetLeaderboardEntryPosition(e) + 1)).ToArray();
     }

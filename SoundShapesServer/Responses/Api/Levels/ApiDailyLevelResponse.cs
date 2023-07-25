@@ -3,7 +3,7 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Responses.Api.Levels;
 
-public class ApiDailyLevelResponse
+public class ApiDailyLevelResponse : IApiResponse
 {
     public ApiDailyLevelResponse(DailyLevel dailyLevel)
     {

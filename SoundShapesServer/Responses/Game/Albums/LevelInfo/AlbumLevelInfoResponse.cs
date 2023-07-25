@@ -7,9 +7,9 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Albums.LevelInfo;
 
-public class AlbumLevelInfoResponse
+public class AlbumLevelInfoResponse : IResponse
 {
-    public AlbumLevelInfoResponse(GameUser user, GameAlbum album, GameLevel level)
+    public AlbumLevelInfoResponse(GameLevel level, GameAlbum album, GameUser user)
     {
         Id = IdHelper.FormatAlbumLinkId(album.Id, level.Id);
         Timestamp = level.ModificationDate.ToUnixTimeMilliseconds();

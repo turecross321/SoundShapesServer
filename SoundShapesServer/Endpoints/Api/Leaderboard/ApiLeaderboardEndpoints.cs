@@ -4,9 +4,10 @@ using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Responses.Api.Leaderboard;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Users;
+using static SoundShapesServer.Helpers.LeaderboardHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Leaderboard;
 
@@ -15,7 +16,7 @@ public class ApiLeaderboardEndpoints : EndpointGroup
     [ApiEndpoint("leaderboard"), Authentication(false)]
     [DocUsesPageData]
     [DocSummary("Retrieves leaderboard.")]
-    public ApiLeaderboardEntriesWrapper GetLeaderboard(RequestContext context, GameDatabaseContext database, string id)
+    public ApiListResponse<ApiLeaderboardEntryResponse> GetLeaderboard(RequestContext context, GameDatabaseContext database, string id)
     {
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context, false);
 
@@ -40,9 +41,13 @@ public class ApiLeaderboardEndpoints : EndpointGroup
         };
 
         LeaderboardFilters filters = new (onLevel, byUser, completed, onlyBest);
-        (IQueryable<LeaderboardEntry> allEntries, LeaderboardEntry[] paginatedEntries) =
+        (int totalEntries, LeaderboardEntry[] paginatedEntries) =
             database.GetLeaderboardEntries(order, descending, filters, from, count);
+        
+        List<ApiLeaderboardEntryResponse> responses = 
+            paginatedEntries.Select((e, i) => 
+                new ApiLeaderboardEntryResponse(e, CalculateEntryPlacement(totalEntries, from, i, descending, true))).ToList();
 
-        return new ApiLeaderboardEntriesWrapper(paginatedEntries, allEntries.Count(), from, descending);
+        return new ApiListResponse<ApiLeaderboardEntryResponse>(responses, totalEntries);
     }
 }

@@ -2,9 +2,9 @@ using Newtonsoft.Json;
 
 namespace SoundShapesServer.Responses.Game.Levels;
 
-public class ExtraDataResponse
+public class LevelExtraDataResponse : IResponse
 {
-    public ExtraDataResponse(int language)
+    public LevelExtraDataResponse(int language)
     {
         Language = language;
     }

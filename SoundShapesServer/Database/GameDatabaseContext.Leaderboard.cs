@@ -52,8 +52,19 @@ public partial class GameDatabaseContext
     {
         return _realm.All<LeaderboardEntry>().FirstOrDefault(e => e.Id == id);
     }
-    
-    public (IQueryable<LeaderboardEntry>, LeaderboardEntry[]) GetLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters, int from, int count)
+
+    // only used in tests
+    public IQueryable<LeaderboardEntry> GetAllLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters)
+    {
+        IQueryable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>();
+
+        IQueryable<LeaderboardEntry> filteredEntries = FilterLeaderboard(entries, filters);
+        IQueryable<LeaderboardEntry> orderedEntries = OrderLeaderboard(filteredEntries, order, descending);
+
+        return orderedEntries;
+    }
+
+    public (int, LeaderboardEntry[]) GetLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters, int from, int count)
     {
         IQueryable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>();
 
@@ -62,7 +73,7 @@ public partial class GameDatabaseContext
         
         LeaderboardEntry[] paginatedEntries = PaginateLeaderboardEntries(orderedEntries, from, count);
 
-        return (filteredEntries, paginatedEntries);
+        return (filteredEntries.Count(), paginatedEntries);
     }
     
     private static IQueryable<LeaderboardEntry> FilterLeaderboard(IQueryable<LeaderboardEntry> entries, LeaderboardFilters filters)

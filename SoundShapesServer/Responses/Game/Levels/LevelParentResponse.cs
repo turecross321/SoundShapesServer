@@ -4,7 +4,7 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Responses.Game.Levels;
 
-public class LevelParentResponse
+public class LevelParentResponse : IResponse
 {
     public LevelParentResponse(GameLevel level)
     {

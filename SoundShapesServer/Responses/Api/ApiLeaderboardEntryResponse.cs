@@ -1,9 +1,9 @@
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.Leaderboard;
 
-namespace SoundShapesServer.Responses.Api.Leaderboard;
+namespace SoundShapesServer.Responses.Api;
 
-public class ApiLeaderboardEntryResponse
+public class ApiLeaderboardEntryResponse : IApiResponse
 {
     public ApiLeaderboardEntryResponse(LeaderboardEntry entry, int position)
     {

@@ -1,11 +1,12 @@
 using SoundShapesServer.Responses.Api.Albums;
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.Levels;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace SoundShapesServer.Responses.Api.Levels;
 
-public class ApiLevelFullResponse
+public class ApiLevelFullResponse : IApiResponse
 {
     public ApiLevelFullResponse(GameLevel level)
     {

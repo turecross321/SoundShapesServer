@@ -1,10 +1,11 @@
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Users;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace SoundShapesServer.Responses.Api.Users;
 
-public class ApiUserFullResponse
+public class ApiUserFullResponse : IApiResponse
 {
     public ApiUserFullResponse(GameUser user)
     {

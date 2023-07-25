@@ -4,7 +4,7 @@ using SoundShapesServer.Types.Punishments;
 namespace SoundShapesServer.Responses.Api.Moderation;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class ApiPunishmentResponse
+public class ApiPunishmentResponse : IApiResponse
 {
     public ApiPunishmentResponse(Punishment punishment)
     {

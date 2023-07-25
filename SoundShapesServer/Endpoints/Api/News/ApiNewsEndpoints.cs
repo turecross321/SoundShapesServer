@@ -4,7 +4,7 @@ using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Responses.Api.News;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Users;
 
@@ -23,7 +23,7 @@ public class ApiNewsEndpoints : EndpointGroup
     [ApiEndpoint("news"), Authentication(false)]
     [DocUsesPageData]
     [DocSummary("Lists news.")]
-    public ApiNewsWrapper News(RequestContext context, GameDatabaseContext database)
+    public ApiListResponse<ApiNewsResponse> News(RequestContext context, GameDatabaseContext database)
     {
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
         
@@ -56,6 +56,6 @@ public class ApiNewsEndpoints : EndpointGroup
         };
 
         (NewsEntry[] entries, int totalEntries) = database.GetNews(order, descending, filters, from, count);
-        return new ApiNewsWrapper(entries, totalEntries);
+        return new ApiListResponse<ApiNewsResponse>(entries.Select(e=>new ApiNewsResponse(e)), totalEntries);
     }
 }

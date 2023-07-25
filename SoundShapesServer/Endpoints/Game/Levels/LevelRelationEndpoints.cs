@@ -5,6 +5,7 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
@@ -14,7 +15,7 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class LevelRelationEndpoints : EndpointGroup
 {
     [GameEndpoint("~identity:{userId}/~queued:*.page")]
-    public RelationLevelsWrapper? QueuedAndLiked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
+    public ListResponse<RelationLevelResponse>? QueuedAndLiked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
     {
         (int from, int count, bool _) = PaginationHelper.GetPageData(context);
         
@@ -23,11 +24,11 @@ public class LevelRelationEndpoints : EndpointGroup
         
         (GameLevel[] levels, int totalLevels) = database.GetLevels(LevelOrderType.DoNotOrder, true, new LevelFilters(likedOrQueuedByUser: userToGetLevelsFrom), from, count);
         
-        return new RelationLevelsWrapper(levels, user, totalLevels, from, count);
+        return new ListResponse<RelationLevelResponse>(levels.Select(l=>new RelationLevelResponse(l, user)), totalLevels, from, count);
     }
     
     [GameEndpoint("~identity:{userId}/~like:*.page")]
-    public RelationLevelsWrapper? Liked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
+    public ListResponse<RelationLevelResponse>? Liked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
     {
         (int from, int count, bool _) = PaginationHelper.GetPageData(context); 
         
@@ -36,7 +37,7 @@ public class LevelRelationEndpoints : EndpointGroup
         
         (GameLevel[] levels, int totalLevels) = database.GetLevels(LevelOrderType.DoNotOrder, true, new LevelFilters(likedByUser: userToGetLevelsFrom), from, count);
         
-        return new RelationLevelsWrapper(levels, user, totalLevels, from, count);
+        return new ListResponse<RelationLevelResponse>(levels.Select(l=>new RelationLevelResponse(l, user)), totalLevels, from, count);
     }
     
     [GameEndpoint("~identity:{userId}/~like:%2F~level%3A{arguments}")]

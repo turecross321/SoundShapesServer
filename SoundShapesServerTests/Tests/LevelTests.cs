@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using Newtonsoft.Json.Linq;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
@@ -27,19 +28,19 @@ public class LevelTests: ServerTest
 
         // Filtration
         string payload = $"/api/v1/levels?search={firstLevel.Name}";
-        ApiLevelsWrapper? response = await client.GetFromJsonAsync<ApiLevelsWrapper>(payload);
+        ApiListResponse<ApiLevelBriefResponse>? response = await client.GetFromJsonAsync<ApiListResponse<ApiLevelBriefResponse>>(payload);
         Assert.That(response?.Count, Is.EqualTo(1));
 
         // Ordering
         payload = $"/api/v1/levels?orderBy=creationDate&descending=true";
-        response = await client.GetFromJsonAsync<ApiLevelsWrapper>(payload);
+        response = await client.GetFromJsonAsync<ApiListResponse<ApiLevelBriefResponse>>(payload);
         
-        Assert.That(response != null && response.Levels[0].CreationDate > response.Levels[1].CreationDate);
+        Assert.That(response != null && response.Items[0].CreationDate > response.Items[1].CreationDate);
         
         payload = $"/api/v1/levels?orderBy=creationDate&descending=false";
-        response = await client.GetFromJsonAsync<ApiLevelsWrapper>(payload);
+        response = await client.GetFromJsonAsync<ApiListResponse<ApiLevelBriefResponse>>(payload);
         
-        Assert.That(response != null && response.Levels[0].CreationDate < response.Levels[1].CreationDate);
+        Assert.That(response != null && response.Items[0].CreationDate < response.Items[1].CreationDate);
     }
     
     [Test]

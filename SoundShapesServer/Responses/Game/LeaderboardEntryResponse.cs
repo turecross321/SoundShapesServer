@@ -2,9 +2,9 @@ using Newtonsoft.Json;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types.Leaderboard;
 
-namespace SoundShapesServer.Responses.Game.Leaderboards;
+namespace SoundShapesServer.Responses.Game;
 
-public class LeaderboardEntryResponse
+public class LeaderboardEntryResponse : IResponse
 {
     public LeaderboardEntryResponse(LeaderboardEntry entry, int position)
     {

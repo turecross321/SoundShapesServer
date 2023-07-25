@@ -1,9 +1,9 @@
-namespace SoundShapesServer.Responses.Api.IpAuthorization;
+namespace SoundShapesServer.Responses.Api;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class ApiIpAddressResponse
+public class ApiIpResponse : IApiResponse
 {
-    public ApiIpAddressResponse(Types.IpAuthorization ip)
+    public ApiIpResponse(Types.IpAuthorization ip)
     {
         IpAddress = ip.IpAddress;
         Authorized = ip.Authorized;

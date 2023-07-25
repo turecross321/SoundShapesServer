@@ -8,6 +8,7 @@ using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Moderation;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Leaderboard;
@@ -46,7 +47,7 @@ public class ApiReportManagementEndpoints : EndpointGroup
     [DocUsesPageData]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Lists reports.")]
-    public ApiReportsWrapper GetReports(RequestContext context, GameDatabaseContext database, GameUser user, string id)
+    public ApiListResponse<ApiReportResponse> GetReports(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
 
@@ -86,6 +87,6 @@ public class ApiReportManagementEndpoints : EndpointGroup
         ReportFilters filters = new (contentType, reasonType, contentUser, contentLevel, contentLeaderboardEntry);
 
         (Report[] reports, int totalReports) = database.GetReports(ReportOrderType.Date, descending, filters, from, count);
-        return new ApiReportsWrapper(database, reports, totalReports);
+        return new ApiListResponse<ApiReportResponse>(reports.Select(r=>new ApiReportResponse(database, r)), totalReports);
     }
 }

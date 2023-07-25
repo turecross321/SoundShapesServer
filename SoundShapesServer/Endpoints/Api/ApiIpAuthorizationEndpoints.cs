@@ -8,11 +8,10 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
-using SoundShapesServer.Responses.Api.IpAuthorization;
-using SoundShapesServer.Types.Sessions;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Endpoints.Api.IpAuthorization;
+namespace SoundShapesServer.Endpoints.Api;
 
 public class ApiIpAuthorizationEndpoints : EndpointGroup
 {
@@ -41,7 +40,7 @@ public class ApiIpAuthorizationEndpoints : EndpointGroup
     [DocUsesPageData]
     [DocSummary("Lists user's IP addresses.")]
     [DocQueryParam("authorized", "Removes authorized/unauthorized IP addresses from result.")]
-    public ApiIpAddressesWrapper GetAddresses(RequestContext context, GameDatabaseContext database, GameUser user)
+    public ApiListResponse<ApiIpResponse> GetAddresses(RequestContext context, GameDatabaseContext database, GameUser user)
     {
         (int from, int count, bool _) = PaginationHelper.GetPageData(context);
         
@@ -51,6 +50,6 @@ public class ApiIpAuthorizationEndpoints : EndpointGroup
         (Types.IpAuthorization[] addresses, int totalAddresses) =
             database.GetIpAddresses(user, from, count, authorized);
 
-        return new ApiIpAddressesWrapper(addresses, totalAddresses);
+        return new ApiListResponse<ApiIpResponse>(addresses.Select(a=>new ApiIpResponse(a)), totalAddresses);
     }
 }

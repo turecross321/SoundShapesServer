@@ -6,6 +6,7 @@ using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Levels;
 
@@ -16,7 +17,7 @@ public class ApiDailyLevelEndpoint : EndpointGroup
     [ApiEndpoint("daily"), Authentication(false)]
     [DocUsesPageData]
     [DocSummary("Lists levels that have been picked as daily levels.")]
-    public Response GetDailyLevelObjects(RequestContext context, GameDatabaseContext database)
+    public ApiListResponse<ApiDailyLevelResponse> GetDailyLevelObjects(RequestContext context, GameDatabaseContext database)
     {
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
 
@@ -39,6 +40,6 @@ public class ApiDailyLevelEndpoint : EndpointGroup
         IQueryable<DailyLevel> dailyLevels = database.GetDailyLevels(order, descending, filters);
         DailyLevel[] paginatedDailyLevels = PaginationHelper.PaginateDailyLevels(dailyLevels, from, count);
         
-        return new Response(new ApiDailyLevelsWrapper(paginatedDailyLevels, dailyLevels.Count()), ContentType.Json);
+        return new ApiListResponse<ApiDailyLevelResponse>(paginatedDailyLevels.Select(d=>new ApiDailyLevelResponse(d)), dailyLevels.Count());
     }
 }

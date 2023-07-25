@@ -1,9 +1,9 @@
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.News;
 
-namespace SoundShapesServer.Responses.Api.News;
+namespace SoundShapesServer.Responses.Api;
 
-public class ApiNewsResponse
+public class ApiNewsResponse : IApiResponse
 {
     public ApiNewsResponse(NewsEntry entry)
     {

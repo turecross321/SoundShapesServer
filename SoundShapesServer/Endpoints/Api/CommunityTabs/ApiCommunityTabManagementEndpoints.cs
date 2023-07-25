@@ -8,7 +8,7 @@ using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api;
-using SoundShapesServer.Responses.Api.CommunityTabs;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Users;
 

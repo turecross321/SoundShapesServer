@@ -3,7 +3,7 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Responses.Api.Levels;
 
-public class ApiLevelBriefResponse
+public class ApiLevelBriefResponse : IApiResponse
 {
     public ApiLevelBriefResponse(GameLevel level)
     {

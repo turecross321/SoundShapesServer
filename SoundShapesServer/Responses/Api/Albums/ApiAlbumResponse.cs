@@ -1,9 +1,10 @@
 using SoundShapesServer.Types.Albums;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace SoundShapesServer.Responses.Api.Albums;
 
-public class ApiAlbumResponse
+public class ApiAlbumResponse : IApiResponse
 {
     public ApiAlbumResponse(GameAlbum album)
     {

@@ -8,7 +8,7 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Events;
 
-public class EventResponse
+public class EventResponse : IResponse
 {
     public EventResponse(GameEvent gameEventObject)
     {

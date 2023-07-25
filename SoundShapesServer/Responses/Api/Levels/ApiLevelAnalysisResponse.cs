@@ -2,7 +2,7 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Responses.Api.Levels;
 
-public class ApiLevelAnalysisResponse
+public class ApiLevelAnalysisResponse : IApiResponse
 {
     public ApiLevelAnalysisResponse(GameLevel level)
     {

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Newtonsoft.Json.Linq;
-using SoundShapesServer.Responses.Api.Leaderboard;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
@@ -35,21 +35,21 @@ public class LeaderboardTests: ServerTest
         
         // Filtering
         string payload = $"/api/v1/leaderboard?onLevel={firstLevel.Id}&onlyBest=true";
-        ApiLeaderboardEntriesWrapper? response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
+        ApiListResponse<ApiLeaderboardEntryResponse>? response = await client.GetFromJsonAsync<ApiListResponse<ApiLeaderboardEntryResponse>>(payload);
         Assert.That(response?.Count, Is.EqualTo(firstUserAmount));
         
         payload = $"/api/v1/leaderboard?onLevel={secondLevel.Id}&onlyBest=false";
-        response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
+        response = await client.GetFromJsonAsync<ApiListResponse<ApiLeaderboardEntryResponse>>(payload);
         Assert.That(response?.Count, Is.EqualTo(secondUserAmount * scoresPerUser));
         
         // Ordering
         payload = $"/api/v1/leaderboard?orderBy=score&descending=true";
-        response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
-        Assert.That(response != null && response.Entries[0].Score >= response.Entries[1].Score);
+        response = await client.GetFromJsonAsync<ApiListResponse<ApiLeaderboardEntryResponse>>(payload);
+        Assert.That(response != null && response.Items[0].Score >= response.Items[1].Score);
         
         payload = $"/api/v1/leaderboard?orderBy=score&descending=false";
-        response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
-        Assert.That(response != null && response.Entries[0].Score <= response.Entries[1].Score);
+        response = await client.GetFromJsonAsync<ApiListResponse<ApiLeaderboardEntryResponse>>(payload);
+        Assert.That(response != null && response.Items[0].Score <= response.Items[1].Score);
     }
     
     [Test]
@@ -101,10 +101,9 @@ public class LeaderboardTests: ServerTest
         context.Database.Refresh();
 
         LeaderboardFilters filters = new(onLevel: level.Id, byUser:user);
-        (IQueryable<LeaderboardEntry> entries, LeaderboardEntry[] _) =
-            context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 0);
+        IQueryable<LeaderboardEntry> entries = context.Database.GetAllLeaderboardEntries(LeaderboardOrderType.Score, false, filters);
         
-        Assert.That(entries.ToList(), Has.Count.EqualTo(1));
+        Assert.That(entries.Count(), Is.EqualTo(1));
     }
     
     private void LeaderboardSegmentTest(int expectedIndex, int amount, int score)
@@ -117,10 +116,8 @@ public class LeaderboardTests: ServerTest
         LeaderboardEntry entry = context.SubmitLeaderboardEntry(score, level, user);
 
         LeaderboardFilters filters = new(onLevel:level.Id);
-        (IQueryable<LeaderboardEntry> entriesQueryable, LeaderboardEntry[] _) = 
-            context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 0);
-
-        List<LeaderboardEntry> entries = entriesQueryable.ToList();
+        List<LeaderboardEntry> entries = 
+            context.Database.GetAllLeaderboardEntries(LeaderboardOrderType.Score, false, filters).ToList();
         
         Assert.Multiple(() =>
         {

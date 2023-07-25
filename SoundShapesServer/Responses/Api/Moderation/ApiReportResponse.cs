@@ -1,13 +1,12 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Database;
-using SoundShapesServer.Responses.Api.Leaderboard;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.Reports;
 
 namespace SoundShapesServer.Responses.Api.Moderation;
 
-public class ApiReportResponse
+public class ApiReportResponse : IApiResponse
 {
     public ApiReportResponse(GameDatabaseContext database, Report report)
     {

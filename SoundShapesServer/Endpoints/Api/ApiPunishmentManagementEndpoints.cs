@@ -9,6 +9,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Moderation;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Punishments;
@@ -66,7 +67,7 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
     [DocUsesPageData]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Lists punishments.")]
-    public ApiPunishmentsWrapper GetPunishments(RequestContext context, GameDatabaseContext database, GameUser user)
+    public ApiListResponse<ApiPunishmentResponse> GetPunishments(RequestContext context, GameDatabaseContext database, GameUser user)
     {
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
 
@@ -86,6 +87,6 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
         PunishmentFilters filters = new (author, recipient, revoked);
         (Punishment[] punishments, int totalPunishments) = database.GetPunishments(PunishmentOrderType.CreationDate, descending, filters, from, count);
 
-        return new ApiPunishmentsWrapper(punishments, totalPunishments);
+        return new ApiListResponse<ApiPunishmentResponse>(punishments.Select(p=>new ApiPunishmentResponse(p)), totalPunishments);
     }
 }
