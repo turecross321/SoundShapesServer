@@ -17,9 +17,7 @@ public class UserEndpoints : EndpointGroup
     public UsersWrapper GetUsers(RequestContext context, GameDatabaseContext database, GameUser user)
     {
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
-        
-        
-        
+
         UserFilters filters = UserHelper.GetUserFilters(context, database);
         UserOrderType order = UserHelper.GetUserOrderType(context);
 
@@ -37,7 +35,7 @@ public class UserEndpoints : EndpointGroup
     [GameEndpoint("~identity:{id}/~follow:*.page")]
     public UsersWrapper? GetFollowing(RequestContext context, string id, GameDatabaseContext database)
     {
-        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool _) = PaginationHelper.GetPageData(context);
 
         GameUser? user = database.GetUserWithId(id);
         if (user == null) return null;
@@ -49,7 +47,7 @@ public class UserEndpoints : EndpointGroup
     [GameEndpoint("~identity:{id}/~followers.page")]
     public UsersWrapper? GetFollowers(RequestContext context, string id, GameDatabaseContext database)
     {
-        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool _) = PaginationHelper.GetPageData(context);
 
         GameUser? recipient = database.GetUserWithId(id);
         if (recipient == null) return null;
@@ -58,8 +56,7 @@ public class UserEndpoints : EndpointGroup
         return new UsersWrapper(recipient, users, totalUsers, from, count);
     }
     
-    [GameEndpoint("~identity:{userId}/~metadata:{args}", ContentType.Plaintext)]
-    [Authentication(false)]
+    [GameEndpoint("~identity:{userId}/~metadata:{args}", ContentType.Plaintext), Authentication(false)]
     public string? GetFeaturedLevel(RequestContext context, GameDatabaseContext database, string userId, string args)
     {
         // Using args here because Bunkum doesn't support using a . as a separator

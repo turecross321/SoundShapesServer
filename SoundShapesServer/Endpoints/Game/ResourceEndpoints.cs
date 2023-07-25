@@ -41,8 +41,7 @@ public class ResourceEndpoints : EndpointGroup
         return new Response(dataStore.GetDataFromStore(key), ContentType.BinaryData);
     }
     
-    [GameEndpoint("~album:{albumId}/~content:{resource}/data.get")]
-    [Authentication(false)]
+    [GameEndpoint("~album:{albumId}/~content:{resource}/data.get"), Authentication(false)]
     public Response GetAlbumResource
         (RequestContext context, IDataStore dataStore, GameDatabaseContext database, string albumId, string resource)
     {
@@ -59,11 +58,10 @@ public class ResourceEndpoints : EndpointGroup
         if (key == null) return HttpStatusCode.NotFound;
         if (!dataStore.ExistsInStore(key)) return HttpStatusCode.Gone;
 
-        return new Response(dataStore.GetDataFromStore(key), ContentType.BinaryData);
+        return new Response(dataStore.GetDataFromStore(key), ContentType.Png);
     }
     
-    [GameEndpoint("~news:{id}/~content:thumbnail/data.get", ContentType.BinaryData)]
-    [Authentication(false)]
+    [GameEndpoint("~news:{id}/~content:thumbnail/data.get"), Authentication(false)]
     public Response GetNewsThumbnail(RequestContext context, GameDatabaseContext database, IDataStore dataStore, string id)
     {
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
@@ -73,11 +71,10 @@ public class ResourceEndpoints : EndpointGroup
         if (key == null) return HttpStatusCode.NotFound;
         if (!dataStore.ExistsInStore(key)) return HttpStatusCode.Gone;
 
-        return new Response(dataStore.GetDataFromStore(key), ContentType.BinaryData);
+        return new Response(dataStore.GetDataFromStore(key), ContentType.Png);
     }
     
-    [GameEndpoint("~communityTab:{id}/~content:thumbnail/data.get")]
-    [Authentication(false)]
+    [GameEndpoint("~communityTab:{id}/~content:thumbnail/data.get"), Authentication(false)]
     public Response GetCommunityTabThumbnail(RequestContext context, IDataStore dataStore, GameDatabaseContext database, string id)
     {
         CommunityTab? communityTab = database.GetCommunityTabWithId(id);
@@ -86,6 +83,6 @@ public class ResourceEndpoints : EndpointGroup
         if (key == null) return HttpStatusCode.NotFound;
         if (!dataStore.ExistsInStore(key)) return HttpStatusCode.Gone;
         
-        return new Response(dataStore.GetDataFromStore(key), ContentType.BinaryData);
+        return new Response(dataStore.GetDataFromStore(key), ContentType.Png);
     }
 }

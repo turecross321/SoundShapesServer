@@ -17,7 +17,7 @@ public class ApiLeaderboardEndpoints : EndpointGroup
     [DocSummary("Retrieves leaderboard.")]
     public ApiLeaderboardEntriesWrapper GetLeaderboard(RequestContext context, GameDatabaseContext database, string id)
     {
-        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool descending) = PaginationHelper.GetPageData(context, false);
 
         string? onLevel = context.QueryString["onLevel"];        
         string? byUserId = context.QueryString["byUser"];

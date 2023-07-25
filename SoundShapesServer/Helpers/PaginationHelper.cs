@@ -13,7 +13,7 @@ namespace SoundShapesServer.Helpers;
 
 public static class PaginationHelper
 {
-    public static (int, int, bool) GetPageData(RequestContext context)
+    public static (int, int, bool) GetPageData(RequestContext context, bool descendingIfNull = true)
     {
         const int maxCount = 100;
         
@@ -21,8 +21,10 @@ public static class PaginationHelper
         int count = int.Parse(context.QueryString["count"] ?? "9");
 
         if (count > maxCount) count = maxCount;
-        
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
+
+        bool descending = descendingIfNull;
+        if (bool.TryParse(context.QueryString["descending"], out bool tempDescending))
+            descending = tempDescending;
         
         return (from, count, descending);
     }

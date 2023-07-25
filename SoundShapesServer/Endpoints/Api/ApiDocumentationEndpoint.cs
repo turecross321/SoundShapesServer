@@ -12,8 +12,8 @@ public class ApiDocumentationEndpoint : EndpointGroup
     [ApiEndpoint("documentation"), Authentication(false)]
     [DocSummary("Retrieves a JSON object containing documentation about the API.")]
     [ClientCacheResponse(Globals.OneHourInSeconds)]
-    public IEnumerable<ApiRouteResponse> GetDocumentation(RequestContext context, DocumentationService service)
+    public IEnumerable<ApiRouteResponse> GetDocumentation(RequestContext context, DocumentationService documentation)
     {
-        return service.Documentation;
+        return documentation.Documentation;
     }
 }

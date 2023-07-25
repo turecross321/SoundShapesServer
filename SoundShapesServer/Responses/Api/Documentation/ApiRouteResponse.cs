@@ -13,10 +13,8 @@ public class ApiRouteResponse : IApiResponse
     public required IEnumerable<ApiParameterResponse> Parameters { get; set; }
     public required IEnumerable<ApiErrorResponse> PotentialErrors { get; set; }
 
-    private static ApiRouteResponse? FromRoute(Route? old)
+    private static ApiRouteResponse FromRoute(Route old)
     {
-        if (old == null) return null;
-
         return new ApiRouteResponse
         {
             Method = old.Method,

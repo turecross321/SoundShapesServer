@@ -75,7 +75,7 @@ public partial class GameDatabaseContext
         });
     }
 
-    public (IpAuthorization[], int) GetIpAddresses(GameUser user, int from, int count, SessionType sessionType, bool? authorized)
+    public (IpAuthorization[], int) GetIpAddresses(GameUser user, int from, int count, bool? authorized)
     {
         IQueryable<IpAuthorization> addresses = _realm.All<IpAuthorization>().Where(i => i.User == user);
 

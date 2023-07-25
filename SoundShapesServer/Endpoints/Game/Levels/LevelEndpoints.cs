@@ -22,8 +22,7 @@ public class LevelEndpoints : EndpointGroup
         string? query = context.QueryString["query"];
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
         string searchString = context.QueryString["search"] ?? "all";
-        
-        
+
         // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
         if (session == null || user == null)
         {
@@ -39,6 +38,7 @@ public class LevelEndpoints : EndpointGroup
         LevelOrderType? order = null;
         LevelFilters? filters = null;
 
+        // published by user
         if (query != null && query.Contains("author.id:"))
         {
             string id = query.Split(":")[2];
@@ -47,11 +47,14 @@ public class LevelEndpoints : EndpointGroup
             if (usersToGetLevelsFrom == null) return HttpStatusCode.NotFound;
 
             filters = new LevelFilters(usersToGetLevelsFrom);
+            order = LevelOrderType.CreationDate;
         }
 
+        // search
         else if (query != null && query.Contains("metadata.displayName:"))
         {
             filters = new LevelFilters(search: query.Split(":")[1]);
+            order = LevelOrderType.UniquePlays;
         }
         
         else switch (searchString)

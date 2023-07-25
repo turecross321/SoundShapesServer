@@ -11,10 +11,8 @@ public class ApiParameterResponse : IApiResponse
     public required ParameterType Type { get; set; }
     public required string Summary { get; set; }
     
-    private static ApiParameterResponse? FromParameter(Parameter? old)
+    private static ApiParameterResponse FromParameter(Parameter old)
     {
-        if (old == null) return null;
-
         return new ApiParameterResponse
         {
             Name = old.Name,

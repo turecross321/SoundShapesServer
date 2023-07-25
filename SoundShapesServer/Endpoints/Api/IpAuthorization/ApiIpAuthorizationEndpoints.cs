@@ -49,7 +49,7 @@ public class ApiIpAuthorizationEndpoints : EndpointGroup
         if (bool.TryParse(context.QueryString["authorized"], out bool authorizedTemp)) authorized = authorizedTemp;
         
         (Types.IpAuthorization[] addresses, int totalAddresses) =
-            database.GetIpAddresses(user, from, count,  SessionType.Game, authorized);
+            database.GetIpAddresses(user, from, count, authorized);
 
         return new ApiIpAddressesWrapper(addresses, totalAddresses);
     }

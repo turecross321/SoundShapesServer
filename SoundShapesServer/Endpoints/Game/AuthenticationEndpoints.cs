@@ -60,30 +60,26 @@ public class AuthenticationEndpoints : EndpointGroup
 
         sessionType ??= SessionType.Game;
         GameSession session = database.CreateSession(user, (SessionType)sessionType, platformType, Globals.FourHoursInSeconds, null, ip);
+        
+        if (session.Ip is { OneTimeUse: true }) database.UseOneTimeIpAddress(session.Ip);
 
-        Debug.Assert(session.Ip != null, "session.Ip != null");
-        if (session.Ip.OneTimeUse) database.UseOneTimeIpAddress(session.Ip);
+        GameSessionResponse sessionResponse = new (session);
+        GameSessionWrapper responseWrapper = new (sessionResponse);
 
-        GameSessionResponse gameSessionResponse = new (session);
+        Console.WriteLine($"{sessionResponse.User.Username} has logged in.");
 
-        GameSessionWrapper responseWrapper = new (gameSessionResponse);
-
-        Debug.Assert(gameSessionResponse.User != null, "gameSessionResponse.User != null");
-        Console.WriteLine($"{gameSessionResponse.User.Username} has logged in.");
-
-        context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={gameSessionResponse.Id};Version=1;Path=/");
+        context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={sessionResponse.Id};Version=1;Path=/");
         // ReSharper disable StringLiteralTypo
-        context.ResponseHeaders.Add("x-otg-identity-displayname", gameSessionResponse.User.Username);
-        context.ResponseHeaders.Add("x-otg-identity-personid", gameSessionResponse.User.Id);
-        context.ResponseHeaders.Add("x-otg-identity-sessionid", gameSessionResponse.Id);
+        context.ResponseHeaders.Add("x-otg-identity-displayname", sessionResponse.User.Username);
+        context.ResponseHeaders.Add("x-otg-identity-personid", sessionResponse.User.Id);
+        context.ResponseHeaders.Add("x-otg-identity-sessionid", sessionResponse.Id);
         // ReSharper restore StringLiteralTypo
         
         return new Response(responseWrapper, ContentType.Json, HttpStatusCode.Created);
     }
 
     
-    [GameEndpoint("~identity:*.hello")]
-    [Authentication(false)]
+    [GameEndpoint("~identity:*.hello"), Authentication(false)]
     public Response Hello(RequestContext context)
     {
         return HttpStatusCode.OK;

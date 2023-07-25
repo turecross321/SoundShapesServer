@@ -16,7 +16,7 @@ public class LevelRelationEndpoints : EndpointGroup
     [GameEndpoint("~identity:{userId}/~queued:*.page")]
     public RelationLevelsWrapper? QueuedAndLiked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
     {
-        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool _) = PaginationHelper.GetPageData(context);
         
         GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
         if (userToGetLevelsFrom == null) return null;
@@ -29,7 +29,7 @@ public class LevelRelationEndpoints : EndpointGroup
     [GameEndpoint("~identity:{userId}/~like:*.page")]
     public RelationLevelsWrapper? Liked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
     {
-        (int from, int count, bool descending) = PaginationHelper.GetPageData(context); 
+        (int from, int count, bool _) = PaginationHelper.GetPageData(context); 
         
         GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
         if (userToGetLevelsFrom == null) return null;

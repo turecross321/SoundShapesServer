@@ -7,6 +7,7 @@ using SoundShapesServer.Responses.Api.Documentation;
 
 namespace SoundShapesServer.Services;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class DocumentationService : EndpointService
 {
     internal DocumentationService(LoggerContainer<BunkumContext> logger) : base(logger)

@@ -81,7 +81,6 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         IQueryable<GameAlbum> newAlbums = migration.NewRealm.All<GameAlbum>();
         for (int i = 0; i < newAlbums.Count(); i++)
         {
-            dynamic oldAlbum = oldAlbums.ElementAt(i);
             GameAlbum newAlbum = newAlbums.ElementAt(i);
             
             if (oldVersion < 44)
@@ -95,7 +94,6 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         IQueryable<GameSession> newSessions = migration.NewRealm.All<GameSession>();
         for (int i = 0; i < newSessions.Count(); i++)
         {
-            dynamic oldSession = oldSessions.ElementAt(i);
             GameSession newSession = newSessions.ElementAt(i);
 
             if (oldVersion < 40)
@@ -227,7 +225,6 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         IQueryable<DailyLevel> newDailyLevels = migration.NewRealm.All<DailyLevel>();
         for (int i = 0; i < newDailyLevels.Count(); i++)
         {
-            dynamic oldDaily = oldDailyLevels.ElementAt(i);
             DailyLevel newLevel = newDailyLevels.ElementAt(i);
 
             if (oldVersion < 49)

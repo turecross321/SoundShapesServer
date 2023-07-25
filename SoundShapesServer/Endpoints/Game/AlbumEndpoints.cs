@@ -20,7 +20,7 @@ public class AlbumEndpoints : EndpointGroup
     [GameEndpoint("~albums/~link:*.page")]
     public AlbumsWrapper GetAlbums(RequestContext context, GameDatabaseContext database, GameSession session)
     {
-        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool _) = PaginationHelper.GetPageData(context);
 
         (GameAlbum[] albums, int totalAlbums) = database.GetAlbums(AlbumOrderType.CreationDate, true, from, count);
 
@@ -31,7 +31,7 @@ public class AlbumEndpoints : EndpointGroup
     public Response GetAlbumLevels
         (RequestContext context, GameDatabaseContext database, GameUser user, string albumId)
     {
-        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool _) = PaginationHelper.GetPageData(context);
         string? order = context.QueryString["order"];
 
         GameAlbum? album = database.GetAlbumWithId(albumId);
