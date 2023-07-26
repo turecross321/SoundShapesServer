@@ -6,6 +6,7 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types;
@@ -19,6 +20,7 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
     [ApiEndpoint("daily/create", Method.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Picks level as a daily level.")]
+    [DocError(typeof(NotFoundError), NotFoundError.LevelNotFoundWhen)]
     public Response AddDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiCreateDailyLevelRequest body)
     {
         GameLevel? level = database.GetLevelWithId(body.LevelId);
@@ -31,6 +33,8 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
     [ApiEndpoint("daily/id/{id}/edit", Method.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Edits daily level pick with specified ID.")]
+    [DocError(typeof(NotFoundError), NotFoundError.DailyLevelNotFoundWhen)]
+    [DocError(typeof(NotFoundError), NotFoundError.LevelNotFoundWhen)]
     public Response EditDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id, ApiCreateDailyLevelRequest body)
     {
         DailyLevel? dailyLevel = database.GetDailyLevelWithId(id);
@@ -46,12 +50,13 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
     [ApiEndpoint("daily/id/{id}", Method.Delete)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Removes daily level pick with specified ID.")]
+    [DocError(typeof(NotFoundError), NotFoundError.DailyLevelNotFoundWhen)]
     public Response RemoveDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         DailyLevel? dailyLevel = database.GetDailyLevelWithId(id);
         if (dailyLevel == null) return HttpStatusCode.NotFound;
         
         database.RemoveDailyLevel(dailyLevel);
-        return HttpStatusCode.OK;
+        return HttpStatusCode.NoContent;
     }
 }

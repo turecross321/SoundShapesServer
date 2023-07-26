@@ -3,6 +3,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types;
 
@@ -21,6 +22,7 @@ public class ApiCommunityTabsEndpoint : EndpointGroup
 
     [ApiEndpoint("communityTabs/id/{id}"), Authentication(false)]
     [DocSummary("Retrieves community tab with specified ID.")]
+    [DocError(typeof(NotFoundError), NotFoundError.CommunityTabNotFoundWhen)]
     public ApiCommunityTabResponse? GetCommunityTab(RequestContext context, GameDatabaseContext database, string id)
     {
         CommunityTab? communityTab = database.GetCommunityTabWithId(id);

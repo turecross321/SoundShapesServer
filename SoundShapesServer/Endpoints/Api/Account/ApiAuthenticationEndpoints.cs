@@ -5,6 +5,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Requests.Api.Account;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types;
@@ -17,9 +18,10 @@ namespace SoundShapesServer.Endpoints.Api.Account;
 
 public class ApiAuthenticationEndpoints : EndpointGroup
 {
-    private readonly Response _invalidCredentialsResponse = new ("The email address or password was incorrect.", ContentType.Plaintext, HttpStatusCode.Forbidden);
+    private readonly Response _invalidCredentialsResponse = new (ForbiddenError.EmailOrPasswordIsWrongWhen, ContentType.Plaintext, HttpStatusCode.Forbidden);
     
     [ApiEndpoint("account/logIn", Method.Post), Authentication(false)]
+    [DocError(typeof(ForbiddenError), ForbiddenError.EmailOrPasswordIsWrongWhen)]
     public Response Login(RequestContext context, GameDatabaseContext database, ApiLoginRequest body)
     {
         GameUser? user = database.GetUserWithEmail(body.Email);
@@ -39,6 +41,6 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     public Response Logout(RequestContext context, GameDatabaseContext database, GameSession session)
     {
         database.RemoveSession(session);
-        return HttpStatusCode.OK;
+        return HttpStatusCode.NoContent;
     }
 }

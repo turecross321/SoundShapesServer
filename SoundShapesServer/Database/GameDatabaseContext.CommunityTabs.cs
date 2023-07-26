@@ -2,6 +2,7 @@ using System.Net;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Users;
@@ -60,7 +61,7 @@ public partial class GameDatabaseContext
     
     public Response UploadCommunityTabResource(IDataStore dataStore, CommunityTab communityTab, byte[] file)
     {
-        if (!IsByteArrayPng(file)) return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
+        if (!IsByteArrayPng(file)) return new Response(BadRequestError.FileIsNotPngWhen, ContentType.Plaintext, HttpStatusCode.BadRequest);
 
         string key = GetCommunityTabResourceKey(communityTab.Id);
         dataStore.WriteToStore(key, file);

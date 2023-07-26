@@ -7,6 +7,7 @@ using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Albums;
 using SoundShapesServer.Types;
@@ -29,6 +30,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     [ApiEndpoint("albums/id/{id}/edit", Method.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Edits album with specified ID.")]
+    [DocError(typeof(NotFoundError), NotFoundError.AlbumNotFoundWhen)]
     public Response EditAlbum(RequestContext context, GameDatabaseContext database, GameUser user, ApiCreateAlbumRequest body, string id)
     {
         GameAlbum? album = database.GetAlbumWithId(id);
@@ -41,6 +43,8 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     [ApiEndpoint("albums/id/{id}/setThumbnail", Method.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets thumbnail of album.")]
+    [DocError(typeof(NotFoundError), NotFoundError.AlbumNotFoundWhen)]
+    [DocError(typeof(BadRequestError), BadRequestError.FileIsNotPngWhen)]
     public Response SetAlbumThumbnail(RequestContext context, GameDatabaseContext database, IDataStore dataStore,
         GameUser user, byte[] body, string id) 
         => SetAlbumAssets(
@@ -55,6 +59,8 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     [ApiEndpoint("albums/id/{id}/setSidePanel", Method.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets side panel of album.")]
+    [DocError(typeof(NotFoundError), NotFoundError.AlbumNotFoundWhen)]
+    [DocError(typeof(BadRequestError), BadRequestError.FileIsNotPngWhen)]
     public Response SetAlbumSidePanel(RequestContext context, GameDatabaseContext database, IDataStore dataStore,
         GameUser user, byte[] body, string id) 
         => SetAlbumAssets(
@@ -83,6 +89,6 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
         if (albumToRemove == null) return HttpStatusCode.NotFound;
         
         database.RemoveAlbum(dataStore, albumToRemove);
-        return HttpStatusCode.OK;
+        return HttpStatusCode.NoContent;
     }
 }

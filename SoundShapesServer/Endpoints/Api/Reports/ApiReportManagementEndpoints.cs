@@ -7,6 +7,7 @@ using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Moderation;
@@ -23,18 +24,20 @@ public class ApiReportManagementEndpoints : EndpointGroup
     [ApiEndpoint("reports/id/{id}", Method.Delete)]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Deletes report with specified ID.")]
+    [DocError(typeof(NotFoundError), NotFoundError.ReportNotFoundWhen)]
     public Response RemoveReport(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         Report? report = database.GetReportWithId(id);
         if (report == null) return HttpStatusCode.NotFound;
         
         database.RemoveReport(report);
-        return HttpStatusCode.OK;
+        return HttpStatusCode.NoContent;
     }
 
     [ApiEndpoint("reports/id/{id}")]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Retrieves report with specified ID.")]
+    [DocError(typeof(NotFoundError), NotFoundError.ReportNotFoundWhen)]
     public Response GetReport(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         Report? report = database.GetReportWithId(id);

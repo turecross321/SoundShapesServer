@@ -7,6 +7,7 @@ using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api;
@@ -22,12 +23,15 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
     [ApiEndpoint("punishments/create", Method.Post)]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Punishes user.")]
+    [DocError(typeof(NotFoundError), NotFoundError.UserNotFoundWhen)]
+    [DocError(typeof(MethodNotAllowedError), MethodNotAllowedError.PunishYourselfWhen)]
     public Response CreatePunishment(RequestContext context, GameDatabaseContext database, GameUser user, ApiPunishRequest body)
     {
         GameUser? userToPunish = database.GetUserWithId(body.UserId);
         if (userToPunish == null) return HttpStatusCode.NotFound;
 
-        if (userToPunish.Id == user.Id) return HttpStatusCode.MethodNotAllowed;
+        if (userToPunish.Id == user.Id) 
+            return new Response(MethodNotAllowedError.PunishYourselfWhen, ContentType.Plaintext, HttpStatusCode.MethodNotAllowed);
         
         Punishment createdPunishment = database.CreatePunishment(user, userToPunish, body);
         return new Response(new ApiPunishmentResponse(createdPunishment), ContentType.Json, HttpStatusCode.Created);
@@ -36,6 +40,9 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
     [ApiEndpoint("punishments/id/{id}/edit", Method.Post)]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Edits punishment with specified ID.")]
+    [DocError(typeof(NotFoundError), NotFoundError.PunishmentNotFoundWhen)]
+    [DocError(typeof(NotFoundError), NotFoundError.UserNotFoundWhen)]
+    [DocError(typeof(MethodNotAllowedError), MethodNotAllowedError.PunishYourselfWhen)]
     public Response EditPunishment(RequestContext context, GameDatabaseContext database, GameUser user, string id,
         ApiPunishRequest body)
     {
@@ -45,7 +52,8 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
         GameUser? userToPunish = database.GetUserWithId(body.UserId);
         if (userToPunish == null) return HttpStatusCode.NotFound;
         
-        if (userToPunish.Id == user.Id) return HttpStatusCode.MethodNotAllowed;
+        if (userToPunish.Id == user.Id) 
+            return new Response(MethodNotAllowedError.PunishYourselfWhen, ContentType.Plaintext, HttpStatusCode.MethodNotAllowed);
 
         Punishment editedPunishment = database.EditPunishment(user, punishment, userToPunish, body);
         return new Response(new ApiPunishmentResponse(editedPunishment), ContentType.Json, HttpStatusCode.Created);
@@ -54,6 +62,7 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
     [ApiEndpoint("punishments/id/{id}/revoke", Method.Post)]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Revokes punishment with specified ID.")]
+    [DocError(typeof(NotFoundError), NotFoundError.PunishmentNotFoundWhen)]
     public Response RevokePunishment(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         Punishment? punishment = database.GetPunishmentWithId(id);
@@ -65,7 +74,7 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
     
     [ApiEndpoint("punishments")]
     [DocUsesPageData]
-    [MinimumPermissions(PermissionsType.Administrator)]
+    [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Lists punishments.")]
     public ApiListResponse<ApiPunishmentResponse> GetPunishments(RequestContext context, GameDatabaseContext database, GameUser user)
     {

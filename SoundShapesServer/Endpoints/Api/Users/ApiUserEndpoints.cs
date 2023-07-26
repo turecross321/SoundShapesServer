@@ -3,6 +3,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Users;
@@ -14,6 +15,7 @@ public class ApiUserEndpoints : EndpointGroup
 {
     [ApiEndpoint("users/id/{id}"), Authentication(false)]
     [DocSummary("Retrieves user with specified ID.")]
+    [DocError(typeof(NotFoundError), NotFoundError.UserNotFoundWhen)]
     public ApiUserFullResponse? GetUserWithId(RequestContext context, GameDatabaseContext database, string id)
     {
         GameUser? userToCheck = database.GetUserWithId(id);
@@ -22,6 +24,7 @@ public class ApiUserEndpoints : EndpointGroup
     
     [ApiEndpoint("users/username/{username}"), Authentication(false)]
     [DocSummary("Retrieves user with specified username.")]
+    [DocError(typeof(NotFoundError), NotFoundError.UserNotFoundWhen)]
     public ApiUserFullResponse? GetUserWithUsername(RequestContext context, GameDatabaseContext database, string username)
     {
         GameUser? userToCheck = database.GetUserWithUsername(username);

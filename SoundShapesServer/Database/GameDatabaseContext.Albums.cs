@@ -2,6 +2,7 @@ using System.Net;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types.Albums;
@@ -39,7 +40,7 @@ public partial class GameDatabaseContext
     {
         // Album Files should always be Images
         if (!ResourceHelper.IsByteArrayPng(file))
-            return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
+            return new Response(BadRequestError.FileIsNotPngWhen, ContentType.Plaintext, HttpStatusCode.BadRequest);
 
         string key = ResourceHelper.GetAlbumResourceKey(album.Id, resourceType);
         dataStore.WriteToStore(key, file);

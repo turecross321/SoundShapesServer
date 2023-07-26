@@ -3,6 +3,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Albums;
@@ -15,6 +16,7 @@ public class ApiAlbumEndpoints : EndpointGroup
 {
     [ApiEndpoint("albums/id/{id}"), Authentication(false)]
     [DocSummary("Retrieves album with specified ID.")]
+    [DocError(typeof(NotFoundError), NotFoundError.AlbumNotFoundWhen)]
     public ApiAlbumResponse? GetAlbum(RequestContext context, GameDatabaseContext database, string id)
     {
         GameAlbum? album = database.GetAlbumWithId(id);
@@ -49,6 +51,8 @@ public class ApiAlbumEndpoints : EndpointGroup
 
     [ApiEndpoint("albums/id/{albumId}/relationWith/id/{userId}")]
     [DocSummary("Retrieves relation between an album and a user.")]
+    [DocError(typeof(NotFoundError), NotFoundError.AlbumNotFoundWhen)]
+    [DocError(typeof(NotFoundError), NotFoundError.UserNotFoundWhen)]
     public ApiAlbumCompletionResponse? GetAlbumCompletion(RequestContext context, GameDatabaseContext database, string albumId, string userId)
     {
         GameAlbum? album = database.GetAlbumWithId(albumId);
