@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using Newtonsoft.Json.Linq;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
@@ -12,7 +13,7 @@ namespace SoundShapesServerTests.Tests;
 public class LevelTests: ServerTest
 {
     [Test]
-    public async Task ApiLevelFetchingWorks()
+    public async Task LevelFilteringWorks()
     {
         using TestContext context = GetServer();
         
@@ -22,24 +23,17 @@ public class LevelTests: ServerTest
         context.CreateLevel(user, "Second Level", DateTimeOffset.UtcNow.AddDays(1));
 
         context.Database.Refresh();
-        
-        using HttpClient client = context.GetAuthenticatedClient(SessionType.Api, user);
 
         // Filtration
-        string payload = $"/api/v1/levels?search={firstLevel.Name}";
-        ApiLevelsWrapper? response = await client.GetFromJsonAsync<ApiLevelsWrapper>(payload);
-        Assert.That(response?.Count, Is.EqualTo(1));
+        IEnumerable<GameLevel> levels = context.Database.GetLevels(LevelOrderType.CreationDate, true, new LevelFilters(search: firstLevel.Name));
+        Assert.That(levels.Count(), Is.EqualTo(1));
 
         // Ordering
-        payload = $"/api/v1/levels?orderBy=creationDate&descending=true";
-        response = await client.GetFromJsonAsync<ApiLevelsWrapper>(payload);
+        levels = context.Database.GetLevels(LevelOrderType.CreationDate, true, new LevelFilters());
+        Assert.That(levels.First().CreationDate, Is.GreaterThan(levels.Last().CreationDate));
         
-        Assert.That(response != null && response.Levels[0].CreationDate > response.Levels[1].CreationDate);
-        
-        payload = $"/api/v1/levels?orderBy=creationDate&descending=false";
-        response = await client.GetFromJsonAsync<ApiLevelsWrapper>(payload);
-        
-        Assert.That(response != null && response.Levels[0].CreationDate < response.Levels[1].CreationDate);
+        levels = context.Database.GetLevels(LevelOrderType.CreationDate, false, new LevelFilters());
+        Assert.That(levels.First().CreationDate, Is.LessThan(levels.Last().CreationDate));
     }
     
     [Test]
@@ -56,7 +50,7 @@ public class LevelTests: ServerTest
         
         using HttpClient client = context.GetAuthenticatedClient(SessionType.Game, user);
 
-        // Filtration
+        // Search
         string payload = $"/otg/~index:level.page?query=metadata.displayName:{firstLevel.Name}";
         JObject response = JObject.Parse(await client.GetStringAsync(payload));
         
@@ -76,7 +70,7 @@ public class LevelTests: ServerTest
         using HttpClient client = context.GetAuthenticatedClient(SessionType.Api, user);
         
         // Check Relation
-        string relationPayload = $"/api/v1/levels/id/{level.Id}/users/id/{user.Id}";
+        string relationPayload = $"/api/v1/levels/id/{level.Id}/relationWith/id/{user.Id}";
         ApiLevelRelationResponse? relationResponse = 
             await client.GetFromJsonAsync<ApiLevelRelationResponse>(relationPayload);
         Assert.That(relationResponse is { Liked: false, Queued:false });
@@ -160,18 +154,18 @@ public class LevelTests: ServerTest
     {
         using TestContext context = GetServer();
         
-        GameUser user = context.CreateUser();
-        GameLevel level = context.CreateLevel(user);
+        GameUser firstUser = context.CreateUser();
+        GameLevel firstLevel = context.CreateLevel(firstUser);
         
-        GameUser otherUser = context.CreateUser();
-        GameLevel otherLevel = context.CreateLevel(otherUser);
+        GameUser secondUser = context.CreateUser();
+        GameLevel secondLevel = context.CreateLevel(secondUser);
         
         context.Database.Refresh();
         
-        using HttpClient client = context.GetAuthenticatedClient(SessionType.Api, user);
+        using HttpClient client = context.GetAuthenticatedClient(SessionType.Api, firstUser);
         
         // Updating Metadata
-        string payload = $"/api/v1/levels/id/{level.Id}/edit";
+        string payload = $"/api/v1/levels/id/{firstLevel.Id}/edit";
         ApiPublishLevelRequest body = new()
         {
             Name = "Updated Level Name"
@@ -180,7 +174,7 @@ public class LevelTests: ServerTest
         Assert.That(response.IsSuccessStatusCode);
         
         // Try changing metadata of other user's level
-        payload = $"/api/v1/levels/id/{otherLevel.Id}/edit";
+        payload = $"/api/v1/levels/id/{secondLevel.Id}/edit";
         body = new()
         {
             Name = "Updated Level Name"
@@ -189,13 +183,13 @@ public class LevelTests: ServerTest
         Assert.That(!response.IsSuccessStatusCode);
         
         // Removing Level
-        payload = $"/api/v1/levels/id/{level.Id}/remove";
-        response = await client.PostAsync(payload, null);
+        payload = $"/api/v1/levels/id/{firstLevel.Id}";
+        response = await client.DeleteAsync(payload);
         Assert.That(response.IsSuccessStatusCode);
         
         // Try Removing other user's level
-        payload = $"/api/v1/levels/id/{otherLevel.Id}/remove";
-        response = await client.PostAsync(payload, null);
+        payload = $"/api/v1/levels/id/{secondLevel.Id}";
+        response = await client.DeleteAsync(payload);
         Assert.That(!response.IsSuccessStatusCode);
     } 
 }

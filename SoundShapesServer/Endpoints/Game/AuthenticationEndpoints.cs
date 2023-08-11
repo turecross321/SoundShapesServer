@@ -59,37 +59,33 @@ public class AuthenticationEndpoints : EndpointGroup
         PlatformType platformType = PlatformHelper.GetPlatformType(ticket);
 
         sessionType ??= SessionType.Game;
-        GameSession session = database.CreateSession(user, (SessionType)sessionType, platformType, 14400, null, ip); // 4 hours
+        GameSession session = database.CreateSession(user, (SessionType)sessionType, platformType, Globals.FourHoursInSeconds, null, ip);
+        
+        if (session.Ip is { OneTimeUse: true }) database.UseOneTimeIpAddress(session.Ip);
 
-        Debug.Assert(session.Ip != null, "session.Ip != null");
-        if (session.Ip.OneTimeUse) database.UseOneTimeIpAddress(session.Ip);
+        GameSessionResponse sessionResponse = new (session);
+        GameSessionWrapper responseWrapper = new (sessionResponse);
 
-        GameSessionResponse gameSessionResponse = new (session);
+        context.Logger.LogInfo(BunkumContext.Authentication, $"{sessionResponse.User.Username} has logged in.");
 
-        GameSessionWrapper responseWrapper = new (gameSessionResponse);
-
-        Debug.Assert(gameSessionResponse.User != null, "gameSessionResponse.User != null");
-        Console.WriteLine($"{gameSessionResponse.User.Username} has logged in.");
-
-        context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={gameSessionResponse.Id};Version=1;Path=/");
+        context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={sessionResponse.Id};Version=1;Path=/");
         // ReSharper disable StringLiteralTypo
-        context.ResponseHeaders.Add("x-otg-identity-displayname", gameSessionResponse.User.Username);
-        context.ResponseHeaders.Add("x-otg-identity-personid", gameSessionResponse.User.Id);
-        context.ResponseHeaders.Add("x-otg-identity-sessionid", gameSessionResponse.Id);
+        context.ResponseHeaders.Add("x-otg-identity-displayname", sessionResponse.User.Username);
+        context.ResponseHeaders.Add("x-otg-identity-personid", sessionResponse.User.Id);
+        context.ResponseHeaders.Add("x-otg-identity-sessionid", sessionResponse.Id);
         // ReSharper restore StringLiteralTypo
         
         return new Response(responseWrapper, ContentType.Json, HttpStatusCode.Created);
     }
 
     
-    [GameEndpoint("~identity:*.hello", ContentType.Json)]
-    [Authentication(false)]
+    [GameEndpoint("~identity:*.hello"), Authentication(false)]
     public Response Hello(RequestContext context)
     {
         return HttpStatusCode.OK;
     }
     
-    [GameEndpoint("{platform}/{publisher}/{language}/~eula.get", ContentType.Json)]
+    [GameEndpoint("{platform}/{publisher}/{language}/~eula.get")]
     public string Eula(RequestContext context, GameServerConfig config, GameDatabaseContext database, string platform, string publisher, string language, GameSession session, GameUser user)
     {
         if (session.SessionType == SessionType.Game)
@@ -114,7 +110,7 @@ public class AuthenticationEndpoints : EndpointGroup
             IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
 
             string emailSessionId = GenerateEmailSessionId(database);
-            database.CreateSession(user, SessionType.SetEmail, session.PlatformType, 600, emailSessionId, ip); // 10 minutes
+            database.CreateSession(user, SessionType.SetEmail, session.PlatformType, Globals.TenMinutesInSeconds, emailSessionId, ip);
             eula = $"Your account is not registered.\n" +
                    $"To proceed, you will have to register an account at {config.WebsiteUrl}/register\n" +
                    $"Your email code is: {emailSessionId}";

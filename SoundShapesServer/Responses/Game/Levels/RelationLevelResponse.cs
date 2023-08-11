@@ -6,9 +6,9 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Levels;
 
-public class RelationLevelResponse
+public class RelationLevelResponse : IResponse
 {
-    public RelationLevelResponse(GameUser user, GameLevel level)
+    public RelationLevelResponse(GameLevel level, GameUser user)
     {
         Id = IdHelper.FormatRelationLevelId(user.Id, level.Id);
         

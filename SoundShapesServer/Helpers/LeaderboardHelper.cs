@@ -47,6 +47,6 @@ public static class LeaderboardHelper
     {
         return descending ? 
             totalEntries - (from + index) - (startFromZero ? 0 : 1) : 
-            from + index + (startFromZero ? 1 : 0);
+            from + index + (startFromZero ? 0 : 1);
     }
 }

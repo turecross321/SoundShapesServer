@@ -8,7 +8,6 @@ using Bunkum.ProfanityFilter;
 using HttpMultipartParser;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
@@ -47,11 +46,11 @@ public class Endpoints : EndpointGroup
 
         MultipartFormDataParser? parser = MultipartFormDataParser.Parse(body);
 
-        if (action == "create") return LevelManagementEndpoints.CreateLevel(config, dataStore, profanity, parser, database, user);
+        if (action == "create") return LevelManagementEndpoints.CreateLevel(context, config, dataStore, profanity, parser, database, user);
         
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return new Response(HttpStatusCode.NotFound);
 
-        return action == "update" ? LevelManagementEndpoints.UpdateLevel(dataStore, profanity, parser, database, user, level.Id) : new Response(HttpStatusCode.NotFound);
+        return action == "update" ? LevelManagementEndpoints.UpdateLevel(context, dataStore, profanity, parser, database, user, level.Id) : new Response(HttpStatusCode.NotFound);
     }
 }

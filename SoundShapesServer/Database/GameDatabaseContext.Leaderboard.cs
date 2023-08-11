@@ -52,17 +52,22 @@ public partial class GameDatabaseContext
     {
         return _realm.All<LeaderboardEntry>().FirstOrDefault(e => e.Id == id);
     }
-    
-    public (IQueryable<LeaderboardEntry>, LeaderboardEntry[]) GetLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters, int from, int count)
-    {
-        IQueryable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>();
 
-        IQueryable<LeaderboardEntry> filteredEntries = FilterLeaderboard(entries, filters);
-        IQueryable<LeaderboardEntry> orderedEntries = OrderLeaderboard(filteredEntries, order, descending);
-        
+    public (int, LeaderboardEntry[]) GetPaginatedLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters, int from, int count)
+    {
+        IQueryable<LeaderboardEntry> orderedEntries = GetLeaderboardEntries(order, descending, filters);
         LeaderboardEntry[] paginatedEntries = PaginateLeaderboardEntries(orderedEntries, from, count);
 
-        return (filteredEntries, paginatedEntries);
+        return (orderedEntries.Count(), paginatedEntries);
+    }
+    
+    public IQueryable<LeaderboardEntry> GetLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters)
+    {
+        IQueryable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>();
+        IQueryable<LeaderboardEntry> filteredEntries = FilterLeaderboard(entries, filters);
+        IQueryable<LeaderboardEntry> orderedEntries = OrderLeaderboard(filteredEntries, order, descending);
+
+        return orderedEntries;
     }
     
     private static IQueryable<LeaderboardEntry> FilterLeaderboard(IQueryable<LeaderboardEntry> entries, LeaderboardFilters filters)

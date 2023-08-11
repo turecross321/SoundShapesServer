@@ -64,16 +64,23 @@ public partial class GameDatabaseContext
         return _realm.All<Report>().FirstOrDefault(r => r.Id == id);
     }
     
-    public (Report[], int) GetReports(ReportOrderType order, bool descending, ReportFilters filters, int from, int count)
+    public (Report[], int) GetPaginatedReports(ReportOrderType order, bool descending, ReportFilters filters, int from, int count)
+    {
+        IQueryable<Report> orderedReports = GetReports(order, descending, filters);
+        Report[] paginatedReports = PaginateReports(orderedReports, from, count);
+        
+        return (paginatedReports, orderedReports.Count());
+    }
+
+    private IQueryable<Report> GetReports(ReportOrderType order, bool descending, ReportFilters filters)
     {
         IQueryable<Report> reports = _realm.All<Report>();
-        
         IQueryable<Report> filteredReports = FilterReports(reports, filters);
         IQueryable<Report> orderedReports = OrderReports(filteredReports, order, descending);
 
-        Report[] paginatedReports = PaginateReports(orderedReports, from, count);
-        return (paginatedReports, filteredReports.Count());
+        return orderedReports;
     }
+
     private static IQueryable<Report> FilterReports(IQueryable<Report> reports, ReportFilters filters)
     {
         IQueryable<Report> response = reports;

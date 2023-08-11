@@ -8,7 +8,7 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Albums.Levels;
 
-public class AlbumLevelResponse
+public class AlbumLevelResponse : IResponse
 {
     public AlbumLevelResponse(GameAlbum album, GameLevel level, GameUser user)
     {

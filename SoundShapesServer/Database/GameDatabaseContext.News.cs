@@ -2,6 +2,7 @@ using System.Net;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types.News;
@@ -43,7 +44,7 @@ public partial class GameDatabaseContext
 
     public Response UploadNewsResource(IDataStore dataStore, NewsEntry newsEntry, byte[] file)
     {
-        if (!IsByteArrayPng(file)) return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
+        if (!IsByteArrayPng(file)) return new Response(BadRequestError.FileIsNotPngWhen, ContentType.Plaintext, HttpStatusCode.BadRequest);
 
         string key = GetNewsResourceKey(newsEntry.Id);
         dataStore.WriteToStore(key, file);
@@ -71,18 +72,23 @@ public partial class GameDatabaseContext
         return _realm.All<NewsEntry>().FirstOrDefault(e => e.Id == id);
     }
     
-    public (NewsEntry[], int) GetNews(NewsOrderType order, bool descending, NewsFilters filters, int from, int count)
+    public (NewsEntry[], int) GetPaginatedNews(NewsOrderType order, bool descending, NewsFilters filters, int from, int count)
     {
-        IQueryable<NewsEntry> entries = _realm.All<NewsEntry>();
-
-        IQueryable<NewsEntry> filteredEntries = FilterNews(entries, filters);
-        IQueryable<NewsEntry> orderedEntries = OrderNews(filteredEntries, order, descending);
-        
+        IQueryable<NewsEntry> orderedEntries = GetNews(order, descending, filters);
         NewsEntry[] paginatedNews = PaginationHelper.PaginateNews(orderedEntries, from, count);
 
-        return (paginatedNews, filteredEntries.Count());
+        return (paginatedNews, orderedEntries.Count());
     }
-    
+
+    private IQueryable<NewsEntry> GetNews(NewsOrderType order, bool descending, NewsFilters filters)
+    {
+        IQueryable<NewsEntry> entries = _realm.All<NewsEntry>();
+        IQueryable<NewsEntry> filteredEntries = FilterNews(entries, filters);
+        IQueryable<NewsEntry> orderedEntries = OrderNews(filteredEntries, order, descending);
+
+        return orderedEntries;
+    }
+
     private IQueryable<NewsEntry> FilterNews(IQueryable<NewsEntry> entries, NewsFilters filters)
     {
         IQueryable<NewsEntry> response = entries;

@@ -45,18 +45,23 @@ public partial class GameDatabaseContext
         return _realm.All<GameEvent>().FirstOrDefault(e => e.Id == id);
     }
     
-    public (GameEvent[], int) GetEvents(EventOrderType order, bool descending,  EventFilters filters, int from, int count)
+    public (GameEvent[], int) GetPaginatedEvents(EventOrderType order, bool descending,  EventFilters filters, int from, int count)
     {
-        IQueryable<GameEvent> events = _realm.All<GameEvent>();
-
-        IQueryable<GameEvent> filteredEvents = FilterEvents(events, filters);
-        IQueryable<GameEvent> orderedEvents = OrderEvents(filteredEvents, order, descending);
-        
+        IQueryable<GameEvent> orderedEvents = GetEvents(order, descending, filters);
         GameEvent[] paginatedEvents = PaginationHelper.PaginateEvents(orderedEvents, from, count);
 
-        return (paginatedEvents, filteredEvents.Count());
+        return (paginatedEvents, orderedEvents.Count());
     }
-    
+
+    private IQueryable<GameEvent> GetEvents(EventOrderType order, bool descending, EventFilters filters)
+    {
+        IQueryable<GameEvent> events = _realm.All<GameEvent>();
+        IQueryable<GameEvent> filteredEvents = FilterEvents(events, filters);
+        IQueryable<GameEvent> orderedEvents = OrderEvents(filteredEvents, order, descending);
+
+        return orderedEvents;
+    }
+
     private static IQueryable<GameEvent> FilterEvents(IQueryable<GameEvent> events, EventFilters filters)
     {
         IQueryable<GameEvent> response = events;

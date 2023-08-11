@@ -1,4 +1,3 @@
-using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
@@ -11,14 +10,14 @@ namespace SoundShapesServer.Endpoints.Game;
 
 public class NewsEndpoints : EndpointGroup
 {
-    [GameEndpoint("global/news/~metadata:*.get", ContentType.Json)]
-    [GameEndpoint("global/news/{language}/~metadata:*.get", ContentType.Json)]
+    [GameEndpoint("global/news/~metadata:*.get")]
+    [GameEndpoint("global/news/{language}/~metadata:*.get")]
     public NewsResponse GetNews(RequestContext context, GameDatabaseContext database, string? language, GameSession session)
     {
         NewsFilters filters = new (language);
 
         // Game only gets the last news entry
-        (NewsEntry[] entries, int _) = database.GetNews(NewsOrderType.CreationDate, true, filters, 0, 1);
+        (NewsEntry[] entries, int _) = database.GetPaginatedNews(NewsOrderType.CreationDate, true, filters, 0, 1);
         NewsEntry? entry = entries.LastOrDefault();
 
         // News images make the vita version crash, so this is a workaround that only lets non-vita view them

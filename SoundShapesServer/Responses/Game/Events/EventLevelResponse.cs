@@ -6,7 +6,7 @@ using static SoundShapesServer.Helpers.IdHelper;
 
 namespace SoundShapesServer.Responses.Game.Events;
 
-public class EventLevelResponse
+public class EventLevelResponse : IResponse
 {
     public EventLevelResponse(GameLevel level)
     {

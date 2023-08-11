@@ -3,7 +3,7 @@ using SoundShapesServer.Types.Albums;
 
 namespace SoundShapesServer.Responses.Game.Albums;
 
-public class LinerNoteResponse
+public class LinerNoteResponse : IResponse
 {
     public LinerNoteResponse(FontType fontType, string text)
     {

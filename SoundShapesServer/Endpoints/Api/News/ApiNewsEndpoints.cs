@@ -1,7 +1,11 @@
+using AttribDoc.Attributes;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
-using SoundShapesServer.Responses.Api.News;
+using SoundShapesServer.Documentation.Attributes;
+using SoundShapesServer.Documentation.Errors;
+using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Users;
 
@@ -9,22 +13,22 @@ namespace SoundShapesServer.Endpoints.Api.News;
 
 public class ApiNewsEndpoints : EndpointGroup
 {
-    [ApiEndpoint("news/id/{id}")]
-    [Authentication(false)]
+    [ApiEndpoint("news/id/{id}"), Authentication(false)]
+    [DocSummary("Retrieves news entry with specified ID.")]
+    [DocError(typeof(NotFoundError), NotFoundError.NewsEntryNotFoundWhen)]
     public ApiNewsResponse? NewsEntryWithId(RequestContext context, GameDatabaseContext database, string id)
     {
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
         return newsEntry != null ? new ApiNewsResponse(newsEntry) : null;
     }
     
-    [ApiEndpoint("news")]
-    [Authentication(false)]
-    public ApiNewsWrapper News(RequestContext context, GameDatabaseContext database)
+    [ApiEndpoint("news"), Authentication(false)]
+    [DocUsesPageData]
+    [DocSummary("Lists news.")]
+    public ApiListResponse<ApiNewsResponse> News(RequestContext context, GameDatabaseContext database)
     {
-        int from = int.Parse(context.QueryString["from"] ?? "0");
-        int count = int.Parse(context.QueryString["count"] ?? "9");
+        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
         
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
         string? orderString = context.QueryString["orderBy"];
 
         string? language = context.QueryString["language"];
@@ -53,7 +57,7 @@ public class ApiNewsEndpoints : EndpointGroup
             _ => NewsOrderType.CreationDate
         };
 
-        (NewsEntry[] entries, int totalEntries) = database.GetNews(order, descending, filters, from, count);
-        return new ApiNewsWrapper(entries, totalEntries);
+        (NewsEntry[] entries, int totalEntries) = database.GetPaginatedNews(order, descending, filters, from, count);
+        return new ApiListResponse<ApiNewsResponse>(entries.Select(e=>new ApiNewsResponse(e)), totalEntries);
     }
 }

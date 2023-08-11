@@ -1,7 +1,11 @@
+using AttribDoc.Attributes;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
+using SoundShapesServer.Documentation.Attributes;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.Users;
 
@@ -9,35 +13,35 @@ namespace SoundShapesServer.Endpoints.Api.Users;
 
 public class ApiUserEndpoints : EndpointGroup
 {
-    [ApiEndpoint("users/id/{id}")]
-    [Authentication(false)]
+    [ApiEndpoint("users/id/{id}"), Authentication(false)]
+    [DocSummary("Retrieves user with specified ID.")]
+    [DocError(typeof(NotFoundError), NotFoundError.UserNotFoundWhen)]
     public ApiUserFullResponse? GetUserWithId(RequestContext context, GameDatabaseContext database, string id)
     {
         GameUser? userToCheck = database.GetUserWithId(id);
         return userToCheck == null ? null : new ApiUserFullResponse(userToCheck);
     }
     
-    [ApiEndpoint("users/username/{username}")]
-    [Authentication(false)]
+    [ApiEndpoint("users/username/{username}"), Authentication(false)]
+    [DocSummary("Retrieves user with specified username.")]
+    [DocError(typeof(NotFoundError), NotFoundError.UserNotFoundWhen)]
     public ApiUserFullResponse? GetUserWithUsername(RequestContext context, GameDatabaseContext database, string username)
     {
         GameUser? userToCheck = database.GetUserWithUsername(username);
         return userToCheck == null ? null : new ApiUserFullResponse(userToCheck);
     }
 
-    [ApiEndpoint("users")]
-    [Authentication(false)]
-    public ApiUsersWrapper GetUsers(RequestContext context, GameDatabaseContext database)
+    [ApiEndpoint("users"), Authentication(false)]
+    [DocUsesPageData]
+    [DocSummary("Lists users.")]
+    public ApiListResponse<ApiUserBriefResponse> GetUsers(RequestContext context, GameDatabaseContext database)
     {
-        int from = int.Parse(context.QueryString["from"] ?? "0");
-        int count = int.Parse(context.QueryString["count"] ?? "9");
-
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
+        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
 
         UserFilters filters = UserHelper.GetUserFilters(context, database);
         UserOrderType order = UserHelper.GetUserOrderType(context);
 
-        (GameUser[] users, int totalUsers) = database.GetUsers(order, descending, filters, from, count);
-        return new ApiUsersWrapper(users, totalUsers);
+        (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(order, descending, filters, from, count);
+        return new ApiListResponse<ApiUserBriefResponse>(users.Select(u=>new ApiUserBriefResponse(u)), totalUsers);
     }
 }

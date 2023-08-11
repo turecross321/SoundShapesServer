@@ -8,7 +8,7 @@ using static SoundShapesServer.Helpers.IdHelper;
 
 namespace SoundShapesServer.Responses.Game.Levels;
 
-public class LevelResponse
+public class LevelResponse : IResponse
 {
     public LevelResponse(GameLevel level, GameUser user)
     {

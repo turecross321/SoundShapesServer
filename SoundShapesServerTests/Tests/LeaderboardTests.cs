@@ -1,8 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Newtonsoft.Json.Linq;
-using SoundShapesServer.Responses.Api.Leaderboard;
-using SoundShapesServer.Responses.Api.Levels;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
@@ -16,8 +15,8 @@ public class LeaderboardTests: ServerTest
     [Test]
     public async Task ApiLeaderboardFetchingWorks()
     {
-        const int firstUserAmount = 10;
-        const int secondUserAmount = 20;
+        const int usersOnFirstLevel = 10;
+        const int usersOnSecondLevel = 20;
         const int scoresPerUser = 2;
         
         using TestContext context = GetServer();
@@ -27,30 +26,36 @@ public class LeaderboardTests: ServerTest
         GameLevel firstLevel = context.CreateLevel(user);
         GameLevel secondLevel = context.CreateLevel(user);
 
-        context.FillLeaderboard(firstLevel, firstUserAmount, scoresPerUser);
-        context.FillLeaderboard(secondLevel, secondUserAmount, scoresPerUser);
+        context.FillLeaderboard(firstLevel, usersOnFirstLevel, scoresPerUser);
+        context.FillLeaderboard(secondLevel, usersOnSecondLevel, scoresPerUser);
         
         context.Database.Refresh();
         
-        using HttpClient client = context.GetAuthenticatedClient(SessionType.Api, user);
-        
         // Filtering
-        string payload = $"/api/v1/scores?onLevel={firstLevel.Id}&onlyBest=true";
-        ApiLeaderboardEntriesWrapper? response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
-        Assert.That(response?.Count, Is.EqualTo(firstUserAmount));
         
-        payload = $"/api/v1/scores?onLevel={secondLevel.Id}&onlyBest=false";
-        response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
-        Assert.That(response?.Count, Is.EqualTo(secondUserAmount * scoresPerUser));
+        // Only best entries on first level
+        IEnumerable<LeaderboardEntry> entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
+            false, new LeaderboardFilters(onlyBest: true, onLevel:firstLevel.Id));
+        Assert.That(entries.Count(), Is.EqualTo(usersOnFirstLevel));
+        
+        // All entries on second level
+        entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
+            false, new LeaderboardFilters(onlyBest: false, onLevel:secondLevel.Id));
+        Assert.That(entries.Count(), Is.EqualTo(usersOnSecondLevel * scoresPerUser));
+        
+        // All entries
+        entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
+            false, new LeaderboardFilters(onlyBest: false));
+        Assert.That(entries.Count(), Is.EqualTo((usersOnFirstLevel + usersOnSecondLevel) * scoresPerUser));
         
         // Ordering
-        payload = $"/api/v1/scores?orderBy=score&descending=true";
-        response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
-        Assert.That(response != null && response.Entries[0].Score >= response.Entries[1].Score);
+        entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
+            false, new LeaderboardFilters(onlyBest: false));
+        Assert.That(entries.First().Score, Is.LessThan(entries.Last().Score));
         
-        payload = $"/api/v1/scores?orderBy=score&descending=false";
-        response = await client.GetFromJsonAsync<ApiLeaderboardEntriesWrapper>(payload);
-        Assert.That(response != null && response.Entries[0].Score <= response.Entries[1].Score);
+        entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
+            true, new LeaderboardFilters(onlyBest: false));
+        Assert.That(entries.First().Score, Is.GreaterThan(entries.Last().Score));
     }
     
     [Test]
@@ -102,10 +107,9 @@ public class LeaderboardTests: ServerTest
         context.Database.Refresh();
 
         LeaderboardFilters filters = new(onLevel: level.Id, byUser:user);
-        (IQueryable<LeaderboardEntry> entries, LeaderboardEntry[] _) =
-            context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 0);
+        IQueryable<LeaderboardEntry> entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters);
         
-        Assert.That(entries.ToList(), Has.Count.EqualTo(1));
+        Assert.That(entries.Count(), Is.EqualTo(1));
     }
     
     private void LeaderboardSegmentTest(int expectedIndex, int amount, int score)
@@ -118,10 +122,8 @@ public class LeaderboardTests: ServerTest
         LeaderboardEntry entry = context.SubmitLeaderboardEntry(score, level, user);
 
         LeaderboardFilters filters = new(onLevel:level.Id);
-        (IQueryable<LeaderboardEntry> entriesQueryable, LeaderboardEntry[] _) = 
-            context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 0);
-
-        List<LeaderboardEntry> entries = entriesQueryable.ToList();
+        List<LeaderboardEntry> entries = 
+            context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters).ToList();
         
         Assert.Multiple(() =>
         {

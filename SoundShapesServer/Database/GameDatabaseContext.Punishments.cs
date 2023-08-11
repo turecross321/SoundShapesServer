@@ -62,17 +62,23 @@ public partial class GameDatabaseContext
         return _realm.All<Punishment>().FirstOrDefault(p => p.Id == id);
     }
     
-    public (Punishment[], int) GetPunishments(PunishmentOrderType order, bool descending, PunishmentFilters filters, int from, int count)
+    public (Punishment[], int) GetPaginatedPunishments(PunishmentOrderType order, bool descending, PunishmentFilters filters, int from, int count)
+    {
+        IQueryable<Punishment> orderedPunishments = GetPunishments(order, descending, filters);
+        Punishment[] paginatedPunishments = PaginationHelper.PaginatePunishments(orderedPunishments, from, count);
+        
+        return (paginatedPunishments, orderedPunishments.Count());
+    }
+
+    private IQueryable<Punishment> GetPunishments(PunishmentOrderType order, bool descending, PunishmentFilters filters)
     {
         IQueryable<Punishment> punishments = _realm.All<Punishment>();
-        
         IQueryable<Punishment> filteredPunishments = FilterPunishments(punishments, filters);
         IQueryable<Punishment> orderedPunishments = OrderPunishments(filteredPunishments, order, descending);
 
-        Punishment[] paginatedPunishments = PaginationHelper.PaginatePunishments(orderedPunishments, from, count);
-        return (paginatedPunishments, filteredPunishments.Count());
+        return orderedPunishments;
     }
-    
+
     private static IQueryable<Punishment> FilterPunishments(IQueryable<Punishment> punishments, PunishmentFilters filters)
     {
         IQueryable<Punishment> response = punishments;

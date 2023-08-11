@@ -1,6 +1,6 @@
 namespace SoundShapesServer.Responses.Api.Albums;
 
-public class ApiAlbumCompletionResponse
+public class ApiAlbumCompletionResponse : IApiResponse
 {
     public ApiAlbumCompletionResponse(int levelsBeaten, int totalLevels)
     {

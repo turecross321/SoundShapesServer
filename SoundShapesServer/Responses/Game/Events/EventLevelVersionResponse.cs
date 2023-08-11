@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace SoundShapesServer.Responses.Game.Events;
 
-public class EventLevelVersionResponse
+public class EventLevelVersionResponse : IResponse
 {
     // This is only used with recent activity levels
     public EventLevelVersionResponse(string id)

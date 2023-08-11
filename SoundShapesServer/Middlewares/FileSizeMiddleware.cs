@@ -7,7 +7,7 @@ namespace SoundShapesServer.Middlewares;
 
 public class FileSizeMiddleware : IMiddleware
 {
-    private const long FileSizeLimit = 4000000; // 4 mb
+    private const long FileSizeLimit = Globals.FourMegabytes;
     
     public void HandleRequest(ListenerContext context, Lazy<IDatabaseContext> database, Action next)
     {

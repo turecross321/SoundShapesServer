@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace SoundShapesServer.Responses.Game.Sessions;
 
-public class GameSessionWrapper
+public class GameSessionWrapper : IResponse
 {
     public GameSessionWrapper(GameSessionResponse gameSessionResponse)
     {

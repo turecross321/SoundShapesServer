@@ -1,9 +1,12 @@
+using AttribDoc.Attributes;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
+using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Levels;
 
@@ -11,18 +14,18 @@ namespace SoundShapesServer.Endpoints.Api.Levels;
 
 public class ApiDailyLevelEndpoint : EndpointGroup
 {
-    [ApiEndpoint("daily")]
-    [Authentication(false)]
-    public Response GetDailyLevelObjects(RequestContext context, GameDatabaseContext database)
+    [ApiEndpoint("daily"), Authentication(false)]
+    [DocUsesPageData]
+    [DocSummary("Lists levels that have been picked as daily levels.")]
+    public ApiListResponse<ApiDailyLevelResponse> GetDailyLevelObjects(RequestContext context, GameDatabaseContext database)
     {
-        int count = int.Parse(context.QueryString["count"] ?? "9");
-        int from = int.Parse(context.QueryString["from"] ?? "0");
-        
-        bool descending = bool.Parse(context.QueryString["descending"] ?? "true");
-        
+        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+
         string? dateString = context.QueryString["date"];
+        long? dateLong = null;
+        if (dateString != null) dateLong = long.Parse(dateString);
         DateTimeOffset? date = null;
-        if (dateString != null) date = DateTimeOffset.Parse(dateString).Date;
+        if (dateLong != null) date = DateTimeOffset.FromUnixTimeSeconds((long)dateLong);
         
         bool? lastDate = null;
         if (bool.TryParse(context.QueryString["lastDate"], out bool lastDateTemp)) lastDate = lastDateTemp;
@@ -36,9 +39,7 @@ public class ApiDailyLevelEndpoint : EndpointGroup
             _ => DailyLevelOrderType.Date
         };
 
-        IQueryable<DailyLevel> dailyLevels = database.GetDailyLevels(order, descending, filters);
-        DailyLevel[] paginatedDailyLevels = PaginationHelper.PaginateDailyLevels(dailyLevels, from, count);
-        
-        return new Response(new ApiDailyLevelsWrapper(paginatedDailyLevels, dailyLevels.Count()), ContentType.Json);
+        (DailyLevel[] dailyLevels, int totalLevels) = database.GetPaginatedDailyLevels(order, descending, filters, from, count);
+        return new ApiListResponse<ApiDailyLevelResponse>(dailyLevels.Select(d=>new ApiDailyLevelResponse(d)), totalLevels);
     }
 }

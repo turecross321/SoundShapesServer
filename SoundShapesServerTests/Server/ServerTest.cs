@@ -24,17 +24,17 @@ public class ServerTest
         InMemoryGameDatabaseProvider provider = new();
         provider.Initialize();
 
-        Lazy<TestServer> gameServer = new(() =>
+        Lazy<TestGameServer> testGameServer = new(() =>
         {
-            TestServer server = new(listener, provider);
-            server.Initialize();
-            server.Start();
+            TestGameServer gameServer = new(listener, provider);
+            gameServer.Initialize();
+            gameServer.Start();
 
-            return server;
+            return gameServer;
         });
 
-        if (startServer) _ = gameServer.Value;
+        if (startServer) _ = testGameServer.Value;
         
-        return new TestContext(gameServer, provider.GetContext(), client, listener);
+        return new TestContext(testGameServer, provider.GetContext(), client, listener);
     }
 }

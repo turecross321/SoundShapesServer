@@ -3,7 +3,7 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Users;
 
-public class UserMetadataResponse
+public class UserMetadataResponse : IResponse
 {
     public UserMetadataResponse(GameUser user)
     {

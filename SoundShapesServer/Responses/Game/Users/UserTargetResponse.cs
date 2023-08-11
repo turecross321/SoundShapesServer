@@ -5,7 +5,7 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Users;
 
-public class UserTargetResponse
+public class UserTargetResponse : IResponse
 {
     public UserTargetResponse(GameUser? user)
     {

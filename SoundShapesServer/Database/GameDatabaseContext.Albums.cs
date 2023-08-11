@@ -2,6 +2,7 @@ using System.Net;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types.Albums;
@@ -39,7 +40,7 @@ public partial class GameDatabaseContext
     {
         // Album Files should always be Images
         if (!ResourceHelper.IsByteArrayPng(file))
-            return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
+            return new Response(BadRequestError.FileIsNotPngWhen, ContentType.Plaintext, HttpStatusCode.BadRequest);
 
         string key = ResourceHelper.GetAlbumResourceKey(album.Id, resourceType);
         dataStore.WriteToStore(key, file);
@@ -97,14 +98,20 @@ public partial class GameDatabaseContext
         return _realm.All<GameAlbum>().FirstOrDefault(a => a.Id == id);
     }
     
-    public (GameAlbum[], int) GetAlbums(AlbumOrderType order, bool descending, int from, int count)
+    public (GameAlbum[], int) GetPaginatedAlbums(AlbumOrderType order, bool descending, int from, int count)
     {
-        IQueryable<GameAlbum> albums = _realm.All<GameAlbum>();
+        IQueryable<GameAlbum> orderedAlbums = GetAlbums(order, descending);
 
-        IQueryable<GameAlbum> orderedAlbums = OrderAlbums(albums, order, descending);
-        
         GameAlbum[] paginatedAlbums = PaginationHelper.PaginateAlbums(orderedAlbums, from, count);
         return (paginatedAlbums, orderedAlbums.Count());
+    }
+
+    private IQueryable<GameAlbum> GetAlbums(AlbumOrderType order, bool descending)
+    {
+        IQueryable<GameAlbum> albums = _realm.All<GameAlbum>();
+        IQueryable<GameAlbum> orderedAlbums = OrderAlbums(albums, order, descending);
+
+        return orderedAlbums;
     }
 
     #region Album Ordering

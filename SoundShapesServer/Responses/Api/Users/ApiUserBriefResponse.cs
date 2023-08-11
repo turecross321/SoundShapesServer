@@ -2,7 +2,7 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Api.Users;
 
-public class ApiUserBriefResponse
+public class ApiUserBriefResponse : IApiResponse
 {
     public ApiUserBriefResponse(GameUser user)
     {

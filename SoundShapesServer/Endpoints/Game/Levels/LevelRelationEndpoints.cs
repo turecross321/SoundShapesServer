@@ -4,6 +4,8 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
@@ -12,35 +14,33 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 
 public class LevelRelationEndpoints : EndpointGroup
 {
-    [GameEndpoint("~identity:{userId}/~queued:*.page", ContentType.Json)]
-    public RelationLevelsWrapper? QueuedAndLiked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
+    [GameEndpoint("~identity:{userId}/~queued:*.page")]
+    public ListResponse<RelationLevelResponse>? QueuedAndLiked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
     {
-        int count = int.Parse(context.QueryString["count"] ?? "9");
-        int from = int.Parse(context.QueryString["from"] ?? "0");
+        (int from, int count, bool _) = PaginationHelper.GetPageData(context);
         
         GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
         if (userToGetLevelsFrom == null) return null;
         
-        (GameLevel[] levels, int totalLevels) = database.GetLevels(LevelOrderType.DoNotOrder, true, new LevelFilters(likedOrQueuedByUser: userToGetLevelsFrom), from, count);
+        (GameLevel[] levels, int totalLevels) = database.GetPaginatedLevels(LevelOrderType.DoNotOrder, true, new LevelFilters(likedOrQueuedByUser: userToGetLevelsFrom), from, count);
         
-        return new RelationLevelsWrapper(levels, user, totalLevels, from, count);
+        return new ListResponse<RelationLevelResponse>(levels.Select(l=>new RelationLevelResponse(l, user)), totalLevels, from, count);
     }
     
-    [GameEndpoint("~identity:{userId}/~like:*.page", ContentType.Json)]
-    public RelationLevelsWrapper? Liked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
+    [GameEndpoint("~identity:{userId}/~like:*.page")]
+    public ListResponse<RelationLevelResponse>? Liked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
     {
-        int count = int.Parse(context.QueryString["count"] ?? "9");
-        int from = int.Parse(context.QueryString["from"] ?? "0"); 
+        (int from, int count, bool _) = PaginationHelper.GetPageData(context); 
         
         GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
         if (userToGetLevelsFrom == null) return null;
         
-        (GameLevel[] levels, int totalLevels) = database.GetLevels(LevelOrderType.DoNotOrder, true, new LevelFilters(likedByUser: userToGetLevelsFrom), from, count);
+        (GameLevel[] levels, int totalLevels) = database.GetPaginatedLevels(LevelOrderType.DoNotOrder, true, new LevelFilters(likedByUser: userToGetLevelsFrom), from, count);
         
-        return new RelationLevelsWrapper(levels, user, totalLevels, from, count);
+        return new ListResponse<RelationLevelResponse>(levels.Select(l=>new RelationLevelResponse(l, user)), totalLevels, from, count);
     }
     
-    [GameEndpoint("~identity:{userId}/~like:%2F~level%3A{arguments}", ContentType.Json)]
+    [GameEndpoint("~identity:{userId}/~like:%2F~level%3A{arguments}")]
     public Response LevelLikeRequests(RequestContext context, GameDatabaseContext database, GameUser user, string userId, string arguments)
     {
         string[] argumentArray = arguments.Split("."); // This is to separate the .put / .get / delete from the id, which Bunkum currently cannot do by it self

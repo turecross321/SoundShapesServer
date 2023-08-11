@@ -12,7 +12,7 @@ namespace SoundShapesServer.Endpoints.Game;
 public class FriendsEndpoints : EndpointGroup
 {
     // Todo: Figure out what the response here should actually be. I know it should be a json, but that's all I know.
-    [GameEndpoint("~identity:{id}/~friends.all", ContentType.Json)]
+    [GameEndpoint("~identity:{id}/~friends.all")]
     public Response GetFriends(RequestContext context)
     {
         return HttpStatusCode.OK;

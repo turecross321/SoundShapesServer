@@ -1,12 +1,15 @@
 using System.Net;
+using AttribDoc.Attributes;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
+using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
-using SoundShapesServer.Helpers;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Levels;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 
@@ -15,10 +18,11 @@ namespace SoundShapesServer.Endpoints.Api.Levels;
 public class ApiDailyLevelManagementEndpoints : EndpointGroup
 {
     [ApiEndpoint("daily/create", Method.Post)]
+    [MinimumPermissions(PermissionsType.Administrator)]
+    [DocSummary("Picks level as a daily level.")]
+    [DocError(typeof(NotFoundError), NotFoundError.LevelNotFoundWhen)]
     public Response AddDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiCreateDailyLevelRequest body)
     {
-        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
-
         GameLevel? level = database.GetLevelWithId(body.LevelId);
         if (level == null) return HttpStatusCode.NotFound;
 
@@ -27,10 +31,12 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
     }
     
     [ApiEndpoint("daily/id/{id}/edit", Method.Post)]
+    [MinimumPermissions(PermissionsType.Administrator)]
+    [DocSummary("Edits daily level pick with specified ID.")]
+    [DocError(typeof(NotFoundError), NotFoundError.DailyLevelNotFoundWhen)]
+    [DocError(typeof(NotFoundError), NotFoundError.LevelNotFoundWhen)]
     public Response EditDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id, ApiCreateDailyLevelRequest body)
     {
-        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
-
         DailyLevel? dailyLevel = database.GetDailyLevelWithId(id);
         if (dailyLevel == null) return HttpStatusCode.NotFound;
         
@@ -41,15 +47,16 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
         return new Response(new ApiDailyLevelResponse(createdDailyLevel), ContentType.Json, HttpStatusCode.Created);
     }
     
-    [ApiEndpoint("daily/id/{id}/remove", Method.Post)]
+    [ApiEndpoint("daily/id/{id}", Method.Delete)]
+    [MinimumPermissions(PermissionsType.Administrator)]
+    [DocSummary("Removes daily level pick with specified ID.")]
+    [DocError(typeof(NotFoundError), NotFoundError.DailyLevelNotFoundWhen)]
     public Response RemoveDailyLevel(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
-        if (PermissionHelper.IsUserAdmin(user) == false) return HttpStatusCode.Forbidden;
-
         DailyLevel? dailyLevel = database.GetDailyLevelWithId(id);
         if (dailyLevel == null) return HttpStatusCode.NotFound;
         
         database.RemoveDailyLevel(dailyLevel);
-        return HttpStatusCode.OK;
+        return HttpStatusCode.NoContent;
     }
 }

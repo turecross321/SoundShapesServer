@@ -1,7 +1,6 @@
 using Bunkum.HttpServer;
 using SoundShapesServer.Database;
 using SoundShapesServer.Types.Users;
-using static System.Text.RegularExpressions.Regex;
 
 namespace SoundShapesServer.Helpers;
 

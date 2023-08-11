@@ -6,8 +6,8 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public const int DefaultSessionExpirySeconds = 86400; // 1 day
-    private const int SessionLimit = 3; // limit of how many sessions a user can have simultaneously with the same SessionType
+    public const int DefaultSessionExpirySeconds = Globals.OneDayInSeconds;
+    private const int SimultaneousSessionsLimit = 3;
 
     public GameSession CreateSession(GameUser user, SessionType sessionType, PlatformType platformType, int? expirationSeconds = null, string? id = null, IpAuthorization? ip = null)
     {
@@ -28,7 +28,7 @@ public partial class GameDatabaseContext
         IEnumerable<GameSession> sessionsToDelete = _realm.All<GameSession>()
             .Where(s=> s.User == user && s._SessionType == (int)sessionType)
             .AsEnumerable()
-            .SkipLast(SessionLimit - 1);
+            .SkipLast(SimultaneousSessionsLimit - 1);
 
         _realm.Write(() =>
         {
@@ -47,9 +47,9 @@ public partial class GameDatabaseContext
         return session;
     }
 
-    private GameSession[] GetSessionsWithIp(IpAuthorization ip)
+    private IEnumerable<GameSession> GetSessionsWithIp(IpAuthorization ip)
     {
-        return _realm.All<GameSession>().Where(s => s.Ip == ip).ToArray();
+        return _realm.All<GameSession>().Where(s => s.Ip == ip);
     }
 
     public void RemoveSession(GameSession session)

@@ -5,7 +5,7 @@ using SoundShapesServer.Types.Albums;
 
 namespace SoundShapesServer.Responses.Game.Albums;
 
-public class AlbumTargetResponse
+public class AlbumTargetResponse : IResponse
 {
     public AlbumTargetResponse(GameAlbum album)
     {

@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace SoundShapesServer.Responses.Game.Albums;
 
-public class LinerNotesWrapper
+public class LinerNotesWrapper : IResponse
 {
     public LinerNotesWrapper(LinerNoteResponse[] linerNotes)
     {

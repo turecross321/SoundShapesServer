@@ -4,6 +4,7 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using Newtonsoft.Json.Linq;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
@@ -73,8 +74,7 @@ public partial class GameDatabaseContext
         JObject? deCompressedLevel = LevelFileToJObject(levelFile);
         if (deCompressedLevel == null)
             return false;
-
-
+        
         int bpm = deCompressedLevel.Value<int?>("bpm") ?? 120;
         int transposeValue = deCompressedLevel.Value<int?>("transposeValue") ?? 0;
         int scaleIndex = deCompressedLevel.Value<int?>("scaleIndex") ?? 0;
@@ -115,12 +115,12 @@ public partial class GameDatabaseContext
         byte[] file, FileType fileType)
     {
         if (fileType == FileType.Image && !IsByteArrayPng(file))
-            return new Response("Image is not a PNG.", ContentType.Plaintext, HttpStatusCode.BadRequest);
+            return new Response(BadRequestError.FileIsNotPngWhen, ContentType.Plaintext, HttpStatusCode.BadRequest);
 
         if (fileType == FileType.Level)
         {
             if (!SetLevelInfo(level, file))
-                return HttpStatusCode.BadRequest;
+                return new Response(BadRequestError.CorruptLevelWhen, ContentType.Plaintext, HttpStatusCode.BadRequest);
         }
         
         string key = GetLevelResourceKey(level, fileType);
@@ -232,17 +232,23 @@ public partial class GameDatabaseContext
         return levels.AsQueryable();
     }
 
-    public (GameLevel[], int) GetLevels(LevelOrderType order, bool descending, LevelFilters filters, int from, int count)
+    public (GameLevel[], int) GetPaginatedLevels(LevelOrderType order, bool descending, LevelFilters filters, int from, int count)
+    {
+        IQueryable<GameLevel> orderedLevels = GetLevels(order, descending, filters);
+        GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(orderedLevels, from, count);
+
+        return (paginatedLevels, orderedLevels.Count());
+    }
+
+    public IQueryable<GameLevel> GetLevels(LevelOrderType order, bool descending, LevelFilters filters)
     {
         IQueryable<GameLevel> levels = _realm.All<GameLevel>();
         IQueryable<GameLevel> filteredLevels = FilterLevels(levels, filters);
         IQueryable<GameLevel> orderedLevels = OrderLevels(filteredLevels, order, descending);
-        
-        GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(orderedLevels, from, count);
 
-        return (paginatedLevels, filteredLevels.Count());
+        return orderedLevels;
     }
-    
+
     private IQueryable<GameLevel> FilterLevels(IQueryable<GameLevel> levels, LevelFilters filters)
     {
         IQueryable<GameLevel> response = levels;

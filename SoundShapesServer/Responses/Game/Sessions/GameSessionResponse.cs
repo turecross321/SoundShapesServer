@@ -3,7 +3,7 @@ using SoundShapesServer.Types.Sessions;
 
 namespace SoundShapesServer.Responses.Game.Sessions;
 
-public class GameSessionResponse
+public class GameSessionResponse : IResponse
 {
     public GameSessionResponse(GameSession session)
     {
@@ -15,6 +15,6 @@ public class GameSessionResponse
     }
 
     [JsonProperty("id")] public string Id { get; set; }
-    [JsonProperty("expires")] public long? ExpirationDate { get; set; }
-    [JsonProperty("person")] public SessionUserResponse? User { get; set; }
+    [JsonProperty("expires")] public long ExpirationDate { get; set; }
+    [JsonProperty("person")] public SessionUserResponse User { get; set; }
 }

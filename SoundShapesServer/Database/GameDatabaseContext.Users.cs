@@ -16,7 +16,7 @@ public partial class GameDatabaseContext
         GameUser? user = GetUserWithUsername(AdminUsername);
         if (user != null) return user;
 
-        user ??= new GameUser()
+        user ??= new GameUser
         {
             Id = new Guid().ToString(), // 00000000-0000-0000-0000-000000000000
             Username = AdminUsername,
@@ -180,20 +180,23 @@ public partial class GameDatabaseContext
         return _realm.All<GameUser>().FirstOrDefault(u => (!u.Deleted || u.Deleted == includeDeleted) && u.Id == id);
     }
 
-    public (GameUser[], int) GetUsers(UserOrderType order, bool descending, UserFilters filters, int from, int count, 
-        bool includeDeleted = false)
+    public (GameUser[], int) GetPaginatedUsers(UserOrderType order, bool descending, UserFilters filters, int from, int count)
     {
-        // Including Deleted is not a filter because it should only be accessible in internal server stuff
-        IQueryable<GameUser> users = _realm.All<GameUser>().Where(u=>!u.Deleted || u.Deleted == includeDeleted);
-
-        IQueryable<GameUser> filteredUsers = FilterUsers(users, filters);
-        IQueryable<GameUser> orderedUsers = OrderUsers(filteredUsers, order, descending);
-        
+        IQueryable<GameUser> orderedUsers = GetUsers(order, descending, filters);
         GameUser[] paginatedUsers = PaginateUsers(orderedUsers, from, count);
 
-        return (paginatedUsers, filteredUsers.Count());
+        return (paginatedUsers, orderedUsers.Count());
     }
-    
+
+    private IQueryable<GameUser> GetUsers(UserOrderType order, bool descending, UserFilters filters)
+    {
+        IQueryable<GameUser> users = _realm.All<GameUser>();
+        IQueryable<GameUser> filteredUsers = FilterUsers(users, filters);
+        IQueryable<GameUser> orderedUsers = OrderUsers(filteredUsers, order, descending);
+
+        return orderedUsers;
+    }
+
     private static IQueryable<GameUser> FilterUsers(IQueryable<GameUser> users, UserFilters filters)
     {
         IQueryable<GameUser> response = users;
@@ -232,7 +235,12 @@ public partial class GameDatabaseContext
         
         if (filters.Search != null)
         {
-            response = response.Where(l => l.Username.Contains(filters.Search, StringComparison.OrdinalIgnoreCase));
+            response = response.Where(u => u.Username.Contains(filters.Search, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (filters.Deleted != null)
+        {
+            response = response.Where(u => u.Deleted == filters.Deleted);
         }
 
         return response;
