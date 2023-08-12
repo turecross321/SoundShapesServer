@@ -5,7 +5,7 @@ namespace SoundShapesServer.Configuration;
 
 public class GameServerConfig : Config
 {
-    public override int CurrentConfigVersion => 2;
+    public override int CurrentConfigVersion => 3;
     public override int Version { get; set; }
     
     protected override void Migrate(int oldVer, dynamic oldConfig)
@@ -20,6 +20,7 @@ public class GameServerConfig : Config
     public string WebsiteUrl { get; set; } = "https://example.com";
     public int LevelPublishLimit = 200;
     public bool RequireAuthentication { get; set; }
+    public bool AccountCreation { get; set; } = true;
     public string EmailAddress { get; set; } = "";
     public string EmailPassword { get; set; } = "";
     public string EmailHost { get; set; } = "smtp.gmail.com";

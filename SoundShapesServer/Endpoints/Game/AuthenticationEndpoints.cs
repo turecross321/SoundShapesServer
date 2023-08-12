@@ -4,6 +4,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using NPTicket;
+using Realms.Sync;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Sessions;
 using SoundShapesServer.Types;
@@ -40,6 +41,10 @@ public class AuthenticationEndpoints : EndpointGroup
         if (!UserHelper.IsUsernameLegal(ticket.Username)) return HttpStatusCode.BadRequest;
 
         GameUser? user = database.GetUserWithUsername(ticket.Username, true);
+        if (user == null && !config.AccountCreation)
+        {
+            return new Response(HttpStatusCode.Created);
+        }
         user ??= database.CreateUser(ticket.Username);
         
         IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
@@ -84,41 +89,52 @@ public class AuthenticationEndpoints : EndpointGroup
         return HttpStatusCode.OK;
     }
     
-    [GameEndpoint("{platform}/{publisher}/{language}/~eula.get")]
-    public string Eula(RequestContext context, GameServerConfig config, GameDatabaseContext database, string platform, string publisher, string language, GameSession session, GameUser user)
+    [GameEndpoint("{platform}/{publisher}/{language}/~eula.get"), Authentication(false)]
+    public string? Eula(RequestContext context, GameServerConfig config, GameDatabaseContext database, string platform, string publisher, string language, GameSession? session, GameUser? user)
     {
-        if (session.SessionType == SessionType.Game)
+        if (session?.SessionType == SessionType.Game)
             return EulaEndpoint.NormalEula(config);
 
         string? eula = null;
-        
-        IQueryable<Punishment> bans = GetActiveUserBans(user);
-        
-        if (user.Deleted)
-            eula = $"The account attached to your username ({user.Username}) has been deleted, and is no longer available.";
-        else if (bans.Any())
+
+        if (user == null)
         {
-            Punishment longestBan = bans.Last();
+            if (!config.AccountCreation)
+                eula = "Account Creation is disabled on this instance.";
+            else
+                return null;
+        }
             
-            eula = "You are banned.\n" +
-                   "Expires at " + longestBan.ExpiryDate.Date + ".\n" + 
-                   "Reason: \"" + longestBan.Reason + "\"";
-        }
-        else if (user.HasFinishedRegistration == false)
+        
+        else if (user.Deleted)
+            eula = $"The account attached to your username ({user.Username}) has been deleted, and is no longer available.";
+        else
         {
-            IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
+            IQueryable<Punishment> bans = GetActiveUserBans(user);
+            if (bans.Any())
+            {
+                Punishment longestBan = bans.Last();
+            
+                eula = "You are banned.\n" +
+                       "Expires at " + longestBan.ExpiryDate.Date + ".\n" + 
+                       "Reason: \"" + longestBan.Reason + "\"";
+            }
+            else if (user.HasFinishedRegistration == false)
+            {
+                IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
 
-            string emailSessionId = GenerateEmailSessionId(database);
-            database.CreateSession(user, SessionType.SetEmail, session.PlatformType, Globals.TenMinutesInSeconds, emailSessionId, ip);
-            eula = $"Your account is not registered.\n" +
-                   $"To proceed, you will have to register an account at {config.WebsiteUrl}/register\n" +
-                   $"Your email code is: {emailSessionId}";
+                string emailSessionId = GenerateEmailSessionId(database);
+                database.CreateSession(user, SessionType.SetEmail, session.PlatformType, Globals.TenMinutesInSeconds, emailSessionId, ip);
+                eula = $"Your account is not registered.\n" +
+                       $"To proceed, you will have to register an account at {config.WebsiteUrl}/register\n" +
+                       $"Your email code is: {emailSessionId}";
+            }
+            else if (session.Ip is { Authorized: false })
+                return $"Your IP address has not been authorized.\n" +
+                       $"To proceed, you will have to log into your account at {config.WebsiteUrl}/authorization " +
+                       $"and approve your IP address.";
         }
-        else if (session.Ip is { Authorized: false })
-            return $"Your IP address has not been authorized.\n" +
-                   $"To proceed, you will have to log into your account at {config.WebsiteUrl}/authorization " +
-                   $"and approve your IP address.";
-
+        
         return eula + $"\n-\n{DateTime.UtcNow}";
     }
 }
