@@ -22,9 +22,9 @@ public class GameServer
 {
     protected readonly BunkumHttpServer ServerInstance;
     protected readonly GameDatabaseProvider DatabaseProvider;
-    protected readonly IDataStore DataStore;
+    private readonly IDataStore _dataStore;
     private readonly SessionProvider _authProvider;
-    private GameServerConfig _config;
+    protected GameServerConfig? Config;
 
     public GameServer(BunkumHttpListener? listener = null,
         GameDatabaseProvider? databaseProvider = null,
@@ -36,7 +36,7 @@ public class GameServer
         dataStore ??= new FileSystemDataStore();
 
         DatabaseProvider = databaseProvider;
-        DataStore = dataStore;
+        _dataStore = dataStore;
         _authProvider = (SessionProvider)authProvider;
         ServerInstance = listener == null ? new BunkumHttpServer() : new BunkumHttpServer(listener);
         
@@ -74,13 +74,13 @@ public class GameServer
 
     protected virtual void SetUpConfiguration()
     {
-        _config = Config.LoadFromFile<GameServerConfig>("gameServer.json", ServerInstance.Logger);
-        ServerInstance.UseConfig(_config);
+        Config ??= Bunkum.HttpServer.Configuration.Config.LoadFromFile<GameServerConfig>("gameServer.json", ServerInstance.Logger);
+        ServerInstance.UseConfig(Config);
     }
 
     protected virtual void SetUpServices()
     {
-        ServerInstance.AddRateLimitService(_config.RateLimitSettings);
+        ServerInstance.AddRateLimitService(Config!.RateLimitSettings);
         ServerInstance.AddService<DocumentationService>();
         ServerInstance.AddService<EmailService>();
         ServerInstance.AddProfanityService();
@@ -129,6 +129,6 @@ public class GameServer
 
     public void ImportLevels()
     {
-        LevelImporting.ImportLevels(DatabaseProvider.GetContext(), DataStore);
+        LevelImporting.ImportLevels(DatabaseProvider.GetContext(), _dataStore);
     }
 }
