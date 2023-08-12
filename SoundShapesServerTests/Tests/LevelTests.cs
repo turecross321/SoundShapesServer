@@ -1,7 +1,6 @@
 using System.Net.Http.Json;
 using Newtonsoft.Json.Linq;
 using SoundShapesServer.Requests.Api;
-using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;

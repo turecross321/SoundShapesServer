@@ -3,13 +3,12 @@ using Bunkum.AutoDiscover.Extensions;
 using Bunkum.CustomHttpListener;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Authentication;
-using Bunkum.HttpServer.RateLimit;
+using Bunkum.HttpServer.Configuration;
 using Bunkum.HttpServer.Storage;
 using Bunkum.ProfanityFilter;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
-using SoundShapesServer.Documentation;
 using SoundShapesServer.Endpoints;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Middlewares;
@@ -25,6 +24,7 @@ public class GameServer
     protected readonly GameDatabaseProvider DatabaseProvider;
     protected readonly IDataStore DataStore;
     private readonly SessionProvider _authProvider;
+    private GameServerConfig _config;
 
     public GameServer(BunkumHttpListener? listener = null,
         GameDatabaseProvider? databaseProvider = null,
@@ -74,12 +74,13 @@ public class GameServer
 
     protected virtual void SetUpConfiguration()
     {
-        ServerInstance.UseJsonConfig<GameServerConfig>("gameServer.json");
+        _config = Config.LoadFromFile<GameServerConfig>("gameServer.json", ServerInstance.Logger);
+        ServerInstance.UseConfig(_config);
     }
 
     protected virtual void SetUpServices()
     {
-        ServerInstance.AddRateLimitService(new RateLimitSettings(30, 400, 0)); // Todo: figure out a good balance here between security and usability
+        ServerInstance.AddRateLimitService(_config.RateLimitSettings);
         ServerInstance.AddService<DocumentationService>();
         ServerInstance.AddService<EmailService>();
         ServerInstance.AddProfanityService();

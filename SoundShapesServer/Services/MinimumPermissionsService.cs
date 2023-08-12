@@ -8,7 +8,6 @@ using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Services;
 using NotEnoughLogs;
 using SoundShapesServer.Attributes;
-using SoundShapesServer.Authentication;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
