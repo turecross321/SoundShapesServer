@@ -1,3 +1,5 @@
+using SoundShapesServer.Types.Levels;
+
 #pragma warning disable CS8618
 namespace SoundShapesServer.Requests.Api;
 
@@ -5,4 +7,5 @@ namespace SoundShapesServer.Requests.Api;
 public class ApiEditLevelRequest
 {
     public string Name { get; set; }
+    public LevelVisibility Visibility { get; set; }
 }

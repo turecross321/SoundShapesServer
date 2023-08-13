@@ -24,7 +24,7 @@ public partial class GameDatabaseContext
     public GameLevel CreateLevel(GameUser user, PublishLevelRequest request, bool createEvent = true, string? levelId = null)
     {
         levelId ??= GenerateLevelId();
-        GameLevel level = new(levelId, user, AdhereToLevelNameCharacterLimit(request.Name), request.Language, request.FileSize, request.Created);
+        GameLevel level = new(levelId, user, AdhereToLevelNameCharacterLimit(request.Name), request.Language, request.FileSize, request.CreationDate, request.Visibility);
 
         _realm.Write(() =>
         {
@@ -42,6 +42,7 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             level.Name = AdhereToLevelNameCharacterLimit(updatedPublishLevel.Name);
+            level.Visibility = updatedPublishLevel.Visibility;
             level.ModificationDate = DateTimeOffset.UtcNow;
         });
 
@@ -50,10 +51,7 @@ public partial class GameDatabaseContext
 
     private void SetLevelPlayTime(GameLevel level)
     {
-        // GameLevel doesn't have a LeaderboardEntry backlink since leaderboard entries only store the level id
-        // (which is to support campaign levels)
-        IQueryable<LeaderboardEntry> entriesOnLevel = _realm.All<LeaderboardEntry>().Where(e => e.LevelId == level.Id);
-        long totalPlayTime = entriesOnLevel.AsEnumerable().Sum(e => e.PlayTime);
+        long totalPlayTime = level.LeaderboardEntries.AsEnumerable().Sum(e => e.PlayTime);
 
         _realm.Write(() =>
         {
@@ -173,7 +171,7 @@ public partial class GameDatabaseContext
             }
             _realm.RemoveRange(level.DailyLevels);
             _realm.RemoveRange(level.Likes);
-            _realm.RemoveRange(_realm.All<LeaderboardEntry>().Where(e=>e.LevelId == level.Id));
+            _realm.RemoveRange(level.LeaderboardEntries);
             _realm.Remove(level);
         });
     }
@@ -232,24 +230,24 @@ public partial class GameDatabaseContext
         return levels.AsQueryable();
     }
 
-    public (GameLevel[], int) GetPaginatedLevels(LevelOrderType order, bool descending, LevelFilters filters, int from, int count)
+    public (GameLevel[], int) GetPaginatedLevels(LevelOrderType order, bool descending, LevelFilters filters, int from, int count, GameUser? user)
     {
-        IQueryable<GameLevel> orderedLevels = GetLevels(order, descending, filters);
+        IQueryable<GameLevel> orderedLevels = GetLevels(order, descending, filters, user);
         GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(orderedLevels, from, count);
 
         return (paginatedLevels, orderedLevels.Count());
     }
 
-    public IQueryable<GameLevel> GetLevels(LevelOrderType order, bool descending, LevelFilters filters)
+    public IQueryable<GameLevel> GetLevels(LevelOrderType order, bool descending, LevelFilters filters, GameUser? user = null)
     {
         IQueryable<GameLevel> levels = _realm.All<GameLevel>();
-        IQueryable<GameLevel> filteredLevels = FilterLevels(levels, filters);
+        IQueryable<GameLevel> filteredLevels = FilterLevels(levels, filters, user);
         IQueryable<GameLevel> orderedLevels = OrderLevels(filteredLevels, order, descending);
 
         return orderedLevels;
     }
 
-    private IQueryable<GameLevel> FilterLevels(IQueryable<GameLevel> levels, LevelFilters filters)
+    private IQueryable<GameLevel> FilterLevels(IQueryable<GameLevel> levels, LevelFilters filters, GameUser? user = null)
     {
         IQueryable<GameLevel> response = levels;
         
@@ -393,6 +391,9 @@ public partial class GameDatabaseContext
         {
             response = response.Where(l => l.HasExplodingCar == filters.HasExplodingCar);
         }
+
+        IQueryable<GameLevel> nonPublicLevels = response.Where(l => l.Author != user && l._Visibility != (int)LevelVisibility.Public);
+        response = response.AsEnumerable().Except(nonPublicLevels).AsQueryable();
         
         return response;
     }

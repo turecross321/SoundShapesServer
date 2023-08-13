@@ -1,6 +1,7 @@
 using Realms;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Events;
+using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
 #pragma warning disable CS8618
@@ -9,7 +10,7 @@ namespace SoundShapesServer.Types.Levels;
 
 public class GameLevel : RealmObject
 {
-    public GameLevel(string id, GameUser author, string name, int language, long fileSize, DateTimeOffset creationDate)
+    public GameLevel(string id, GameUser author, string name, int language, long fileSize, DateTimeOffset creationDate, LevelVisibility visibility)
     {
         Id = id;
         Author = author;
@@ -18,6 +19,7 @@ public class GameLevel : RealmObject
         CreationDate = creationDate;
         ModificationDate = creationDate;
         FileSize = fileSize;
+        Visibility = visibility;
     }
     
     // Realm cries if this doesn't exist
@@ -29,6 +31,16 @@ public class GameLevel : RealmObject
     public GameUser Author { get; init; }
     public string Name { get; set; }
     public int Language { get; set; }
+    
+    // Realm can't store enums, use recommended workaround
+    // ReSharper disable once InconsistentNaming (can't fix due to conflict with PunishmentType)
+    // ReSharper disable once MemberCanBePrivate.Global
+    internal int _Visibility { get; set; }
+    public LevelVisibility Visibility
+    {
+        get => (LevelVisibility)_Visibility;
+        set => _Visibility = (int)value;
+    }
     public string? LevelFilePath { get; set; }
     public string? ThumbnailFilePath { get; set; }
     public string? SoundFilePath { get; set; }
@@ -49,6 +61,7 @@ public class GameLevel : RealmObject
     [Backlink(nameof(GameAlbum.Levels))] public IQueryable<GameAlbum> Albums { get; }
     [Backlink(nameof(DailyLevel.Level))] public IQueryable<DailyLevel> DailyLevels { get; }
     [Backlink(nameof(GameEvent.ContentLevel))] public IQueryable<GameEvent> Events { get; }
+    [Backlink(nameof(LeaderboardEntry.Level))] public IQueryable<LeaderboardEntry> LeaderboardEntries { get; }
     // ReSharper restore UnassignedGetOnlyAutoProperty
     public long FileSize { get; set; }
     public float Difficulty { get; set; }

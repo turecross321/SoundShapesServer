@@ -6,6 +6,7 @@ using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types.Leaderboard;
+using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.LeaderboardHelper;
 
@@ -20,14 +21,18 @@ public class ApiLeaderboardEndpoints : EndpointGroup
     {
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context, false);
 
-        string? onLevel = context.QueryString["onLevel"];        
+        string? onLevelId = context.QueryString["onLevel"];
+        GameLevel? onLevel = null;
+        if (onLevelId != null) onLevel = database.GetLevelWithId(onLevelId);
+        
         string? byUserId = context.QueryString["byUser"];
+        GameUser? byUser = null;
+        if (byUserId != null) byUser = database.GetUserWithId(byUserId);
+        
+        
         bool onlyBest = bool.Parse(context.QueryString["onlyBest"] ?? "false");
         bool? completed = null;
         if (bool.TryParse(context.QueryString["completed"], out bool completedTemp)) completed = completedTemp;
-
-        GameUser? byUser = null;
-        if (byUserId != null) byUser = database.GetUserWithId(byUserId);
         
         string? orderString = context.QueryString["orderBy"];
 

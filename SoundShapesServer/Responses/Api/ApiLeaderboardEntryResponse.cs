@@ -1,3 +1,4 @@
+using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.Leaderboard;
 
@@ -8,7 +9,7 @@ public class ApiLeaderboardEntryResponse : IApiResponse
     public ApiLeaderboardEntryResponse(LeaderboardEntry entry, int position)
     {
         Id = entry.Id;
-        LevelId = entry.LevelId;
+        Level = new ApiLevelBriefResponse(entry.Level);
         Position = position;
         User = new ApiUserBriefResponse(entry.User);
         Score = entry.Score;
@@ -20,7 +21,7 @@ public class ApiLeaderboardEntryResponse : IApiResponse
     }
 
     public string Id { get; set; }
-    public string LevelId { get; set; } // Not a BriefLevelResponse because it should support campaign levels too
+    public ApiLevelBriefResponse Level { get; set; }
     public int Position { get; set; }
     public ApiUserBriefResponse User { get; set; }
     public long Score { get; set; }

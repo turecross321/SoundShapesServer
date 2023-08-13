@@ -39,7 +39,7 @@ public class AlbumEndpoints : EndpointGroup
 
         if (album == null) return HttpStatusCode.NotFound;
 
-        (GameLevel[] levels, int totalLevels) = database.GetPaginatedLevels(LevelOrderType.Difficulty, true, new LevelFilters(inAlbum: album), from, count);
+        (GameLevel[] levels, int totalLevels) = database.GetPaginatedLevels(LevelOrderType.Difficulty, true, new LevelFilters(inAlbum: album), from, count, user);
 
         if (order == "time:ascn")
             return new Response(new ListResponse<LevelResponse>(levels.Select(l=>new LevelResponse(l, user)), totalLevels, from, count), ContentType.Json);

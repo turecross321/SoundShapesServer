@@ -8,6 +8,7 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api.Levels;
 
@@ -16,14 +17,14 @@ public class ApiLevelEndpoints: EndpointGroup
     [ApiEndpoint("levels"), Authentication(false)]
     [DocUsesPageData]
     [DocSummary("Lists levels.")]
-    public ApiListResponse<ApiLevelBriefResponse> GetLevels(RequestContext context, GameDatabaseContext database)
+    public ApiListResponse<ApiLevelBriefResponse> GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user)
     {
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
 
         LevelFilters filters = LevelHelper.GetLevelFilters(context, database);
         LevelOrderType order = LevelHelper.GetLevelOrderType(context);
 
-        (GameLevel[] levels, int levelCount) = database.GetPaginatedLevels(order, descending, filters, from, count);
+        (GameLevel[] levels, int levelCount) = database.GetPaginatedLevels(order, descending, filters, from, count, user);
         
         return new ApiListResponse<ApiLevelBriefResponse>(levels.Select(l => new ApiLevelBriefResponse(l)), levelCount);
     }
@@ -31,9 +32,15 @@ public class ApiLevelEndpoints: EndpointGroup
     [ApiEndpoint("levels/id/{levelId}"), Authentication(false)]
     [DocSummary("Retrieves level with specified ID.")]
     [DocError(typeof(NotFoundError), NotFoundError.LevelNotFoundWhen)]
-    public ApiLevelFullResponse? GetLevelWithId(RequestContext context, GameDatabaseContext database, string levelId)
+    public ApiLevelFullResponse? GetLevelWithId(RequestContext context, GameDatabaseContext database, string levelId, GameUser? user)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
-        return level == null ? null : new ApiLevelFullResponse(level);
+        if (level == null)
+            return null;
+
+        if (level.Visibility == LevelVisibility.Private && level.Author.Id != user?.Id)
+            return null; 
+            
+        return new ApiLevelFullResponse(level);
     }
 }

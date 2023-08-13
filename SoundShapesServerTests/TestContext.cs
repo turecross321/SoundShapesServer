@@ -98,7 +98,7 @@ public class TestContext : IDisposable
             Score = score
         };
 
-        LeaderboardEntry entry = Database.CreateLeaderboardEntry(request, user, level.Id);
+        LeaderboardEntry entry = Database.CreateLeaderboardEntry(request, user, level);
 
         return entry;
     }

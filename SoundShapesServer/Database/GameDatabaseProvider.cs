@@ -16,7 +16,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 51;
+    protected override ulong SchemaVersion => 53;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -40,7 +40,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
     };
 
     protected override string Filename => "database.realm";
-
+    
     public override void Warmup()
     {
         using GameDatabaseContext context = GetContext();
@@ -49,6 +49,8 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 
     protected override void Migrate(Migration migration, ulong oldVersion)
     {
+        GameUser adminUser = migration.NewRealm.All<GameUser>().First(u => u.Id == GameDatabaseContext.AdminId);
+        
         IQueryable<dynamic> oldUsers = migration.OldRealm.DynamicApi.All("GameUser");
         IQueryable<GameUser> newUsers = migration.NewRealm.All<GameUser>();
         for (int i = 0; i < newUsers.Count(); i++)
@@ -143,14 +145,6 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                 // Renamed Date to CreationDate
                 newEvent.CreationDate = (DateTimeOffset)oldEvent.Date;
             }
-
-            if (oldVersion < 51)
-            {
-                // Fixed oversight where leaderboard events don't set the ContentLevel
-                if (newEvent.ContentLeaderboardEntry != null)
-                    newEvent.ContentLevel = migration.NewRealm.All<GameLevel>()
-                        .FirstOrDefault(l => l.Id == newEvent.ContentLeaderboardEntry.LevelId);
-            }
         }
         
         IQueryable<dynamic> oldLeaderboardEntries = migration.OldRealm.DynamicApi.All("LeaderboardEntry");
@@ -170,6 +164,26 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             {
                 // Renamed Date to CreationDate
                 newEntry.CreationDate = (DateTimeOffset)oldEntry.Date;
+            }
+
+            if (oldVersion < 52)
+            {
+                // Replaced LevelId with Level
+                string levelId = (string)oldEntry.LevelId;
+                
+                GameLevel? level = migration.NewRealm.All<GameLevel>().FirstOrDefault(l => l.Id == levelId);
+                if (level == null)
+                {
+                    level = new GameLevel
+                    {
+                        Author = adminUser,
+                        Id = levelId,
+                        Name = levelId,
+                        Visibility = LevelVisibility.Private
+                    };
+                    migration.NewRealm.Add(level);
+                }
+                newEntry.Level = level;
             }
         }
         

@@ -34,15 +34,14 @@ public class LeaderboardEndpoints : EndpointGroup
         LeaderboardSubmissionRequest deSerializedRequest = DeSerializeSubmission(body);
         
         GameLevel? level = database.GetLevelWithId(levelId);
-        if (level != null) // Doing this since story levels can be null
-        {
-            if (deSerializedRequest.Completed) database.AddCompletionToLevel(user, level);
-            database.CreatePlay(user, level);
-            database.AddDeathsToLevel(user, level, deSerializedRequest.Deaths);
-            database.SetLevelDifficulty(level);
-        }
+        if (level == null) return HttpStatusCode.NotFound;
+        
+        if (deSerializedRequest.Completed) database.AddCompletionToLevel(user, level);
+        database.CreatePlay(user, level);
+        database.AddDeathsToLevel(user, level, deSerializedRequest.Deaths);
+        database.SetLevelDifficulty(level);
 
-        database.CreateLeaderboardEntry(deSerializedRequest, user, levelId);
+        database.CreateLeaderboardEntry(deSerializedRequest, user, level);
 
         return HttpStatusCode.OK;
     }
@@ -50,12 +49,15 @@ public class LeaderboardEndpoints : EndpointGroup
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.page")] // campaign levels
     [GameEndpoint("~level:{levelId}/~leaderboard.page")] // community levels
     [GameEndpoint("{levelId}/~leaderboard.page")] // recent activity community levels 
-    public ListResponse<LeaderboardEntryResponse> GetLeaderboard(RequestContext context, GameDatabaseContext database, string levelId)
+    public ListResponse<LeaderboardEntryResponse>? GetLeaderboard(RequestContext context, GameDatabaseContext database, string levelId)
     {
         (int from, int count, bool _) = PaginationHelper.GetPageData(context);
         const bool descending = false;
 
-        LeaderboardFilters filters = new (levelId, onlyBest: true, completed: true);
+        GameLevel? level = database.GetLevelWithId(levelId);
+        if (level == null) return null;
+
+        LeaderboardFilters filters = new (level, onlyBest: true, completed: true);
         (int totalEntries, LeaderboardEntry[] paginatedEntries) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, from, count);
 
         List<LeaderboardEntryResponse> responses = 
@@ -68,9 +70,12 @@ public class LeaderboardEndpoints : EndpointGroup
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near")] // campaign levels
     [GameEndpoint("~level:{levelId}/~leaderboard.near")] // community levels
     [GameEndpoint("{levelId}/~leaderboard.near")] // recent activity community levels 
-    public LeaderboardEntryResponse[] GetLeaderboardNearPlayer(RequestContext context, GameDatabaseContext database, GameUser user, string levelId)
+    public LeaderboardEntryResponse[]? GetLeaderboardNearPlayer(RequestContext context, GameDatabaseContext database, GameUser user, string levelId)
     {
-        LeaderboardFilters filters = new (levelId, user, completed:true);
+        GameLevel? level = database.GetLevelWithId(levelId);
+        if (level == null) return null;
+        
+        LeaderboardFilters filters = new (level, user, completed:true);
 
         (int _, LeaderboardEntry[] paginatedEntries) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 1);
         

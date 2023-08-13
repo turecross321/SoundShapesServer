@@ -9,21 +9,19 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public LeaderboardEntry CreateLeaderboardEntry(LeaderboardSubmissionRequest request, GameUser user, string levelId)
+    public LeaderboardEntry CreateLeaderboardEntry(LeaderboardSubmissionRequest request, GameUser user, GameLevel level)
     {
-        LeaderboardEntry entry = new (GenerateGuid(), user, levelId, request);
+        LeaderboardEntry entry = new (GenerateGuid(), user, level, request);
 
         _realm.Write(() =>
         {
             _realm.Add(entry);
         });
         
-        GameLevel? level = GetLevelWithId(levelId);
-        if (level != null) SetLevelPlayTime(level);
-        
+        SetLevelPlayTime(level);
         CreateEvent(user, EventType.ScoreSubmission, null, level, entry);
-
         SetUserPlayTime(user);
+        
         return entry;
     }
 
@@ -32,7 +30,7 @@ public partial class GameDatabaseContext
         IQueryable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>();
         
         IQueryable<LeaderboardEntry> filteredEntries = FilterLeaderboard(entries,
-            new LeaderboardFilters(onLevel: entry.LevelId, completed: true, onlyBest: true));
+            new LeaderboardFilters(onLevel: entry.Level, completed: true, onlyBest: true));
         IQueryable<LeaderboardEntry> orderedEntries = OrderLeaderboardByScore(filteredEntries, false);
 
         return orderedEntries.ToList().IndexOf(entry);
@@ -76,7 +74,7 @@ public partial class GameDatabaseContext
         
         if (filters.OnLevel != null)
         {
-            response = response.Where(e => e.LevelId == filters.OnLevel);
+            response = response.Where(e => e.Level == filters.OnLevel);
         }
 
         if (filters.ByUser != null)

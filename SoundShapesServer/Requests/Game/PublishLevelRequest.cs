@@ -1,15 +1,17 @@
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Requests.Game;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class PublishLevelRequest
 {
-    public PublishLevelRequest(string name, int language, DateTimeOffset? created = null)
+    public PublishLevelRequest(string name, int language, DateTimeOffset? created = null, LevelVisibility visibility = LevelVisibility.Public)
     {
         Name = name;
         Language = language;
-        Created = created ?? DateTimeOffset.UtcNow;
+        CreationDate = created ?? DateTimeOffset.UtcNow;
+        Visibility = visibility;
     }
 
     public PublishLevelRequest(ApiPublishLevelRequest request)
@@ -18,7 +20,7 @@ public class PublishLevelRequest
         Language = request.Language;
         FileSize = 0;
         if (request.CreationDate != null)
-            Created = DateTimeOffset.FromUnixTimeSeconds((long)request.CreationDate);
+            CreationDate = DateTimeOffset.FromUnixTimeSeconds((long)request.CreationDate);
     }
 
     public PublishLevelRequest(ApiEditLevelRequest request)
@@ -27,7 +29,8 @@ public class PublishLevelRequest
     }
 
     public string Name { get; set; }
-    public int Language { get; }
-    public long FileSize { get; }
-    public DateTimeOffset Created { get; }    
+    public int Language { get; set; }
+    public long FileSize { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
+    public LevelVisibility Visibility { get; set; }
 }

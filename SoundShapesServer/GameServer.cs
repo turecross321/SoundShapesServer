@@ -12,7 +12,9 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Endpoints;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Middlewares;
+using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Services;
+using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 
@@ -130,5 +132,19 @@ public class GameServer
     public void ImportLevels()
     {
         LevelImporting.ImportLevels(DatabaseProvider.GetContext(), _dataStore);
+    }
+
+    public void AddOfflineLevels()
+    {
+        GameDatabaseContext context = DatabaseProvider.GetContext();
+        GameUser adminUser = context.GetAdminUser();
+        
+        foreach (string id in LevelHelper.OfflineLevelIds)
+        {
+            if (context.GetLevelWithId(id) != null)
+                continue;
+            PublishLevelRequest request = new (id, 0, new DateTimeOffset(), LevelVisibility.Private);
+            context.CreateLevel(adminUser, request, false, id);
+        }
     }
 }

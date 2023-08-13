@@ -11,14 +11,15 @@ namespace SoundShapesServer.Database;
 public partial class GameDatabaseContext
 {
     private const string AdminUsername = "admin";
+    public const string AdminId = "00000000-0000-0000-0000-000000000000";
     public GameUser GetAdminUser()
     {
-        GameUser? user = GetUserWithUsername(AdminUsername);
+        GameUser? user = GetUserWithId(AdminId);
         if (user != null) return user;
 
         user ??= new GameUser
         {
-            Id = new Guid().ToString(), // 00000000-0000-0000-0000-000000000000
+            Id = AdminId,
             Username = AdminUsername,
             PermissionsType = PermissionsType.Administrator,
             HasFinishedRegistration = true

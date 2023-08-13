@@ -1,16 +1,17 @@
 using Realms;
 using SoundShapesServer.Requests.Game;
+using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Types.Leaderboard;
 
 public class LeaderboardEntry : RealmObject
 {
-    public LeaderboardEntry(string id, GameUser user, string levelId, LeaderboardSubmissionRequest request)
+    public LeaderboardEntry(string id, GameUser user, GameLevel level, LeaderboardSubmissionRequest request)
     {
         Id = id;
         User = user;
-        LevelId = levelId;
+        Level = level;
         Score = request.Score;
         PlayTime = Math.Max(request.PlayTime, 0);
         Deaths = Math.Max(request.Deaths, 0);
@@ -28,7 +29,7 @@ public class LeaderboardEntry : RealmObject
     [PrimaryKey]
     [Required] public string Id { get; set; }
     public GameUser User { get; init; }
-    public string LevelId { get; set; }
+    public GameLevel Level { get; set; }
     public long Score { get; set; }
     public long PlayTime { get; set; }
     public int Deaths { get; set; }

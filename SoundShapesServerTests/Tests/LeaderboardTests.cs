@@ -33,12 +33,12 @@ public class LeaderboardTests: ServerTest
         
         // Only best entries on first level
         IEnumerable<LeaderboardEntry> entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
-            false, new LeaderboardFilters(onlyBest: true, onLevel:firstLevel.Id));
+            false, new LeaderboardFilters(onlyBest: true, onLevel:firstLevel));
         Assert.That(entries.Count(), Is.EqualTo(usersOnFirstLevel));
         
         // All entries on second level
         entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
-            false, new LeaderboardFilters(onlyBest: false, onLevel:secondLevel.Id));
+            false, new LeaderboardFilters(onlyBest: false, onLevel:secondLevel));
         Assert.That(entries.Count(), Is.EqualTo(usersOnSecondLevel * scoresPerUser));
         
         // All entries
@@ -104,7 +104,7 @@ public class LeaderboardTests: ServerTest
 
         context.Database.Refresh();
 
-        LeaderboardFilters filters = new(onLevel: level.Id, byUser:user);
+        LeaderboardFilters filters = new(onLevel: level, byUser:user);
         IQueryable<LeaderboardEntry> entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters);
         
         Assert.That(entries.Count(), Is.EqualTo(1));
@@ -119,7 +119,7 @@ public class LeaderboardTests: ServerTest
         context.FillLeaderboard(level, amount, 2);
         LeaderboardEntry entry = context.SubmitLeaderboardEntry(score, level, user);
 
-        LeaderboardFilters filters = new(onLevel:level.Id);
+        LeaderboardFilters filters = new(onLevel:level);
         List<LeaderboardEntry> entries = 
             context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters).ToList();
         

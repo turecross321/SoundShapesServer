@@ -12,7 +12,7 @@ public class AuthenticationTests : ServerTest
     {
         using TestContext context = GetServer();
         
-        HttpResponseMessage unAuthedRequest = await context.Http.GetAsync("/otg/ps3/SCEA/en/~eula.get");
+        HttpResponseMessage unAuthedRequest = await context.Http.GetAsync("/otg/~index:activity.page");
         Assert.That(unAuthedRequest.StatusCode, Is.EqualTo(HttpStatusCode.Forbidden));
 
         HttpClient authedClient = context.GetAuthenticatedClient(SessionType.Game, out string sessionId);

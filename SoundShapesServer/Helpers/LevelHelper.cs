@@ -145,4 +145,30 @@ public static class LevelHelper
         return new LevelFilters(byUser, likedBy, queuedBy, likedOrQueuedBy, inAlbum, inDaily, inDailyDate, lastDate, 
             searchQuery, completedBy, bpm, scaleIndex, transposeValue, hasCar, hasExplodingCar);
     }
+
+    public static readonly List<string> OfflineLevelIds = new()
+    {
+        "vic1_ver2",
+        "vic2",
+        "vic3",
+        "vic4_master",
+        "craig1",
+        "craig2",
+        "craig3",
+        "craig4",
+        "colinIce",
+        "colinDesert",
+        "colinFactory",
+        "colinUnderwater",
+        "colinUFO",
+        "pixeljam1",
+        "pixeljam2",
+        "pixeljam3",
+        "pixeljam4",
+        "beckCities",
+        "beckThePeople",
+        "beckSpiralStaircase",
+        "carDLC",
+        "carDLC_metal"
+    };
 }
