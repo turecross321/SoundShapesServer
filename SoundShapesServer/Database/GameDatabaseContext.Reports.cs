@@ -83,34 +83,32 @@ public partial class GameDatabaseContext
 
     private static IQueryable<Report> FilterReports(IQueryable<Report> reports, ReportFilters filters)
     {
-        IQueryable<Report> response = reports;
-
         if (filters.ContentUser != null)
         {
-            response = reports.Where(r => r.ContentUser == filters.ContentUser);
+            reports = reports.Where(r => r.ContentUser == filters.ContentUser);
         }
         
         if (filters.ContentLevel != null)
         {
-            response = reports.Where(r => r.ContentLevel == filters.ContentLevel);
+            reports = reports.Where(r => r.ContentLevel == filters.ContentLevel);
         }
         
         if (filters.ContentLeaderboardEntry != null)
         {
-            response = reports.Where(r => r.ContentLeaderboardEntry == filters.ContentLeaderboardEntry);
+            reports = reports.Where(r => r.ContentLeaderboardEntry == filters.ContentLeaderboardEntry);
         }
 
         if (filters.ContentType != null)
         {
-            response = response.Where(r => r._ContentType == (int)filters.ContentType);
+            reports = reports.Where(r => r._ContentType == (int)filters.ContentType);
         }
 
         if (filters.ReasonType != null)
         {
-            response = response.Where(r => r._ReasonType == (int)filters.ReasonType);
+            reports = reports.Where(r => r._ReasonType == (int)filters.ReasonType);
         }
 
-        return response;
+        return reports;
     }
 
     #region Report Ordering

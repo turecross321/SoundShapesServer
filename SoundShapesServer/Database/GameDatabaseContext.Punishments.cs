@@ -81,24 +81,22 @@ public partial class GameDatabaseContext
 
     private static IQueryable<Punishment> FilterPunishments(IQueryable<Punishment> punishments, PunishmentFilters filters)
     {
-        IQueryable<Punishment> response = punishments;
-
         if (filters.Author != null)
         {
-            response = response.Where(p => p.Author == filters.Author);
+            punishments = punishments.Where(p => p.Author == filters.Author);
         }
 
         if (filters.Recipient != null)
         {
-            response = response.Where(p => p.Recipient == filters.Recipient);
+            punishments = punishments.Where(p => p.Recipient == filters.Recipient);
         }
 
         if (filters.Revoked != null)
         {
-            response = response.Where(p => p.Revoked == filters.Revoked);
+            punishments = punishments.Where(p => p.Revoked == filters.Revoked);
         }
 
-        return response;
+        return punishments;
     }
 
     private static IQueryable<Punishment> OrderPunishments(IQueryable<Punishment> punishments, PunishmentOrderType order,

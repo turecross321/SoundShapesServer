@@ -70,20 +70,18 @@ public partial class GameDatabaseContext
 
     private static IQueryable<DailyLevel> FilterDailyLevels(IQueryable<DailyLevel> dailyLevels, DailyLevelFilters filters)
     {
-        IQueryable<DailyLevel> response = dailyLevels;
-
         if (filters.LastDate == true)
         {
-            response = response
+            dailyLevels = dailyLevels
                 .OrderByDescending(d => d.Date);
 
             IList<DailyLevel> dailiesOnLastDate = new List<DailyLevel>();
 
-            if (response.Any())
+            if (dailyLevels.Any())
             {
-                DateTimeOffset lastDate = response.ToArray()[0].Date.Date;
+                DateTimeOffset lastDate = dailyLevels.ToArray()[0].Date.Date;
 
-                foreach (DailyLevel dailyLevel in response)
+                foreach (DailyLevel dailyLevel in dailyLevels)
                 {
                     if (dailyLevel.Date < lastDate) break;
                     
@@ -91,18 +89,18 @@ public partial class GameDatabaseContext
                 }
             }
 
-            response = dailiesOnLastDate.AsQueryable();
+            dailyLevels = dailiesOnLastDate.AsQueryable();
         }
 
         if (filters.Date != null)
         {
-            response = response
+            dailyLevels = dailyLevels
                 .AsEnumerable()
                 .Where(d => d.Date.Date == filters.Date?.Date)
                 .AsQueryable();
         }
 
-        return response;
+        return dailyLevels;
     }
     
 

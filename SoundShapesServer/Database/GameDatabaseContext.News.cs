@@ -91,11 +91,9 @@ public partial class GameDatabaseContext
 
     private IQueryable<NewsEntry> FilterNews(IQueryable<NewsEntry> entries, NewsFilters filters)
     {
-        IQueryable<NewsEntry> response = entries;
-
         if (filters.Language != null)
         {
-            response = response.Where(e => e.Language == filters.Language);
+            entries = entries.Where(e => e.Language == filters.Language);
         }
 
         if (filters.Authors != null)
@@ -105,13 +103,13 @@ public partial class GameDatabaseContext
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (GameUser author in filters.Authors)
             {
-                tempResponse = tempResponse.Concat(response.Where(e=> e.Author == author));
+                tempResponse = tempResponse.Concat(entries.Where(e=> e.Author == author));
             }
 
-            response = tempResponse.AsQueryable();
+            entries = tempResponse.AsQueryable();
         }
 
-        return response;
+        return entries;
     }
 
     #region News Ordering
