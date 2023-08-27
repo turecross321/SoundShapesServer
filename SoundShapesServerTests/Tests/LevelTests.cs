@@ -24,14 +24,14 @@ public class LevelTests: ServerTest
         context.Database.Refresh();
 
         // Filtration
-        IEnumerable<GameLevel> levels = context.Database.GetLevels(LevelOrderType.CreationDate, true, new LevelFilters(search: firstLevel.Name));
+        IEnumerable<GameLevel> levels = context.Database.GetLevels(LevelOrderType.CreationDate, true, new LevelFilters(search: firstLevel.Name), null);
         Assert.That(levels.Count(), Is.EqualTo(1), "Check if filtration works");
 
         // Ordering
-        levels = context.Database.GetLevels(LevelOrderType.CreationDate, true, new LevelFilters());
+        levels = context.Database.GetLevels(LevelOrderType.CreationDate, true, new LevelFilters(), null);
         Assert.That(levels.First().CreationDate, Is.GreaterThan(levels.Last().CreationDate), "Check if ordering works");
         
-        levels = context.Database.GetLevels(LevelOrderType.CreationDate, false, new LevelFilters());
+        levels = context.Database.GetLevels(LevelOrderType.CreationDate, false, new LevelFilters(), null);
         Assert.That(levels.First().CreationDate, Is.LessThan(levels.Last().CreationDate), "Check if descending toggle works");
     }
     

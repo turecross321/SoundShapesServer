@@ -38,8 +38,8 @@ public class ApiLevelEndpoints: EndpointGroup
         if (level == null)
             return null;
 
-        if (level.Visibility == LevelVisibility.Private && level.Author.Id != user?.Id)
-            return null; 
+        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+            return null;
             
         return new ApiLevelFullResponse(level);
     }

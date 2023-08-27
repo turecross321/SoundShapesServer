@@ -143,7 +143,7 @@ public class GameServer
         {
             if (context.GetLevelWithId(id) != null)
                 continue;
-            PublishLevelRequest request = new (id, 0, new DateTimeOffset(), LevelVisibility.Private);
+            PublishLevelRequest request = new (id, 0, new DateTimeOffset(), LevelVisibility.Unlisted);
             context.CreateLevel(adminUser, request, false, id);
         }
     }

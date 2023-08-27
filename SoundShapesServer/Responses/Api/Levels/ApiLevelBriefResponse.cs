@@ -17,6 +17,7 @@ public class ApiLevelBriefResponse : IApiResponse
         Likes = level.Likes.Count();
         Queues = level.Queues.Count();
         Difficulty = level.Difficulty;
+        Visibility = level.Visibility;
     }
     
 #pragma warning disable CS8618
@@ -33,4 +34,5 @@ public class ApiLevelBriefResponse : IApiResponse
     public int Likes { get; set; }
     public int Queues { get; set; }
     public float Difficulty { get; set; }
+    public LevelVisibility Visibility { get; set; }
 }

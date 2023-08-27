@@ -3,6 +3,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
+using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api;
 using SoundShapesServer.Types.Leaderboard;
@@ -14,16 +15,17 @@ namespace SoundShapesServer.Endpoints.Api.Leaderboard;
 
 public class ApiLeaderboardEndpoints : EndpointGroup
 {
-    [ApiEndpoint("leaderboard"), Authentication(false)]
+    [ApiEndpoint("levels/id/{levelId}/leaderboard"), Authentication(false)]
     [DocUsesPageData]
-    [DocSummary("Retrieves leaderboard.")]
-    public ApiListResponse<ApiLeaderboardEntryResponse> GetLeaderboard(RequestContext context, GameDatabaseContext database, string id)
+    [DocSummary("Retrieves leaderboard of level.")]
+    [DocError(typeof(NotFoundError), NotFoundError.LevelNotFoundWhen)]
+    public ApiListResponse<ApiLeaderboardEntryResponse>? GetLeaderboard(RequestContext context, GameDatabaseContext database, string levelId, GameUser? user)
     {
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context, false);
 
-        string? onLevelId = context.QueryString["onLevel"];
-        GameLevel? onLevel = null;
-        if (onLevelId != null) onLevel = database.GetLevelWithId(onLevelId);
+        GameLevel? level = database.GetLevelWithId(levelId);
+        if (level == null)
+            return null;
         
         string? byUserId = context.QueryString["byUser"];
         GameUser? byUser = null;
@@ -45,9 +47,9 @@ public class ApiLeaderboardEndpoints : EndpointGroup
             _ => LeaderboardOrderType.Score
         };
 
-        LeaderboardFilters filters = new (onLevel, byUser, completed, onlyBest);
+        LeaderboardFilters filters = new (level, byUser, completed, onlyBest);
         (int totalEntries, LeaderboardEntry[] paginatedEntries) =
-            database.GetPaginatedLeaderboardEntries(order, descending, filters, from, count);
+            database.GetPaginatedLeaderboardEntries(order, descending, filters, from, count, user);
         
         List<ApiLeaderboardEntryResponse> responses = 
             paginatedEntries.Select((e, i) => 

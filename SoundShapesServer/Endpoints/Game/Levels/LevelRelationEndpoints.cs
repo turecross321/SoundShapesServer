@@ -50,6 +50,9 @@ public class LevelRelationEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return new Response(HttpStatusCode.NotFound);
         
+        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+            return HttpStatusCode.NotFound;
+        
         if (requestType == "put") return LikeLevel(database, user, level);
         if (requestType == "get") return CheckIfUserHasLikedLevel(database, user, level);
         if (requestType == "delete") return UnLikeLevel(database, user, level);
@@ -66,6 +69,9 @@ public class LevelRelationEndpoints : EndpointGroup
         
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return new Response(HttpStatusCode.NotFound);
+        
+        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+            return HttpStatusCode.NotFound;
         
         // There is no queue button, and this is always called when the like button is pressed, so ignore it.
         if (requestType == "put") return HttpStatusCode.NotFound;

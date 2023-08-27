@@ -1,4 +1,5 @@
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
@@ -45,27 +46,25 @@ public partial class GameDatabaseContext
         return _realm.All<GameEvent>().FirstOrDefault(e => e.Id == id);
     }
     
-    public (GameEvent[], int) GetPaginatedEvents(EventOrderType order, bool descending,  EventFilters filters, int from, int count)
+    public (GameEvent[], int) GetPaginatedEvents(EventOrderType order, bool descending,  EventFilters filters, int from, int count, GameUser? accessor)
     {
-        IQueryable<GameEvent> orderedEvents = GetEvents(order, descending, filters);
+        IQueryable<GameEvent> orderedEvents = GetEvents(order, descending, filters, accessor);
         GameEvent[] paginatedEvents = PaginationHelper.PaginateEvents(orderedEvents, from, count);
 
         return (paginatedEvents, orderedEvents.Count());
     }
 
-    private IQueryable<GameEvent> GetEvents(EventOrderType order, bool descending, EventFilters filters)
+    private IQueryable<GameEvent> GetEvents(EventOrderType order, bool descending, EventFilters filters, GameUser? accessor)
     {
         IQueryable<GameEvent> events = _realm.All<GameEvent>();
-        IQueryable<GameEvent> filteredEvents = FilterEvents(events, filters);
+        IQueryable<GameEvent> filteredEvents = FilterEvents(events, filters, accessor);
         IQueryable<GameEvent> orderedEvents = OrderEvents(filteredEvents, order, descending);
 
         return orderedEvents;
     }
 
-    private static IQueryable<GameEvent> FilterEvents(IQueryable<GameEvent> events, EventFilters filters)
+    private static IQueryable<GameEvent> FilterEvents(IQueryable<GameEvent> events, EventFilters filters, GameUser? accessor)
     {
-        IQueryable<GameEvent> response = events;
-
         if (filters.Actors != null)
         {
             IEnumerable<GameEvent> tempResponse = new List<GameEvent>();
@@ -73,20 +72,20 @@ public partial class GameDatabaseContext
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (GameUser actor in filters.Actors)
             {
-                tempResponse = tempResponse.Concat(response.Where(e=> e.Actor == actor));
+                tempResponse = tempResponse.Concat(events.Where(e=> e.Actor == actor));
             }
 
-            response = tempResponse.AsQueryable();
+            events = tempResponse.AsQueryable();
         }
         
         if (filters.OnUser != null)
         {
-            response = response.Where(e => e.ContentUser == filters.OnUser);
+            events = events.Where(e => e.ContentUser == filters.OnUser);
         }
         
         if (filters.OnLevel != null)
         {
-            response = response.Where(e => e.ContentLevel == filters.OnLevel);
+            events = events.Where(e => e.ContentLevel == filters.OnLevel);
         }
 
         if (filters.EventTypes != null)
@@ -96,13 +95,38 @@ public partial class GameDatabaseContext
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (EventType eventType in filters.EventTypes)
             {
-                tempResponse = tempResponse.Concat(response.Where(e=> e._EventType == (int)eventType));
+                tempResponse = tempResponse.Concat(events.Where(e=> e._EventType == (int)eventType));
             }
 
-            response = tempResponse.AsQueryable();
+            events = tempResponse.AsQueryable();
+        }
+        
+        // Automatically remove private results, and remove unlisted results if the level hasn't been specified
+        if ((accessor?.PermissionsType ?? PermissionsType.Default) < PermissionsType.Moderator)
+        {
+            List<GameEvent> nonPublicLevelEventsList = new ();
+
+            foreach (GameEvent e in events)
+            {
+                if (e.ContentLevel != null && e.ContentLevel.Author.Id != accessor?.Id &&
+                    e.ContentLevel._Visibility != (int)LevelVisibility.Public)
+                {
+                    nonPublicLevelEventsList.Add(e);
+                }
+            }
+
+            IQueryable<GameEvent> nonPublicLevelEvents = nonPublicLevelEventsList.AsQueryable();
+
+            // If an OnLevel has been specified and the specified level is unlisted, don't count it as non public.
+            if (filters.OnLevel is { Visibility: LevelVisibility.Unlisted })
+            {
+                nonPublicLevelEvents = nonPublicLevelEvents.Where(e => e.ContentLevel != null && e.ContentLevel.Id != filters.OnLevel.Id);
+            }
+                
+            events = events.AsEnumerable().Except(nonPublicLevelEvents).AsQueryable();
         }
 
-        return response;
+        return events;
     }
 
     #region Event Ordering

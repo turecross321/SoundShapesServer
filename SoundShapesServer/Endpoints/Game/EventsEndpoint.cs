@@ -20,7 +20,7 @@ public class EventsEndpoint : EndpointGroup
     
     [GameEndpoint("~identity:{id}/~stream:news.page")]
     [GameEndpoint("~index:activity.page")]
-    public ListResponse<EventResponse> GetEvents(RequestContext context, GameDatabaseContext database, GameUser user)
+    public ListResponse<EventResponse> GetEvents(RequestContext context, GameDatabaseContext database, GameUser? user)
     {
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
 
@@ -28,7 +28,7 @@ public class EventsEndpoint : EndpointGroup
         filters.EventTypes ??= _gameEventTypes;
         EventOrderType order = EventHelper.GetEventOrder(context);
         
-        (GameEvent[] events, int totalEvents) = database.GetPaginatedEvents(order, descending, filters, from, count);
+        (GameEvent[] events, int totalEvents) = database.GetPaginatedEvents(order, descending, filters, from, count, user);
         return new ListResponse<EventResponse>(events.Select(e => new EventResponse(e)), totalEvents, from, count);
     }
 }

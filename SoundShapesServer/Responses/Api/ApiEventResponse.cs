@@ -3,12 +3,13 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Responses.Api.Users;
 using SoundShapesServer.Types.Events;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Api;
 
 public class ApiEventResponse : IApiResponse
 {
-    public ApiEventResponse(GameDatabaseContext database, GameEvent eventObject)
+    public ApiEventResponse(GameDatabaseContext database, GameEvent eventObject, GameUser? accessor)
     {
         Id = eventObject.Id;
         EventType = eventObject.EventType;
@@ -16,10 +17,10 @@ public class ApiEventResponse : IApiResponse
         
         if (eventObject.ContentUser != null)
             ContentUser = new ApiUserBriefResponse(eventObject.ContentUser);
-        if (eventObject.ContentLevel != null)
+        else if (eventObject.ContentLeaderboardEntry != null)
+            ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(eventObject.ContentLeaderboardEntry, database.GetLeaderboardEntryPosition(eventObject.ContentLeaderboardEntry, accessor));
+        else if (eventObject.ContentLevel != null)
             ContentLevel = new ApiLevelBriefResponse(eventObject.ContentLevel);
-        if (eventObject.ContentLeaderboardEntry != null)
-            ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(eventObject.ContentLeaderboardEntry, database.GetLeaderboardEntryPosition(eventObject.ContentLeaderboardEntry));
         
         CreationDate = eventObject.CreationDate.ToUnixTimeSeconds();
     }

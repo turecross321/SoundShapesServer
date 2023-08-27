@@ -1,5 +1,6 @@
 using Bunkum.HttpServer;
 using SoundShapesServer.Database;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
@@ -54,6 +55,11 @@ public static class LevelHelper
     public static string AdhereToLevelNameCharacterLimit(string name)
     {
         return name[..Math.Min(name.Length, LevelNameCharacterLimit)];
+    }
+
+    public static bool IsUserAllowedToAccessLevel(GameLevel level, GameUser? user)
+    {
+        return !(level.Visibility == LevelVisibility.Private && level.Author.Id != user?.Id && user?.PermissionsType < PermissionsType.Moderator);
     }
 
     public static LevelOrderType GetLevelOrderType(RequestContext context)
@@ -168,6 +174,7 @@ public static class LevelHelper
         "beckCities",
         "beckThePeople",
         "beckSpiralStaircase",
+        "carTutorial",
         "carDLC",
         "carDLC_metal"
     };

@@ -1,5 +1,6 @@
 using Bunkum.RealmDatabase;
 using Realms;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Events;
@@ -16,7 +17,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 53;
+    protected override ulong SchemaVersion => 58;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -76,6 +77,17 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             if (oldVersion < 46)
             {
                 newUser.Email = newUser.Email?.ToLower();
+            }
+        }
+
+
+        if (oldVersion < 56)
+        {
+            // Change the Visibility of offline levels to Unlisted instead of Private
+            foreach (string offlineLevelId in LevelHelper.OfflineLevelIds)
+            {
+                GameLevel level = migration.NewRealm.All<GameLevel>().First(l => l.Id == offlineLevelId);
+                level.Visibility = LevelVisibility.Unlisted;
             }
         }
         
@@ -144,6 +156,12 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             {
                 // Renamed Date to CreationDate
                 newEvent.CreationDate = (DateTimeOffset)oldEvent.Date;
+            }
+
+            if (oldVersion < 58)
+            {
+                if (newEvent.ContentLeaderboardEntry != null)
+                    newEvent.ContentLevel = newEvent.ContentLeaderboardEntry.Level;
             }
         }
         

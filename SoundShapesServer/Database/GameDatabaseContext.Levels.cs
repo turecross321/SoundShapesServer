@@ -230,30 +230,28 @@ public partial class GameDatabaseContext
         return levels.AsQueryable();
     }
 
-    public (GameLevel[], int) GetPaginatedLevels(LevelOrderType order, bool descending, LevelFilters filters, int from, int count, GameUser? user)
+    public (GameLevel[], int) GetPaginatedLevels(LevelOrderType order, bool descending, LevelFilters filters, int from, int count, GameUser? accessor)
     {
-        IQueryable<GameLevel> orderedLevels = GetLevels(order, descending, filters, user);
+        IQueryable<GameLevel> orderedLevels = GetLevels(order, descending, filters, accessor);
         GameLevel[] paginatedLevels = PaginationHelper.PaginateLevels(orderedLevels, from, count);
 
         return (paginatedLevels, orderedLevels.Count());
     }
 
-    public IQueryable<GameLevel> GetLevels(LevelOrderType order, bool descending, LevelFilters filters, GameUser? user = null)
+    public IQueryable<GameLevel> GetLevels(LevelOrderType order, bool descending, LevelFilters filters, GameUser? accessor)
     {
         IQueryable<GameLevel> levels = _realm.All<GameLevel>();
-        IQueryable<GameLevel> filteredLevels = FilterLevels(levels, filters, user);
+        IQueryable<GameLevel> filteredLevels = FilterLevels(levels, filters, accessor);
         IQueryable<GameLevel> orderedLevels = OrderLevels(filteredLevels, order, descending);
 
         return orderedLevels;
     }
 
-    private IQueryable<GameLevel> FilterLevels(IQueryable<GameLevel> levels, LevelFilters filters, GameUser? user = null)
+    private IQueryable<GameLevel> FilterLevels(IQueryable<GameLevel> levels, LevelFilters filters, GameUser? accessor)
     {
-        IQueryable<GameLevel> response = levels;
-        
         if (filters.ByUser != null)
         {
-            response = response.Where(l => l.Author == filters.ByUser);
+            levels = levels.Where(l => l.Author == filters.ByUser);
         }
 
         if (filters.LikedByUser != null || filters.QueuedByUser != null || filters.LikedOrQueuedByUser != null)
@@ -274,7 +272,7 @@ public partial class GameDatabaseContext
                 .OrderByDescending(obj => obj.Date)
                 .Select(obj => obj.Level);
 
-            response = combinedLevels.AsQueryable();
+            levels = combinedLevels.AsQueryable();
         }
 
         if (filters.InAlbum != null)
@@ -283,11 +281,11 @@ public partial class GameDatabaseContext
 
             foreach (GameLevel level in filters.InAlbum.Levels)
             {
-                GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == level.Id);
+                GameLevel? responseLevel = levels.FirstOrDefault(l => l.Id == level.Id);
                 if (responseLevel != null) tempResponse.Add(responseLevel);
             }
 
-            response = tempResponse.AsQueryable();
+            levels = tempResponse.AsQueryable();
         }
         
         if (filters.InDaily == true)
@@ -308,7 +306,7 @@ public partial class GameDatabaseContext
                 filteredLevels = filteredLevels.Concat(levels.Where(l=> l .Id == levelId));
             }
 
-            response = filteredLevels.AsQueryable();
+            levels = filteredLevels.AsQueryable();
         }
         
         if (filters.InDaily == false)
@@ -329,7 +327,7 @@ public partial class GameDatabaseContext
                 filteredLevels = filteredLevels.Concat(levels.Where(l=> l .Id != levelId));
             }
 
-            response = filteredLevels.AsQueryable();
+            levels = filteredLevels.AsQueryable();
         }
         
         if (filters.InDailyDate != null || filters.InLatestDaily == true)
@@ -341,17 +339,17 @@ public partial class GameDatabaseContext
             foreach (DailyLevel dailyLevelObject in dailyLevelObjects)
             {
                 GameLevel dailyLevel = dailyLevelObject.Level;
-                GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == dailyLevel.Id);
+                GameLevel? responseLevel = levels.FirstOrDefault(l => l.Id == dailyLevel.Id);
                 if (responseLevel != null) tempResponse.Add(responseLevel);
             }
 
-            response = tempResponse.AsQueryable();
+            levels = tempResponse.AsQueryable();
         }
 
         if (filters.Search != null)
         {
             GameUser? userWithSearchName = GetUserWithUsername(filters.Search);
-            response = response.Where(l => l.Name.Contains(filters.Search, StringComparison.OrdinalIgnoreCase) || l.Author == userWithSearchName);
+            levels = levels.Where(l => l.Name.Contains(filters.Search, StringComparison.OrdinalIgnoreCase) || l.Author == userWithSearchName);
         }
 
         if (filters.CompletedBy != null)
@@ -360,42 +358,46 @@ public partial class GameDatabaseContext
             
             foreach (GameLevel level in filters.CompletedBy.CompletedLevels)
             {
-                GameLevel? responseLevel = response.FirstOrDefault(l => l.Id == level.Id);
+                GameLevel? responseLevel = levels.FirstOrDefault(l => l.Id == level.Id);
                 if (responseLevel != null) tempResponse.Add(responseLevel);
             }
 
-            response = tempResponse.AsQueryable();
+            levels = tempResponse.AsQueryable();
         }
 
         if (filters.Bpm != null)
         {
-            response = response.Where(l => l.Bpm == filters.Bpm);
+            levels = levels.Where(l => l.Bpm == filters.Bpm);
         }
 
         if (filters.ScaleIndex != null)
         {
-            response = response.Where(l => l.ScaleIndex == filters.ScaleIndex);
+            levels = levels.Where(l => l.ScaleIndex == filters.ScaleIndex);
         }
 
         if (filters.TransposeValue != null)
         {
-            response = response.Where(l => l.TransposeValue == filters.TransposeValue);
+            levels = levels.Where(l => l.TransposeValue == filters.TransposeValue);
         }
 
         if (filters.HasCar != null)
         {
-            response = response.Where(l => l.HasCar == filters.HasCar);
+            levels = levels.Where(l => l.HasCar == filters.HasCar);
         }
 
         if (filters.HasExplodingCar != null)
         {
-            response = response.Where(l => l.HasExplodingCar == filters.HasExplodingCar);
+            levels = levels.Where(l => l.HasExplodingCar == filters.HasExplodingCar);
         }
-
-        IQueryable<GameLevel> nonPublicLevels = response.Where(l => l.Author != user && l._Visibility != (int)LevelVisibility.Public);
-        response = response.AsEnumerable().Except(nonPublicLevels).AsQueryable();
         
-        return response;
+        // Automatically remove unlisted and private levels from results
+        if ((accessor?.PermissionsType ?? PermissionsType.Default) < PermissionsType.Moderator)
+        {
+            IQueryable<GameLevel> nonPublicLevels = levels.Where(l => l.Author != accessor && l._Visibility != (int)LevelVisibility.Public);
+            levels = levels.AsEnumerable().Except(nonPublicLevels).AsQueryable();
+        }
+        
+        return levels;
     }
 
     #region Level Ordering

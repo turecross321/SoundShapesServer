@@ -6,6 +6,7 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Errors;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Levels;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
@@ -25,6 +26,9 @@ public class ApiLevelRelationEndpoints : EndpointGroup
 
         GameUser? user = database.GetUserWithId(userId);
         if (user == null) return null;
+        
+        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+            return null;
 
         return new ApiLevelRelationResponse()
         {
@@ -42,6 +46,9 @@ public class ApiLevelRelationEndpoints : EndpointGroup
     {
         GameLevel? level = database.GetLevelWithId(id);
         if (level == null) return HttpStatusCode.NotFound;
+        
+        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+            return HttpStatusCode.NotFound;
 
         if (!database.LikeLevel(user, level)) 
             return new Response(ConflictError.AlreadyLikedLevelWhen, ContentType.Plaintext, HttpStatusCode.Conflict);
@@ -58,6 +65,9 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(id);
         if (level == null) return HttpStatusCode.NotFound;
 
+        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+            return HttpStatusCode.NotFound;
+        
         if (!database.UnLikeLevel(user, level))
             return new Response(NotFoundError.NotLikedLevelWhen, ContentType.Plaintext, HttpStatusCode.NotFound);
         
@@ -73,6 +83,9 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(id);
         if (level == null) return HttpStatusCode.NotFound;
 
+        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+            return HttpStatusCode.NotFound;
+        
         if (!database.QueueLevel(user, level)) 
             return new Response(ConflictError.AlreadyQueuedLevelWhen, ContentType.Plaintext, HttpStatusCode.Conflict);
         
@@ -88,6 +101,9 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(id);
         if (level == null) return HttpStatusCode.NotFound;
 
+        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+            return HttpStatusCode.NotFound;
+        
         if (!database.UnQueueLevel(user, level))         
             return new Response(NotFoundError.NotQueuedLevelWhen, ContentType.Plaintext, HttpStatusCode.NotFound);
         

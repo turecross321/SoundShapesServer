@@ -1,4 +1,5 @@
 using SoundShapesServer.Requests.Game;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
@@ -25,12 +26,12 @@ public partial class GameDatabaseContext
         return entry;
     }
 
-    public int GetLeaderboardEntryPosition(LeaderboardEntry entry)
+    public int GetLeaderboardEntryPosition(LeaderboardEntry entry, GameUser? accessor)
     {
         IQueryable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>();
         
         IQueryable<LeaderboardEntry> filteredEntries = FilterLeaderboard(entries,
-            new LeaderboardFilters(onLevel: entry.Level, completed: true, onlyBest: true));
+            new LeaderboardFilters(onLevel: entry.Level, completed: true, onlyBest: true), accessor);
         IQueryable<LeaderboardEntry> orderedEntries = OrderLeaderboardByScore(filteredEntries, false);
 
         return orderedEntries.ToList().IndexOf(entry);
@@ -51,40 +52,35 @@ public partial class GameDatabaseContext
         return _realm.All<LeaderboardEntry>().FirstOrDefault(e => e.Id == id);
     }
 
-    public (int, LeaderboardEntry[]) GetPaginatedLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters, int from, int count)
+    public (int, LeaderboardEntry[]) GetPaginatedLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters, int from, int count, GameUser? accessor)
     {
-        IQueryable<LeaderboardEntry> orderedEntries = GetLeaderboardEntries(order, descending, filters);
+        IQueryable<LeaderboardEntry> orderedEntries = GetLeaderboardEntries(order, descending, filters, accessor);
         LeaderboardEntry[] paginatedEntries = PaginateLeaderboardEntries(orderedEntries, from, count);
 
         return (orderedEntries.Count(), paginatedEntries);
     }
     
-    public IQueryable<LeaderboardEntry> GetLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters)
+    public IQueryable<LeaderboardEntry> GetLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters, GameUser? accessor)
     {
         IQueryable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>();
-        IQueryable<LeaderboardEntry> filteredEntries = FilterLeaderboard(entries, filters);
+        IQueryable<LeaderboardEntry> filteredEntries = FilterLeaderboard(entries, filters, accessor);
         IQueryable<LeaderboardEntry> orderedEntries = OrderLeaderboard(filteredEntries, order, descending);
 
         return orderedEntries;
     }
     
-    private static IQueryable<LeaderboardEntry> FilterLeaderboard(IQueryable<LeaderboardEntry> entries, LeaderboardFilters filters)
+    private static IQueryable<LeaderboardEntry> FilterLeaderboard(IQueryable<LeaderboardEntry> entries, LeaderboardFilters filters, GameUser? accessor)
     {
-        IQueryable<LeaderboardEntry> response = entries;
-        
-        if (filters.OnLevel != null)
-        {
-            response = response.Where(e => e.Level == filters.OnLevel);
-        }
+        entries = entries.Where(e => e.Level == filters.OnLevel);
 
         if (filters.ByUser != null)
         {
-            response = response.Where(e => e.User == filters.ByUser);
+            entries = entries.Where(e => e.User == filters.ByUser);
         }
 
         if (filters.Completed != null)
         {
-            response = response.Where(e => e.Completed == filters.Completed);
+            entries = entries.Where(e => e.Completed == filters.Completed);
         }
         
         if (filters.OnlyBest)
@@ -93,7 +89,7 @@ public partial class GameDatabaseContext
 
             List<string> previousUserIds = new();
             // The lower "Score", the higher the score actually is because scores don't start from 0, and they decrease.
-            foreach (LeaderboardEntry entry in response.OrderBy(e=>e.Score))
+            foreach (LeaderboardEntry entry in entries.OrderBy(e=>e.Score))
             {
                 if (previousUserIds.Contains(entry.User.Id)) continue;
                 
@@ -101,10 +97,18 @@ public partial class GameDatabaseContext
                 previousUserIds.Add(entry.User.Id);
             }
 
-            response = bestEntries.AsQueryable();
+            entries = bestEntries.AsQueryable();
         }
         
-        return response;
+        // Automatically remove private and unlisted results
+        if ((accessor?.PermissionsType ?? PermissionsType.Default) < PermissionsType.Moderator)
+        {
+            IQueryable<LeaderboardEntry> privateLevelEntries = entries.Where(e =>
+                e.Level.Author != accessor && e.Level.Visibility == LevelVisibility.Private);
+            entries = entries.AsEnumerable().Except(privateLevelEntries).AsQueryable();
+        }
+        
+        return entries;
     }
 
     #region Leaderboard Ordering

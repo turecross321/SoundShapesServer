@@ -25,6 +25,7 @@ public class ApiLevelFullResponse : IApiResponse
         TotalPlayTime = level.TotalPlayTime;
         Language = level.Language;
         Difficulty = level.Difficulty;
+        Visibility = level.Visibility;
         Analysis = new ApiLevelAnalysisResponse(level);
         Albums = level.Albums.AsEnumerable().Select(a => new ApiAlbumResponse(a)).ToArray();
         DailyLevels = level.DailyLevels.AsEnumerable().Select(a => new ApiDailyLevelResponse(a)).ToArray();
@@ -45,6 +46,7 @@ public class ApiLevelFullResponse : IApiResponse
     public long TotalPlayTime { get; set; }
     public int Language { get; set; }
     public float Difficulty { get; set; }
+    public LevelVisibility Visibility { get; set; }
     public ApiLevelAnalysisResponse Analysis { get; set; }
     public ApiAlbumResponse[] Albums { get; set; }
     public ApiDailyLevelResponse[] DailyLevels { get; set; }

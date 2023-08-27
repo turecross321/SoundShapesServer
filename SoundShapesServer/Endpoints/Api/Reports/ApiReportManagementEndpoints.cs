@@ -43,7 +43,7 @@ public class ApiReportManagementEndpoints : EndpointGroup
         Report? report = database.GetReportWithId(id);
         if (report == null) return HttpStatusCode.NotFound;
 
-        return new Response(new ApiReportResponse(database, report), ContentType.Json);
+        return new Response(new ApiReportResponse(database, report, user), ContentType.Json);
     }
 
     [ApiEndpoint("reports")]
@@ -90,6 +90,6 @@ public class ApiReportManagementEndpoints : EndpointGroup
         ReportFilters filters = new (contentType, reasonType, contentUser, contentLevel, contentLeaderboardEntry);
 
         (Report[] reports, int totalReports) = database.GetPaginatedReports(ReportOrderType.Date, descending, filters, from, count);
-        return new ApiListResponse<ApiReportResponse>(reports.Select(r=>new ApiReportResponse(database, r)), totalReports);
+        return new ApiListResponse<ApiReportResponse>(reports.Select(r=>new ApiReportResponse(database, r, user)), totalReports);
     }
 }
