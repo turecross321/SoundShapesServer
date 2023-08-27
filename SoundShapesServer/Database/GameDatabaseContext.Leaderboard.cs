@@ -68,8 +68,9 @@ public partial class GameDatabaseContext
 
         return orderedEntries;
     }
-    
-    private static IQueryable<LeaderboardEntry> FilterLeaderboard(IQueryable<LeaderboardEntry> entries, LeaderboardFilters filters, GameUser? accessor)
+
+    private static IQueryable<LeaderboardEntry> FilterLeaderboard(IQueryable<LeaderboardEntry> entries,
+        LeaderboardFilters filters, GameUser? accessor)
     {
         entries = entries.Where(e => e.Level == filters.OnLevel);
 
@@ -82,34 +83,42 @@ public partial class GameDatabaseContext
         {
             entries = entries.Where(e => e.Completed == filters.Completed);
         }
-        
+
         if (filters.OnlyBest)
         {
             List<LeaderboardEntry> bestEntries = new();
 
             List<string> previousUserIds = new();
             // The lower "Score", the higher the score actually is because scores don't start from 0, and they decrease.
-            foreach (LeaderboardEntry entry in entries.OrderBy(e=>e.Score))
+            foreach (LeaderboardEntry entry in entries.OrderBy(e => e.Score))
             {
                 if (previousUserIds.Contains(entry.User.Id)) continue;
-                
+
                 bestEntries.Add(entry);
                 previousUserIds.Add(entry.User.Id);
             }
 
             entries = bestEntries.AsQueryable();
         }
-        
+
         // Automatically remove private and unlisted results
         if ((accessor?.PermissionsType ?? PermissionsType.Default) < PermissionsType.Moderator)
         {
-            IQueryable<LeaderboardEntry> privateLevelEntries = entries.Where(e =>
-                e.Level.Author != accessor && e.Level.Visibility == LevelVisibility.Private);
-            entries = entries.AsEnumerable().Except(privateLevelEntries).AsQueryable();
+            List<LeaderboardEntry> privateLevelEntries = new();
+
+            foreach (LeaderboardEntry entry in entries)
+            {
+                if (entry.Level.Author.Id != accessor?.Id && entry.Level.Visibility == LevelVisibility.Private)
+                {
+                    privateLevelEntries.Add(entry);
+                }
+
+                entries = entries.AsEnumerable().Except(privateLevelEntries).AsQueryable();
+            }
         }
-        
+
         return entries;
-    }
+        }
 
     #region Leaderboard Ordering
 
