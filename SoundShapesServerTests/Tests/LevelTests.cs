@@ -114,7 +114,7 @@ public class LevelTests: ServerTest
         Assert.That(relationResponse is { Liked: false, Queued:false }, "Check if queue was removed from level");
     }
     
-    [Test]
+    /*[Test]
     public async Task LevelLikingAndQueuingWorks()
     {
         using TestContext context = GetServer();
@@ -151,7 +151,7 @@ public class LevelTests: ServerTest
         payload = $"/otg/~identity:{user.Id}/~queued:%2F~level%3A{level.Id}.delete";
         response = await client.GetAsync(payload);
         Assert.That(response.IsSuccessStatusCode, "Remove queue from level");
-    }
+    }*/
 
     [Test]
     public async Task ApiLevelManagingWorks()
