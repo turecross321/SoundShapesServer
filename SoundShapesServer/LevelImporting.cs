@@ -117,7 +117,7 @@ public static class LevelImporting
 
             string levelId = LevelHelper.GenerateLevelId();
             PublishLevelRequest request = new ($"Imported Level ({levelId})", 0, levelCreationDate);
-            GameLevel publishedLevel = database.CreateLevel(adminUser, request, false, levelId);
+            GameLevel publishedLevel = database.CreateLevel(adminUser, request, PlatformType.Unknown, false, levelId);
             
             database.UploadLevelResources(dataStore, publishedLevel, levelBytes, thumbnailBytes, soundBytes);
             

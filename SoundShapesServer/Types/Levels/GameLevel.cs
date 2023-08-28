@@ -10,16 +10,17 @@ namespace SoundShapesServer.Types.Levels;
 
 public class GameLevel : RealmObject
 {
-    public GameLevel(string id, GameUser author, string name, int language, long fileSize, DateTimeOffset creationDate, LevelVisibility visibility)
+    public GameLevel(string id, GameUser author, string name, int language, long fileSize, DateTimeOffset creationDate, LevelVisibility visibility, PlatformType uploadPlatform)
     {
         Id = id;
         Author = author;
         Name = name;
         Language = language;
         CreationDate = creationDate;
-        ModificationDate = creationDate;
         FileSize = fileSize;
+        ModificationDate = creationDate;
         Visibility = visibility;
+        UploadPlatform = uploadPlatform;
     }
     
     // Realm cries if this doesn't exist
@@ -40,6 +41,14 @@ public class GameLevel : RealmObject
     {
         get => (LevelVisibility)_Visibility;
         set => _Visibility = (int)value;
+    }
+    // ReSharper disable once InconsistentNaming (can't fix due to conflict with PunishmentType)
+    // ReSharper disable once MemberCanBePrivate.Global
+    internal int _UploadPlatform { get; set; }
+    public PlatformType UploadPlatform
+    {
+        get => (PlatformType)_UploadPlatform;
+        set => _UploadPlatform = (int)value;
     }
     public string? LevelFilePath { get; set; }
     public string? ThumbnailFilePath { get; set; }

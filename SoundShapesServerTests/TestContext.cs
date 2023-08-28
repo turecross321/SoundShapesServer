@@ -76,7 +76,7 @@ public class TestContext : IDisposable
     public GameLevel CreateLevel(GameUser author, string title = "Level", DateTimeOffset? creationDate = null)
     {
         PublishLevelRequest request = new (title, 0, creationDate);
-        return Database.CreateLevel(author, request);
+        return Database.CreateLevel(author, request, PlatformType.Unknown);
     }
     
     public void FillLeaderboard(GameLevel level, int userAmount, int scoresPerUser)

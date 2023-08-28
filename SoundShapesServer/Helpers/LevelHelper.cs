@@ -148,8 +148,17 @@ public static class LevelHelper
         
         string? searchQuery = context.QueryString["search"];
         
+        string? uploadPlatformsString = context.QueryString["uploadPlatforms"];
+        List<PlatformType>? uploadPlatforms = null;
+
+        if (uploadPlatformsString != null)
+        {
+            uploadPlatforms = new List<PlatformType>();
+            uploadPlatforms.AddRange(uploadPlatformsString.Split(",").Select(Enum.Parse<PlatformType>));
+        }
+        
         return new LevelFilters(byUser, likedBy, queuedBy, likedOrQueuedBy, inAlbum, inDaily, inDailyDate, lastDate, 
-            searchQuery, completedBy, bpm, scaleIndex, transposeValue, hasCar, hasExplodingCar);
+            searchQuery, completedBy, bpm, scaleIndex, transposeValue, hasCar, hasExplodingCar, uploadPlatforms);
     }
 
     public static readonly List<string> OfflineLevelIds = new()

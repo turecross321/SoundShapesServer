@@ -90,15 +90,15 @@ public partial class GameDatabaseContext
 
         if (filters.EventTypes != null)
         {
-            IEnumerable<GameEvent> tempResponse = new List<GameEvent>();
+            IEnumerable<GameEvent> tempEvents = new List<GameEvent>();
 
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (EventType eventType in filters.EventTypes)
             {
-                tempResponse = tempResponse.Concat(events.Where(e=> e._EventType == (int)eventType));
+                tempEvents = tempEvents.Concat(events.Where(e=> e._EventType == (int)eventType));
             }
 
-            events = tempResponse.AsQueryable();
+            events = tempEvents.AsQueryable();
         }
         
         // Automatically remove private results, and remove unlisted results if the level hasn't been specified

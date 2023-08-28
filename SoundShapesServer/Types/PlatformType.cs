@@ -6,5 +6,6 @@ public enum PlatformType
     PsVita = 1,
     Ps3 = 2,
     Rpcs3 = 3,
-    Ps4 = 4
+    Ps4 = 4,
+    Unknown = 5
 }

@@ -8,7 +8,7 @@ public class LevelFilters
     public LevelFilters(GameUser? byUser = null, GameUser? likedByUser = null, GameUser? queuedByUser = null, GameUser? likedOrQueuedByUser = null, GameAlbum? inAlbum = null, 
         bool? inDaily = null, DateTimeOffset? inDailyDate = null, bool? inLatestDaily = null, string? search = null, 
         GameUser? completedBy = null, int? bpm = null, int? scaleIndex = null, int? transposeValue = null,
-        bool? hasCar = null, bool? hasExplodingCar = null)
+        bool? hasCar = null, bool? hasExplodingCar = null, List<PlatformType>? uploadPlatforms = null)
     {
         ByUser = byUser;
         LikedByUser = likedByUser;
@@ -25,6 +25,7 @@ public class LevelFilters
         TransposeValue = transposeValue;
         HasCar = hasCar;
         HasExplodingCar = hasExplodingCar;
+        UploadPlatforms = uploadPlatforms;
     }
     
     public readonly GameUser? ByUser;
@@ -42,4 +43,5 @@ public class LevelFilters
     public int? TransposeValue;
     public bool? HasCar;
     public bool? HasExplodingCar;
+    public List<PlatformType>? UploadPlatforms;
 }

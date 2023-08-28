@@ -17,7 +17,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 58;
+    protected override ulong SchemaVersion => 59;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -79,15 +79,28 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                 newUser.Email = newUser.Email?.ToLower();
             }
         }
-
-
-        if (oldVersion < 56)
+        
+        foreach (string offlineLevelId in LevelHelper.OfflineLevelIds)
         {
-            // Change the Visibility of offline levels to Unlisted instead of Private
-            foreach (string offlineLevelId in LevelHelper.OfflineLevelIds)
+            GameLevel level = migration.NewRealm.All<GameLevel>().First(l => l.Id == offlineLevelId);
+            if (oldVersion < 56)
             {
-                GameLevel level = migration.NewRealm.All<GameLevel>().First(l => l.Id == offlineLevelId);
+                // Change the Visibility of offline levels to Unlisted instead of Private
                 level.Visibility = LevelVisibility.Unlisted;
+            }
+        }
+        
+        IQueryable<dynamic> oldLevels = migration.OldRealm.DynamicApi.All("GameLevel");
+        IQueryable<GameLevel> newLevels = migration.NewRealm.All<GameLevel>();
+        for (int i = 0; i < newLevels.Count(); i++)
+        {
+            GameLevel newLevel = newLevels.ElementAt(i);
+            
+            if (oldVersion < 59)
+            {
+                Console.WriteLine("Performing Level UploadPlatform Migration. This may take a while. (" + i  + "/" + newLevels.Count() + ")");
+                // Implemented UploadPlatform
+                newLevel.UploadPlatform = PlatformType.Unknown;
             }
         }
         

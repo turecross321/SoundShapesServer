@@ -94,7 +94,7 @@ public class LevelRelationEndpoints : EndpointGroup
     private Response LikeLevel(GameDatabaseContext database, GameUser user, GameLevel level)
     {
         if (database.LikeLevel(user, level)) return new Response(HttpStatusCode.OK);
-        return new Response(HttpStatusCode.BadRequest);
+        return new Response(HttpStatusCode.Conflict);
     }
 
     private Response UnLikeLevel(GameDatabaseContext database, GameUser user, GameLevel level)

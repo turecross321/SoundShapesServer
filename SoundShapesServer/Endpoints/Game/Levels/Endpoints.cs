@@ -10,6 +10,7 @@ using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
@@ -37,7 +38,7 @@ public class Endpoints : EndpointGroup
     }
 
     [GameEndpoint("~level:{args}", Method.Post)]
-    public Response PostEndpoints(RequestContext context, IDataStore dataStore, ProfanityService profanity, Stream body, GameDatabaseContext database, GameServerConfig config, GameUser user, string args)
+    public Response PostEndpoints(RequestContext context, IDataStore dataStore, ProfanityService profanity, Stream body, GameDatabaseContext database, GameServerConfig config, GameUser user, GameSession session, string args)
     {
         string[] arguments = args.Split('.');
 
@@ -46,7 +47,7 @@ public class Endpoints : EndpointGroup
 
         MultipartFormDataParser? parser = MultipartFormDataParser.Parse(body);
 
-        if (action == "create") return LevelManagementEndpoints.CreateLevel(context, config, dataStore, profanity, parser, database, user);
+        if (action == "create") return LevelManagementEndpoints.CreateLevel(context, config, dataStore, profanity, parser, database, user, session);
         
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return new Response(HttpStatusCode.NotFound);

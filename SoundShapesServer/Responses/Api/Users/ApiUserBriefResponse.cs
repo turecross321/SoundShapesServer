@@ -9,18 +9,15 @@ public class ApiUserBriefResponse : IApiResponse
         Id = user.Id;
         Username = user.Username;
         PermissionsType = (int)user.PermissionsType;
-        PublishedLevels = user.Levels.Count();
         Followers = user.Followers.Count();
+        Following = user.Following.Count();
+        PublishedLevels = user.Levels.Count();
     }
-
-#pragma warning disable CS8618
-    public ApiUserBriefResponse() {}
-#pragma warning restore CS8618
-
 
     public string Id { get; set; }
     public string Username { get; set; }
     public int PermissionsType { get; set; }
-    public int PublishedLevels { get; set; }
     public int Followers { get; set; }
+    public int Following { get; set; }
+    public int PublishedLevels { get; set; }
 }

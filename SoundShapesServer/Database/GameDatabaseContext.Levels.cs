@@ -21,10 +21,10 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public GameLevel CreateLevel(GameUser user, PublishLevelRequest request, bool createEvent = true, string? levelId = null)
+    public GameLevel CreateLevel(GameUser user, PublishLevelRequest request, PlatformType uploadPlatform, bool createEvent = true, string? levelId = null)
     {
         levelId ??= GenerateLevelId();
-        GameLevel level = new(levelId, user, AdhereToLevelNameCharacterLimit(request.Name), request.Language, request.FileSize, request.CreationDate, request.Visibility);
+        GameLevel level = new(levelId, user, AdhereToLevelNameCharacterLimit(request.Name), request.Language, request.FileSize, request.CreationDate, request.Visibility, uploadPlatform);
 
         _realm.Write(() =>
         {
@@ -388,6 +388,19 @@ public partial class GameDatabaseContext
         if (filters.HasExplodingCar != null)
         {
             levels = levels.Where(l => l.HasExplodingCar == filters.HasExplodingCar);
+        }
+
+        if (filters.UploadPlatforms != null)
+        {
+            IEnumerable<GameLevel> tempLevels = new List<GameLevel>();
+
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (PlatformType platformType in filters.UploadPlatforms)
+            {
+                tempLevels = tempLevels.Concat(levels.Where(e=> e._UploadPlatform == (int)platformType));
+            }
+
+            levels = tempLevels.AsQueryable();
         }
         
         // Automatically remove unlisted and private levels from results

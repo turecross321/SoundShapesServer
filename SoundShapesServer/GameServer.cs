@@ -14,6 +14,7 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Middlewares;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Services;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
@@ -144,7 +145,7 @@ public class GameServer
             if (context.GetLevelWithId(id) != null)
                 continue;
             PublishLevelRequest request = new (id, 0, new DateTimeOffset(), LevelVisibility.Unlisted);
-            context.CreateLevel(adminUser, request, false, id);
+            context.CreateLevel(adminUser, request, PlatformType.Unknown, false, id);
         }
     }
 }

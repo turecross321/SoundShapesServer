@@ -20,7 +20,7 @@ public class ApiUserFullResponse : IApiResponse
         LikedLevels = user.LikedLevels.Count();
         QueuedLevels = user.QueuedLevels.Count();
         PublishedLevels = user.Levels.Count();
-        Events = user.Events.Count();
+        TotalEvents = user.Events.Count();
         PlayedLevels = user.PlayedLevels.Count();
         TotalDeaths = user.Deaths;
         TotalPlayTime = user.TotalPlayTime;
@@ -37,8 +37,8 @@ public class ApiUserFullResponse : IApiResponse
     public int LikedLevels { get; set; }
     public int QueuedLevels { get; set; }
     public int PublishedLevels { get; set; }
-    public int Events { get; set; }
     public int PlayedLevels { get; set; }
+    public int TotalEvents { get; set; }
     public int TotalDeaths { get; set; }
     public long TotalPlayTime { get; set; }
 }
