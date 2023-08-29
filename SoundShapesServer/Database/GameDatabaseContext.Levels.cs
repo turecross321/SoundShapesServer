@@ -492,21 +492,8 @@ public partial class GameDatabaseContext
     
     private IQueryable<GameLevel> OrderLevelsByRelevance(IQueryable<GameLevel> levels, bool descending)
     {
-        DateTimeOffset oneWeekAgo = DateTimeOffset.UtcNow.AddDays(-7);
-        IQueryable<LevelUniquePlayRelation> relations = _realm.All<LevelUniquePlayRelation>().Where(r=>r.Date > oneWeekAgo);
-
-        var groupedRelations = relations
-            .AsEnumerable()
-            .GroupBy(r => r.Level)
-            .Select(g => new {
-                Level = g.Key,
-                Count = g.Count()
-            });
-
-        groupedRelations = groupedRelations.Where(r => levels.AsEnumerable().Contains(r.Level));
-        
-        if (descending) return groupedRelations.OrderByDescending(r => r.Count).Select(r => r.Level).AsQueryable();
-        return groupedRelations.OrderBy(r => r.Count).Select(r => r.Level).AsQueryable();
+        if (descending) return levels.OrderByDescending(l => l.CreationDate.ToUnixTimeSeconds() + l.UniquePlaysCount * 5000);
+        return levels.OrderBy(l => l.CreationDate.ToUnixTimeSeconds() + l.UniquePlaysCount * 5000);
     } 
     
     // TODO: Cache this every 24 hours
