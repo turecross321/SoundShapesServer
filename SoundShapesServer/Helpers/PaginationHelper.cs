@@ -58,7 +58,7 @@ public static class PaginationHelper
         return albums.AsEnumerable().Skip(from).Take(count).ToArray();
     }
 
-    public static IpAuthorization[] PaginateIpAddresses(IQueryable<IpAuthorization> addresses, int from, int count)
+    public static GameIp[] PaginateIpAddresses(IQueryable<GameIp> addresses, int from, int count)
     {
         return addresses.AsEnumerable().Skip(from).Take(count).ToArray();
     }

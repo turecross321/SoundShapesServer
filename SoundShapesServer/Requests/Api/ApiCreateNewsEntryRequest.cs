@@ -1,4 +1,3 @@
-// ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace SoundShapesServer.Requests.Api;
 
 // ReSharper disable once ClassNeverInstantiated.Global

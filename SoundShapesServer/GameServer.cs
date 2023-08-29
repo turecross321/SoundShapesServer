@@ -83,7 +83,7 @@ public class GameServer
 
     protected virtual void SetUpServices()
     {
-        ServerInstance.AddRateLimitService(Config!.RateLimitSettings);
+        ServerInstance.AddRateLimitService(new (30, 400, 0, "global"));
         ServerInstance.AddService<DocumentationService>();
         ServerInstance.AddService<EmailService>();
         ServerInstance.AddProfanityService();

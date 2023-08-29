@@ -35,27 +35,31 @@ public class TestContext : IDisposable
         return GetAuthenticatedClient(type, out _, user, tokenExpirySeconds);
     }
     
-    public HttpClient GetAuthenticatedClient(SessionType type, out string sessionId,
+    public HttpClient GetAuthenticatedClient(SessionType sessionType, out string sessionId,
         GameUser? user = null,
         int tokenExpirySeconds = GameDatabaseContext.DefaultSessionExpirySeconds)
     {
         user ??= CreateUser();
 
         // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-        PlatformType platformType = type switch
+        PlatformType platformType = sessionType switch
         {
             SessionType.Game => PlatformType.PsVita,
             SessionType.Api => PlatformType.Api,
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(sessionType), sessionType, null)
         };
 
-        GameSession session = Database.CreateSession(user, type, platformType, tokenExpirySeconds);
+        bool? genuineTicket = null; 
+        if (sessionType == SessionType.Game)
+            genuineTicket = true;
+        
+        GameSession session = Database.CreateSession(user, sessionType, platformType, genuineTicket, tokenExpirySeconds);
         sessionId = session.Id;
         
         HttpClient client = Listener.GetClient();
 
         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-        if (type is SessionType.Game or SessionType.Banned or SessionType.GameUnAuthorized)
+        if (sessionType is SessionType.Game or SessionType.Banned or SessionType.GameUnAuthorized)
         {
             client.DefaultRequestHeaders.TryAddWithoutValidation("X-OTG-Identity-SessionId", session.Id);
         }

@@ -8,11 +8,11 @@ namespace SoundShapesServer.Helpers;
 
 public static class IpHelper
 {
-    public static IpAuthorization GetIpAuthorizationFromRequestContext(RequestContext context, GameDatabaseContext database, GameUser user)
+    public static GameIp GetGameIpFromRequestContext(RequestContext context, GameDatabaseContext database, GameUser user)
     {
         string ipAddress = ((IPEndPoint)context.RemoteEndpoint).Address.ToString();
-        IpAuthorization ip = database.GetIpFromAddress(user, ipAddress);
+        GameIp gameIp = database.GetIpFromAddress(user, ipAddress);
 
-        return ip;
+        return gameIp;
     }
 }

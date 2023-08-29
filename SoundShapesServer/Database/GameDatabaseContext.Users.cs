@@ -1,8 +1,10 @@
 using Bunkum.HttpServer.Storage;
+using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Relations;
+using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.PaginationHelper;
 
@@ -158,6 +160,19 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             user.FeaturedLevel = level;
+        });
+    }
+
+    public void SetUserGameAuthenticationSettings(GameUser user, ApiSetGameAuthenticationSettingsRequest request)
+    {
+        _realm.Write(() =>
+        {
+            if (user.AllowIpAuthentication && !request.AllowIpAuthentication)
+                _realm.RemoveRange(user.IpAddresses);
+            
+            user.AllowPsnAuthentication = request.AllowPsnAuthentication;
+            user.AllowRpcnAuthentication = request.AllowRpcnAuthentication;
+            user.AllowIpAuthentication = request.AllowIpAuthentication;
         });
     }
     

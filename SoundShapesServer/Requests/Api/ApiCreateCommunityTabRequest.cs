@@ -1,12 +1,9 @@
-// ReSharper disable ClassNeverInstantiated.Global
-// ReSharper disable UnassignedGetOnlyAutoProperty
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-
 using SoundShapesServer.Types;
 
 #pragma warning disable CS8618
 namespace SoundShapesServer.Requests.Api;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiCreateCommunityTabRequest
 {
     public GameContentType ContentType { get; set; }

@@ -1,5 +1,4 @@
 // ReSharper disable UnassignedGetOnlyAutoProperty
-// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 using SoundShapesServer.Types.Punishments;
 

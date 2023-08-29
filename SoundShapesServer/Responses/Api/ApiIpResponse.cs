@@ -3,13 +3,13 @@ namespace SoundShapesServer.Responses.Api;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ApiIpResponse : IApiResponse
 {
-    public ApiIpResponse(Types.IpAuthorization ip)
+    public ApiIpResponse(Types.GameIp gameIp)
     {
-        IpAddress = ip.IpAddress;
-        Authorized = ip.Authorized;
-        OneTimeUse = ip.OneTimeUse;
-        CreationDate = ip.CreationDate.ToUnixTimeSeconds();
-        ModificationDate = ip.ModificationDate.ToUnixTimeSeconds();
+        IpAddress = gameIp.IpAddress;
+        Authorized = gameIp.Authorized;
+        OneTimeUse = gameIp.OneTimeUse;
+        CreationDate = gameIp.CreationDate.ToUnixTimeSeconds();
+        ModificationDate = gameIp.ModificationDate.ToUnixTimeSeconds();
     }
 
     public string IpAddress { get; set; }

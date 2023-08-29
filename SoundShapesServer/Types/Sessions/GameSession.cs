@@ -28,7 +28,7 @@ public class GameSession : RealmObject, IToken
         get => (PlatformType)_PlatformType;
         set => _PlatformType = (int)value;
     }
-    public IpAuthorization? Ip { get; init; }
     public DateTimeOffset CreationDate { get; init; }
     public DateTimeOffset ExpiryDate { get; init; }
+    public bool? GenuineNpTicket { get; init; }
 }

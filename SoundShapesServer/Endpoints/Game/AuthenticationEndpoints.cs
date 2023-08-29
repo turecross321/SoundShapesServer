@@ -3,7 +3,10 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
+using Bunkum.HttpServer.Storage;
 using NPTicket;
+using NPTicket.Verification;
+using NPTicket.Verification.Keys;
 using Realms.Sync;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Sessions;
@@ -15,6 +18,7 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
+using SoundShapesServer.Verification;
 using static SoundShapesServer.Helpers.IpHelper;
 using static SoundShapesServer.Helpers.PunishmentHelper;
 
@@ -25,7 +29,7 @@ public class AuthenticationEndpoints : EndpointGroup
     [GameEndpoint("identity/login/token/psn.post", ContentType.Json, Method.Post)]
     [Endpoint("/identity/login/token/psn", ContentType.Json, Method.Post)]
     [Authentication(false)]
-    public Response? Login(RequestContext context, GameDatabaseContext database, Stream body, GameServerConfig config)
+    public Response? LogIn(RequestContext context, GameDatabaseContext database, Stream body, GameServerConfig config, IDataStore dataStore)
     {
         Ticket ticket;
         try
@@ -37,7 +41,7 @@ public class AuthenticationEndpoints : EndpointGroup
             context.Logger.LogWarning(BunkumContext.Authentication, "Could not read ticket: " + e);
             return HttpStatusCode.BadRequest;
         }
-        
+
         if (!UserHelper.IsUsernameLegal(ticket.Username)) return HttpStatusCode.BadRequest;
 
         GameUser? user = database.GetUserWithUsername(ticket.Username, true);
@@ -46,26 +50,46 @@ public class AuthenticationEndpoints : EndpointGroup
             return new Response(HttpStatusCode.Created);
         }
         user ??= database.CreateUser(ticket.Username);
-        
-        IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
-
-        SessionType? sessionType = null;
-        
-        if (config.RequireAuthentication)
-        {
-            if (user.HasFinishedRegistration == false || ip.Authorized == false)
-                sessionType = SessionType.GameUnAuthorized;
-        }
-        
-        if (GetActiveUserBans(user).Any()) sessionType = SessionType.Banned;
-        if (user.Deleted) sessionType = SessionType.GameUnAuthorized;
 
         PlatformType platformType = PlatformHelper.GetPlatformType(ticket);
+        GameIp gameIp = GetGameIpFromRequestContext(context, database, user);
+        bool genuineTicket = VerifyTicket(context, (MemoryStream)body, ticket);
 
-        sessionType ??= SessionType.Game;
-        GameSession session = database.CreateSession(user, (SessionType)sessionType, platformType, Globals.FourHoursInSeconds, null, ip);
+        SessionType? sessionType;
+
+        if (config.RequireAuthentication)
+        {
+            if (!user.HasFinishedRegistration)
+            {
+                sessionType = SessionType.GameUnAuthorized;
+            }
+            else if (genuineTicket && ((platformType is PlatformType.Ps3 or PlatformType.PsVita && user.AllowPsnAuthentication) || 
+                                       (platformType is PlatformType.Rpcs3 && user.AllowRpcnAuthentication)))
+            {
+                sessionType = SessionType.Game;
+            }
+            else if (gameIp.Authorized)
+            {
+                sessionType = SessionType.Game;
+                if (gameIp.OneTimeUse) 
+                    database.UseOneTimeIpAddress(gameIp);
+            }
+            else
+            {
+                sessionType = SessionType.GameUnAuthorized;
+            }
+        }
+        else
+        {
+            sessionType = SessionType.Game;   
+        }
+
+        if (GetActiveUserBans(user).Any()) 
+            sessionType = SessionType.Banned;
+        if (user.Deleted) 
+            sessionType = SessionType.GameUnAuthorized;
         
-        if (session.Ip is { OneTimeUse: true }) database.UseOneTimeIpAddress(session.Ip);
+        GameSession session = database.CreateSession(user, (SessionType)sessionType, platformType, genuineTicket, Globals.FourHoursInSeconds);
 
         GameSessionResponse sessionResponse = new (session);
         GameSessionWrapper responseWrapper = new (sessionResponse);
@@ -73,15 +97,28 @@ public class AuthenticationEndpoints : EndpointGroup
         context.Logger.LogInfo(BunkumContext.Authentication, $"{sessionResponse.User.Username} has logged in.");
 
         context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={sessionResponse.Id};Version=1;Path=/");
-        // ReSharper disable StringLiteralTypo
-        context.ResponseHeaders.Add("x-otg-identity-displayname", sessionResponse.User.Username);
-        context.ResponseHeaders.Add("x-otg-identity-personid", sessionResponse.User.Id);
-        context.ResponseHeaders.Add("x-otg-identity-sessionid", sessionResponse.Id);
-        // ReSharper restore StringLiteralTypo
-        
         return new Response(responseWrapper, ContentType.Json, HttpStatusCode.Created);
     }
+    
+    private static bool VerifyTicket(RequestContext context, MemoryStream body, Ticket ticket)
+    {
+        ITicketSigningKey signingKey;
 
+        // Determine the correct key to use
+        if (ticket.IssuerId == 0x33333333)
+        {
+            context.Logger.LogDebug(BunkumContext.Authentication, "Using RPCN ticket key");
+            signingKey = RpcnSigningKey.Instance;
+        }
+        else
+        {
+            context.Logger.LogDebug(BunkumContext.Authentication, "Using PSN Sound Shapes ticket key");
+            signingKey = SoundShapesSigningKey.Instance;
+        }
+        
+        TicketVerifier verifier = new(body.ToArray(), ticket, signingKey);
+        return verifier.IsTicketValid();
+    }
     
     [GameEndpoint("~identity:*.hello"), Authentication(false)]
     public Response Hello(RequestContext context)
@@ -94,47 +131,61 @@ public class AuthenticationEndpoints : EndpointGroup
     {
         if (session?.SessionType == SessionType.Game)
             return EulaEndpoint.NormalEula(config);
-
-        string? eula = null;
+        
+        string eulaEnd = $"\n \n{DateTime.UtcNow}";
 
         if (user == null)
         {
             if (!config.AccountCreation)
-                eula = "Account Creation is disabled on this instance.";
-            else
-                return null;
+                return "Account Creation is disabled on this instance." + eulaEnd;
+            return null;
         }
-            
         
-        else if (user.Deleted)
-            eula = $"The account attached to your username ({user.Username}) has been deleted, and is no longer available.";
-        else
+        if (user.Deleted)
+            return $"The account attached to your username ({user.Username}) has been deleted, and is no longer available." + eulaEnd;
+        
+        IQueryable<Punishment> bans = GetActiveUserBans(user);
+        if (bans.Any())
         {
-            IQueryable<Punishment> bans = GetActiveUserBans(user);
-            if (bans.Any())
-            {
-                Punishment longestBan = bans.Last();
+            Punishment longestBan = bans.Last();
             
-                eula = "You are banned.\n" +
-                       "Expires at " + longestBan.ExpiryDate.Date + ".\n" + 
-                       "Reason: \"" + longestBan.Reason + "\"";
-            }
-            else if (user.HasFinishedRegistration == false)
-            {
-                IpAuthorization ip = GetIpAuthorizationFromRequestContext(context, database, user);
-
-                string emailSessionId = GenerateEmailSessionId(database);
-                database.CreateSession(user, SessionType.SetEmail, session.PlatformType, Globals.TenMinutesInSeconds, emailSessionId, ip);
-                eula = $"Your account is not registered.\n" +
-                       $"To proceed, you will have to register an account at {config.WebsiteUrl}/register\n" +
-                       $"Your email code is: {emailSessionId}";
-            }
-            else if (session.Ip is { Authorized: false })
-                return $"Your IP address has not been authorized.\n" +
-                       $"To proceed, you will have to log into your account at {config.WebsiteUrl}/authorization " +
-                       $"and approve your IP address.";
+            return "You are banned.\n" +
+                   "Expires at " + longestBan.ExpiryDate.Date + ".\n" + 
+                   "Reason: \"" + longestBan.Reason + "\"" + eulaEnd;
+        }
+        if (user.HasFinishedRegistration == false)
+        {
+            string emailSessionId = GenerateEmailSessionId(database);
+            database.CreateSession(user, SessionType.SetEmail, PlatformType.Api, null, Globals.TenMinutesInSeconds, emailSessionId);
+            return $"Your account is not registered.\n \n" +
+                   $"To proceed, you will have to register an account at {config.WebsiteUrl}/register\n" +
+                   $"Your email code is: {emailSessionId}" + eulaEnd;
         }
         
-        return eula + $"\n-\n{DateTime.UtcNow}";
+        string unAuthorizedBase = $"Your session has not been authenticated.\n \n" +
+                             $"To proceed, you will have to log into your account at {config.WebsiteUrl}/authentication " +
+                             $"and perform one of the following actions:\n";
+                
+        List<string> authorizationMethods = new ();
+
+        if (session!.GenuineNpTicket == true)
+        {
+            switch (session.PlatformType)
+            {
+                case PlatformType.Ps3 or PlatformType.PsVita when !user.AllowPsnAuthentication:
+                    authorizationMethods.Add("Enable PSN Authentication.");
+                    break;
+                case PlatformType.Rpcs3 when !user.AllowRpcnAuthentication:
+                    authorizationMethods.Add("Enable RPCN Authentication.");
+                    break;
+            }
+        }
+
+        authorizationMethods.Add(user.AllowIpAuthentication
+            ? "Authorize your IP address."
+            : "Enable IP Authentication and authorize your IP address. (Note: You will have to reconnect upon enabling IP Authentication for your IP to show up.)");
+
+        string formattedMethods = authorizationMethods.Aggregate("", (current, method) => current + ("- " + method + "\n"));
+        return unAuthorizedBase + formattedMethods + eulaEnd;
     }
 }

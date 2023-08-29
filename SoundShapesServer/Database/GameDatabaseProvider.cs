@@ -17,7 +17,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 59;
+    protected override ulong SchemaVersion => 62;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -27,7 +27,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         typeof(LevelPlayRelation),
         typeof(LevelUniquePlayRelation),
         typeof(GameUser),
-        typeof(IpAuthorization),
+        typeof(GameIp),
         typeof(GameSession),
         typeof(GameLevel),
         typeof(NewsEntry),
@@ -92,12 +92,12 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         
         IQueryable<dynamic> oldLevels = migration.OldRealm.DynamicApi.All("GameLevel");
         IQueryable<GameLevel> newLevels = migration.NewRealm.All<GameLevel>();
-        for (int i = 0; i < newLevels.Count(); i++)
+        if (oldVersion < 59)
         {
-            GameLevel newLevel = newLevels.ElementAt(i);
-            
-            if (oldVersion < 59)
+            for (int i = 0; i < newLevels.Count(); i++)
             {
+                GameLevel newLevel = newLevels.ElementAt(i);
+            
                 Console.WriteLine("Performing Level UploadPlatform Migration. This may take a while. (" + i  + "/" + newLevels.Count() + ")");
                 // Implemented UploadPlatform
                 newLevel.UploadPlatform = PlatformType.Unknown;
@@ -123,7 +123,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         {
             GameSession newSession = newSessions.ElementAt(i);
 
-            if (oldVersion < 40)
+            if (oldVersion < 62)
             {
                 migration.NewRealm.Remove(newSession);
             }
@@ -276,6 +276,17 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             {
                 newLevel.CreationDate = newLevel.Date;
                 newLevel.ModificationDate = newLevel.Date;
+            }
+        }
+        
+        IQueryable<GameIp> newIps = migration.NewRealm.All<GameIp>();
+        for (int i = 0; i < newIps.Count(); i++)
+        {
+            GameIp newIp = newIps.ElementAt(i);
+
+            if (oldVersion < 62)
+            {
+                migration.NewRealm.Remove(newIp);
             }
         }
     }

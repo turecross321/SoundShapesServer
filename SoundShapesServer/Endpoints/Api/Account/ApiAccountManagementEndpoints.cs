@@ -46,7 +46,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     public Response SendEmailSession(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
     {
         string emailSessionId = GenerateEmailSessionId(database);
-        GameSession emailSession = database.CreateSession(user, SessionType.SetEmail, PlatformType.Api, Globals.TenMinutesInSeconds, emailSessionId);
+        GameSession emailSession = database.CreateSession(user, SessionType.SetEmail, PlatformType.Api, null, Globals.TenMinutesInSeconds, emailSessionId);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your new email code: " + emailSession.Id + "\n" +
@@ -98,7 +98,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         if (user == null) return HttpStatusCode.Created;
 
         string passwordSessionId = GeneratePasswordSessionId(database);
-        GameSession passwordSession = database.CreateSession(user, SessionType.SetPassword, PlatformType.Api, Globals.TenMinutesInSeconds, passwordSessionId);
+        GameSession passwordSession = database.CreateSession(user, SessionType.SetPassword, PlatformType.Api, null, Globals.TenMinutesInSeconds, passwordSessionId);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your password code: " + passwordSession.Id + "\n" +
@@ -138,7 +138,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     public Response SendUserRemovalSession(RequestContext context, GameDatabaseContext database, GameUser user, GameSession session, EmailService emailService)
     {
         string removalSessionId = GenerateAccountRemovalSessionId(database);
-        GameSession removalSession = database.CreateSession(user, SessionType.RemoveAccount, PlatformType.Api, Globals.TenMinutesInSeconds, removalSessionId);
+        GameSession removalSession = database.CreateSession(user, SessionType.RemoveAccount, PlatformType.Api, null, Globals.TenMinutesInSeconds, removalSessionId);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your account removal code: " + removalSession.Id + "\n" +

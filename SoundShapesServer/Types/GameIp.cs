@@ -6,9 +6,9 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Types;
 
-public class IpAuthorization : RealmObject
+public class GameIp : RealmObject
 {
-    public IpAuthorization(string ipAddress, GameUser user)
+    public GameIp(string ipAddress, GameUser user)
     {
         IpAddress = ipAddress;
         User = user;
@@ -17,13 +17,13 @@ public class IpAuthorization : RealmObject
     }
     
     // Realm cries if this doesn't exist
-    public IpAuthorization() {}
+    public GameIp() {}
     
     public string IpAddress { get; init; }
     public bool Authorized { get; set; }
     public bool OneTimeUse { get; set; }
     public GameUser User { get; init; }
-    [Backlink(nameof(GameSession.Ip))] public IQueryable<GameSession> Sessions { get; }
+    public IList<GameSession> Sessions { get; }
     public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset ModificationDate { get; set; }
 }

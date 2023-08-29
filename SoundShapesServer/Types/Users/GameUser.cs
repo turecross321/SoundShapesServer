@@ -28,14 +28,17 @@ public class GameUser : RealmObject, IRateLimitUser
     public string? Email { get; set; }
     public string? PasswordBcrypt { get; set; }
     public bool HasFinishedRegistration { get; set; }
+    public bool AllowPsnAuthentication { get; set; }
+    public bool AllowRpcnAuthentication { get; set; }
+    public bool AllowIpAuthentication { get; set; }
     public bool Deleted { get; init; }
     public DateTimeOffset CreationDate { get; init; }
     public DateTimeOffset LastGameLogin { get; set; }
     public string? SaveFilePath { get; set; }
     
     // ReSharper disable all UnassignedGetOnlyAutoProperty
-    [Backlink(nameof(IpAuthorization.User))]
-    public IQueryable<IpAuthorization> IpAddresses { get; }
+    [Backlink(nameof(GameIp.User))]
+    public IQueryable<GameIp> IpAddresses { get; }
 
     [Backlink(nameof(LevelLikeRelation.User))] public IQueryable<LevelLikeRelation> LikedLevels { get; }
     public int LikedLevelsCount { get; set; }

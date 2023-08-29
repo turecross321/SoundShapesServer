@@ -9,7 +9,7 @@ public partial class GameDatabaseContext
     public const int DefaultSessionExpirySeconds = Globals.OneDayInSeconds;
     private const int SimultaneousSessionsLimit = 3;
 
-    public GameSession CreateSession(GameUser user, SessionType sessionType, PlatformType platformType, int? expirationSeconds = null, string? id = null, IpAuthorization? ip = null)
+    public GameSession CreateSession(GameUser user, SessionType sessionType, PlatformType platformType, bool? genuineTicket = null, int? expirationSeconds = null, string? id = null)
     {
         double sessionExpirationSeconds = expirationSeconds ?? DefaultSessionExpirySeconds;
         id ??= GenerateGuid();
@@ -20,9 +20,9 @@ public partial class GameDatabaseContext
             User = user,
             SessionType = sessionType,
             PlatformType = platformType,
-            Ip = ip,
             ExpiryDate = DateTimeOffset.UtcNow.AddSeconds(sessionExpirationSeconds),
-            CreationDate = DateTimeOffset.UtcNow
+            CreationDate = DateTimeOffset.UtcNow,
+            GenuineNpTicket = genuineTicket
         };
 
         IEnumerable<GameSession> sessionsToDelete = _realm.All<GameSession>()
@@ -45,11 +45,6 @@ public partial class GameDatabaseContext
         _realm.Refresh();
         
         return session;
-    }
-
-    private IEnumerable<GameSession> GetSessionsWithIp(IpAuthorization ip)
-    {
-        return _realm.All<GameSession>().Where(s => s.Ip == ip);
     }
 
     public void RemoveSession(GameSession session)

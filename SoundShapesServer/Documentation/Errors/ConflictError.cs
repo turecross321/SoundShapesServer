@@ -8,5 +8,5 @@ public class ConflictError
     public const string AlreadyLikedLevelWhen = "You have already liked this level.";
     public const string AlreadyQueuedLevelWhen = "You have already queued this level.";
     public const string AlreadyFollowingWhen = "You are already following this user.";
-    public const string AlreadyAuthorizedIpWhen = "You have already authorized this IP.";
+    public const string AlreadyAuthenticatedIpWhen = "You have already authenticated this IP.";
 }
