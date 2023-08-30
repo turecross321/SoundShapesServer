@@ -19,6 +19,6 @@ public class TestGameServer : GameServer
     
     public override void Start()
     {
-        ServerInstance.Start(1);
+        ServerInstance.Start(0);
     }
 }
