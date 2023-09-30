@@ -5,6 +5,7 @@ using NotEnoughLogs.Loggers;
 
 namespace SoundShapesServerTests.Server;
 
+[Parallelizable]
 [Timeout(2000)]
 public class ServerTest
 {
