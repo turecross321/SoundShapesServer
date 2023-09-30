@@ -1,9 +1,7 @@
-using System.Net;
 using AttribDoc.Attributes;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Framework;

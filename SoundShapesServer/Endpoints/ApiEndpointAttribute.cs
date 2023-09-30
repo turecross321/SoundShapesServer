@@ -14,8 +14,4 @@ public class ApiEndpointAttribute : EndpointAttribute
     {
         RouteWithParameters = '/' + route;
     }
-
-    public ApiEndpointAttribute(string route, ContentType contentType, Method method = Method.Get) 
-        : base(route, contentType, method)
-    {}
 }
