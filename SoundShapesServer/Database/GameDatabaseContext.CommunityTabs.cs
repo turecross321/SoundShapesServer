@@ -2,8 +2,9 @@ using System.Net;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
-using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.ResourceHelper;
@@ -59,9 +60,10 @@ public partial class GameDatabaseContext
         return communityTab;
     }
     
-    public Response UploadCommunityTabResource(IDataStore dataStore, CommunityTab communityTab, byte[] file)
+    public ApiOkResponse UploadCommunityTabResource(IDataStore dataStore, CommunityTab communityTab, byte[] file)
     {
-        if (!IsByteArrayPng(file)) return new Response(BadRequestError.FileIsNotPngWhen, ContentType.Plaintext, HttpStatusCode.BadRequest);
+        if (!IsByteArrayPng(file)) 
+            return ApiBadRequestError.FileIsNotPng;
 
         string key = GetCommunityTabResourceKey(communityTab.Id);
         dataStore.WriteToStore(key, file);
@@ -71,7 +73,7 @@ public partial class GameDatabaseContext
             communityTab.ThumbnailFilePath = key;
         });
 
-        return HttpStatusCode.Created;
+        return new ApiOkResponse();
     }
     
     public void RemoveCommunityTab(IDataStore dataStore, CommunityTab communityTab)

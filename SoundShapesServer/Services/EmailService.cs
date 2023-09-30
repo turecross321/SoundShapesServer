@@ -26,7 +26,7 @@ public class EmailService : EndpointService
         };
     }
 
-    public void SendEmail(string recipient, string subject, string body)
+    public bool SendEmail(string recipient, string subject, string body)
     {
         MailMessage message = new();
         message.From = new MailAddress(_config.EmailAddress);
@@ -34,6 +34,16 @@ public class EmailService : EndpointService
         message.Subject = subject;
         message.Body = body;
 
-        _smtpClient.Send(message);
+        try
+        {
+            _smtpClient.Send(message);
+        }
+        catch (Exception e)
+        {
+            Logger.LogWarning(BunkumContext.Service, $"Failed to send '{subject}' to '{recipient}':\n{e}");
+            return false;
+        }
+
+        return true;
     }
 }

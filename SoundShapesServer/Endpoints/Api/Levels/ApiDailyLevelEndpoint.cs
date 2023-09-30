@@ -4,8 +4,8 @@ using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Responses.Api;
-using SoundShapesServer.Responses.Api.Levels;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Responses.Levels;
 using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Endpoints.Api.Levels;

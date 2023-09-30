@@ -1,5 +1,4 @@
 using Bunkum.HttpServer.Configuration;
-using Bunkum.HttpServer.RateLimit;
 
 namespace SoundShapesServer.Configuration;
 

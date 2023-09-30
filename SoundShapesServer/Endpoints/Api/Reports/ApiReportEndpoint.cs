@@ -6,6 +6,8 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Reports;
@@ -17,7 +19,10 @@ public class ApiReportEndpoint : EndpointGroup
 {
     [ApiEndpoint("reports/create", Method.Post)]
     [DocSummary("Creates report.")]
-    public Response CreateReport(RequestContext context, GameDatabaseContext database, GameUser user, ApiReportRequest body)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LeaderboardEntryNotFoundWhen)]
+    public ApiOkResponse CreateReport(RequestContext context, GameDatabaseContext database, GameUser user, ApiReportRequest body)
     {
         GameUser? userBeingReported = null;
         GameLevel? level = null;
@@ -28,26 +33,29 @@ public class ApiReportEndpoint : EndpointGroup
             case ReportContentType.User:
             {
                 userBeingReported = database.GetUserWithId(body.ContentId);
-                if (userBeingReported == null) return HttpStatusCode.NotFound;
+                if (userBeingReported == null) 
+                    return ApiNotFoundError.UserNotFound;
                 break;
             }
             case ReportContentType.Level:
             {
                 level = database.GetLevelWithId(body.ContentId);
-                if (level == null) return HttpStatusCode.NotFound;
+                if (level == null)
+                    return ApiNotFoundError.LevelNotFound;
                 break;
             }
             case ReportContentType.LeaderboardEntry:
             {
                 leaderboardEntry = database.GetLeaderboardEntryWithId(body.ContentId);
-                if (leaderboardEntry == null) return HttpStatusCode.NotFound;
+                if (leaderboardEntry == null)
+                    return ApiNotFoundError.LeaderboardEntryNotFound;
                 break;
             }
             default:
-                return HttpStatusCode.BadRequest;
+                return ApiBadRequestError.InvalidContentType;
         }
 
         database.CreateReport(user, body.ContentType, body.ReasonType, userBeingReported, level, leaderboardEntry);
-        return HttpStatusCode.Created;
+        return new ApiOkResponse();
     }
 }

@@ -3,7 +3,6 @@ using Bunkum.AutoDiscover.Extensions;
 using Bunkum.CustomHttpListener;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Authentication;
-using Bunkum.HttpServer.Configuration;
 using Bunkum.HttpServer.Storage;
 using Bunkum.ProfanityFilter;
 using SoundShapesServer.Authentication;

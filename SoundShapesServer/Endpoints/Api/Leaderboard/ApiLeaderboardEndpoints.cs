@@ -3,9 +3,10 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
-using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Responses.Api;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
+using SoundShapesServer.Responses.Api.Responses;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
@@ -18,14 +19,14 @@ public class ApiLeaderboardEndpoints : EndpointGroup
     [ApiEndpoint("levels/id/{levelId}/leaderboard"), Authentication(false)]
     [DocUsesPageData]
     [DocSummary("Retrieves leaderboard of level.")]
-    [DocError(typeof(NotFoundError), NotFoundError.LevelNotFoundWhen)]
-    public ApiListResponse<ApiLeaderboardEntryResponse>? GetLeaderboard(RequestContext context, GameDatabaseContext database, string levelId, GameUser? user)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
+    public ApiListResponse<ApiLeaderboardEntryResponse> GetLeaderboard(RequestContext context, GameDatabaseContext database, string levelId, GameUser? user)
     {
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context, false);
 
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null)
-            return null;
+            return ApiNotFoundError.LevelNotFound;
         
         string? byUserId = context.QueryString["byUser"];
         GameUser? byUser = null;

@@ -7,7 +7,6 @@ using Bunkum.HttpServer.Storage;
 using NPTicket;
 using NPTicket.Verification;
 using NPTicket.Verification.Keys;
-using Realms.Sync;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Sessions;
 using SoundShapesServer.Types;

@@ -1,12 +1,11 @@
-using System.Net;
 using AttribDoc.Attributes;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
-using SoundShapesServer.Documentation.Errors;
-using SoundShapesServer.Responses.Api.Users;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
+using SoundShapesServer.Responses.Api.Responses.Users;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api.Users;
@@ -15,14 +14,16 @@ public class ApiUserRelationEndpoints : EndpointGroup
 {
     [ApiEndpoint("users/id/{recipientId}/relationWith/id/{actorId}"), Authentication(false)]
     [DocSummary("Retrieves relation between two users.")]
-    [DocError(typeof(NotFoundError), NotFoundError.UserNotFoundWhen)]
-    public ApiUserRelationResponse? CheckIfFollowingUser(RequestContext context, GameDatabaseContext database, string recipientId, string actorId)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
+    public ApiResponse<ApiUserRelationResponse> CheckIfFollowingUser(RequestContext context, GameDatabaseContext database, string recipientId, string actorId)
     {
         GameUser? recipient = database.GetUserWithId(recipientId);
-        if (recipient == null) return null;
+        if (recipient == null)
+            return ApiNotFoundError.UserNotFound;
         
         GameUser? actor = database.GetUserWithId(actorId);
-        if (actor == null) return null;
+        if (actor == null) 
+            return ApiNotFoundError.UserNotFound;
 
         return new ApiUserRelationResponse
         {
@@ -33,34 +34,37 @@ public class ApiUserRelationEndpoints : EndpointGroup
 
     [ApiEndpoint("users/id/{id}/follow", Method.Post)]
     [DocSummary("Follows user with specified ID.")]
-    [DocError(typeof(NotFoundError), NotFoundError.UserNotFoundWhen)]
-    [DocError(typeof(ForbiddenError), ForbiddenError.FollowYourselfWhen)]
-    public Response FollowUser(RequestContext context, GameDatabaseContext database, GameUser user, string id)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
+    [DocError(typeof(ApiForbiddenError), ApiForbiddenError.FollowYourselfWhen)]
+    [DocError(typeof(ApiConflictError), ApiConflictError.AlreadyFollowingWhen)]
+    public ApiOkResponse FollowUser(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameUser? recipient = database.GetUserWithId(id);
-        if (recipient == null) return HttpStatusCode.NotFound;
+        if (recipient == null)
+            return ApiNotFoundError.UserNotFound;
         
         if (recipient.Id == user.Id) 
-            return new Response(ForbiddenError.FollowYourselfWhen, ContentType.Plaintext, HttpStatusCode.Forbidden);
+            return ApiForbiddenError.FollowYourself;
 
         if (!database.FollowUser(user, recipient)) 
-            return new Response(ConflictError.AlreadyFollowingWhen, ContentType.Plaintext, HttpStatusCode.Conflict);
+            return ApiConflictError.AlreadyFollowing;
         
-        return HttpStatusCode.Created;
+        return new ApiOkResponse();
     }
 
     [ApiEndpoint("users/id/{id}/unFollow", Method.Post)]
     [DocSummary("Unfollows user with specified ID.")]
-    [DocError(typeof(NotFoundError), NotFoundError.UserNotFoundWhen)]
-    [DocError(typeof(NotFoundError), NotFoundError.NotFollowingWhen)]
-    public Response UnFollowUser(RequestContext context, GameDatabaseContext database, GameUser user, string id)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
+    [DocError(typeof(ApiForbiddenError), ApiNotFoundError.NotFollowingWhen)]
+    public ApiOkResponse UnFollowUser(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameUser? recipient = database.GetUserWithId(id);
-        if (recipient == null) return HttpStatusCode.NotFound;
+        if (recipient == null)
+            return ApiNotFoundError.UserNotFound;
 
         if (!database.UnFollowUser(user, recipient)) 
-            return new Response(NotFoundError.NotFollowingWhen, ContentType.Plaintext, HttpStatusCode.NotFound);
+            return ApiNotFoundError.NotFollowing;
         
-        return HttpStatusCode.OK;
+        return new ApiOkResponse();
     }
 }

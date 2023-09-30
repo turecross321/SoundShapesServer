@@ -3,10 +3,10 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
-using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Responses.Api;
-using SoundShapesServer.Responses.Api.Albums;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
+using SoundShapesServer.Responses.Api.Responses.Albums;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Users;
 
@@ -16,11 +16,14 @@ public class ApiAlbumEndpoints : EndpointGroup
 {
     [ApiEndpoint("albums/id/{id}"), Authentication(false)]
     [DocSummary("Retrieves album with specified ID.")]
-    [DocError(typeof(NotFoundError), NotFoundError.AlbumNotFoundWhen)]
-    public ApiAlbumResponse? GetAlbum(RequestContext context, GameDatabaseContext database, string id)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.AlbumNotFoundWhen)]
+    public ApiResponse<ApiAlbumResponse> GetAlbum(RequestContext context, GameDatabaseContext database, string id)
     {
         GameAlbum? album = database.GetAlbumWithId(id);
-        return album == null ? null : new ApiAlbumResponse(album);
+        if (album == null)
+            return ApiNotFoundError.AlbumNotFound;
+        
+        return new ApiAlbumResponse(album);
     }
 
     [ApiEndpoint("albums"), Authentication(false)]
@@ -51,18 +54,19 @@ public class ApiAlbumEndpoints : EndpointGroup
 
     [ApiEndpoint("albums/id/{albumId}/relationWith/id/{userId}")]
     [DocSummary("Retrieves relation between an album and a user.")]
-    [DocError(typeof(NotFoundError), NotFoundError.AlbumNotFoundWhen)]
-    [DocError(typeof(NotFoundError), NotFoundError.UserNotFoundWhen)]
-    public ApiAlbumCompletionResponse? GetAlbumCompletion(RequestContext context, GameDatabaseContext database, string albumId, string userId)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.AlbumNotFoundWhen)]
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
+    public ApiResponse<ApiAlbumCompletionResponse> GetAlbumCompletion(RequestContext context, GameDatabaseContext database, string albumId, string userId)
     {
         GameAlbum? album = database.GetAlbumWithId(albumId);
-        if (album == null) return null;
+        if (album == null)
+            return ApiNotFoundError.AlbumNotFound;
 
         GameUser? user = database.GetUserWithId(userId);
-        if (user == null) return null;
+        if (user == null)
+            return ApiNotFoundError.UserNotFound;
         
         int completedLevels = album.Levels.Count(level => level.UniqueCompletions.Contains(user));
-
         return new ApiAlbumCompletionResponse(completedLevels, album.Levels.Count);
     }
 }

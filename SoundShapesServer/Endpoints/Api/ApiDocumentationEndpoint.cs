@@ -1,7 +1,7 @@
 using AttribDoc.Attributes;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
-using SoundShapesServer.Responses.Api.Documentation;
+using SoundShapesServer.Responses.Api.Framework.Documentation;
 using SoundShapesServer.Services;
 
 namespace SoundShapesServer.Endpoints.Api;

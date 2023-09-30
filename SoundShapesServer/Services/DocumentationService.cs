@@ -3,7 +3,7 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Services;
 using NotEnoughLogs;
 using SoundShapesServer.Documentation;
-using SoundShapesServer.Responses.Api.Documentation;
+using SoundShapesServer.Responses.Api.Framework.Documentation;
 
 namespace SoundShapesServer.Services;
 

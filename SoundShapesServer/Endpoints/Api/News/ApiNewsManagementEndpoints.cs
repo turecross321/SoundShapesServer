@@ -7,9 +7,10 @@ using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
-using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Requests.Api;
-using SoundShapesServer.Responses.Api;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
+using SoundShapesServer.Responses.Api.Responses;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Users;
@@ -21,36 +22,38 @@ public class ApiNewsManagementEndpoints : EndpointGroup
     [ApiEndpoint("news/create", Method.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Creates news entry.")]
-    public Response CreateNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
+    public ApiResponse<ApiNewsResponse> CreateNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
         GameUser user, ApiCreateNewsEntryRequest body)
     {
         NewsEntry createdNewsEntry = database.CreateNewsEntry(body, user);
-        return new Response(new ApiNewsResponse(createdNewsEntry), ContentType.Json, HttpStatusCode.Created);
+        return new ApiNewsResponse(createdNewsEntry);
     }
 
     [ApiEndpoint("news/id/{id}/edit", Method.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Edits news entry with specified ID.")]
-    [DocError(typeof(NotFoundError), NotFoundError.NewsEntryNotFoundWhen)]
-    public Response EditNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.NewsEntryNotFoundWhen)]
+    public ApiResponse<ApiNewsResponse> EditNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
         GameUser user, ApiCreateNewsEntryRequest body, string id)
     {
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
-        if (newsEntry == null) return HttpStatusCode.NotFound;
+        if (newsEntry == null) 
+            return ApiNotFoundError.NewsEntryNotFound;
 
         NewsEntry editedNewsEntry = database.EditNewsEntry(newsEntry, body, user);
-        return new Response(new ApiNewsResponse(editedNewsEntry), ContentType.Json, HttpStatusCode.Created);
+        return new ApiNewsResponse(editedNewsEntry);
     }
     
     [ApiEndpoint("news/id/{id}/setThumbnail", Method.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets thumbnail of news entry with specified ID.")]
-    [DocError(typeof(NotFoundError), NotFoundError.NewsEntryNotFoundWhen)]
-    [DocError(typeof(BadRequestError), BadRequestError.FileIsNotPngWhen)]
-    public Response SetNewsAssets(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id, byte[] body)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.NewsEntryNotFoundWhen)]
+    [DocError(typeof(ApiBadRequestError), ApiBadRequestError.FileIsNotPngWhen)]
+    public ApiOkResponse SetNewsAssets(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id, byte[] body)
     {
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
-        if (newsEntry == null) return HttpStatusCode.NotFound;
+        if (newsEntry == null) 
+            return ApiNotFoundError.NewsEntryNotFound;
 
         return database.UploadNewsResource(dataStore, newsEntry, body);
     }
@@ -58,13 +61,14 @@ public class ApiNewsManagementEndpoints : EndpointGroup
     [ApiEndpoint("news/id/{id}", Method.Delete)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Deletes news entry with specified ID.")]
-    [DocError(typeof(NotFoundError), NotFoundError.NewsEntryNotFoundWhen)]
-    public Response DeleteNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.NewsEntryNotFoundWhen)]
+    public ApiOkResponse DeleteNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)
     {
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
-        if (newsEntry == null) return HttpStatusCode.NotFound;
+        if (newsEntry == null) 
+            return ApiNotFoundError.NewsEntryNotFound;
         
         database.RemoveNewsEntry(dataStore, newsEntry);
-        return HttpStatusCode.NoContent;
+        return new ApiOkResponse();
     }
 }

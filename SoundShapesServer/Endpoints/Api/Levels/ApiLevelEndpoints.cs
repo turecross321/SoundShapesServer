@@ -3,10 +3,10 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
-using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Responses.Api;
-using SoundShapesServer.Responses.Api.Levels;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
+using SoundShapesServer.Responses.Api.Responses.Levels;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 
@@ -31,15 +31,15 @@ public class ApiLevelEndpoints: EndpointGroup
 
     [ApiEndpoint("levels/id/{levelId}"), Authentication(false)]
     [DocSummary("Retrieves level with specified ID.")]
-    [DocError(typeof(NotFoundError), NotFoundError.LevelNotFoundWhen)]
-    public ApiLevelFullResponse? GetLevelWithId(RequestContext context, GameDatabaseContext database, string levelId, GameUser? user)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
+    public ApiResponse<ApiLevelFullResponse> GetLevelWithId(RequestContext context, GameDatabaseContext database, string levelId, GameUser? user)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null)
-            return null;
+            return ApiNotFoundError.LevelNotFound;
 
         if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
-            return null;
+            return ApiNotFoundError.LevelNotFound;
             
         return new ApiLevelFullResponse(level);
     }

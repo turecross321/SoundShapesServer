@@ -1,16 +1,15 @@
-using System.Net;
 using AttribDoc.Attributes;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
-using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Requests.Api.Account;
-using SoundShapesServer.Responses.Api;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
+using SoundShapesServer.Responses.Api.Responses;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Sessions;
@@ -21,66 +20,67 @@ namespace SoundShapesServer.Endpoints.Api.Account;
 
 public class ApiAuthenticationEndpoints : EndpointGroup
 {
-    private readonly Response _invalidCredentialsResponse = new (ForbiddenError.EmailOrPasswordIsWrongWhen, ContentType.Plaintext, HttpStatusCode.Forbidden);
-    
     [ApiEndpoint("account/logIn", Method.Post), Authentication(false)]
-    [DocError(typeof(ForbiddenError), ForbiddenError.EmailOrPasswordIsWrongWhen)]
-    public Response Login(RequestContext context, GameDatabaseContext database, ApiLoginRequest body)
+    [DocError(typeof(ApiForbiddenError), ApiForbiddenError.EmailOrPasswordIsWrongWhen)]
+    public ApiResponse<ApiSessionResponse> Login(RequestContext context, GameDatabaseContext database, ApiLoginRequest body)
     {
         GameUser? user = database.GetUserWithEmail(body.Email);
-        if (user == null) return _invalidCredentialsResponse;
+        if (user == null) 
+            return ApiForbiddenError.EmailOrPasswordIsWrong;
 
-        if (!database.ValidatePassword(user, body.PasswordSha512)) return _invalidCredentialsResponse;
+        if (!database.ValidatePassword(user, body.PasswordSha512))
+            return ApiForbiddenError.EmailOrPasswordIsWrong;
 
         IQueryable<Punishment> activeBans = GetActiveUserBans(user);
         SessionType sessionType = activeBans.Any() ? SessionType.Banned : SessionType.Api;
         GameSession session = database.CreateSession(user, sessionType, PlatformType.Api);
         
-        return new Response(new ApiSessionResponse(session, activeBans), ContentType.Json);
+        return new ApiSessionResponse(session, activeBans);
     }
 
     [ApiEndpoint("account/logOut", Method.Post)]
     [DocSummary("Revokes the session used to make this request.")]
-    public Response Logout(RequestContext context, GameDatabaseContext database, GameSession session)
+    public ApiOkResponse Logout(RequestContext context, GameDatabaseContext database, GameSession session)
     {
         database.RemoveSession(session);
-        return HttpStatusCode.NoContent;
+        return new ApiOkResponse();
     }
     
     // Game Authentication
     
     [ApiEndpoint("gameAuth/settings", Method.Post)]
     [DocSummary("Sets user's game authentication settings.")]
-    public Response SetGameAuthenticationSettings(RequestContext context, GameDatabaseContext database, GameUser user, ApiSetGameAuthenticationSettingsRequest body)
+    public ApiOkResponse SetGameAuthenticationSettings(RequestContext context, GameDatabaseContext database, GameUser user, ApiSetGameAuthenticationSettingsRequest body)
     {
         database.SetUserGameAuthenticationSettings(user, body);
-        return HttpStatusCode.Created;
+        return new ApiOkResponse();
     }
 
     [ApiEndpoint("gameAuth/settings")]
     [DocSummary("Lists user's game authentication settings.")]
-    public ApiGameAuthenticationSettingsResponse GetGameAuthenticationSettings(RequestContext context, GameUser user) => new (user);
+    public ApiResponse<ApiGameAuthenticationSettingsResponse> GetGameAuthenticationSettings(RequestContext context, GameUser user) 
+        => new ApiGameAuthenticationSettingsResponse(user);
     
     [ApiEndpoint("gameAuth/ip/authorize", Method.Post)]
     [DocSummary("Authorizes specified IP address.")]
-    [DocError(typeof(ConflictError), ConflictError.AlreadyAuthenticatedIpWhen)]
-    public Response AuthorizeIpAddress(RequestContext context, GameDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
+    [DocError(typeof(ApiConflictError), ApiConflictError.AlreadyAuthenticatedIpWhen)]
+    public ApiOkResponse AuthorizeIpAddress(RequestContext context, GameDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
     {
         GameIp gameIp = database.GetIpFromAddress(user, body.IpAddress);
 
         if (!database.AuthorizeIpAddress(gameIp, body.OneTimeUse))
-            return new Response(ConflictError.AlreadyAuthenticatedIpWhen, ContentType.Plaintext, HttpStatusCode.Conflict);
-        
-        return HttpStatusCode.Created;
+            return ApiConflictError.AlreadyAuthenticatedIp;
+
+        return new ApiOkResponse();
     }
     [ApiEndpoint("gameAuth/ip/address/{address}", Method.Delete)]
     [DocSummary("Deletes specified IP address.")]
-    public Response UnAuthorizeIpAddress(RequestContext context, GameDatabaseContext database, string address, GameUser user)
+    public ApiOkResponse UnAuthorizeIpAddress(RequestContext context, GameDatabaseContext database, string address, GameUser user)
     {
         GameIp gameIp = database.GetIpFromAddress(user, address);
 
         database.RemoveIpAddress(gameIp);
-        return HttpStatusCode.NoContent;
+        return new ApiOkResponse();
     }
 
     [ApiEndpoint("gameAuth/ip")]

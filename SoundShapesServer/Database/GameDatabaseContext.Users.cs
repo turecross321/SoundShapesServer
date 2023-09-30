@@ -4,7 +4,6 @@ using SoundShapesServer.Types;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Relations;
-using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.PaginationHelper;
 

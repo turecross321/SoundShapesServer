@@ -3,9 +3,10 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
-using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Responses.Api;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
+using SoundShapesServer.Responses.Api.Responses;
 using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Users;
 
@@ -15,11 +16,14 @@ public class ApiNewsEndpoints : EndpointGroup
 {
     [ApiEndpoint("news/id/{id}"), Authentication(false)]
     [DocSummary("Retrieves news entry with specified ID.")]
-    [DocError(typeof(NotFoundError), NotFoundError.NewsEntryNotFoundWhen)]
-    public ApiNewsResponse? NewsEntryWithId(RequestContext context, GameDatabaseContext database, string id)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.NewsEntryNotFoundWhen)]
+    public ApiResponse<ApiNewsResponse> NewsEntryWithId(RequestContext context, GameDatabaseContext database, string id)
     {
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
-        return newsEntry != null ? new ApiNewsResponse(newsEntry) : null;
+        if (newsEntry == null)
+            return ApiNotFoundError.NewsEntryNotFound;
+        
+        return new ApiNewsResponse(newsEntry);
     }
     
     [ApiEndpoint("news"), Authentication(false)]

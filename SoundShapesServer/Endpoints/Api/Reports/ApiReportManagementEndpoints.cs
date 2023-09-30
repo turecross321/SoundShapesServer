@@ -7,10 +7,10 @@ using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
-using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Responses.Api;
-using SoundShapesServer.Responses.Api.Moderation;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
+using SoundShapesServer.Responses.Api.Responses.Moderation;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
@@ -24,26 +24,28 @@ public class ApiReportManagementEndpoints : EndpointGroup
     [ApiEndpoint("reports/id/{id}", Method.Delete)]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Deletes report with specified ID.")]
-    [DocError(typeof(NotFoundError), NotFoundError.ReportNotFoundWhen)]
-    public Response RemoveReport(RequestContext context, GameDatabaseContext database, GameUser user, string id)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.ReportNotFoundWhen)]
+    public ApiOkResponse RemoveReport(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         Report? report = database.GetReportWithId(id);
-        if (report == null) return HttpStatusCode.NotFound;
+        if (report == null) 
+            return ApiNotFoundError.ReportNotFound;
         
         database.RemoveReport(report);
-        return HttpStatusCode.NoContent;
+        return new ApiOkResponse();
     }
 
     [ApiEndpoint("reports/id/{id}")]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Retrieves report with specified ID.")]
-    [DocError(typeof(NotFoundError), NotFoundError.ReportNotFoundWhen)]
-    public Response GetReport(RequestContext context, GameDatabaseContext database, GameUser user, string id)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.ReportNotFoundWhen)]
+    public ApiResponse<ApiReportResponse> GetReport(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         Report? report = database.GetReportWithId(id);
-        if (report == null) return HttpStatusCode.NotFound;
+        if (report == null)
+            return ApiNotFoundError.ReportNotFound;
 
-        return new Response(new ApiReportResponse(database, report, user), ContentType.Json);
+        return new ApiReportResponse(database, report, user);
     }
 
     [ApiEndpoint("reports")]

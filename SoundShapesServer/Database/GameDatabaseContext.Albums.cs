@@ -2,9 +2,10 @@ using System.Net;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
-using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
 
@@ -36,18 +37,18 @@ public partial class GameDatabaseContext
     }
 
     // These aren't database related, but idk where to put them otherwise
-    public Response UploadAlbumResource(IDataStore dataStore, GameAlbum album, byte[] file, AlbumResourceType resourceType)
+    public ApiOkResponse UploadAlbumResource(IDataStore dataStore, GameAlbum album, byte[] file, AlbumResourceType resourceType)
     {
         // Album Files should always be Images
         if (!ResourceHelper.IsByteArrayPng(file))
-            return new Response(BadRequestError.FileIsNotPngWhen, ContentType.Plaintext, HttpStatusCode.BadRequest);
+            return ApiBadRequestError.FileIsNotPng;
 
         string key = ResourceHelper.GetAlbumResourceKey(album.Id, resourceType);
         dataStore.WriteToStore(key, file);
         
         SetAlbumFilePath(album, resourceType, key);
 
-        return HttpStatusCode.Created;
+        return new ApiOkResponse();
     }
 
     private void SetAlbumFilePath(GameAlbum album, AlbumResourceType resourceType, string path)

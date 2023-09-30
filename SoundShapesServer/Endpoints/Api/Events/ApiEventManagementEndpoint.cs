@@ -6,7 +6,8 @@ using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
-using SoundShapesServer.Documentation.Errors;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Users;
@@ -18,13 +19,14 @@ public class ApiEventManagementEndpoint : EndpointGroup
     [ApiEndpoint("events/id/{id}", Method.Delete)]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Deletes event with specified ID.")]
-    [DocError(typeof(NotFoundError), NotFoundError.EventNotFoundWhen)]
-    public Response RemoveEvent(RequestContext context, GameDatabaseContext database, GameUser user, string id)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.EventNotFoundWhen)]
+    public ApiOkResponse RemoveEvent(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameEvent? eventObject = database.GetEventWithId(id);
-        if (eventObject == null) return HttpStatusCode.NotFound;
+        if (eventObject == null) 
+            return ApiNotFoundError.EventNotFound;
         
         database.RemoveEvent(eventObject);
-        return HttpStatusCode.NoContent;
+        return new ApiOkResponse();
     }
 }

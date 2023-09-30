@@ -2,9 +2,10 @@ using System.Net;
 using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
-using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.ResourceHelper;
@@ -42,9 +43,9 @@ public partial class GameDatabaseContext
         return entry;
     }
 
-    public Response UploadNewsResource(IDataStore dataStore, NewsEntry newsEntry, byte[] file)
+    public ApiOkResponse UploadNewsResource(IDataStore dataStore, NewsEntry newsEntry, byte[] file)
     {
-        if (!IsByteArrayPng(file)) return new Response(BadRequestError.FileIsNotPngWhen, ContentType.Plaintext, HttpStatusCode.BadRequest);
+        if (!IsByteArrayPng(file)) return ApiBadRequestError.FileIsNotPng;
 
         string key = GetNewsResourceKey(newsEntry.Id);
         dataStore.WriteToStore(key, file);
@@ -54,7 +55,7 @@ public partial class GameDatabaseContext
             newsEntry.ThumbnailFilePath = key;
         });
 
-        return HttpStatusCode.Created;
+        return new ApiOkResponse();
     }
     
     public void RemoveNewsEntry(IDataStore dataStore, NewsEntry entry)

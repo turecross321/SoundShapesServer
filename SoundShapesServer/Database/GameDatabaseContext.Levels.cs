@@ -4,13 +4,13 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Storage;
 using Newtonsoft.Json.Linq;
-using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Events;
-using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
@@ -109,23 +109,23 @@ public partial class GameDatabaseContext
         return true;
     }
     
-    public Response UploadLevelResource(IDataStore dataStore, GameLevel level,
+    public ApiOkResponse UploadLevelResource(IDataStore dataStore, GameLevel level,
         byte[] file, FileType fileType)
     {
         if (fileType == FileType.Image && !IsByteArrayPng(file))
-            return new Response(BadRequestError.FileIsNotPngWhen, ContentType.Plaintext, HttpStatusCode.BadRequest);
+            return ApiBadRequestError.FileIsNotPng;
 
         if (fileType == FileType.Level)
         {
             if (!SetLevelInfo(level, file))
-                return new Response(BadRequestError.CorruptLevelWhen, ContentType.Plaintext, HttpStatusCode.BadRequest);
+                return ApiBadRequestError.CorruptLevel;
         }
         
         string key = GetLevelResourceKey(level, fileType);
         dataStore.WriteToStore(key, file);
         
         SetLevelFilePath(level, fileType, key);
-        return HttpStatusCode.Created;
+        return new ApiOkResponse();
     }
 
     private void SetLevelFilePath(GameLevel level, FileType fileType, string path)

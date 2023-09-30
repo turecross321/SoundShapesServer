@@ -3,10 +3,10 @@ using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
-using SoundShapesServer.Documentation.Errors;
 using SoundShapesServer.Helpers;
-using SoundShapesServer.Responses.Api;
-using SoundShapesServer.Responses.Api.Users;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Framework.Errors;
+using SoundShapesServer.Responses.Api.Responses.Users;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api.Users;
@@ -15,20 +15,26 @@ public class ApiUserEndpoints : EndpointGroup
 {
     [ApiEndpoint("users/id/{id}"), Authentication(false)]
     [DocSummary("Retrieves user with specified ID.")]
-    [DocError(typeof(NotFoundError), NotFoundError.UserNotFoundWhen)]
-    public ApiUserFullResponse? GetUserWithId(RequestContext context, GameDatabaseContext database, string id)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
+    public ApiResponse<ApiUserFullResponse> GetUserWithId(RequestContext context, GameDatabaseContext database, string id)
     {
         GameUser? userToCheck = database.GetUserWithId(id);
-        return userToCheck == null ? null : new ApiUserFullResponse(userToCheck);
+        if (userToCheck == null)
+            return ApiNotFoundError.UserNotFound;
+        
+        return new ApiUserFullResponse(userToCheck);
     }
     
     [ApiEndpoint("users/username/{username}"), Authentication(false)]
     [DocSummary("Retrieves user with specified username.")]
-    [DocError(typeof(NotFoundError), NotFoundError.UserNotFoundWhen)]
-    public ApiUserFullResponse? GetUserWithUsername(RequestContext context, GameDatabaseContext database, string username)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
+    public ApiResponse<ApiUserFullResponse> GetUserWithUsername(RequestContext context, GameDatabaseContext database, string username)
     {
         GameUser? userToCheck = database.GetUserWithUsername(username);
-        return userToCheck == null ? null : new ApiUserFullResponse(userToCheck);
+        if (userToCheck == null)
+            return ApiNotFoundError.UserNotFound;
+        
+        return new ApiUserFullResponse(userToCheck);
     }
 
     [ApiEndpoint("users"), Authentication(false)]

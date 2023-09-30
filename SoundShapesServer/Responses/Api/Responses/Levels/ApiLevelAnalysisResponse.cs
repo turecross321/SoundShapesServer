@@ -1,0 +1,28 @@
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Types.Levels;
+
+namespace SoundShapesServer.Responses.Api.Responses.Levels;
+
+public class ApiLevelAnalysisResponse : IApiResponse
+{
+    public ApiLevelAnalysisResponse(GameLevel level)
+    {
+        FileSize = level.FileSize;
+        Bpm = level.Bpm;
+        TransposeValue = level.TransposeValue;
+        ScaleIndex = level.ScaleIndex;
+        TotalScreens = level.TotalScreens;
+        TotalEntities = level.TotalEntities;
+        HasCar = level.HasCar;
+        HasExplodingCar = level.HasExplodingCar;    
+    }
+    
+    public long FileSize { get; set; }
+    public int Bpm { get; set; }
+    public int TransposeValue { get; set; }
+    public int ScaleIndex { get; set; }
+    public int TotalScreens { get; set; }
+    public int TotalEntities { get; set; }
+    public bool HasCar { get; set; }
+    public bool HasExplodingCar { get; set; }
+}
