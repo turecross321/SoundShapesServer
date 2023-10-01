@@ -1,9 +1,9 @@
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Storage;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.Storage;
 using Bunkum.ProfanityFilter;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api;
@@ -20,7 +20,7 @@ namespace SoundShapesServer.Endpoints.Api.Levels;
 
 public class ApiLevelManagementEndpoints : EndpointGroup
 {
-    [ApiEndpoint("levels/create", Method.Post)]
+    [ApiEndpoint("levels/create", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Creates level.")]
     public ApiResponse<ApiLevelFullResponse> CreateLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiPublishLevelRequest body, ProfanityService profanity)
@@ -30,7 +30,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
         return new ApiLevelFullResponse(publishedLevel);
     }
 
-    [ApiEndpoint("levels/id/{id}/setLevel", Method.Post)]
+    [ApiEndpoint("levels/id/{id}/setLevel", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets the level file of level.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
@@ -40,7 +40,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
         string id)
         => UploadLevelResource(database, dataStore, body, id, FileType.Level);
     
-    [ApiEndpoint("levels/id/{id}/setSound", Method.Post)]
+    [ApiEndpoint("levels/id/{id}/setSound", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets the sound file of level.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
@@ -49,7 +49,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
         string id)
         => UploadLevelResource(database, dataStore, body, id, FileType.Sound);
     
-    [ApiEndpoint("levels/id/{id}/setThumbnail", Method.Post)]
+    [ApiEndpoint("levels/id/{id}/setThumbnail", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets the thumbnail of level.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
@@ -69,7 +69,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
         return database.UploadLevelResource(dataStore, level, body, fileType);
     }
 
-    [ApiEndpoint("levels/id/{id}/edit", Method.Post)]
+    [ApiEndpoint("levels/id/{id}/edit", HttpMethods.Post)]
     [DocSummary("Edits level with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.NoEditPermissionWhen)]
@@ -91,7 +91,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
         return new ApiLevelFullResponse(publishedLevel);
     }
     
-    [ApiEndpoint("levels/id/{id}", Method.Delete)]
+    [ApiEndpoint("levels/id/{id}", HttpMethods.Delete)]
     [DocSummary("Deletes level with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.NoDeletionPermissionWhen)]

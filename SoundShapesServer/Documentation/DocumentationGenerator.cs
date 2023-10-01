@@ -1,7 +1,7 @@
 using System.Reflection;
 using AttribDoc;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Extensions;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.Extensions;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Endpoints;
 

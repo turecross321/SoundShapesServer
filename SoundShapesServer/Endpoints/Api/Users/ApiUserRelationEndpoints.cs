@@ -1,7 +1,7 @@
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
@@ -32,7 +32,7 @@ public class ApiUserRelationEndpoints : EndpointGroup
         };
     }
 
-    [ApiEndpoint("users/id/{id}/follow", Method.Post)]
+    [ApiEndpoint("users/id/{id}/follow", HttpMethods.Post)]
     [DocSummary("Follows user with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
     [DocError(typeof(ApiForbiddenError), ApiForbiddenError.FollowYourselfWhen)]
@@ -52,7 +52,7 @@ public class ApiUserRelationEndpoints : EndpointGroup
         return new ApiOkResponse();
     }
 
-    [ApiEndpoint("users/id/{id}/unFollow", Method.Post)]
+    [ApiEndpoint("users/id/{id}/unFollow", HttpMethods.Post)]
     [DocSummary("Unfollows user with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
     [DocError(typeof(ApiForbiddenError), ApiNotFoundError.NotFollowingWhen)]

@@ -1,4 +1,4 @@
-using Bunkum.HttpServer.RateLimit;
+using Bunkum.Core.RateLimit;
 using Realms;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Leaderboard;

@@ -1,8 +1,8 @@
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Storage;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.Storage;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api;
@@ -17,7 +17,7 @@ namespace SoundShapesServer.Endpoints.Api.Albums;
 
 public class ApiAlbumManagementEndpoints : EndpointGroup
 {
-    [ApiEndpoint("albums/create", Method.Post)]
+    [ApiEndpoint("albums/create", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Creates an album.")]
     public ApiResponse<ApiAlbumResponse> CreateAlbum(RequestContext context, GameDatabaseContext database, GameUser user, ApiCreateAlbumRequest body)
@@ -26,7 +26,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
         return new ApiAlbumResponse(album);
     }
 
-    [ApiEndpoint("albums/id/{id}/edit", Method.Post)]
+    [ApiEndpoint("albums/id/{id}/edit", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Edits album with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.AlbumNotFoundWhen)]
@@ -40,7 +40,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
         return new ApiAlbumResponse(editedAlbum);
     }
 
-    [ApiEndpoint("albums/id/{id}/setThumbnail", Method.Post)]
+    [ApiEndpoint("albums/id/{id}/setThumbnail", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets thumbnail of album.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.AlbumNotFoundWhen)]
@@ -56,7 +56,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
             AlbumResourceType.Thumbnail
     );
     
-    [ApiEndpoint("albums/id/{id}/setSidePanel", Method.Post)]
+    [ApiEndpoint("albums/id/{id}/setSidePanel", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets side panel of album.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.AlbumNotFoundWhen)]
@@ -81,7 +81,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
         return database.UploadAlbumResource(dataStore, album, body, resourceType);
     }
 
-    [ApiEndpoint("albums/id/{id}", Method.Delete)]
+    [ApiEndpoint("albums/id/{id}", HttpMethods.Delete)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Deletes album with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.AlbumNotFoundWhen)]

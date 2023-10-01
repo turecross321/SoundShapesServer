@@ -1,11 +1,11 @@
-using Bunkum.HttpServer.Authentication;
+using Bunkum.Core.Authentication;
 using Realms;
 using SoundShapesServer.Types.Users;
 #pragma warning disable CS8618
 
 namespace SoundShapesServer.Types.Sessions;
 
-public class GameSession : RealmObject, IToken
+public class GameSession : RealmObject, IToken<GameUser>
 {
     [Required] [PrimaryKey] public string Id { get; init; }
     public GameUser User { get; init; }

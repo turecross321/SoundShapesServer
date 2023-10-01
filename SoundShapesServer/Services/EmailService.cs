@@ -1,8 +1,8 @@
 using System.Net;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Services;
-using NotEnoughLogs;
+using Bunkum.Core.Services;
 using System.Net.Mail;
+using Bunkum.Core;
+using NotEnoughLogs;
 using SoundShapesServer.Configuration;
 
 
@@ -14,7 +14,7 @@ public class EmailService : EndpointService
     
     private readonly GameServerConfig _config;
     
-    internal EmailService(LoggerContainer<BunkumContext> logger, GameServerConfig config) : base(logger)
+    internal EmailService(Logger logger, GameServerConfig config) : base(logger)
     {
         _config = config;
         
@@ -40,7 +40,7 @@ public class EmailService : EndpointService
         }
         catch (Exception e)
         {
-            Logger.LogWarning(BunkumContext.Service, $"Failed to send '{subject}' to '{recipient}':\n{e}");
+            Logger.LogWarning(BunkumCategory.Service, $"Failed to send '{subject}' to '{recipient}':\n{e}");
             return false;
         }
 

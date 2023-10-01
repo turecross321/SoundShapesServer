@@ -1,7 +1,7 @@
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Framework;
@@ -15,7 +15,7 @@ namespace SoundShapesServer.Endpoints.Api.Reports;
 
 public class ApiReportEndpoint : EndpointGroup
 {
-    [ApiEndpoint("reports/create", Method.Post)]
+    [ApiEndpoint("reports/create", HttpMethods.Post)]
     [DocSummary("Creates report.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]

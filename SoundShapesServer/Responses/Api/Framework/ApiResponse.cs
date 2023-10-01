@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Bunkum.HttpServer.Responses;
+using Bunkum.Core.Responses;
 using SoundShapesServer.Responses.Api.Framework.Errors;
 
 namespace SoundShapesServer.Responses.Api.Framework;

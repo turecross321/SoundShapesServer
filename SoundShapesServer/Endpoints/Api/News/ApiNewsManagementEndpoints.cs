@@ -1,8 +1,8 @@
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Storage;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.Storage;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api;
@@ -17,7 +17,7 @@ namespace SoundShapesServer.Endpoints.Api.News;
 
 public class ApiNewsManagementEndpoints : EndpointGroup
 {
-    [ApiEndpoint("news/create", Method.Post)]
+    [ApiEndpoint("news/create", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Creates news entry.")]
     public ApiResponse<ApiNewsResponse> CreateNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
@@ -27,7 +27,7 @@ public class ApiNewsManagementEndpoints : EndpointGroup
         return new ApiNewsResponse(createdNewsEntry);
     }
 
-    [ApiEndpoint("news/id/{id}/edit", Method.Post)]
+    [ApiEndpoint("news/id/{id}/edit", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Edits news entry with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.NewsEntryNotFoundWhen)]
@@ -42,7 +42,7 @@ public class ApiNewsManagementEndpoints : EndpointGroup
         return new ApiNewsResponse(editedNewsEntry);
     }
     
-    [ApiEndpoint("news/id/{id}/setThumbnail", Method.Post)]
+    [ApiEndpoint("news/id/{id}/setThumbnail", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets thumbnail of news entry with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.NewsEntryNotFoundWhen)]
@@ -56,7 +56,7 @@ public class ApiNewsManagementEndpoints : EndpointGroup
         return database.UploadNewsResource(dataStore, newsEntry, body);
     }
 
-    [ApiEndpoint("news/id/{id}", Method.Delete)]
+    [ApiEndpoint("news/id/{id}", HttpMethods.Delete)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Deletes news entry with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.NewsEntryNotFoundWhen)]

@@ -1,5 +1,6 @@
 ﻿using System.Net;
-using Bunkum.CustomHttpListener.Parsing;
+using Bunkum.Core.Responses;
+using Bunkum.Listener.Protocol;
 
 namespace SoundShapesServer.Responses.Api.Framework.Errors;
 
@@ -15,6 +16,6 @@ public class ApiError
     public string Message { get; set; }
     public HttpStatusCode StatusCode { get; set; }
 
-    public static implicit operator Bunkum.HttpServer.Responses.Response(ApiError error) 
+    public static implicit operator Response(ApiError error) 
         => new(error, ContentType.Json, error.StatusCode);
 }

@@ -1,4 +1,4 @@
-using Bunkum.CustomHttpListener.Listeners.Direct;
+using Bunkum.Protocols.Http.Direct;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;

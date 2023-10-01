@@ -1,8 +1,8 @@
 using System.Net;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Responses;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.Responses;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
@@ -16,8 +16,8 @@ namespace SoundShapesServer.Endpoints.Game;
 
 public class LeaderboardEndpoints : EndpointGroup
 {
-    [GameEndpoint("global/~campaign:{levelId}/~leaderboard.post", Method.Post)]
-    [GameEndpoint("~identity:{userId}/~record:%2F~level%3A{arguments}", Method.Post)]
+    [GameEndpoint("global/~campaign:{levelId}/~leaderboard.post", HttpMethods.Post)]
+    [GameEndpoint("~identity:{userId}/~record:%2F~level%3A{arguments}", HttpMethods.Post)]
     public Response SubmitScore(RequestContext context, GameDatabaseContext database, GameUser user, string userId, string? arguments, string body, string levelId)
     {
         if (arguments != null)

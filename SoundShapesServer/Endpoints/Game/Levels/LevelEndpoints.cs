@@ -1,6 +1,6 @@
 using System.Net;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
@@ -8,7 +8,7 @@ using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
-using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
+using ContentType = Bunkum.Listener.Protocol.ContentType;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
 

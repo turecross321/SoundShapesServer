@@ -1,8 +1,8 @@
 using System.Net;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Responses;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.Responses;
+using Bunkum.Listener.Protocol;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;

@@ -1,4 +1,4 @@
-using Bunkum.HttpServer;
+using Bunkum.Core;
 using SoundShapesServer;
 
 BunkumConsole.AllocateConsole();

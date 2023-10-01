@@ -1,7 +1,7 @@
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
@@ -18,7 +18,7 @@ namespace SoundShapesServer.Endpoints.Api;
 
 public class ApiPunishmentManagementEndpoints : EndpointGroup
 {
-    [ApiEndpoint("punishments/create", Method.Post)]
+    [ApiEndpoint("punishments/create", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Punishes user.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
@@ -36,7 +36,7 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
         return new ApiPunishmentResponse(createdPunishment);
     }
 
-    [ApiEndpoint("punishments/id/{id}/edit", Method.Post)]
+    [ApiEndpoint("punishments/id/{id}/edit", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Edits punishment with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.PunishmentNotFoundWhen)]
@@ -60,7 +60,7 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
         return new ApiPunishmentResponse(editedPunishment);
     }
 
-    [ApiEndpoint("punishments/id/{id}/revoke", Method.Post)]
+    [ApiEndpoint("punishments/id/{id}/revoke", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Revokes punishment with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.PunishmentNotFoundWhen)]
