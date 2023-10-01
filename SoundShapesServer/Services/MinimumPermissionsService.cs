@@ -1,11 +1,10 @@
 using System.Net;
 using System.Reflection;
-using Bunkum.CustomHttpListener.Request;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Authentication;
-using Bunkum.HttpServer.Database;
-using Bunkum.HttpServer.Responses;
-using Bunkum.HttpServer.Services;
+using Bunkum.Listener.Request;
+using Bunkum.Core.Authentication;
+using Bunkum.Core.Database;
+using Bunkum.Core.Responses;
+using Bunkum.Core.Services;
 using NotEnoughLogs;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Types;
@@ -16,9 +15,9 @@ namespace SoundShapesServer.Services;
 
 public class MinimumPermissionsService : Service
 {
-    private readonly IAuthenticationProvider<GameUser, GameSession>? _authProvider;
+    private readonly IAuthenticationProvider<GameSession>? _authProvider;
     
-    internal MinimumPermissionsService(LoggerContainer<BunkumContext> logger, IAuthenticationProvider<GameUser, GameSession>? authProvider) : base(logger)
+    internal MinimumPermissionsService(Logger logger, IAuthenticationProvider<GameSession>? authProvider) : base(logger)
     {
         _authProvider = authProvider;
     }
@@ -30,7 +29,7 @@ public class MinimumPermissionsService : Service
             method.GetCustomAttribute<MinimumPermissionsAttribute>()?.MinimumPermissions;
         if (minimumPermissions == null) return null;
 
-        GameUser? user = _authProvider?.AuthenticateUser(context, database);
+        GameUser? user = _authProvider?.AuthenticateToken(context, database)?.User;
         
         if (user?.PermissionsType >= minimumPermissions)
             return null;

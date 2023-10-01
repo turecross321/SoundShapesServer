@@ -1,10 +1,11 @@
 using System.Net;
 using System.Text;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Responses;
-using Bunkum.HttpServer.Storage;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.Responses;
+using Bunkum.Core.Storage;
+using Bunkum.Listener.Protocol;
+using Bunkum.Protocols.Http;
 using HttpMultipartParser;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,7 +17,7 @@ namespace SoundShapesServer.Endpoints.Game;
 
 public class CloudSyncEndpoints : EndpointGroup
 {
-    [GameEndpoint("~identity:{userId}/~content:progress.put", Method.Post)]
+    [GameEndpoint("~identity:{userId}/~content:progress.put", HttpMethods.Post)]
     public Response UploadSave(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, Stream body)
     {
         string? key = user.SaveFilePath;

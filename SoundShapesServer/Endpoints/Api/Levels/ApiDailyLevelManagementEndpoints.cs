@@ -1,7 +1,7 @@
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api;
@@ -16,7 +16,7 @@ namespace SoundShapesServer.Endpoints.Api.Levels;
 
 public class ApiDailyLevelManagementEndpoints : EndpointGroup
 {
-    [ApiEndpoint("daily/create", Method.Post)]
+    [ApiEndpoint("daily/create", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Picks level as a daily level.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
@@ -30,7 +30,7 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
         return new ApiDailyLevelResponse(createdDailyLevel);
     }
     
-    [ApiEndpoint("daily/id/{id}/edit", Method.Post)]
+    [ApiEndpoint("daily/id/{id}/edit", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Edits daily level pick with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.DailyLevelNotFoundWhen)]
@@ -48,7 +48,7 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
         return new ApiDailyLevelResponse(createdDailyLevel);
     }
     
-    [ApiEndpoint("daily/id/{id}", Method.Delete)]
+    [ApiEndpoint("daily/id/{id}", HttpMethods.Delete)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Removes daily level pick with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.DailyLevelNotFoundWhen)]

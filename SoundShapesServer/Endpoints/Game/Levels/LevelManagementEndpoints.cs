@@ -1,9 +1,9 @@
 using System.Net;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Responses;
-using Bunkum.HttpServer.Storage;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.Responses;
+using Bunkum.Core.Storage;
+using Bunkum.Listener.Protocol;
 using Bunkum.ProfanityFilter;
 using HttpMultipartParser;
 using SoundShapesServer.Configuration;
@@ -86,14 +86,14 @@ public class LevelManagementEndpoints : EndpointGroup
                     break;
                 case FileType.Unknown:
                 default:
-                    context.Logger.LogInfo(BunkumContext.Filter, user.Username + " attempted to upload an illegal file: " + file.ContentType);
+                    context.Logger.LogInfo(BunkumCategory.Filter, user.Username + " attempted to upload an illegal file: " + file.ContentType);
                     return HttpStatusCode.BadRequest;
             }
         }
 
         if (levelFile == null || thumbnailFile == null || soundFile == null)
         {
-            context.Logger.LogInfo(BunkumContext.Filter, user.Username + " did not upload all the required files.");
+            context.Logger.LogInfo(BunkumCategory.Filter, user.Username + " did not upload all the required files.");
             return HttpStatusCode.BadRequest;
         }
 

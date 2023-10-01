@@ -1,4 +1,4 @@
-using Bunkum.HttpServer.Storage;
+using Bunkum.Core.Storage;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Events;

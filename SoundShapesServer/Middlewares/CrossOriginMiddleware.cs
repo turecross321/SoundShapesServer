@@ -1,8 +1,8 @@
 using System.Net;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.CustomHttpListener.Request;
-using Bunkum.HttpServer.Database;
-using Bunkum.HttpServer.Endpoints.Middlewares;
+using Bunkum.Listener.Request;
+using Bunkum.Core.Database;
+using Bunkum.Core.Endpoints.Middlewares;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Endpoints;
 
 namespace SoundShapesServer.Middlewares;
@@ -13,9 +13,9 @@ public class CrossOriginMiddleware : IMiddleware
 
     static CrossOriginMiddleware()
     {
-        foreach (Method method in Enum.GetValues<Method>())
+        foreach (HttpMethods method in Enum.GetValues<HttpMethods>())
         {
-            if(method is Method.Options or Method.Invalid) continue;
+            if(method == HttpMethods.Options) continue;
             AllowedMethods.Add(method.ToString().ToUpperInvariant());
         }
     }
@@ -30,7 +30,7 @@ public class CrossOriginMiddleware : IMiddleware
         {
             context.ResponseHeaders.Add("Access-Control-Allow-Origin", "*");
             
-            if (context.Method == Method.Options)
+            if (context.Method == HttpProtocolMethods.Options)
             {
                 context.ResponseHeaders.Add("Access-Control-Allow-Headers", "Authorization, Content-Type");
                 context.ResponseHeaders.Add("Access-Control-Allow-Methods", string.Join(", ", AllowedMethods));

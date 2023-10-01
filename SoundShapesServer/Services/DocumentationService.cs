@@ -1,6 +1,5 @@
 using System.Reflection;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Services;
+using Bunkum.Core.Services;
 using NotEnoughLogs;
 using SoundShapesServer.Documentation;
 using SoundShapesServer.Responses.Api.Framework.Documentation;
@@ -10,7 +9,7 @@ namespace SoundShapesServer.Services;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class DocumentationService : EndpointService
 {
-    internal DocumentationService(LoggerContainer<BunkumContext> logger) : base(logger)
+    internal DocumentationService(Logger logger) : base(logger)
     {}
 
     public override void Initialize()

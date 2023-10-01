@@ -1,6 +1,6 @@
-using Bunkum.CustomHttpListener.Request;
-using Bunkum.HttpServer.Authentication;
-using Bunkum.HttpServer.Database;
+using Bunkum.Listener.Request;
+using Bunkum.Core.Authentication;
+using Bunkum.Core.Database;
 using SoundShapesServer.Database;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
@@ -8,7 +8,7 @@ using static SoundShapesServer.Helpers.SessionHelper;
 
 namespace SoundShapesServer.Authentication;
 
-public class SessionProvider : IAuthenticationProvider<GameUser, GameSession>
+public class SessionProvider : IAuthenticationProvider<GameSession>
 {
     public GameUser? AuthenticateUser(ListenerContext request, Lazy<IDatabaseContext> db)
     {

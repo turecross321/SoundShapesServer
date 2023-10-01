@@ -1,8 +1,8 @@
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Storage;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.Storage;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api;
@@ -15,7 +15,7 @@ namespace SoundShapesServer.Endpoints.Api.Users;
 
 public class ApiUserManagementEndpoints : EndpointGroup
 {
-    [ApiEndpoint("users/id/{id}", Method.Delete)]
+    [ApiEndpoint("users/id/{id}", HttpMethods.Delete)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Deletes user with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
@@ -33,7 +33,7 @@ public class ApiUserManagementEndpoints : EndpointGroup
         return new ApiOkResponse();
     }
 
-    [ApiEndpoint("users/id/{id}/setPermissions", Method.Post)]
+    [ApiEndpoint("users/id/{id}/setPermissions", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets the permissions of user with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]

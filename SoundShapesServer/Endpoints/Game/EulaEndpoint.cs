@@ -1,4 +1,4 @@
-using Bunkum.HttpServer.Endpoints;
+using Bunkum.Core.Endpoints;
 using SoundShapesServer.Configuration;
 
 namespace SoundShapesServer.Endpoints.Game;

@@ -1,10 +1,10 @@
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Storage;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.Storage;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api.Account;
@@ -23,7 +23,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [GeneratedRegex("^[a-fA-F0-9]{128}$")]
     private static partial Regex Sha512Regex();
     
-    [ApiEndpoint("account/setUsername", Method.Post)]
+    [ApiEndpoint("account/setUsername", HttpMethods.Post)]
     [DocSummary("Changes your username.")]
     [DocError(typeof(ApiBadRequestError), ApiBadRequestError.InvalidUsernameWhen)]
     [DocError(typeof(ApiConflictError), ApiConflictError.UsernameAlreadyTakenWhen)]
@@ -40,7 +40,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         return new ApiOkResponse();
     }
 
-    [ApiEndpoint("account/sendEmailSession", Method.Post)]
+    [ApiEndpoint("account/sendEmailSession", HttpMethods.Post)]
     [DocSummary("Sends an email containing a session ID that is required to change your email address.")]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
     public ApiOkResponse SendEmailSession(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
@@ -58,7 +58,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         return ApiInternalServerError.CouldNotSendEmail;
     }
     
-    [ApiEndpoint("account/setEmail", Method.Post)]
+    [ApiEndpoint("account/setEmail", HttpMethods.Post)]
     [DocSummary("Changes your email address.")]
     [DocError(typeof(ApiBadRequestError), ApiBadRequestError.InvalidEmailWhen)]
     [DocError(typeof(ApiConflictError), ApiConflictError.EmailAlreadyTakenWhen)]
@@ -84,7 +84,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         return new ApiOkResponse();
     }
 
-    [ApiEndpoint("account/sendPasswordSession", Method.Post), Authentication(false)]
+    [ApiEndpoint("account/sendPasswordSession", HttpMethods.Post), Authentication(false)]
     [DocSummary("Sends an email containing a session ID that is required to change your password.")]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
     public ApiOkResponse SendPasswordSession(RequestContext context, GameDatabaseContext database, ApiPasswordSessionRequest body, EmailService emailService)
@@ -106,7 +106,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         return ApiInternalServerError.CouldNotSendEmail;
     }
     
-    [ApiEndpoint("account/setPassword", Method.Post)]
+    [ApiEndpoint("account/setPassword", HttpMethods.Post)]
     [DocSummary("Changes your password.")]
     [DocError(typeof(ApiBadRequestError), ApiBadRequestError.PasswordIsNotHashedWhen)]
     public ApiOkResponse SetUserPassword(RequestContext context, GameDatabaseContext database, ApiSetPasswordRequest body, GameSession session)
@@ -122,7 +122,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         return new ApiOkResponse();
     }
 
-    [ApiEndpoint("account/sendRemovalSession", Method.Post)]
+    [ApiEndpoint("account/sendRemovalSession", HttpMethods.Post)]
     [DocSummary("Sends an email containing a session ID that is required to delete your account.")]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
     public ApiOkResponse SendUserRemovalSession(RequestContext context, GameDatabaseContext database, GameUser user, GameSession session, EmailService emailService)
@@ -140,7 +140,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         return ApiInternalServerError.CouldNotSendEmail;
     }
 
-    [ApiEndpoint("account", Method.Delete)]
+    [ApiEndpoint("account", HttpMethods.Delete)]
     [DocSummary("Deletes your account.")]
     public ApiOkResponse RemoveAccount(RequestContext context, GameDatabaseContext database, GameUser user, IDataStore dataStore)
     {

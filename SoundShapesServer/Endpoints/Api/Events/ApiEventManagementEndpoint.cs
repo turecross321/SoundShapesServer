@@ -1,7 +1,7 @@
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Framework;
@@ -14,7 +14,7 @@ namespace SoundShapesServer.Endpoints.Api.Events;
 
 public class ApiEventManagementEndpoint : EndpointGroup
 {
-    [ApiEndpoint("events/id/{id}", Method.Delete)]
+    [ApiEndpoint("events/id/{id}", HttpMethods.Delete)]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Deletes event with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.EventNotFoundWhen)]

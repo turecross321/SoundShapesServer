@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
 using Bunkum.AutoDiscover.Extensions;
-using Bunkum.CustomHttpListener;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Authentication;
-using Bunkum.HttpServer.Storage;
+using Bunkum.Core.Authentication;
+using Bunkum.Core.Storage;
+using Bunkum.Listener;
 using Bunkum.ProfanityFilter;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
@@ -28,9 +28,9 @@ public class GameServer
     private readonly SessionProvider _authProvider;
     protected GameServerConfig? Config;
 
-    public GameServer(BunkumHttpListener? listener = null,
+    public GameServer(BunkumListener? listener = null,
         GameDatabaseProvider? databaseProvider = null,
-        IAuthenticationProvider<GameUser, GameSession>? authProvider = null,
+        IAuthenticationProvider<GameSession>? authProvider = null,
         IDataStore? dataStore = null)
     {
         databaseProvider ??= new GameDatabaseProvider();
@@ -47,11 +47,6 @@ public class GameServer
         ServerInstance.AddAuthenticationService(_authProvider, true);
         
         ServerInstance.DiscoverEndpointsFromAssembly(Assembly.GetExecutingAssembly());
-    }
-    
-    public Task StartAndBlockAsync()
-    {
-        return ServerInstance.StartAndBlockAsync();
     }
     
     public virtual void Start()
@@ -76,8 +71,8 @@ public class GameServer
 
     protected virtual void SetUpConfiguration()
     {
-        Config ??= Bunkum.HttpServer.Configuration.Config.LoadFromFile<GameServerConfig>("gameServer.json", ServerInstance.Logger);
-        ServerInstance.UseConfig(Config);
+        Config ??= Bunkum.Core.Configuration.Config.LoadFromJsonFile<GameServerConfig>("gameServer.json", ServerInstance.Logger);
+        ServerInstance.AddConfig(Config);
     }
 
     protected virtual void SetUpServices()

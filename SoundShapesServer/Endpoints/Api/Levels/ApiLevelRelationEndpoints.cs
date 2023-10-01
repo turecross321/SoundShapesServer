@@ -1,7 +1,7 @@
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Framework;
@@ -39,7 +39,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         };
     }
 
-    [ApiEndpoint("levels/id/{id}/like", Method.Post)]
+    [ApiEndpoint("levels/id/{id}/like", HttpMethods.Post)]
     [DocSummary("Likes level with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     [DocError(typeof(ApiConflictError), ApiConflictError.AlreadyLikedLevelWhen)]
@@ -58,7 +58,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         return new ApiOkResponse();
     }
 
-    [ApiEndpoint("levels/id/{id}/unLike", Method.Post)]
+    [ApiEndpoint("levels/id/{id}/unLike", HttpMethods.Post)]
     [DocSummary("Removes like on level with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.NotLikedLevelWhen)]
@@ -77,7 +77,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         return new ApiOkResponse();
     }
     
-    [ApiEndpoint("levels/id/{id}/queue", Method.Post)]
+    [ApiEndpoint("levels/id/{id}/queue", HttpMethods.Post)]
     [DocSummary("Queues level with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     [DocError(typeof(ApiConflictError), ApiConflictError.AlreadyQueuedLevelWhen)]
@@ -96,7 +96,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         return new ApiOkResponse();
     }
 
-    [ApiEndpoint("levels/id/{id}/unQueue", Method.Post)]
+    [ApiEndpoint("levels/id/{id}/unQueue", HttpMethods.Post)]
     [DocSummary("Removes queue on level with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.NotQueuedLevelWhen)]

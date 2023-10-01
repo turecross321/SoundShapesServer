@@ -1,8 +1,8 @@
 using System.Net;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Responses;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.Responses;
+using Bunkum.Protocols.Http;
 using HttpMultipartParser;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
@@ -14,7 +14,7 @@ namespace SoundShapesServer.Endpoints.Game;
 
 public class ReportEndpoints : EndpointGroup
 {
-    [GameEndpoint("~grief:*.post", Method.Post)]
+    [GameEndpoint("~grief:*.post", HttpMethods.Post)]
     public Response CreateReportForLevel(RequestContext context, GameDatabaseContext database, GameUser user, Stream body)
     {
         MultipartFormDataParser? parser = MultipartFormDataParser.Parse(body);

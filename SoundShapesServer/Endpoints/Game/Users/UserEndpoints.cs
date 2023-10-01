@@ -1,8 +1,9 @@
 using System.Net;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Responses;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.Responses;
+using Bunkum.Listener.Protocol;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
@@ -75,7 +76,7 @@ public class UserEndpoints : EndpointGroup
         return IdHelper.FormatLevelIdAndVersion(level);
     }
     
-    [GameEndpoint("~identity:{userId}/~metadata:{args}", Method.Post)]
+    [GameEndpoint("~identity:{userId}/~metadata:{args}", HttpMethods.Post)]
     public Response SubmitFeaturedLevel(RequestContext context, GameDatabaseContext database, GameUser user, string args, string body)
     {
         // Using args here because Bunkum doesn't support using a . as a separator

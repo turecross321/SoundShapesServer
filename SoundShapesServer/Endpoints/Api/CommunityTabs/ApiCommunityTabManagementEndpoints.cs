@@ -1,8 +1,8 @@
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.Storage;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.Storage;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Api;
@@ -16,7 +16,7 @@ namespace SoundShapesServer.Endpoints.Api.CommunityTabs;
 
 public class ApiCommunityTabManagementEndpoints : EndpointGroup
 {
-    [ApiEndpoint("communityTabs/create", Method.Post)]
+    [ApiEndpoint("communityTabs/create", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocError(typeof(ApiConflictError), ApiConflictError.TooManyCommunityTabsWhen)]
     public ApiResponse<ApiCommunityTabResponse> CreateCommunityTab(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
@@ -29,7 +29,7 @@ public class ApiCommunityTabManagementEndpoints : EndpointGroup
         return new ApiCommunityTabResponse(createdCommunityTab);
     }
 
-    [ApiEndpoint("communityTabs/id/{id}/edit", Method.Post)]
+    [ApiEndpoint("communityTabs/id/{id}/edit", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Edits community tab with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.CommunityTabNotFoundWhen)]
@@ -44,7 +44,7 @@ public class ApiCommunityTabManagementEndpoints : EndpointGroup
         return new ApiCommunityTabResponse(editedCommunityTab);
     }
     
-    [ApiEndpoint("communityTabs/id/{id}/setThumbnail", Method.Post)]
+    [ApiEndpoint("communityTabs/id/{id}/setThumbnail", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets thumbnail of community tab with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.CommunityTabNotFoundWhen)]
@@ -58,7 +58,7 @@ public class ApiCommunityTabManagementEndpoints : EndpointGroup
         return database.UploadCommunityTabResource(dataStore, communityTab, body);
     }
 
-    [ApiEndpoint("communityTabs/id/{id}", Method.Delete)]
+    [ApiEndpoint("communityTabs/id/{id}", HttpMethods.Delete)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Deletes community tab with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.CommunityTabNotFoundWhen)]

@@ -1,7 +1,7 @@
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Framework;
@@ -14,7 +14,7 @@ namespace SoundShapesServer.Endpoints.Api.Leaderboard;
 
 public class ApiLeaderboardManagementEndpoints : EndpointGroup
 {
-    [ApiEndpoint("leaderboard/id/{id}", Method.Delete)]
+    [ApiEndpoint("leaderboard/id/{id}", HttpMethods.Delete)]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Deletes leaderboard entry with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LeaderboardEntryNotFoundWhen)]

@@ -1,7 +1,5 @@
-using Bunkum.CustomHttpListener.Listeners.Direct;
-using Bunkum.HttpServer;
+using Bunkum.Protocols.Http.Direct;
 using NotEnoughLogs;
-using NotEnoughLogs.Loggers;
 
 namespace SoundShapesServerTests.Server;
 
@@ -9,17 +7,12 @@ namespace SoundShapesServerTests.Server;
 [Timeout(2000)]
 public class ServerTest
 {
-    protected static readonly LoggerContainer<BunkumContext> Logger = new();
-
-    static ServerTest()
-    {
-        Logger.RegisterLogger(new ConsoleLogger());
-    }
+    protected static readonly Logger Logger = new();
     
     // ReSharper disable once MemberCanBeMadeStatic.Global
     protected TestContext GetServer(bool startServer = true)
     {
-        DirectHttpListener listener = new();
+        DirectHttpListener listener = new(Logger);
         HttpClient client = listener.GetClient();
 
         InMemoryGameDatabaseProvider provider = new();

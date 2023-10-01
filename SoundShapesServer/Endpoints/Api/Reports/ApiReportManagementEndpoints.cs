@@ -1,7 +1,7 @@
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
@@ -19,7 +19,7 @@ namespace SoundShapesServer.Endpoints.Api.Reports;
 
 public class ApiReportManagementEndpoints : EndpointGroup
 {
-    [ApiEndpoint("reports/id/{id}", Method.Delete)]
+    [ApiEndpoint("reports/id/{id}", HttpMethods.Delete)]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Deletes report with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.ReportNotFoundWhen)]
