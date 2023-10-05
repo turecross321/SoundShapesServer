@@ -1,17 +1,17 @@
 using System.Net;
-using Bunkum.Core;
-using Bunkum.Core.Endpoints;
-using Bunkum.Core.Responses;
-using Bunkum.Core.Storage;
-using Bunkum.Protocols.Http;
+using Bunkum.CustomHttpListener.Parsing;
+using Bunkum.HttpServer;
+using Bunkum.HttpServer.Endpoints;
+using Bunkum.HttpServer.RateLimit;
+using Bunkum.HttpServer.Responses;
+using Bunkum.HttpServer.Storage;
 using NPTicket;
 using NPTicket.Verification;
 using NPTicket.Verification.Keys;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Sessions;
 using SoundShapesServer.Types;
-using static SoundShapesServer.Helpers.SessionHelper;
-using ContentType = Bunkum.Listener.Protocol.ContentType;
+using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Punishments;
@@ -25,8 +25,9 @@ namespace SoundShapesServer.Endpoints.Game;
 
 public class AuthenticationEndpoints : EndpointGroup
 {
-    [GameEndpoint("identity/login/token/psn.post", ContentType.Json, HttpMethods.Post)]
-    [HttpEndpoint("/identity/login/token/psn", ContentType.Json, HttpMethods.Post)]
+    [GameEndpoint("identity/login/token/psn.post", ContentType.Json, Method.Post)]
+    [Endpoint("/identity/login/token/psn", ContentType.Json, Method.Post)]
+    [RateLimitSettings(300, 10, 300, "authentication")]
     [Authentication(false)]
     public Response? LogIn(RequestContext context, GameDatabaseContext database, Stream body, GameServerConfig config, IDataStore dataStore)
     {
@@ -37,7 +38,7 @@ public class AuthenticationEndpoints : EndpointGroup
         }
         catch (Exception e)
         {
-            context.Logger.LogWarning(BunkumCategory.Authentication, "Could not read ticket: " + e);
+            context.Logger.LogWarning(BunkumContext.Authentication, "Could not read ticket: " + e);
             return HttpStatusCode.BadRequest;
         }
 
@@ -82,18 +83,16 @@ public class AuthenticationEndpoints : EndpointGroup
         {
             sessionType = SessionType.Game;   
         }
-
-        if (GetActiveUserBans(user).Any()) 
-            sessionType = SessionType.Banned;
-        if (user.Deleted) 
+        
+        if (user.Deleted || user.PermissionsType == PermissionsType.Banned)
             sessionType = SessionType.GameUnAuthorized;
         
-        GameSession session = database.CreateSession(user, (SessionType)sessionType, platformType, genuineTicket, Globals.FourHoursInSeconds);
+        GameSession session = database.CreateSession(user, (SessionType)sessionType, Globals.FourHoursInSeconds, platformType, genuineTicket);
 
         GameSessionResponse sessionResponse = new (session);
         GameSessionWrapper responseWrapper = new (sessionResponse);
 
-        context.Logger.LogInfo(BunkumCategory.Authentication, $"{sessionResponse.User.Username} has logged in.");
+        context.Logger.LogInfo(BunkumContext.Authentication, $"{sessionResponse.User.Username} has logged in.");
 
         context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={sessionResponse.Id};Version=1;Path=/");
         return new Response(responseWrapper, ContentType.Json, HttpStatusCode.Created);
@@ -106,12 +105,12 @@ public class AuthenticationEndpoints : EndpointGroup
         // Determine the correct key to use
         if (ticket.IssuerId == 0x33333333)
         {
-            context.Logger.LogDebug(BunkumCategory.Authentication, "Using RPCN ticket key");
+            context.Logger.LogDebug(BunkumContext.Authentication, "Using RPCN ticket key");
             signingKey = RpcnSigningKey.Instance;
         }
         else
         {
-            context.Logger.LogDebug(BunkumCategory.Authentication, "Using PSN Sound Shapes ticket key");
+            context.Logger.LogDebug(BunkumContext.Authentication, "Using PSN Sound Shapes ticket key");
             signingKey = SoundShapesSigningKey.Instance;
         }
         
@@ -154,11 +153,10 @@ public class AuthenticationEndpoints : EndpointGroup
         }
         if (user.HasFinishedRegistration == false)
         {
-            string emailSessionId = GenerateEmailSessionId(database);
-            database.CreateSession(user, SessionType.SetEmail, PlatformType.Api, null, Globals.TenMinutesInSeconds, emailSessionId);
+            GameSession emailSession = database.CreateSession(user, SessionType.SetEmail, Globals.TenMinutesInSeconds);
             return $"Your account is not registered.\n \n" +
                    $"To proceed, you will have to register an account at {config.WebsiteUrl}/register\n" +
-                   $"Your email code is: {emailSessionId}" + eulaEnd;
+                   $"Your email code is: {emailSession.Id}" + eulaEnd;
         }
         
         string unAuthorizedBase = $"Your session has not been authenticated.\n \n" +

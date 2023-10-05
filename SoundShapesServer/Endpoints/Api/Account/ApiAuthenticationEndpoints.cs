@@ -1,7 +1,8 @@
 using AttribDoc.Attributes;
-using Bunkum.Core;
-using Bunkum.Core.Endpoints;
-using Bunkum.Protocols.Http;
+using Bunkum.CustomHttpListener.Parsing;
+using Bunkum.HttpServer;
+using Bunkum.HttpServer.Endpoints;
+using Bunkum.HttpServer.RateLimit;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
@@ -11,18 +12,17 @@ using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Responses.Api.Responses;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.PunishmentHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Account;
 
 public class ApiAuthenticationEndpoints : EndpointGroup
 {
-    [ApiEndpoint("account/logIn", HttpMethods.Post), Authentication(false)]
+    [ApiEndpoint("account/logIn", Method.Post), Authentication(false)]
+    [RateLimitSettings(300, 10, 300, "authentication")]
     [DocError(typeof(ApiForbiddenError), ApiForbiddenError.EmailOrPasswordIsWrongWhen)]
-    public ApiResponse<ApiSessionResponse> Login(RequestContext context, GameDatabaseContext database, ApiLoginRequest body)
+    public ApiResponse<ApiLoginResponse> Login(RequestContext context, GameDatabaseContext database, ApiLoginRequest body)
     {
         GameUser? user = database.GetUserWithEmail(body.Email);
         if (user == null) 
@@ -31,24 +31,49 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         if (!database.ValidatePassword(user, body.PasswordSha512))
             return ApiForbiddenError.EmailOrPasswordIsWrong;
 
-        IQueryable<Punishment> activeBans = GetActiveUserBans(user);
-        SessionType sessionType = activeBans.Any() ? SessionType.Banned : SessionType.Api;
-        GameSession session = database.CreateSession(user, sessionType, PlatformType.Api);
-        
-        return new ApiSessionResponse(session, activeBans);
-    }
+        GameSession refreshSession = database.CreateSession(user, SessionType.ApiRefresh, Globals.OneMonthInSeconds);
+        GameSession session = database.CreateSession(user, SessionType.Api, refreshSession:refreshSession);
 
-    [ApiEndpoint("account/logOut", HttpMethods.Post)]
-    [DocSummary("Revokes the session used to make this request.")]
+        return new ApiLoginResponse(user, session, refreshSession);
+    }
+    
+    [ApiEndpoint("account/refreshSession", Method.Post), Authentication(false)]
+    [RateLimitSettings(300, 10, 300, "authentication")]
+    [DocSummary("Generates a new session with an old refresh session serving as authentication.")]
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.SessionDoesNotExistWhen)]
+    public ApiResponse<ApiLoginResponse> RefreshSession(RequestContext context, GameDatabaseContext database, ApiRefreshSessionRequest body)
+    {
+        GameSession? refreshSession = database.GetSessionWithId(body.RefreshSessionId);
+        if (refreshSession is not { SessionType: SessionType.ApiRefresh } || DateTimeOffset.UtcNow > refreshSession.ExpiryDate)
+            return ApiNotFoundError.SessionDoesNotExist;
+        
+        database.RefreshSession(refreshSession, Globals.OneMonthInSeconds);
+        GameSession session = database.CreateSession(refreshSession.User, SessionType.Api, refreshSession:refreshSession);
+        
+        return new ApiLoginResponse(session.User, session, refreshSession);
+    }
+    
+    [ApiEndpoint("account/logOut", Method.Post)]
+    [DocSummary("Revokes the session (and the associated refresh session if it exists) used to make this request.")]
     public ApiOkResponse Logout(RequestContext context, GameDatabaseContext database, GameSession session)
     {
-        database.RemoveSession(session);
+        if (session.RefreshSession != null)
+        {
+            GameSession refreshSession = session.RefreshSession;
+            database.RemoveSessions(refreshSession.RefreshableSessions);
+            database.RemoveSession(refreshSession);
+        }
+        else
+        {
+            database.RemoveSession(session);
+        }
+        
         return new ApiOkResponse();
     }
     
     // Game Authentication
     
-    [ApiEndpoint("gameAuth/settings", HttpMethods.Post)]
+    [ApiEndpoint("gameAuth/settings", Method.Post)]
     [DocSummary("Sets user's game authentication settings.")]
     public ApiOkResponse SetGameAuthenticationSettings(RequestContext context, GameDatabaseContext database, GameUser user, ApiSetGameAuthenticationSettingsRequest body)
     {
@@ -61,7 +86,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     public ApiResponse<ApiGameAuthenticationSettingsResponse> GetGameAuthenticationSettings(RequestContext context, GameUser user) 
         => new ApiGameAuthenticationSettingsResponse(user);
     
-    [ApiEndpoint("gameAuth/ip/authorize", HttpMethods.Post)]
+    [ApiEndpoint("gameAuth/ip/authorize", Method.Post)]
     [DocSummary("Authorizes specified IP address.")]
     [DocError(typeof(ApiConflictError), ApiConflictError.AlreadyAuthenticatedIpWhen)]
     public ApiOkResponse AuthorizeIpAddress(RequestContext context, GameDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
@@ -73,7 +98,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 
         return new ApiOkResponse();
     }
-    [ApiEndpoint("gameAuth/ip/address/{address}", HttpMethods.Delete)]
+    [ApiEndpoint("gameAuth/ip/address/{address}", Method.Delete)]
     [DocSummary("Deletes specified IP address.")]
     public ApiOkResponse UnAuthorizeIpAddress(RequestContext context, GameDatabaseContext database, string address, GameUser user)
     {

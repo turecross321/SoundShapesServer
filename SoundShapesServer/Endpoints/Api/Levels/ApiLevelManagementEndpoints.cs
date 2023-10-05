@@ -26,7 +26,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
     public ApiResponse<ApiLevelFullResponse> CreateLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiPublishLevelRequest body, ProfanityService profanity)
     {
         body.Name = profanity.CensorSentence(body.Name); // Censor any potential profanity
-        GameLevel publishedLevel = database.CreateLevel(user, new PublishLevelRequest(body), PlatformType.Api);
+        GameLevel publishedLevel = database.CreateLevel(user, new PublishLevelRequest(body), PlatformType.Unknown);
         return new ApiLevelFullResponse(publishedLevel);
     }
 

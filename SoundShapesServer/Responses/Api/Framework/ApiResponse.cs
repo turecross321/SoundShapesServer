@@ -6,7 +6,7 @@ namespace SoundShapesServer.Responses.Api.Framework;
 
 public class ApiResponse<T> : IHasResponseCode where T : class
 {
-    public ApiResponse(T data)
+    protected ApiResponse(T data)
     {
         Success = true;
         Data = data;
@@ -15,7 +15,7 @@ public class ApiResponse<T> : IHasResponseCode where T : class
         StatusCode = HttpStatusCode.OK;
     }
 
-    public ApiResponse(ApiError error)
+    protected ApiResponse(ApiError error)
     {
         Success = false;
         Data = null;
@@ -26,7 +26,8 @@ public class ApiResponse<T> : IHasResponseCode where T : class
 
     public static implicit operator ApiResponse<T>(T? data)
     {
-        if (data == null) return new ApiResponse<T>(new ApiError("Data was null, maybe internal validation failed?"));
+        if (data == null) 
+            return new ApiResponse<T>(new ApiError("Data was null, maybe internal validation failed?"));
         return new ApiResponse<T>(data);
     }
     
@@ -35,7 +36,7 @@ public class ApiResponse<T> : IHasResponseCode where T : class
         return new ApiResponse<T>(error);
     }
     
-    public HttpStatusCode StatusCode { get; private set; }
+    public HttpStatusCode StatusCode { get; }
     public bool Success { get; private init; }
     public T? Data { get; private init; }
     public ApiError? Error { get; private init; }

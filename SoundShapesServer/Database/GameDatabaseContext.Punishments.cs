@@ -9,11 +9,6 @@ public partial class GameDatabaseContext
 {
     public Punishment CreatePunishment(GameUser author, GameUser recipient, ApiPunishRequest request)
     {
-        if (request.PunishmentType == PunishmentType.Ban)
-        {
-            RemoveAllSessionsWithUser(recipient);
-        }
-        
         Punishment newPunishment = new()
         {
             Id = GenerateGuid(),
@@ -22,6 +17,7 @@ public partial class GameDatabaseContext
             Reason = request.Reason,
             ExpiryDate = DateTimeOffset.FromUnixTimeSeconds(request.ExpiryDate),
             CreationDate = DateTimeOffset.UtcNow,
+            ModificationDate = DateTimeOffset.UtcNow,
             Author = author
         };
         

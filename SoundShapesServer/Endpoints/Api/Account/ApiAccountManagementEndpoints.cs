@@ -11,7 +11,6 @@ using SoundShapesServer.Requests.Api.Account;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Services;
-using SoundShapesServer.Types;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.SessionHelper;
@@ -45,8 +44,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
     public ApiOkResponse SendEmailSession(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
     {
-        string emailSessionId = GenerateEmailSessionId(database);
-        GameSession emailSession = database.CreateSession(user, SessionType.SetEmail, PlatformType.Api, null, Globals.TenMinutesInSeconds, emailSessionId);
+        GameSession emailSession = database.CreateSession(user, SessionType.SetEmail, Globals.TenMinutesInSeconds);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your new email code: " + emailSession.Id + "\n" +
@@ -92,9 +90,8 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         GameUser? user = database.GetUserWithEmail(body.Email);
         if (user == null) 
             return new ApiOkResponse();
-
-        string passwordSessionId = GeneratePasswordSessionId(database);
-        GameSession passwordSession = database.CreateSession(user, SessionType.SetPassword, PlatformType.Api, null, Globals.TenMinutesInSeconds, passwordSessionId);
+        
+        GameSession passwordSession = database.CreateSession(user, SessionType.SetPassword, Globals.TenMinutesInSeconds);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your password code: " + passwordSession.Id + "\n" +
@@ -117,7 +114,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
             return ApiBadRequestError.PasswordIsNotHashed;
 
         database.SetUserPassword(user, body.NewPasswordSha512);
-        database.RemoveSession(session);
+        // All sessions are wiped automatically by GameDatabaseContext
 
         return new ApiOkResponse();
     }
@@ -127,8 +124,8 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
     public ApiOkResponse SendUserRemovalSession(RequestContext context, GameDatabaseContext database, GameUser user, GameSession session, EmailService emailService)
     {
-        string removalSessionId = GenerateAccountRemovalSessionId(database);
-        GameSession removalSession = database.CreateSession(user, SessionType.RemoveAccount, PlatformType.Api, null, Globals.TenMinutesInSeconds, removalSessionId);
+        GenerateAccountRemovalSessionId(database);
+        GameSession removalSession = database.CreateSession(user, SessionType.AccountRemoval, Globals.TenMinutesInSeconds);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your account removal code: " + removalSession.Id + "\n" +

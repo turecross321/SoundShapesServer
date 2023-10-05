@@ -21,7 +21,7 @@ public class ApiRouteResponse : IApiResponse
             RouteUri = old.RouteUri,
             Summary = old.Summary,
             AuthenticationRequired = old.AuthenticationRequired,
-            MinimumPermissionsType = PermissionsType.Default, // todo: make this actually work
+            MinimumPermissionsType = PermissionsType.Default,  // todo: make this actually work
             Parameters = ApiParameterResponse.FromParameterList(old.Parameters),
             PotentialErrors = ApiErrorResponse.FromErrorList(old.PotentialErrors),
         };

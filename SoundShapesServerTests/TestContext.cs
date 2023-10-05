@@ -45,7 +45,7 @@ public class TestContext : IDisposable
         PlatformType platformType = sessionType switch
         {
             SessionType.Game => PlatformType.PsVita,
-            SessionType.Api => PlatformType.Api,
+            SessionType.Api => PlatformType.Unknown,
             _ => throw new ArgumentOutOfRangeException(nameof(sessionType), sessionType, null)
         };
 
@@ -53,13 +53,13 @@ public class TestContext : IDisposable
         if (sessionType == SessionType.Game)
             genuineTicket = true;
         
-        GameSession session = Database.CreateSession(user, sessionType, platformType, genuineTicket, tokenExpirySeconds);
+        GameSession session = Database.CreateSession(user, sessionType, tokenExpirySeconds, platformType, genuineTicket);
         sessionId = session.Id;
         
         HttpClient client = Listener.GetClient();
 
         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-        if (sessionType is SessionType.Game or SessionType.Banned or SessionType.GameUnAuthorized)
+        if (sessionType is SessionType.Game or SessionType.GameUnAuthorized)
         {
             client.DefaultRequestHeaders.TryAddWithoutValidation("X-OTG-Identity-SessionId", session.Id);
         }

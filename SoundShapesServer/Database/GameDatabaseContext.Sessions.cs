@@ -1,6 +1,7 @@
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
+using static SoundShapesServer.Helpers.SessionHelper;
 
 namespace SoundShapesServer.Database;
 
@@ -9,10 +10,17 @@ public partial class GameDatabaseContext
     public const int DefaultSessionExpirySeconds = Globals.OneDayInSeconds;
     private const int SimultaneousSessionsLimit = 3;
 
-    public GameSession CreateSession(GameUser user, SessionType sessionType, PlatformType platformType, bool? genuineTicket = null, int? expirationSeconds = null, string? id = null)
+    public GameSession CreateSession(GameUser user, SessionType sessionType, 
+        double expirationSeconds = DefaultSessionExpirySeconds, PlatformType platformType = PlatformType.Unknown, 
+        bool? genuineTicket = null, GameSession? refreshSession = null)
     {
-        double sessionExpirationSeconds = expirationSeconds ?? DefaultSessionExpirySeconds;
-        id ??= GenerateGuid();
+        string id = sessionType switch
+        {
+            SessionType.SetPassword => GeneratePasswordSessionId(this),
+            SessionType.SetEmail => GenerateEmailSessionId(this),
+            SessionType.AccountRemoval => GenerateAccountRemovalSessionId(this),
+            _ => GenerateGuid()
+        };
         
         GameSession session = new()
         {
@@ -20,9 +28,10 @@ public partial class GameDatabaseContext
             User = user,
             SessionType = sessionType,
             PlatformType = platformType,
-            ExpiryDate = DateTimeOffset.UtcNow.AddSeconds(sessionExpirationSeconds),
+            ExpiryDate = DateTimeOffset.UtcNow.AddSeconds(expirationSeconds),
             CreationDate = DateTimeOffset.UtcNow,
-            GenuineNpTicket = genuineTicket
+            GenuineNpTicket = genuineTicket,
+            RefreshSession = refreshSession
         };
 
         IEnumerable<GameSession> sessionsToDelete = _realm.All<GameSession>()
@@ -47,11 +56,27 @@ public partial class GameDatabaseContext
         return session;
     }
 
+    public void RefreshSession(GameSession session, long expirySecondsFromNow)
+    {
+        _realm.Write(() =>
+        {
+            session.ExpiryDate = DateTimeOffset.UtcNow.AddSeconds(expirySecondsFromNow);
+        });
+    }
+
     public void RemoveSession(GameSession session)
     {
         _realm.Write(() =>
         {
             _realm.Remove(session);
+        });
+    }
+
+    public void RemoveSessions(IQueryable<GameSession> sessions)
+    {
+        _realm.Write(() =>
+        {
+            _realm.RemoveRange(sessions);
         });
     }
 
@@ -66,7 +91,6 @@ public partial class GameDatabaseContext
     
     public GameSession? GetSessionWithId(string sessionId)
     {
-        _realm.All<GameSession>();
         GameSession? session = _realm.All<GameSession>()
             .FirstOrDefault(s => s.Id == sessionId);
         

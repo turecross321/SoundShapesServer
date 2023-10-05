@@ -39,11 +39,11 @@ public static partial class SessionHelper
             // This is for the EULA endpoint, and we use regex here to support all platforms and languages
             EulaRegex().IsMatch(uriPath))
         {
-            if (session.SessionType is SessionType.GameUnAuthorized or SessionType.Banned) return true;
+            if (session.SessionType is SessionType.GameUnAuthorized) return true;
         }
         if (uriPath.StartsWith(GameEndpointAttribute.BaseRoute) || uriPath.StartsWith("/identity/"))
         {
-            // If Session is a Game Session, let it only access Game endpoints
+            // If Session is a Game Session, let it access all Game endpoints
             if (session.SessionType == SessionType.Game) return true;
         }
 
@@ -52,19 +52,17 @@ public static partial class SessionHelper
             switch (uriPath)
             {
                 case ApiEndpointAttribute.BaseRoute + "account/setEmail":
-                    if (session.SessionType == SessionType.SetEmail) return true;
+                    if (session.SessionType == SessionType.SetEmail) 
+                        return true;
                     return false;
                 case ApiEndpointAttribute.BaseRoute + "account/setPassword":
-                    if (session.SessionType == SessionType.SetPassword) return true;
+                    if (session.SessionType == SessionType.SetPassword) 
+                        return true;
                     return false;
                 case ApiEndpointAttribute.BaseRoute + "account/remove":
-                    if (session.SessionType == SessionType.RemoveAccount) return true;
-                    return false;
-                case ApiEndpointAttribute.BaseRoute + "account/sendRemovalSession":
-                    if (session.SessionType == SessionType.Banned)
+                    if (session.SessionType == SessionType.AccountRemoval) 
                         return true;
-                    // no return false here because you don't have to be banned to remove an account
-                    break;
+                    return false;
             }
         }
         

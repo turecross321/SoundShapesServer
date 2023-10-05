@@ -3,9 +3,9 @@ public enum SessionType
 {
     Game = 0,
     Api = 1,
-    SetPassword = 2,
-    SetEmail = 3,
-    RemoveAccount = 4,
-    GameUnAuthorized = 5,
-    Banned = 6
+    ApiRefresh = 2,
+    SetPassword = 3,
+    SetEmail = 4,
+    AccountRemoval = 5,
+    GameUnAuthorized = 6
 }

@@ -115,7 +115,10 @@ public partial class GameDatabaseContext
         });
         
         // Only create the event when the user has finished registration and can actually connect.
-        if (!registered) CreateEvent(user, EventType.AccountRegistration, user);
+        if (!registered) 
+            CreateEvent(user, EventType.AccountRegistration, user);
+
+        RemoveAllSessionsWithUser(user);
 
         _realm.Refresh();
     }
@@ -130,8 +133,6 @@ public partial class GameDatabaseContext
 
     public void SetUsername(GameUser user, string username)
     {
-        RemoveAllSessionsWithUser(user);
-        
         _realm.Write(() =>
         {
             user.Username = username;

@@ -29,6 +29,8 @@ public class GameSession : RealmObject, IToken<GameUser>
         set => _PlatformType = (int)value;
     }
     public DateTimeOffset CreationDate { get; init; }
-    public DateTimeOffset ExpiryDate { get; init; }
+    public DateTimeOffset ExpiryDate { get; set; }
     public bool? GenuineNpTicket { get; init; }
+    public GameSession? RefreshSession { get; init; }
+    [Backlink(nameof(RefreshSession))] public IQueryable<GameSession> RefreshableSessions { get; }
 }

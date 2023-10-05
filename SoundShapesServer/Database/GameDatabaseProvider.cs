@@ -17,7 +17,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 62;
+    protected override ulong SchemaVersion => 64;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -90,7 +90,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             }
         }
         
-        IQueryable<dynamic> oldLevels = migration.OldRealm.DynamicApi.All("GameLevel");
+        migration.OldRealm.DynamicApi.All("GameLevel");
         IQueryable<GameLevel> newLevels = migration.NewRealm.All<GameLevel>();
         if (oldVersion < 59)
         {
@@ -104,7 +104,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             }
         }
         
-        IQueryable<dynamic> oldAlbums = migration.OldRealm.DynamicApi.All("GameAlbum");
+        migration.OldRealm.DynamicApi.All("GameAlbum");
         IQueryable<GameAlbum> newAlbums = migration.NewRealm.All<GameAlbum>();
         for (int i = 0; i < newAlbums.Count(); i++)
         {
@@ -117,13 +117,13 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             }
         }
         
-        IQueryable<dynamic> oldSessions = migration.OldRealm.DynamicApi.All("GameSession");
+        migration.OldRealm.DynamicApi.All("GameSession");
         IQueryable<GameSession> newSessions = migration.NewRealm.All<GameSession>();
         for (int i = 0; i < newSessions.Count(); i++)
         {
             GameSession newSession = newSessions.ElementAt(i);
 
-            if (oldVersion < 62)
+            if (oldVersion < 64)
             {
                 migration.NewRealm.Remove(newSession);
             }
@@ -266,7 +266,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         }
         
         
-        IQueryable<dynamic> oldDailyLevels = migration.OldRealm.DynamicApi.All("DailyLevel");
+        migration.OldRealm.DynamicApi.All("DailyLevel");
         IQueryable<DailyLevel> newDailyLevels = migration.NewRealm.All<DailyLevel>();
         for (int i = 0; i < newDailyLevels.Count(); i++)
         {
