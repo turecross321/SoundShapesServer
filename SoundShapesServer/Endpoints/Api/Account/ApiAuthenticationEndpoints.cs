@@ -3,6 +3,7 @@ using Bunkum.CustomHttpListener.Parsing;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.RateLimit;
+using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
@@ -40,12 +41,12 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     [ApiEndpoint("account/refreshSession", Method.Post), Authentication(false)]
     [RateLimitSettings(300, 10, 300, "authentication")]
     [DocSummary("Generates a new session with an old refresh session serving as authentication.")]
-    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.SessionDoesNotExistWhen)]
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.RefreshSessionDoesNotExistWhen)]
     public ApiResponse<ApiLoginResponse> RefreshSession(RequestContext context, GameDatabaseContext database, ApiRefreshSessionRequest body)
     {
         GameSession? refreshSession = database.GetSessionWithId(body.RefreshSessionId);
         if (refreshSession is not { SessionType: SessionType.ApiRefresh } || DateTimeOffset.UtcNow > refreshSession.ExpiryDate)
-            return ApiNotFoundError.SessionDoesNotExist;
+            return ApiNotFoundError.RefreshSessionDoesNotExist;
         
         database.RefreshSession(refreshSession, Globals.OneMonthInSeconds);
         GameSession session = database.CreateSession(refreshSession.User, SessionType.Api, refreshSession:refreshSession);

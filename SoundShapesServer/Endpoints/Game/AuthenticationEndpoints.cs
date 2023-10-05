@@ -25,8 +25,8 @@ namespace SoundShapesServer.Endpoints.Game;
 
 public class AuthenticationEndpoints : EndpointGroup
 {
-    [GameEndpoint("identity/login/token/psn.post", ContentType.Json, Method.Post)]
-    [Endpoint("/identity/login/token/psn", ContentType.Json, Method.Post)]
+    [GameEndpoint("identity/login/token/psn.post", Method.Post)]
+    [Endpoint("/identity/login/token/psn", Method.Post)]
     [RateLimitSettings(300, 10, 300, "authentication")]
     [Authentication(false)]
     public Response? LogIn(RequestContext context, GameDatabaseContext database, Stream body, GameServerConfig config, IDataStore dataStore)
@@ -142,9 +142,9 @@ public class AuthenticationEndpoints : EndpointGroup
         if (user.Deleted)
             return $"The account attached to your username ({user.Username}) has been deleted, and is no longer available." + eulaEnd;
         
-        IQueryable<Punishment> bans = GetActiveUserBans(user);
-        if (bans.Any())
+        if (user.PermissionsType == PermissionsType.Banned)
         {
+            IQueryable<Punishment> bans = GetActiveUserBans(user);
             Punishment longestBan = bans.Last();
             
             return "You are banned.\n" +

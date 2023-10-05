@@ -35,40 +35,22 @@ public static partial class SessionHelper
     
     public static bool IsSessionAllowedToAccessEndpoint(GameSession session, string uriPath)
     {
-        if (uriPath == GameEndpointAttribute.BaseRoute + "~identity:*.hello" ||
-            // This is for the EULA endpoint, and we use regex here to support all platforms and languages
-            EulaRegex().IsMatch(uriPath))
+        if (uriPath == GameEndpointAttribute.BaseRoute + "~identity:*.hello"
+            || EulaRegex().IsMatch(uriPath)
+            && session.SessionType == SessionType.GameUnAuthorized)
         {
-            if (session.SessionType is SessionType.GameUnAuthorized) return true;
+            return true;
         }
-        if (uriPath.StartsWith(GameEndpointAttribute.BaseRoute) || uriPath.StartsWith("/identity/"))
-        {
-            // If Session is a Game Session, let it access all Game endpoints
-            if (session.SessionType == SessionType.Game) return true;
-        }
-
-        if (uriPath.StartsWith(ApiEndpointAttribute.BaseRoute + "account/"))
-        {
-            switch (uriPath)
-            {
-                case ApiEndpointAttribute.BaseRoute + "account/setEmail":
-                    if (session.SessionType == SessionType.SetEmail) 
-                        return true;
-                    return false;
-                case ApiEndpointAttribute.BaseRoute + "account/setPassword":
-                    if (session.SessionType == SessionType.SetPassword) 
-                        return true;
-                    return false;
-                case ApiEndpointAttribute.BaseRoute + "account/remove":
-                    if (session.SessionType == SessionType.AccountRemoval) 
-                        return true;
-                    return false;
-            }
+        if (uriPath.StartsWith(GameEndpointAttribute.BaseRoute) 
+            || uriPath.StartsWith("/identity/")
+            && session.SessionType == SessionType.Game)
+        { 
+            return true;
         }
         
-        if (uriPath.StartsWith(ApiEndpointAttribute.BaseRoute))
+        if (uriPath.StartsWith(ApiEndpointAttribute.BaseRoute) && session.SessionType == SessionType.Api)
         {
-            if (session.SessionType == SessionType.Api) return true;
+            return true;
         }
 
         return false;

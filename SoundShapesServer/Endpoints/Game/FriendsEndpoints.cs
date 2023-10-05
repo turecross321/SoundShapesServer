@@ -1,11 +1,11 @@
 using System.Net;
-using Bunkum.Core;
-using Bunkum.Core.Endpoints;
-using Bunkum.Core.Responses;
-using Bunkum.Protocols.Http;
+using Bunkum.CustomHttpListener.Parsing;
+using Bunkum.HttpServer;
+using Bunkum.HttpServer.Endpoints;
+using Bunkum.HttpServer.Responses;
 using SoundShapesServer.Database;
 using SoundShapesServer.Types.Users;
-using ContentType = Bunkum.Listener.Protocol.ContentType;
+using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
 
 namespace SoundShapesServer.Endpoints.Game;
 
@@ -18,8 +18,8 @@ public class FriendsEndpoints : EndpointGroup
         return HttpStatusCode.OK;
     }
 
-    [HttpEndpoint("/identity/person/{id}/data/psn/friends-list", ContentType.Json, HttpMethods.Post)]
-    [GameEndpoint("identity/person/{id}/data/psn/friends-list", ContentType.Json, HttpMethods.Post)]
+    [Endpoint("/identity/person/{id}/data/psn/friends-list", Method.Post)]
+    [GameEndpoint("identity/person/{id}/data/psn/friends-list", Method.Post)]
     [AllowEmptyBody]    
     public Response UploadFriends(RequestContext context, GameDatabaseContext database, string? body, string id, GameUser user)
     {

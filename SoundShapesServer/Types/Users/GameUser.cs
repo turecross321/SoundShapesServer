@@ -1,5 +1,7 @@
 using Bunkum.Core.RateLimit;
 using Realms;
+using Realms.Sync;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
@@ -21,10 +23,19 @@ public class GameUser : RealmObject, IRateLimitUser
     internal int _PermissionsType { get; set; } = (int)PermissionsType.Default;
     public PermissionsType PermissionsType
     {
-        get => (PermissionsType)_PermissionsType;
+        get
+        {
+            if (Deleted)
+                return PermissionsType.Deleted;
+            
+            if (PunishmentHelper.GetActiveUserBans(this).Any())
+                return PermissionsType.Banned;
+            
+            return (PermissionsType)_PermissionsType;
+        }
         set => _PermissionsType = (int)value;
     }
-    
+
     public string? Email { get; set; }
     public string? PasswordBcrypt { get; set; }
     public bool HasFinishedRegistration { get; set; }

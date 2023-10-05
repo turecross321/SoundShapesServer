@@ -4,6 +4,7 @@ using Bunkum.CustomHttpListener.Request;
 using Bunkum.HttpServer;
 using Bunkum.HttpServer.Authentication;
 using Bunkum.HttpServer.Database;
+using Bunkum.HttpServer.Endpoints;
 using Bunkum.HttpServer.Responses;
 using Bunkum.HttpServer.Services;
 using NotEnoughLogs;
@@ -28,18 +29,18 @@ public class MinimumPermissionsService : Service
     {
         PermissionsType? minimumPermissions =
             method.GetCustomAttribute<MinimumPermissionsAttribute>()?.MinimumPermissions;
-
-        GameUser? user = _authProvider?.AuthenticateUser(context, database);
-
-        // if the endpoint doesn't need an account and a minimumPermissions hasn't been set, let them access it
-        if (user == null && minimumPermissions == null)
+        
+        // if no authentication is required, let them through
+        if (method.GetCustomAttribute<AuthenticationAttribute>()?.Required == false)
             return null;
+        
+        GameUser? user = _authProvider?.AuthenticateUser(context, database);
 
         // if minimumPermissions hasn't been set, assume it's Default
         minimumPermissions ??= PermissionsType.Default;
         
         // if the user has enough permissions, let them access it
-        if (user?.PermissionsType >= minimumPermissions)
+        if ((user?.PermissionsType ?? PermissionsType.Banned) >= minimumPermissions)
             return null;
 
         return new Response(HttpStatusCode.Unauthorized);

@@ -26,7 +26,9 @@ public class ApiNotFoundError : ApiError
     public static readonly ApiNotFoundError PunishmentNotFound = new(PunishmentNotFoundWhen);
     public const string FileDoesNotExistWhen = "File does not exist.";
     public static readonly ApiNotFoundError FileDoesNotExist = new(FileDoesNotExistWhen);
-    public const string SessionDoesNotExistWhen = "Refresh session with specified ID does not exist. It has probably expired.";
+    public const string RefreshSessionDoesNotExistWhen = "Refresh session with specified ID does not exist. It has probably expired.";
+    public static readonly ApiNotFoundError RefreshSessionDoesNotExist = new(RefreshSessionDoesNotExistWhen);
+    public const string SessionDoesNotExistWhen = "Session with specified ID does not exist.";
     public static readonly ApiNotFoundError SessionDoesNotExist = new(SessionDoesNotExistWhen);
     
     public const string NotLikedLevelWhen = "You have not liked this level.";
