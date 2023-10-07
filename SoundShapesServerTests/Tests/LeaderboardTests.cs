@@ -38,16 +38,16 @@ public class LeaderboardTests: ServerTest
         
         // All entries on second level
         entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
-            false, new LeaderboardFilters(obsolete: false, onLevel:secondLevel), null);
+            false, new LeaderboardFilters(obsolete: null, onLevel:secondLevel), null);
         Assert.That(entries.Count(), Is.EqualTo(usersOnSecondLevel * scoresPerUser));
         
         // Ordering
         entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
-            false, new LeaderboardFilters(obsolete: false, onLevel:firstLevel), null);
+            false, new LeaderboardFilters(obsolete: null, onLevel:firstLevel), null);
         Assert.That(entries.First().Score, Is.LessThan(entries.Last().Score));
         
         entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
-            true, new LeaderboardFilters(obsolete: false, onLevel:secondLevel), null);
+            true, new LeaderboardFilters(obsolete: null, onLevel:secondLevel), null);
         Assert.That(entries.First().Score, Is.GreaterThan(entries.Last().Score));
     }
     

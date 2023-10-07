@@ -12,14 +12,6 @@ public class LeaderboardFilters
         Completed = completed;
         Obsolete = obsolete;
     }
-
-    public LeaderboardFilters(GameLevel onLevel)
-    {
-        OnLevel = onLevel;
-        ByUser = null;
-        Completed = true;
-        Obsolete = false;
-    }
     
     public readonly GameLevel OnLevel;
     public readonly GameUser? ByUser;
