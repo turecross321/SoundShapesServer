@@ -2,5 +2,5 @@
 
 public class ApiRefreshSessionRequest
 {
-    public string RefreshSessionId { get; set; } = null!;
+    public string RefreshSessionId { get; init; } = null!;
 }

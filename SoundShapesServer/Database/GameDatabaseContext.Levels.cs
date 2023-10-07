@@ -29,7 +29,7 @@ public partial class GameDatabaseContext
             user.LevelsCount = user.Levels.Count();
         });
 
-        if (createEvent) CreateEvent(user, EventType.Publish, null, level);
+        if (createEvent) CreateEvent(user, EventType.Publish, uploadPlatform, null, level);
         
         return level;
     }

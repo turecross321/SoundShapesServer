@@ -7,25 +7,7 @@ namespace SoundShapesServer.Types.Events;
 
 public class GameEvent : RealmObject
 {
-    public GameEvent(GameUser actor, EventType eventType, GameUser? user, GameLevel? level, LeaderboardEntry? leaderboardEntry)
-    {
-        Id = Guid.NewGuid().ToString();
-        Actor = actor;
-
-        ContentUser = user;
-        ContentLevel = level;
-        ContentLeaderboardEntry = leaderboardEntry;
-        
-        EventType = eventType;
-        CreationDate = DateTimeOffset.UtcNow;
-    }
-    
-    // Realm cries if this doesn't exist
-#pragma warning disable CS8618
-    public GameEvent() {}
-#pragma warning restore CS8618
-
-    [PrimaryKey] [Required] public string Id { get; set; }
+    [PrimaryKey] [Required] public string Id { get; init; }
     
     // Realm can't store enums, use recommended workaround
     // ReSharper disable once InconsistentNaming (can't fix due to conflict with EventType)
@@ -36,11 +18,19 @@ public class GameEvent : RealmObject
         get => (EventType)_EventType;
         set => _EventType = (int)value;
     }
-    
-    public GameUser Actor { get; init; }
+
+    public GameUser Actor { get; init; } = null!;
     public GameUser? ContentUser { get; init; }
     public GameLevel? ContentLevel { get; set; }
     
-    public LeaderboardEntry? ContentLeaderboardEntry { get; set; }
+    public LeaderboardEntry? ContentLeaderboardEntry { get; init; }
     public DateTimeOffset CreationDate { get; set; }
+    // ReSharper disable once InconsistentNaming (can't fix due to conflict with PlatformType)
+    // ReSharper disable once MemberCanBePrivate.Global
+    internal int _PlatformType { get; init; } = (int)PlatformType.Unknown;
+    public PlatformType PlatformType
+    {
+        get => (PlatformType)_PlatformType;
+        init => _PlatformType = (int)value;
+    }
 }

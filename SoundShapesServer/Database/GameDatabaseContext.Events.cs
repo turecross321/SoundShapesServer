@@ -9,9 +9,21 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    private void CreateEvent(GameUser actor, EventType eventType, GameUser? user = null, GameLevel? level = null, LeaderboardEntry? leaderboardEntry = null)
+    private void CreateEvent(GameUser actor, EventType eventType, PlatformType platformType, GameUser? user = null, GameLevel? level = null, LeaderboardEntry? leaderboardEntry = null)
     {
-        GameEvent eventObject = new (actor, eventType, user, level, leaderboardEntry);
+        GameEvent eventObject = new()
+        {
+            Id = Guid.NewGuid().ToString(),
+            Actor = actor,
+
+            ContentUser = user,
+            ContentLevel = level,
+            ContentLeaderboardEntry = leaderboardEntry,
+        
+            EventType = eventType,
+            CreationDate = DateTimeOffset.UtcNow,
+            PlatformType = platformType
+        };
         
         GameEvent? previousEvent = _realm
             .All<GameEvent>()

@@ -7,34 +7,26 @@ namespace SoundShapesServer.Types.Leaderboard;
 
 public class LeaderboardEntry : RealmObject
 {
-    public LeaderboardEntry(string id, GameUser user, GameLevel level, LeaderboardSubmissionRequest request)
-    {
-        Id = id;
-        User = user;
-        Level = level;
-        Score = request.Score;
-        PlayTime = Math.Max(request.PlayTime, 0);
-        Deaths = Math.Max(request.Deaths, 0);
-        Golded = request.Golded;
-        Notes = request.Notes;
-        Completed = request.Completed;
-        CreationDate = DateTimeOffset.UtcNow;
-    }
-
-    // Realm cries if this doesn't exist
-#pragma warning disable CS8618
-    public LeaderboardEntry() { }
-#pragma warning restore CS8618
-
     [PrimaryKey]
-    [Required] public string Id { get; set; }
+    [Required] public string Id { get; init; }
     public GameUser User { get; init; }
     public GameLevel Level { get; set; }
-    public long Score { get; set; }
-    public long PlayTime { get; set; }
-    public int Deaths { get; set; }
-    public int Golded { get; set; }
+    public long Score { get; init; }
+    public long PlayTime { get; init; }
+    public int Deaths { get; init; }
+    // ReSharper disable once IdentifierTypo
+    public int Golded { get; init; }
     public int Notes { get; set; }
-    public bool Completed { get; set; }
+    public bool Completed { get; init; }
     public DateTimeOffset CreationDate { get; set; }
+    
+    // Realm can't store enums, use recommended workaround
+    // ReSharper disable once InconsistentNaming (can't fix due to conflict with PlatformType)
+    // ReSharper disable once MemberCanBePrivate.Global
+    internal int _PlatformType { get; set; } = (int)PlatformType.Unknown;
+    public PlatformType PlatformType
+    {
+        get => (PlatformType)_PlatformType;
+        init => _PlatformType = (int)value;
+    }
 }

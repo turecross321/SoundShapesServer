@@ -7,7 +7,9 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Responses.Api.Responses.Levels;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api.Levels;
@@ -52,7 +54,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
             return ApiNotFoundError.LevelNotFound;
 
-        if (!database.LikeLevel(user, level)) 
+        if (!database.LikeLevel(user, level, PlatformType.Unknown)) 
             return ApiConflictError.AlreadyLikedLevel;
         
         return new ApiOkResponse();
@@ -90,7 +92,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
             return ApiNotFoundError.LevelNotFound;
         
-        if (!database.QueueLevel(user, level)) 
+        if (!database.QueueLevel(user, level, PlatformType.Unknown)) 
             return ApiConflictError.AlreadyQueuedLevel;
 
         return new ApiOkResponse();

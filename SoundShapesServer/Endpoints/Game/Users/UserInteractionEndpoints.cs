@@ -5,6 +5,8 @@ using Bunkum.Core.Responses;
 using Bunkum.Listener.Protocol;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Users;
+using SoundShapesServer.Types;
+using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Users;
@@ -13,7 +15,7 @@ public class UserInteractionEndpoints : EndpointGroup
 {
 
     [GameEndpoint("~identity:{followerId}/~follow:%2F~identity%3A{arguments}")]
-    public Response FollowRequests(RequestContext context, GameDatabaseContext database, GameUser user, string followerId, string arguments)
+    public Response FollowRequests(RequestContext context, GameDatabaseContext database, GameUser user, GameSession session, string followerId, string arguments)
     {
         string[] argumentArray = arguments.Split("."); // This is to separate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
         string userId = argumentArray[0];
@@ -25,7 +27,7 @@ public class UserInteractionEndpoints : EndpointGroup
         return requestType switch
         {
             "get" => new Response(CheckIfUserIsFollowed(user, recipient, database), ContentType.Json),
-            "put" => FollowUser(user, recipient, database),
+            "put" => FollowUser(user, recipient, database, session.PlatformType),
             "delete" => UnFollowUser(user, recipient, database),
             _ => new Response(HttpStatusCode.NotFound)
         };
@@ -40,9 +42,9 @@ public class UserInteractionEndpoints : EndpointGroup
 
         return null;
     }
-    private Response FollowUser(GameUser follower, GameUser recipient, GameDatabaseContext database)
+    private Response FollowUser(GameUser follower, GameUser recipient, GameDatabaseContext database, PlatformType platformType)
     {
-        return database.FollowUser(follower, recipient) ? new Response(HttpStatusCode.Created) : new Response(HttpStatusCode.BadRequest);
+        return database.FollowUser(follower, recipient, platformType) ? new Response(HttpStatusCode.Created) : new Response(HttpStatusCode.BadRequest);
     }
 
     private Response UnFollowUser(GameUser user, GameUser recipient, GameDatabaseContext database)

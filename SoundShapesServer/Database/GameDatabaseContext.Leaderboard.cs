@@ -10,9 +10,22 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public LeaderboardEntry CreateLeaderboardEntry(LeaderboardSubmissionRequest request, GameUser user, GameLevel level)
+    public LeaderboardEntry CreateLeaderboardEntry(LeaderboardSubmissionRequest request, GameUser user, GameLevel level, PlatformType platformType)
     {
-        LeaderboardEntry entry = new (GenerateGuid(), user, level, request);
+        LeaderboardEntry entry = new()
+        {
+            Id = GenerateGuid(),
+            User = user,
+            Level = level,
+            Score = request.Score,
+            PlayTime = Math.Max(request.PlayTime, 0),
+            Deaths = Math.Max(request.Deaths, 0),
+            Golded = request.Golded,
+            Notes = request.Notes,
+            Completed = request.Completed,
+            CreationDate = DateTimeOffset.UtcNow,
+            PlatformType = platformType
+        };
 
         _realm.Write(() =>
         {
@@ -20,7 +33,7 @@ public partial class GameDatabaseContext
         });
         
         SetLevelPlayTime(level);
-        CreateEvent(user, EventType.ScoreSubmission, null, level, entry);
+        CreateEvent(user, EventType.ScoreSubmission, platformType, null, level, entry);
         SetUserPlayTime(user);
         
         return entry;

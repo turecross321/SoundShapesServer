@@ -18,7 +18,7 @@ public class LevelUniquePlayRelation : RealmObject
     public LevelUniquePlayRelation() {}
 #pragma warning restore CS8618
     
-    public GameUser User { get; set; }
-    public GameLevel Level { get; set; }
+    public GameUser User { get; init; }
+    public GameLevel Level { get; init; }
     public DateTimeOffset Date { get; set; }
 }

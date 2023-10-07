@@ -28,7 +28,7 @@ public class GameLevel : RealmObject
     public GameLevel() { }
 #pragma warning restore CS8618
 
-    [PrimaryKey] [Required] public string Id { get; set; }
+    [PrimaryKey] [Required] public string Id { get; init; }
     public GameUser Author { get; init; }
     public string Name { get; set; }
     public int Language { get; set; }

@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using Newtonsoft.Json.Linq;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
@@ -144,7 +145,7 @@ public class LevelTests: ServerTest
         // Queueing
         
         // you can't queue levels through the game, hence this not being done through the HTTP client
-        context.Database.QueueLevel(user, level);
+        context.Database.QueueLevel(user, level, PlatformType.Unknown);
         
         payload = $"/otg/~identity:{user.Id}/~queued:%2F~level%3A{level.Id}.get";
         response = await client.GetAsync(payload);

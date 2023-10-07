@@ -116,7 +116,7 @@ public partial class GameDatabaseContext
         
         // Only create the event when the user has finished registration and can actually connect.
         if (!registered) 
-            CreateEvent(user, EventType.AccountRegistration, user);
+            CreateEvent(user, EventType.AccountRegistration, PlatformType.Unknown, user);
 
         RemoveAllSessionsWithUser(user);
 

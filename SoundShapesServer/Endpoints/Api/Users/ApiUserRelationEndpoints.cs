@@ -6,6 +6,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Responses.Api.Responses.Users;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api.Users;
@@ -46,7 +47,7 @@ public class ApiUserRelationEndpoints : EndpointGroup
         if (recipient.Id == user.Id) 
             return ApiForbiddenError.FollowYourself;
 
-        if (!database.FollowUser(user, recipient)) 
+        if (!database.FollowUser(user, recipient, PlatformType.Unknown)) 
             return ApiConflictError.AlreadyFollowing;
         
         return new ApiOkResponse();

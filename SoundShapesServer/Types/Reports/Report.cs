@@ -17,18 +17,18 @@ public class Report : RealmObject
     public ReportContentType ContentType
     {
         get => (ReportContentType)_ContentType;
-        set => _ContentType = (int)value;
+        init => _ContentType = (int)value;
     }
-    public GameUser? ContentUser { get; set; }
-    public GameLevel? ContentLevel { get; set; }
-    public LeaderboardEntry? ContentLeaderboardEntry { get; set; }
+    public GameUser? ContentUser { get; init; }
+    public GameLevel? ContentLevel { get; init; }
+    public LeaderboardEntry? ContentLeaderboardEntry { get; init; }
     // ReSharper disable once InconsistentNaming (can't fix due to conflict with ReasonType)
     // ReSharper disable once MemberCanBePrivate.Global
     internal int _ReasonType { get; set; }
     public ReportReasonType ReasonType
     {
         get => (ReportReasonType)_ReasonType;
-        set => _ReasonType = (int)value;
+        init => _ReasonType = (int)value;
     }
     public DateTimeOffset CreationDate { get; set; }
     public GameUser Author { get; set; }

@@ -26,7 +26,7 @@ public class GameSession : RealmObject, IToken<GameUser>
     public PlatformType PlatformType
     {
         get => (PlatformType)_PlatformType;
-        set => _PlatformType = (int)value;
+        init => _PlatformType = (int)value;
     }
     public DateTimeOffset CreationDate { get; init; }
     public DateTimeOffset ExpiryDate { get; set; }

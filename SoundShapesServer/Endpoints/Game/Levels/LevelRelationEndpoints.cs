@@ -7,7 +7,9 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Levels;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
@@ -41,7 +43,7 @@ public class LevelRelationEndpoints : EndpointGroup
     }
     
     [GameEndpoint("~identity:{userId}/~like:%2F~level%3A{arguments}")]
-    public Response LevelLikeRequests(RequestContext context, GameDatabaseContext database, GameUser user, string userId, string arguments)
+    public Response LevelLikeRequests(RequestContext context, GameDatabaseContext database, GameUser user, GameSession session, string userId, string arguments)
     {
         string[] argumentArray = arguments.Split("."); // This is to separate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
         string levelId = argumentArray[0];
@@ -53,7 +55,7 @@ public class LevelRelationEndpoints : EndpointGroup
         if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
             return HttpStatusCode.NotFound;
         
-        if (requestType == "put") return LikeLevel(database, user, level);
+        if (requestType == "put") return LikeLevel(database, user, level, session.PlatformType);
         if (requestType == "get") return CheckIfUserHasLikedLevel(database, user, level);
         if (requestType == "delete") return UnLikeLevel(database, user, level);
 
@@ -91,9 +93,9 @@ public class LevelRelationEndpoints : EndpointGroup
 
         return new Response(HttpStatusCode.NotFound);
     }
-    private Response LikeLevel(GameDatabaseContext database, GameUser user, GameLevel level)
+    private Response LikeLevel(GameDatabaseContext database, GameUser user, GameLevel level, PlatformType platformType)
     {
-        if (database.LikeLevel(user, level)) return new Response(HttpStatusCode.OK);
+        if (database.LikeLevel(user, level, platformType)) return new Response(HttpStatusCode.OK);
         return new Response(HttpStatusCode.Conflict);
     }
 

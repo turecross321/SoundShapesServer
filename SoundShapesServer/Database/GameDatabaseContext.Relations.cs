@@ -1,3 +1,4 @@
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Levels;
@@ -7,7 +8,7 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public bool FollowUser(GameUser follower, GameUser recipient)
+    public bool FollowUser(GameUser follower, GameUser recipient, PlatformType platformType)
     {
         if (IsUserFollowingOtherUser(follower, recipient)) return false;
 
@@ -24,7 +25,7 @@ public partial class GameDatabaseContext
             recipient.FollowersCount = recipient.Followers.Count();
         });
 
-        CreateEvent(follower, EventType.Follow, recipient);
+        CreateEvent(follower, EventType.Follow, platformType, recipient);
         
         return true;
     }
@@ -47,7 +48,7 @@ public partial class GameDatabaseContext
         return true;
     }
 
-    public bool LikeLevel(GameUser user, GameLevel level)
+    public bool LikeLevel(GameUser user, GameLevel level, PlatformType platformType)
     { 
         if (HasUserLikedLevel(user, level)) return false;
         
@@ -60,7 +61,7 @@ public partial class GameDatabaseContext
             level.LikesCount = level.Likes.Count();
         });
         
-        CreateEvent(user, EventType.Like, null, level);
+        CreateEvent(user, EventType.Like, platformType, null, level);
 
         return true;
     }
@@ -88,7 +89,7 @@ public partial class GameDatabaseContext
         return relation != null;
     }
     
-    public bool QueueLevel(GameUser user, GameLevel level)
+    public bool QueueLevel(GameUser user, GameLevel level, PlatformType platformType)
     {
         if (HasUserQueuedLevel(user, level)) return false;
         
@@ -101,7 +102,7 @@ public partial class GameDatabaseContext
             level.QueuesCount = level.Queues.Count();
         });
         
-        CreateEvent(user, EventType.Queue, null, level);
+        CreateEvent(user, EventType.Queue, platformType, null, level);
 
         return true;
     }

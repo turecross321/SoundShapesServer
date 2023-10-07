@@ -3,6 +3,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Responses.Levels;
 using SoundShapesServer.Responses.Api.Responses.Users;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Users;
 
@@ -24,6 +25,7 @@ public class ApiEventResponse : IApiResponse
             ContentLevel = new ApiLevelBriefResponse(eventObject.ContentLevel);
         
         CreationDate = eventObject.CreationDate.ToUnixTimeSeconds();
+        PlatformType = eventObject.PlatformType;
     }
 
     public string Id { get; set; }
@@ -33,4 +35,5 @@ public class ApiEventResponse : IApiResponse
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLevelBriefResponse? ContentLevel { get; set; }
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLeaderboardEntryResponse? ContentLeaderboardEntry { get; set; }
     public long CreationDate { get; set; }
+    public PlatformType PlatformType { get; set; }
 }
