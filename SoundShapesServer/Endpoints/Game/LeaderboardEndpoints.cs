@@ -61,7 +61,7 @@ public class LeaderboardEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return null;
 
-        LeaderboardFilters filters = new (level, obsolete: true, completed: true);
+        LeaderboardFilters filters = new (level, obsolete: false, completed: true);
         (int totalEntries, LeaderboardEntry[] paginatedEntries) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, from, count, user);
 
         List<LeaderboardEntryResponse> responses = 
@@ -79,7 +79,7 @@ public class LeaderboardEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return null;
         
-        LeaderboardFilters filters = new (level, user, completed:true);
+        LeaderboardFilters filters = new (level, user, completed:true, obsolete:false);
 
         (int _, LeaderboardEntry[] paginatedEntries) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 1, user);
         

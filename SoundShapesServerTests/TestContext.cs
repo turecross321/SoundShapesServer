@@ -83,11 +83,12 @@ public class TestContext : IDisposable
         return Database.CreateLevel(author, request, PlatformType.Unknown);
     }
     
-    public void FillLeaderboard(GameLevel level, int userAmount, int scoresPerUser)
+    public void FillLeaderboard(GameLevel level, int userAmount, int scoresPerUser, GameUser? firstPlaceUser = null)
     {
-        for (int i = userAmount; i > 0; i--)
+        for (int i = 0; i < userAmount; i++)
         {
-            GameUser scoreUser = Database.CreateUser("score" + i);
+            // if firstPlaceUser has been assigned, make the first user firstPlaceUser
+            GameUser scoreUser = i == 0 && firstPlaceUser != null ? firstPlaceUser : Database.CreateUser("score" + i);
             for (int j = 0; j < scoresPerUser; j++)
             {
                 SubmitLeaderboardEntry(i, level, scoreUser);

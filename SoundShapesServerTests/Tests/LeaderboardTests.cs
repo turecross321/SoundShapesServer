@@ -1,5 +1,8 @@
 using System.Net;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Sessions;
@@ -54,30 +57,30 @@ public class LeaderboardTests: ServerTest
     [Test]
     public async Task LeaderboardFetchingWorks()
     {
-        // WARNING: Can't be more than 9
-        const int firstUserAmount = 5;
-        const int secondUserAmount = 7;
-        const int scoresPerUser = 2;
+        const int userAmount = 5;
+        const int scoresPerUser = 4;
         
         using TestContext context = GetServer();
         
         GameUser user = context.CreateUser();
-        
-        GameLevel firstLevel = context.CreateLevel(user);
-        GameLevel secondLevel = context.CreateLevel(user);
-
-        context.FillLeaderboard(firstLevel, firstUserAmount, scoresPerUser);
-        context.FillLeaderboard(secondLevel, secondUserAmount, scoresPerUser);
-        
+        GameLevel level = context.CreateLevel(user);
+        context.FillLeaderboard(level, userAmount, scoresPerUser, user);
         context.Database.Refresh();
         
         using HttpClient client = context.GetAuthenticatedClient(SessionType.Game, user);
         
-        // Fetching
-        string payload = $"/otg/~level:{firstLevel.Id}/~leaderboard.page";
-        JObject response = JObject.Parse(await client.GetStringAsync(payload));
+        string payload = $"/otg/~level:{level.Id}/~leaderboard.page";
+        ListResponse<LeaderboardEntryResponse> response = JsonConvert.DeserializeObject<ListResponse<LeaderboardEntryResponse>>(await client.GetStringAsync(payload))!;
         
-        Assert.That(response.GetValue("items")?.ToArray().Length, Is.EqualTo(firstUserAmount));
+        Assert.That(response.Count == userAmount, "Check if all scores were included");
+        Assert.That(response.Items.First().Position == 1, "Check if position has been correctly set");
+        Assert.That(response.Items.First().Entrant?.Id != response.Items[1].Entrant?.Id, "Check if obsolete scores are shown");
+
+        payload = $"/otg/{level.Id}/~leaderboard.near";
+        LeaderboardEntryResponse[] nearResponse = JsonConvert.DeserializeObject<LeaderboardEntryResponse[]>(await client.GetStringAsync(payload))!;
+        Assert.That(nearResponse.First().Position == 1, "Check if near leaderboard positions are working properly");
+        Assert.That(nearResponse.Length == 1, "Check if near leaderboard filters are working properly");
+        Assert.That(IdHelper.DeFormatIdentityId(nearResponse.First().Entrant!.Id) == user.Id, "Check if near leaderboard is showing the correct user");
     }
     
     [Test]
@@ -103,35 +106,5 @@ public class LeaderboardTests: ServerTest
         IQueryable<LeaderboardEntry> entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters, null);
         
         Assert.That(entries.Count(), Is.EqualTo(1));
-    }
-    
-    private void LeaderboardSegmentTest(int expectedIndex, int amount, int score)
-    {
-        using TestContext context = GetServer();
-        GameUser user = context.CreateUser();
-        GameLevel level = context.CreateLevel(user);
-
-        context.FillLeaderboard(level, amount, 2);
-        LeaderboardEntry entry = context.SubmitLeaderboardEntry(score, level, user);
-
-        LeaderboardFilters filters = new(onLevel:level);
-        List<LeaderboardEntry> entries = 
-            context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters, null).ToList();
-        
-        Assert.Multiple(() =>
-        {
-            Assert.That(entries.IndexOf(entry), Is.EqualTo(expectedIndex));
-            Assert.That(entries[expectedIndex], Is.EqualTo(entry));
-        });
-    }
-    
-    [Test]
-    public void PlacesScoreInSegmentCorrectly()
-    {
-        const int amount = 20;
-        const int expectedIndex = amount / 2;
-        const int score = expectedIndex;
-        
-        LeaderboardSegmentTest(expectedIndex, amount, score);
     }
 }

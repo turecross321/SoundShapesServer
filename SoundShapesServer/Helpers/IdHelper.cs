@@ -1,3 +1,4 @@
+using System.Text;
 using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Helpers;
@@ -24,6 +25,12 @@ public static class IdHelper
     public static string DeFormatLevelIdAndVersion(string formattedId)
     {
         return formattedId.Split(":")[1].Split("/")[0];
+    }
+
+    public static string DeFormatIdentityId(string formattedId)
+    {
+        // /~identity:42e88fdd-17e0-4a85-96a5-896c71584b8a
+        return formattedId.Remove(0, 11);
     }
     public static string FormatLevelPublishId(string id, long creationTime)
     {

@@ -44,7 +44,7 @@ public partial class GameDatabaseContext
         IQueryable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>();
         
         IQueryable<LeaderboardEntry> filteredEntries = FilterLeaderboard(entries,
-            new LeaderboardFilters(onLevel: entry.Level, completed: true, obsolete: true), accessor);
+            new LeaderboardFilters(onLevel: entry.Level, completed: true, obsolete: false), accessor);
         IQueryable<LeaderboardEntry> orderedEntries = OrderLeaderboardByScore(filteredEntries, false);
 
         return orderedEntries.ToList().IndexOf(entry);
