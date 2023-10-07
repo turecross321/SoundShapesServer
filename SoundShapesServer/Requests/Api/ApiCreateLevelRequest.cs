@@ -3,7 +3,7 @@
 namespace SoundShapesServer.Requests.Api;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class ApiPublishLevelRequest
+public class ApiCreateLevelRequest
 {
     public string Name { get; set; }
     public int Language { get; }

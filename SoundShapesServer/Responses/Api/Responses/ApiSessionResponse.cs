@@ -4,6 +4,11 @@ namespace SoundShapesServer.Responses.Api.Responses;
 
 public class ApiSessionResponse
 {
+    [Obsolete("Empty constructor for deserialization.", true)]
+    public ApiSessionResponse()
+    {
+        
+    }
     public ApiSessionResponse(GameSession session)
     {
         Id = session.Id;
@@ -11,7 +16,7 @@ public class ApiSessionResponse
         ExpiryDate = session.ExpiryDate.ToUnixTimeSeconds();
     }
 
-    public string Id { get; }
-    public long CreationDate { get; }
-    public long ExpiryDate { get; }
+    public string Id { get; set; }
+    public long CreationDate { get; set; }
+    public long ExpiryDate { get; set; }
 }

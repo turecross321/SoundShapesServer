@@ -7,7 +7,10 @@ using SoundShapesServer.Types.Users;
 namespace SoundShapesServer.Responses.Api.Responses;
 
 public class ApiLoginResponse
-{
+{    
+    [Obsolete("Empty constructor for deserialization.", true)]
+    public ApiLoginResponse() {}
+    
     public ApiLoginResponse(GameUser user, GameSession session, GameSession? refreshSession)
     {
         Session = new ApiSessionResponse(session);

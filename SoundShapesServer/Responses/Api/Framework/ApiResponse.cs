@@ -6,6 +6,15 @@ namespace SoundShapesServer.Responses.Api.Framework;
 
 public class ApiResponse<T> : IHasResponseCode where T : class
 {
+    /// <summary>
+    /// Empty constructor for test deserialization. Do not use.
+    /// </summary>
+    [Obsolete("Empty constructor for deserialization.", true)]
+    public ApiResponse()
+    {
+        
+    }
+    
     protected ApiResponse(T data)
     {
         Success = true;
@@ -36,8 +45,8 @@ public class ApiResponse<T> : IHasResponseCode where T : class
         return new ApiResponse<T>(error);
     }
     
-    public HttpStatusCode StatusCode { get; }
-    public bool Success { get; private init; }
-    public T? Data { get; private init; }
-    public ApiError? Error { get; private init; }
+    public HttpStatusCode StatusCode { get; set; }
+    public bool Success { get; set; }
+    public T? Data { get; set; }
+    public ApiError? Error { get; set; }
 }

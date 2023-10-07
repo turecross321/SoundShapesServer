@@ -7,6 +7,9 @@ namespace SoundShapesServer.Responses.Api.Responses.Moderation;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ApiPunishmentResponse : IApiResponse
 {
+    [Obsolete("Empty constructor for deserialization.", true)]
+    public ApiPunishmentResponse() {}
+    
     public ApiPunishmentResponse(Punishment punishment)
     {
         Id = punishment.Id;

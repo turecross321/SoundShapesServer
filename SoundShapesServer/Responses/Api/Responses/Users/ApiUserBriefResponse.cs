@@ -5,6 +5,8 @@ namespace SoundShapesServer.Responses.Api.Responses.Users;
 
 public class ApiUserBriefResponse : IApiResponse
 {
+    [Obsolete("Empty constructor for deserialization.", true)]
+    public ApiUserBriefResponse() {}
     public ApiUserBriefResponse(GameUser user)
     {
         Id = user.Id;

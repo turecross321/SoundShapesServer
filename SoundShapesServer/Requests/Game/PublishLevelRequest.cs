@@ -14,7 +14,7 @@ public class PublishLevelRequest
         Visibility = visibility;
     }
 
-    public PublishLevelRequest(ApiPublishLevelRequest request)
+    public PublishLevelRequest(ApiCreateLevelRequest request)
     {
         Name = request.Name;
         Language = request.Language;
