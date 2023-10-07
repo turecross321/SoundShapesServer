@@ -17,7 +17,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 67;
+    protected override ulong SchemaVersion => 69;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -196,7 +196,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             {
                 // Replaced LevelId with Level
                 string levelId = (string)oldEntry.LevelId;
-                
+
                 GameLevel? level = migration.NewRealm.All<GameLevel>().FirstOrDefault(l => l.Id == levelId);
                 if (level == null)
                 {
@@ -209,10 +209,18 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                     };
                     migration.NewRealm.Add(level);
                 }
+
                 newEntry.Level = level;
             }
+
+            if (oldVersion < 69)
+            {
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                if (newEntry.User == null)
+                    migration.NewRealm.Remove(newEntry);
+            }
         }
-        
+
         IQueryable<dynamic> oldPunishments = migration.OldRealm.DynamicApi.All("Punishment");
         IQueryable<Punishment> newPunishments = migration.NewRealm.All<Punishment>();
         for (int i = 0; i < newPunishments.Count(); i++)

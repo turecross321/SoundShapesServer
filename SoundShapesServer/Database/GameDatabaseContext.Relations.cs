@@ -21,8 +21,8 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             _realm.Add(relation);
-            follower.FollowingCount = follower.Following.Count();
-            recipient.FollowersCount = recipient.Followers.Count();
+            follower.FollowingCount = follower.FollowingRelations.Count();
+            recipient.FollowersCount = recipient.FollowersRelations.Count();
         });
 
         CreateEvent(follower, EventType.Follow, platformType, recipient);
@@ -41,8 +41,8 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             _realm.Remove(relation);
-            follower.FollowingCount = follower.Following.Count();
-            recipient.FollowersCount = recipient.Followers.Count();
+            follower.FollowingCount = follower.FollowingRelations.Count();
+            recipient.FollowersCount = recipient.FollowersRelations.Count();
         });
         
         return true;
@@ -57,7 +57,7 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             _realm.Add(relation);
-            user.LikedLevelsCount = user.LikedLevels.Count();
+            user.LikedLevelsCount = user.LikedLevelRelations.Count();
             level.LikesCount = level.Likes.Count();
         });
         
@@ -76,7 +76,7 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             _realm.Remove(relation);
-            user.LikedLevelsCount = user.LikedLevels.Count();
+            user.LikedLevelsCount = user.LikedLevelRelations.Count();
             level.LikesCount = level.Likes.Count();
         });
         
@@ -98,7 +98,7 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             _realm.Add(relation);
-            user.QueuedLevelsCount = user.QueuedLevels.Count();
+            user.QueuedLevelsCount = user.QueuedLevelRelations.Count();
             level.QueuesCount = level.Queues.Count();
         });
         
@@ -118,7 +118,7 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             _realm.Remove(relation);
-            user.QueuedLevelsCount = user.QueuedLevels.Count();
+            user.QueuedLevelsCount = user.QueuedLevelRelations.Count();
             level.QueuesCount = level.Queues.Count();
         });
         
@@ -152,7 +152,7 @@ public partial class GameDatabaseContext
             uniqueRelation = new LevelUniquePlayRelation(user, level, DateTimeOffset.UtcNow); 
             _realm.Add(uniqueRelation);
             level.UniquePlaysCount = level.UniquePlays.Count();
-            user.PlayedLevelsCount = user.PlayedLevels.Count();
+            user.PlayedLevelsCount = user.PlayedLevelRelations.Count();
         });
     }
 }

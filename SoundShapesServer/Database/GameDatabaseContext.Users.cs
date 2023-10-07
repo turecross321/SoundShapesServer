@@ -41,7 +41,8 @@ public partial class GameDatabaseContext
             RemoveLevel(level, dataStore);
         }
 
-        if (user.SaveFilePath != null) dataStore.RemoveFromStore(user.SaveFilePath);
+        if (user.SaveFilePath != null) 
+            dataStore.RemoveFromStore(user.SaveFilePath);
 
         RemoveAllReportsWithContentUser(user);
         
@@ -49,10 +50,15 @@ public partial class GameDatabaseContext
         {
             _realm.RemoveRange(user.Sessions);
             _realm.RemoveRange(user.IpAddresses);
-            _realm.RemoveRange(user.Followers);
-            _realm.RemoveRange(user.Following);
+            _realm.RemoveRange(user.FollowersRelations);
+            _realm.RemoveRange(user.FollowingRelations);
+            _realm.RemoveRange(user.LikedLevelRelations);
+            _realm.RemoveRange(user.PlayedLevelRelations);
+            _realm.RemoveRange(user.QueuedLevelRelations);
             _realm.RemoveRange(user.Events);
             _realm.RemoveRange(user.EventsWhereUserIsRecipient);
+            _realm.RemoveRange(user.LeaderboardEntries);
+            _realm.RemoveRange(user.NewsEntries);
 
             string id = user.Id;
             string username = user.Username;
@@ -211,7 +217,7 @@ public partial class GameDatabaseContext
         
         if (filters.IsFollowingUser != null)
         {
-            IQueryable<FollowRelation> relations = filters.IsFollowingUser.Followers;
+            IQueryable<FollowRelation> relations = filters.IsFollowingUser.FollowersRelations;
 
             List<GameUser> tempResponse = new();
 
@@ -227,7 +233,7 @@ public partial class GameDatabaseContext
         
         if (filters.FollowedByUser != null)
         {
-            IQueryable<FollowRelation> relations = filters.FollowedByUser.Following;
+            IQueryable<FollowRelation> relations = filters.FollowedByUser.FollowingRelations;
 
             List<GameUser> tempResponse = new();
 

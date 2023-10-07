@@ -5,6 +5,7 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Sessions;
@@ -51,17 +52,17 @@ public class GameUser : RealmObject, IRateLimitUser
     [Backlink(nameof(GameIp.User))]
     public IQueryable<GameIp> IpAddresses { get; }
 
-    [Backlink(nameof(LevelLikeRelation.User))] public IQueryable<LevelLikeRelation> LikedLevels { get; }
+    [Backlink(nameof(LevelLikeRelation.User))] public IQueryable<LevelLikeRelation> LikedLevelRelations { get; }
     public int LikedLevelsCount { get; set; }
-    [Backlink(nameof(LevelQueueRelation.User))] public IQueryable<LevelQueueRelation> QueuedLevels { get; }
+    [Backlink(nameof(LevelQueueRelation.User))] public IQueryable<LevelQueueRelation> QueuedLevelRelations { get; }
     public int QueuedLevelsCount { get; set; }
-    [Backlink(nameof(LevelUniquePlayRelation.User))] public IQueryable<LevelUniquePlayRelation> PlayedLevels { get; }
+    [Backlink(nameof(LevelUniquePlayRelation.User))] public IQueryable<LevelUniquePlayRelation> PlayedLevelRelations { get; }
     public int PlayedLevelsCount { get; set; }
     [Backlink(nameof(GameLevel.UniqueCompletions))] public IQueryable<GameLevel> CompletedLevels { get; }
     public int CompletedLevelsCount { get; set; }
-    [Backlink(nameof(FollowRelation.Recipient))] public IQueryable<FollowRelation> Followers { get; }
+    [Backlink(nameof(FollowRelation.Recipient))] public IQueryable<FollowRelation> FollowersRelations { get; }
     public int FollowersCount { get; set; }
-    [Backlink(nameof(FollowRelation.Follower))] public IQueryable<FollowRelation> Following { get; }
+    [Backlink(nameof(FollowRelation.Follower))] public IQueryable<FollowRelation> FollowingRelations { get; }
     public int FollowingCount { get; set; }
     [Backlink(nameof(GameSession.User))] public IQueryable<GameSession> Sessions { get; }
     [Backlink(nameof(GameLevel.Author))] public IQueryable<GameLevel> Levels { get; }
@@ -71,6 +72,7 @@ public class GameUser : RealmObject, IRateLimitUser
     [Backlink(nameof(GameEvent.Actor))] public IQueryable<GameEvent> Events { get; }
     public int EventsCount { get; set; }
     [Backlink(nameof(GameEvent.ContentUser))] public IQueryable<GameEvent> EventsWhereUserIsRecipient { get; }
+    [Backlink(nameof(NewsEntry.Author))] public IQueryable<NewsEntry> NewsEntries { get; }
     public int Deaths { get; set; }
     public long TotalPlayTime { get; set; }
 

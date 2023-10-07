@@ -12,8 +12,8 @@ public class ApiUserBriefResponse : IApiResponse
         Id = user.Id;
         Username = user.Username;
         PermissionsType = (int)user.PermissionsType;
-        Followers = user.Followers.Count();
-        Following = user.Following.Count();
+        Followers = user.FollowersRelations.Count();
+        Following = user.FollowingRelations.Count();
         PublishedLevels = user.Levels.Count();
     }
 

@@ -44,7 +44,7 @@ public partial class GameDatabaseContext
         IQueryable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>();
         
         IQueryable<LeaderboardEntry> filteredEntries = FilterLeaderboard(entries,
-            new LeaderboardFilters(onLevel: entry.Level, completed: true, onlyBest: true), accessor);
+            new LeaderboardFilters(onLevel: entry.Level, completed: true, obsolete: true), accessor);
         IQueryable<LeaderboardEntry> orderedEntries = OrderLeaderboardByScore(filteredEntries, false);
 
         return orderedEntries.ToList().IndexOf(entry);
@@ -97,21 +97,31 @@ public partial class GameDatabaseContext
             entries = entries.Where(e => e.Completed == filters.Completed);
         }
 
-        if (filters.OnlyBest)
+        if (filters.Obsolete != null)
         {
-            List<LeaderboardEntry> bestEntries = new();
-
+            List<LeaderboardEntry> newEntries = new();
+            if (filters.Obsolete == true)
+                newEntries = entries.ToList();
+            
+            
             List<string> previousUserIds = new();
             // The lower "Score", the higher the score actually is because scores don't start from 0, and they decrease.
             foreach (LeaderboardEntry entry in entries.OrderBy(e => e.Score))
             {
-                if (previousUserIds.Contains(entry.User.Id)) continue;
+                if (previousUserIds.Contains(entry.User.Id)) 
+                    continue;
 
-                bestEntries.Add(entry);
+                if (filters.Obsolete == true)
+                    newEntries.Remove(entry);
+                else if (filters.Obsolete == false)
+                {
+                    newEntries.Add(entry);
+                }
+                
                 previousUserIds.Add(entry.User.Id);
             }
 
-            entries = bestEntries.AsQueryable();
+            entries = newEntries.AsQueryable();
         }
 
         // Automatically remove private and unlisted results

@@ -8,10 +8,10 @@ public class UserMetadataResponse : IResponse
     public UserMetadataResponse(GameUser user)
     {
         Username = user.Username;
-        Following = user.Following.Count();
-        Followers = user.Followers.Count();
+        Following = user.FollowingRelations.Count();
+        Followers = user.FollowersRelations.Count();
         Levels = user.Levels.Count();
-        LikedAndQueuedLevels = user.LikedLevels.Count() + user.QueuedLevels.Count();
+        LikedAndQueuedLevels = user.LikedLevelRelations.Count() + user.QueuedLevelRelations.Count();
     }
 
     public UserMetadataResponse()

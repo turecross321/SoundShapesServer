@@ -253,11 +253,11 @@ public partial class GameDatabaseContext
 
         if (filters.LikedByUser != null || filters.QueuedByUser != null || filters.LikedOrQueuedByUser != null)
         {
-            IEnumerable<LevelLikeRelation>? likeRelations = filters.LikedByUser?.LikedLevels;
-            IEnumerable<LevelQueueRelation>? queueRelations = filters.QueuedByUser?.QueuedLevels;
+            IEnumerable<LevelLikeRelation>? likeRelations = filters.LikedByUser?.LikedLevelRelations;
+            IEnumerable<LevelQueueRelation>? queueRelations = filters.QueuedByUser?.QueuedLevelRelations;
 
-            likeRelations ??= filters.LikedOrQueuedByUser?.LikedLevels;
-            queueRelations ??= filters.LikedOrQueuedByUser?.QueuedLevels;
+            likeRelations ??= filters.LikedOrQueuedByUser?.LikedLevelRelations;
+            queueRelations ??= filters.LikedOrQueuedByUser?.QueuedLevelRelations;
 
             // if null, make them empty
             likeRelations ??= Enumerable.Empty<LevelLikeRelation>();

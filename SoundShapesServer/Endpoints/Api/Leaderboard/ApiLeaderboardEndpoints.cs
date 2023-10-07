@@ -31,11 +31,14 @@ public class ApiLeaderboardEndpoints : EndpointGroup
         string? byUserId = context.QueryString["byUser"];
         GameUser? byUser = null;
         if (byUserId != null) byUser = database.GetUserWithId(byUserId);
-        
-        
-        bool onlyBest = bool.Parse(context.QueryString["onlyBest"] ?? "false");
+
+
+        bool? obsolete = null;
+        if (bool.TryParse(context.QueryString["obsolete"], out bool obsoleteTemp))
+            obsolete = obsoleteTemp;
         bool? completed = null;
-        if (bool.TryParse(context.QueryString["completed"], out bool completedTemp)) completed = completedTemp;
+        if (bool.TryParse(context.QueryString["completed"], out bool completedTemp)) 
+            completed = completedTemp;
         
         string? orderString = context.QueryString["orderBy"];
 
@@ -48,7 +51,7 @@ public class ApiLeaderboardEndpoints : EndpointGroup
             _ => LeaderboardOrderType.Score
         };
 
-        LeaderboardFilters filters = new (level, byUser, completed, onlyBest);
+        LeaderboardFilters filters = new (level, byUser, completed, obsolete);
         (int totalEntries, LeaderboardEntry[] paginatedEntries) =
             database.GetPaginatedLeaderboardEntries(order, descending, filters, from, count, user);
         

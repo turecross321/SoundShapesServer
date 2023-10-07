@@ -11,7 +11,6 @@ public class ApiLeaderboardEntryResponse : IApiResponse
     public ApiLeaderboardEntryResponse(LeaderboardEntry entry, int position)
     {
         Id = entry.Id;
-        Level = new ApiLevelBriefResponse(entry.Level);
         Position = position;
         User = new ApiUserBriefResponse(entry.User);
         Score = entry.Score;
@@ -24,7 +23,6 @@ public class ApiLeaderboardEntryResponse : IApiResponse
     }
 
     public string Id { get; set; }
-    public ApiLevelBriefResponse Level { get; set; }
     public int Position { get; set; }
     public ApiUserBriefResponse User { get; set; }
     public long Score { get; set; }

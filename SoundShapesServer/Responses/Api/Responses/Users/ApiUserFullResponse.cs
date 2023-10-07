@@ -16,13 +16,13 @@ public class ApiUserFullResponse : IApiResponse
         CreationDate = user.CreationDate.ToUnixTimeSeconds();
         LastGameLogin = user.LastGameLogin.ToUnixTimeSeconds();
         LastEventDate = user.Events.Last().CreationDate.ToUnixTimeSeconds();
-        Followers = user.Followers.Count();
-        Following = user.Following.Count();
-        LikedLevels = user.LikedLevels.Count();
-        QueuedLevels = user.QueuedLevels.Count();
+        Followers = user.FollowersRelations.Count();
+        Following = user.FollowingRelations.Count();
+        LikedLevels = user.LikedLevelRelations.Count();
+        QueuedLevels = user.QueuedLevelRelations.Count();
         PublishedLevels = user.Levels.Count();
         TotalEvents = user.Events.Count();
-        PlayedLevels = user.PlayedLevels.Count();
+        PlayedLevels = user.PlayedLevelRelations.Count();
         TotalDeaths = user.Deaths;
         TotalPlayTime = user.TotalPlayTime;
     }
