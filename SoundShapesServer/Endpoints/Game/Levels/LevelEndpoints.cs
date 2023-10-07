@@ -82,20 +82,4 @@ public class LevelEndpoints : EndpointGroup
 
         return new ListResponse<LevelResponse>(levels.Select(l=>new LevelResponse(l, user)), totalLevels, from, count);
     }
-
-    [GameEndpoint("~level:{levelId}/~metadata:{args}", ContentType.Plaintext)]
-    public string? GetFeaturedLevel(RequestContext context, GameDatabaseContext database, GameUser user, string levelId, string args)
-    {
-        // Using args in the endpoints here because Bunkum doesn't support . as a separator
-        string[] arguments = args.Split('.');
-        
-        string action = arguments[1];
-
-        if (action != "get") return null;
-        
-        GameLevel? level = user.FeaturedLevel;
-        if (level == null) return null;
-
-        return IdHelper.FormatLevelIdAndVersion(level);
-    }
 }

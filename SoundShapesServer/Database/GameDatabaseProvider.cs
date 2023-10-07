@@ -17,7 +17,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 64;
+    protected override ulong SchemaVersion => 65;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -67,11 +67,6 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             if (oldVersion < 42)
             {
                 newUser.EventsCount = newUser.Events.Count();
-            }
-
-            if (oldVersion < 45)
-            {
-                newUser.FeaturedLevel = newUser.Levels.LastOrDefault();
             }
 
             if (oldVersion < 46)

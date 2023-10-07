@@ -154,14 +154,6 @@ public partial class GameDatabaseContext
             user.SaveFilePath = path;
         });
     }
-    
-    public void SetFeaturedLevel(GameUser user, GameLevel level)
-    {
-        _realm.Write(() =>
-        {
-            user.FeaturedLevel = level;
-        });
-    }
 
     public void SetUserGameAuthenticationSettings(GameUser user, ApiSetGameAuthenticationSettingsRequest request)
     {
