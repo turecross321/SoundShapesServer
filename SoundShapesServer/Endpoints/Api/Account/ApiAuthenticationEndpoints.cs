@@ -1,9 +1,8 @@
 using AttribDoc.Attributes;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.RateLimit;
-using SoundShapesServer.Attributes;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.RateLimit;
+using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Helpers;
@@ -20,7 +19,7 @@ namespace SoundShapesServer.Endpoints.Api.Account;
 
 public class ApiAuthenticationEndpoints : EndpointGroup
 {
-    [ApiEndpoint("account/logIn", Method.Post), Authentication(false)]
+    [ApiEndpoint("account/logIn", HttpMethods.Post), Authentication(false)]
     [RateLimitSettings(300, 10, 300, "authentication")]
     [DocError(typeof(ApiForbiddenError), ApiForbiddenError.EmailOrPasswordIsWrongWhen)]
     public ApiResponse<ApiLoginResponse> Login(RequestContext context, GameDatabaseContext database, ApiLoginRequest body)
@@ -38,7 +37,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         return new ApiLoginResponse(user, session, refreshSession);
     }
     
-    [ApiEndpoint("account/refreshSession", Method.Post), Authentication(false)]
+    [ApiEndpoint("account/refreshSession", HttpMethods.Post), Authentication(false)]
     [RateLimitSettings(300, 10, 300, "authentication")]
     [DocSummary("Generates a new session with an old refresh session serving as authentication.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.RefreshSessionDoesNotExistWhen)]
@@ -54,7 +53,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         return new ApiLoginResponse(session.User, session, refreshSession);
     }
     
-    [ApiEndpoint("account/logOut", Method.Post)]
+    [ApiEndpoint("account/logOut", HttpMethods.Post)]
     [DocSummary("Revokes the session (and the associated refresh session if it exists) used to make this request.")]
     public ApiOkResponse Logout(RequestContext context, GameDatabaseContext database, GameSession session)
     {
@@ -74,7 +73,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     
     // Game Authentication
     
-    [ApiEndpoint("gameAuth/settings", Method.Post)]
+    [ApiEndpoint("gameAuth/settings", HttpMethods.Post)]
     [DocSummary("Sets user's game authentication settings.")]
     public ApiOkResponse SetGameAuthenticationSettings(RequestContext context, GameDatabaseContext database, GameUser user, ApiSetGameAuthenticationSettingsRequest body)
     {
@@ -87,7 +86,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     public ApiResponse<ApiGameAuthenticationSettingsResponse> GetGameAuthenticationSettings(RequestContext context, GameUser user) 
         => new ApiGameAuthenticationSettingsResponse(user);
     
-    [ApiEndpoint("gameAuth/ip/authorize", Method.Post)]
+    [ApiEndpoint("gameAuth/ip/authorize", HttpMethods.Post)]
     [DocSummary("Authorizes specified IP address.")]
     [DocError(typeof(ApiConflictError), ApiConflictError.AlreadyAuthenticatedIpWhen)]
     public ApiOkResponse AuthorizeIpAddress(RequestContext context, GameDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
@@ -99,7 +98,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 
         return new ApiOkResponse();
     }
-    [ApiEndpoint("gameAuth/ip/address/{address}", Method.Delete)]
+    [ApiEndpoint("gameAuth/ip/address/{address}", HttpMethods.Delete)]
     [DocSummary("Deletes specified IP address.")]
     public ApiOkResponse UnAuthorizeIpAddress(RequestContext context, GameDatabaseContext database, string address, GameUser user)
     {

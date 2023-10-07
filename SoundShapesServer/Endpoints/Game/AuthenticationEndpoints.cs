@@ -1,17 +1,17 @@
 using System.Net;
-using Bunkum.CustomHttpListener.Parsing;
-using Bunkum.HttpServer;
-using Bunkum.HttpServer.Endpoints;
-using Bunkum.HttpServer.RateLimit;
-using Bunkum.HttpServer.Responses;
-using Bunkum.HttpServer.Storage;
+using Bunkum.Core;
+using Bunkum.Core.Endpoints;
+using Bunkum.Core.RateLimit;
+using Bunkum.Core.Responses;
+using Bunkum.Core.Storage;
+using Bunkum.Listener.Protocol;
+using Bunkum.Protocols.Http;
 using NPTicket;
 using NPTicket.Verification;
 using NPTicket.Verification.Keys;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Sessions;
 using SoundShapesServer.Types;
-using ContentType = Bunkum.CustomHttpListener.Parsing.ContentType;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Punishments;
@@ -25,8 +25,8 @@ namespace SoundShapesServer.Endpoints.Game;
 
 public class AuthenticationEndpoints : EndpointGroup
 {
-    [GameEndpoint("identity/login/token/psn.post", Method.Post)]
-    [Endpoint("/identity/login/token/psn", Method.Post)]
+    [GameEndpoint("identity/login/token/psn.post", HttpMethods.Post)]
+    [HttpEndpoint("/identity/login/token/psn", HttpMethods.Post)]
     [RateLimitSettings(300, 10, 300, "authentication")]
     [Authentication(false)]
     public Response? LogIn(RequestContext context, GameDatabaseContext database, Stream body, GameServerConfig config, IDataStore dataStore)
@@ -38,11 +38,12 @@ public class AuthenticationEndpoints : EndpointGroup
         }
         catch (Exception e)
         {
-            context.Logger.LogWarning(BunkumContext.Authentication, "Could not read ticket: " + e);
+            context.Logger.LogWarning(BunkumCategory.Authentication, "Could not read ticket: " + e);
             return HttpStatusCode.BadRequest;
         }
 
-        if (!UserHelper.IsUsernameLegal(ticket.Username)) return HttpStatusCode.BadRequest;
+        if (!UserHelper.IsUsernameLegal(ticket.Username)) 
+            return HttpStatusCode.BadRequest;
 
         GameUser? user = database.GetUserWithUsername(ticket.Username, true);
         if (user == null && !config.AccountCreation)
@@ -92,7 +93,7 @@ public class AuthenticationEndpoints : EndpointGroup
         GameSessionResponse sessionResponse = new (session);
         GameSessionWrapper responseWrapper = new (sessionResponse);
 
-        context.Logger.LogInfo(BunkumContext.Authentication, $"{sessionResponse.User.Username} has logged in.");
+        context.Logger.LogInfo(BunkumCategory.Authentication, $"{sessionResponse.User.Username} has logged in.");
 
         context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={sessionResponse.Id};Version=1;Path=/");
         return new Response(responseWrapper, ContentType.Json, HttpStatusCode.Created);
@@ -105,12 +106,12 @@ public class AuthenticationEndpoints : EndpointGroup
         // Determine the correct key to use
         if (ticket.IssuerId == 0x33333333)
         {
-            context.Logger.LogDebug(BunkumContext.Authentication, "Using RPCN ticket key");
+            context.Logger.LogDebug(BunkumCategory.Authentication, "Using RPCN ticket key");
             signingKey = RpcnSigningKey.Instance;
         }
         else
         {
-            context.Logger.LogDebug(BunkumContext.Authentication, "Using PSN Sound Shapes ticket key");
+            context.Logger.LogDebug(BunkumCategory.Authentication, "Using PSN Sound Shapes ticket key");
             signingKey = SoundShapesSigningKey.Instance;
         }
         
