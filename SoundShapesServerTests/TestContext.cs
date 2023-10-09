@@ -2,9 +2,9 @@ using Bunkum.Protocols.Http.Direct;
 using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using SoundShapesServerTests.Server;
 
@@ -28,44 +28,44 @@ public class TestContext : IDisposable
     private int _users;
     private int UserIncrement => _users++;
 
-    public HttpClient GetAuthenticatedClient(SessionType type,
+    public HttpClient GetAuthenticatedClient(TokenType type,
         GameUser? user = null,
-        int tokenExpirySeconds = GameDatabaseContext.DefaultSessionExpirySeconds)
+        int tokenExpirySeconds = GameDatabaseContext.DefaultTokenExpirySeconds)
     {
         return GetAuthenticatedClient(type, out _, user, tokenExpirySeconds);
     }
     
-    public HttpClient GetAuthenticatedClient(SessionType sessionType, out string sessionId,
+    public HttpClient GetAuthenticatedClient(TokenType tokenType, out string tokenId,
         GameUser? user = null,
-        int tokenExpirySeconds = GameDatabaseContext.DefaultSessionExpirySeconds)
+        int tokenExpirySeconds = GameDatabaseContext.DefaultTokenExpirySeconds)
     {
         user ??= CreateUser();
 
         // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
-        PlatformType platformType = sessionType switch
+        PlatformType platformType = tokenType switch
         {
-            SessionType.Game => PlatformType.PsVita,
-            SessionType.Api => PlatformType.Unknown,
-            _ => throw new ArgumentOutOfRangeException(nameof(sessionType), sessionType, null)
+            TokenType.GameAccess => PlatformType.PsVita,
+            TokenType.ApiAccess => PlatformType.Unknown,
+            _ => throw new ArgumentOutOfRangeException(nameof(tokenType), tokenType, null)
         };
 
         bool? genuineTicket = null; 
-        if (sessionType == SessionType.Game)
+        if (tokenType == TokenType.GameAccess)
             genuineTicket = true;
         
-        GameSession session = Database.CreateSession(user, sessionType, tokenExpirySeconds, platformType, genuineTicket);
-        sessionId = session.Id;
+        AuthToken token = Database.CreateToken(user, tokenType, tokenExpirySeconds, platformType, genuineTicket);
+        tokenId = token.Id;
         
         HttpClient client = Listener.GetClient();
 
         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-        if (sessionType is SessionType.Game or SessionType.GameUnAuthorized)
+        if (tokenType is TokenType.GameAccess or TokenType.GameUnAuthorized)
         {
-            client.DefaultRequestHeaders.TryAddWithoutValidation("X-OTG-Identity-SessionId", session.Id);
+            client.DefaultRequestHeaders.TryAddWithoutValidation("X-OTG-Identity-SessionId", token.Id);
         }
         else
         {
-            client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", session.Id);
+            client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token.Id);
         }
 
         return client;

@@ -11,12 +11,12 @@ using NPTicket;
 using NPTicket.Verification;
 using NPTicket.Verification.Keys;
 using SoundShapesServer.Database;
-using SoundShapesServer.Responses.Game.Sessions;
 using SoundShapesServer.Types;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Responses.Game.Authentication;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Punishments;
-using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using SoundShapesServer.Verification;
 using static SoundShapesServer.Helpers.IpHelper;
@@ -57,46 +57,44 @@ public class AuthenticationEndpoints : EndpointGroup
         GameIp gameIp = GetGameIpFromRequestContext(context, database, user);
         bool genuineTicket = VerifyTicket(context, (MemoryStream)body, ticket);
 
-        SessionType? sessionType;
+        TokenType? tokenType;
 
         if (config.RequireAuthentication)
         {
             if (!user.HasFinishedRegistration)
             {
-                sessionType = SessionType.GameUnAuthorized;
+                tokenType = TokenType.GameUnAuthorized;
             }
             else if (genuineTicket && ((platformType is PlatformType.Ps3 or PlatformType.PsVita && user.AllowPsnAuthentication) || 
                                        (platformType is PlatformType.Rpcs3 && user.AllowRpcnAuthentication)))
             {
-                sessionType = SessionType.Game;
+                tokenType = TokenType.GameAccess;
             }
             else if (gameIp.Authorized)
             {
-                sessionType = SessionType.Game;
+                tokenType = TokenType.GameAccess;
                 if (gameIp.OneTimeUse) 
                     database.UseOneTimeIpAddress(gameIp);
             }
             else
             {
-                sessionType = SessionType.GameUnAuthorized;
+                tokenType = TokenType.GameUnAuthorized;
             }
         }
         else
         {
-            sessionType = SessionType.Game;   
+            tokenType = TokenType.GameAccess;   
         }
         
         if (user.Deleted || user.PermissionsType == PermissionsType.Banned)
-            sessionType = SessionType.GameUnAuthorized;
+            tokenType = TokenType.GameUnAuthorized;
         
-        GameSession session = database.CreateSession(user, (SessionType)sessionType, Globals.FourHoursInSeconds, platformType, genuineTicket);
+        AuthToken token = database.CreateToken(user, (TokenType)tokenType, Globals.FourHoursInSeconds, platformType, genuineTicket);
+        AuthenticationResponse responseWrapper = new (token);
 
-        GameSessionResponse sessionResponse = new (session);
-        GameSessionWrapper responseWrapper = new (sessionResponse);
+        context.Logger.LogInfo(BunkumCategory.Authentication, $"{token.User.Username} has logged in.");
 
-        context.Logger.LogInfo(BunkumCategory.Authentication, $"{sessionResponse.User.Username} has logged in.");
-
-        context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={sessionResponse.Id};Version=1;Path=/");
+        context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={token.Id};Version=1;Path=/");
         return new Response(responseWrapper, ContentType.Json, HttpStatusCode.Created);
     }
     
@@ -127,9 +125,9 @@ public class AuthenticationEndpoints : EndpointGroup
     }
     
     [GameEndpoint("{platform}/{publisher}/{language}/~eula.get"), Authentication(false)]
-    public string? Eula(RequestContext context, GameServerConfig config, GameDatabaseContext database, string platform, string publisher, string language, GameSession? session, GameUser? user)
+    public string? Eula(RequestContext context, GameServerConfig config, GameDatabaseContext database, string platform, string publisher, string language, AuthToken? token, GameUser? user)
     {
-        if (session?.SessionType == SessionType.Game)
+        if (token?.TokenType == TokenType.GameAccess)
             return EulaEndpoint.NormalEula(config);
         
         string eulaEnd = $"\n \n{DateTime.UtcNow}";
@@ -155,21 +153,21 @@ public class AuthenticationEndpoints : EndpointGroup
         }
         if (user.HasFinishedRegistration == false)
         {
-            GameSession emailSession = database.CreateSession(user, SessionType.SetEmail, Globals.TenMinutesInSeconds);
+            AuthToken emailToken = database.CreateToken(user, TokenType.SetEmail, Globals.TenMinutesInSeconds);
             return $"Your account is not registered.\n \n" +
                    $"To proceed, you will have to register an account at {config.WebsiteUrl}/register\n" +
-                   $"Your email code is: {emailSession.Id}" + eulaEnd;
+                   $"Your email code is: {emailToken.Id}" + eulaEnd;
         }
         
-        string unAuthorizedBase = $"Your session has not been authenticated.\n \n" +
+        string unAuthorizedBase = $"Your token has not been authenticated.\n \n" +
                              $"To proceed, you will have to log into your account at {config.WebsiteUrl}/authentication " +
                              $"and perform one of the following actions:\n";
                 
         List<string> authorizationMethods = new ();
 
-        if (session!.GenuineNpTicket == true)
+        if (token!.GenuineNpTicket == true)
         {
-            switch (session.PlatformType)
+            switch (token.PlatformType)
             {
                 case PlatformType.Ps3 or PlatformType.PsVita when !user.AllowPsnAuthentication:
                     authorizationMethods.Add("Enable PSN Authentication.");

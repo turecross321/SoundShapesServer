@@ -11,8 +11,8 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.ResourceHelper;
 
@@ -22,7 +22,7 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class LevelManagementEndpoints : EndpointGroup
 {
     // Gets called by Endpoints.cs
-    public static Response CreateLevel(RequestContext context, GameServerConfig config, IDataStore dataStore, ProfanityService profanity, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user, GameSession session)
+    public static Response CreateLevel(RequestContext context, GameServerConfig config, IDataStore dataStore, ProfanityService profanity, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user, AuthToken token)
     {
         if (user.Levels.Count() >= config.LevelPublishLimit) return HttpStatusCode.Forbidden;
 
@@ -31,7 +31,7 @@ public class LevelManagementEndpoints : EndpointGroup
             int.Parse(parser.GetParameterValue("sce_np_language")));
         
         publishLevelRequest.Name = profanity.CensorSentence(publishLevelRequest.Name); // Censor any potential profanity
-        GameLevel publishedLevel = database.CreateLevel(user, publishLevelRequest, session.PlatformType);
+        GameLevel publishedLevel = database.CreateLevel(user, publishLevelRequest, token.PlatformType);
         
         Response uploadedResources = UploadLevelResources(context, database, dataStore, parser, publishedLevel, user);
         if (uploadedResources.StatusCode != HttpStatusCode.Created) return uploadedResources;

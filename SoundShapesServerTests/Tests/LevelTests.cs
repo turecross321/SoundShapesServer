@@ -2,8 +2,8 @@ using System.Net.Http.Json;
 using Newtonsoft.Json.Linq;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using SoundShapesServerTests.Server;
 
@@ -48,7 +48,7 @@ public class LevelTests: ServerTest
 
         context.Database.Refresh();
         
-        using HttpClient client = context.GetAuthenticatedClient(SessionType.Game, user);
+        using HttpClient client = context.GetAuthenticatedClient(TokenType.GameAccess, user);
 
         // Search
         string payload = $"/otg/~index:level.page?query=metadata.displayName:{firstLevel.Name}";
@@ -67,7 +67,7 @@ public class LevelTests: ServerTest
         
         context.Database.Refresh();
         
-        using HttpClient client = context.GetAuthenticatedClient(SessionType.Api, user);
+        using HttpClient client = context.GetAuthenticatedClient(TokenType.ApiAccess, user);
         
         // TODO: Fix broken relation checking tests
         
@@ -127,7 +127,7 @@ public class LevelTests: ServerTest
         
         context.Database.Refresh();
         
-        using HttpClient client = context.GetAuthenticatedClient(SessionType.Game, user);
+        using HttpClient client = context.GetAuthenticatedClient(TokenType.GameAccess, user);
         
         // Liking
         string payload = $"/otg/~identity:{user.Id}/~like:%2F~level%3A{level.Id}.put";
@@ -169,7 +169,7 @@ public class LevelTests: ServerTest
         
         context.Database.Refresh();
         
-        using HttpClient client = context.GetAuthenticatedClient(SessionType.Api, firstUser);
+        using HttpClient client = context.GetAuthenticatedClient(TokenType.ApiAccess, firstUser);
         
         // Updating Metadata
         string payload = $"/api/v1/levels/id/{firstLevel.Id}/edit";

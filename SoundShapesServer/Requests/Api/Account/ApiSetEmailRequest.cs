@@ -5,6 +5,6 @@ namespace SoundShapesServer.Requests.Api.Account;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ApiSetEmailRequest
 {
-    public string SetEmailSessionId { get; set; }
+    public string SetEmailTokenId { get; set; }
     public string NewEmail { get; set; }
 }

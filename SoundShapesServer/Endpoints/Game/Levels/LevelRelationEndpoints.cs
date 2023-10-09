@@ -8,8 +8,8 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
@@ -43,7 +43,7 @@ public class LevelRelationEndpoints : EndpointGroup
     }
     
     [GameEndpoint("~identity:{userId}/~like:%2F~level%3A{arguments}")]
-    public Response LevelLikeRequests(RequestContext context, GameDatabaseContext database, GameUser user, GameSession session, string userId, string arguments)
+    public Response LevelLikeRequests(RequestContext context, GameDatabaseContext database, GameUser user, AuthToken token, string userId, string arguments)
     {
         string[] argumentArray = arguments.Split("."); // This is to separate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
         string levelId = argumentArray[0];
@@ -55,7 +55,7 @@ public class LevelRelationEndpoints : EndpointGroup
         if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
             return HttpStatusCode.NotFound;
         
-        if (requestType == "put") return LikeLevel(database, user, level, session.PlatformType);
+        if (requestType == "put") return LikeLevel(database, user, level, token.PlatformType);
         if (requestType == "get") return CheckIfUserHasLikedLevel(database, user, level);
         if (requestType == "delete") return UnLikeLevel(database, user, level);
 

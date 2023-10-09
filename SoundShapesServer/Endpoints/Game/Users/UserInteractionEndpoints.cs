@@ -6,7 +6,7 @@ using Bunkum.Listener.Protocol;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.Sessions;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Users;
@@ -15,7 +15,7 @@ public class UserInteractionEndpoints : EndpointGroup
 {
 
     [GameEndpoint("~identity:{followerId}/~follow:%2F~identity%3A{arguments}")]
-    public Response FollowRequests(RequestContext context, GameDatabaseContext database, GameUser user, GameSession session, string followerId, string arguments)
+    public Response FollowRequests(RequestContext context, GameDatabaseContext database, GameUser user, AuthToken token, string followerId, string arguments)
     {
         string[] argumentArray = arguments.Split("."); // This is to separate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
         string userId = argumentArray[0];
@@ -27,7 +27,7 @@ public class UserInteractionEndpoints : EndpointGroup
         return requestType switch
         {
             "get" => new Response(CheckIfUserIsFollowed(user, recipient, database), ContentType.Json),
-            "put" => FollowUser(user, recipient, database, session.PlatformType),
+            "put" => FollowUser(user, recipient, database, token.PlatformType),
             "delete" => UnFollowUser(user, recipient, database),
             _ => new Response(HttpStatusCode.NotFound)
         };

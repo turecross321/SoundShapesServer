@@ -13,9 +13,9 @@ using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Services;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.Sessions;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.SessionHelper;
+using static SoundShapesServer.Helpers.TokenHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Account;
 
@@ -41,16 +41,16 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         return new ApiOkResponse();
     }
 
-    [ApiEndpoint("account/sendEmailSession", HttpMethods.Post)]
+    [ApiEndpoint("account/sendEmailToken", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Banned)]
-    [DocSummary("Sends an email containing a session ID that is required to change your email address.")]
+    [DocSummary("Sends an email containing a token ID that is required to change your email address.")]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
-    public ApiOkResponse SendEmailSession(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
+    public ApiOkResponse SendEmailToken(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
     {
-        GameSession emailSession = database.CreateSession(user, SessionType.SetEmail, Globals.TenMinutesInSeconds);
+        AuthToken emailToken = database.CreateToken(user, TokenType.SetEmail, Globals.TenMinutesInSeconds);
 
         string emailBody = $"Dear {user.Username},\n\n" +
-                           "Here is your new email code: " + emailSession.Id + "\n" +
+                           "Here is your new email code: " + emailToken.Id + "\n" +
                            "If this wasn't you, change your password immediately. Code expires in 10 minutes.";
 
         if (emailService.SendEmail(user.Email!, "Sound Shapes New Email Code", emailBody))
@@ -63,12 +63,12 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [DocSummary("Changes your email address.")]
     [DocError(typeof(ApiBadRequestError), ApiBadRequestError.InvalidEmailWhen)]
     [DocError(typeof(ApiConflictError), ApiConflictError.EmailAlreadyTakenWhen)]
-    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.SessionDoesNotExistWhen)]
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.TokenDoesNotExistWhen)]
     public ApiOkResponse SetUserEmail(RequestContext context, GameDatabaseContext database, EmailService emailService, ApiSetEmailRequest body)
     {
-        GameSession? session = database.GetSessionWithId(body.SetEmailSessionId);
-        if (session == null)
-            return ApiNotFoundError.SessionDoesNotExist;
+        AuthToken? token = database.GetTokenWithId(body.SetEmailTokenId);
+        if (token == null)
+            return ApiNotFoundError.TokenDoesNotExist;
         
         // Check if user has sent a valid mail address
         if (MailAddress.TryCreate(body.NewEmail, out MailAddress? _) == false)
@@ -81,28 +81,28 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
 
 
         
-        database.SetUserEmail(session.User, body.NewEmail);
-        database.RemoveSession(session);
+        database.SetUserEmail(token.User, body.NewEmail);
+        database.RemoveToken(token);
         
-        if (!session.User.HasFinishedRegistration)
-            return SendPasswordSession(context, database, new ApiPasswordSessionRequest {Email = body.NewEmail}, emailService);
+        if (!token.User.HasFinishedRegistration)
+            return SendPasswordToken(context, database, new ApiPasswordTokenRequest {Email = body.NewEmail}, emailService);
 
         return new ApiOkResponse();
     }
 
-    [ApiEndpoint("account/sendPasswordSession", HttpMethods.Post), Authentication(false)]
-    [DocSummary("Sends an email containing a session ID that is required to change your password.")]
+    [ApiEndpoint("account/sendPasswordToken", HttpMethods.Post), Authentication(false)]
+    [DocSummary("Sends an email containing a token ID that is required to change your password.")]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
-    public ApiOkResponse SendPasswordSession(RequestContext context, GameDatabaseContext database, ApiPasswordSessionRequest body, EmailService emailService)
+    public ApiOkResponse SendPasswordToken(RequestContext context, GameDatabaseContext database, ApiPasswordTokenRequest body, EmailService emailService)
     {
         GameUser? user = database.GetUserWithEmail(body.Email);
         if (user == null) 
             return new ApiOkResponse();
         
-        GameSession passwordSession = database.CreateSession(user, SessionType.SetPassword, Globals.TenMinutesInSeconds);
+        AuthToken passwordToken = database.CreateToken(user, TokenType.SetPassword, Globals.TenMinutesInSeconds);
 
         string emailBody = $"Dear {user.Username},\n\n" +
-                           "Here is your password code: " + passwordSession.Id + "\n" +
+                           "Here is your password code: " + passwordToken.Id + "\n" +
                            "If this wasn't you, feel free to ignore this email. Code expires in 10 minutes.";
 
         if (emailService.SendEmail(user.Email!, "Sound Shapes Password Code", emailBody))
@@ -114,33 +114,33 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [ApiEndpoint("account/setPassword", HttpMethods.Post), Authentication(false)]
     [DocSummary("Changes your password.")]
     [DocError(typeof(ApiBadRequestError), ApiBadRequestError.PasswordIsNotHashedWhen)]
-    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.SessionDoesNotExistWhen)]
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.TokenDoesNotExistWhen)]
     public ApiOkResponse SetUserPassword(RequestContext context, GameDatabaseContext database, ApiSetPasswordRequest body)
     {
         if (!Sha512Regex().IsMatch(body.NewPasswordSha512))
             return ApiBadRequestError.PasswordIsNotHashed;
 
-        GameSession? session = database.GetSessionWithId(body.SetPasswordSessionId);
-        if (session == null)
-            return ApiNotFoundError.SessionDoesNotExist;
+        AuthToken? token = database.GetTokenWithId(body.SetPasswordTokenId);
+        if (token == null)
+            return ApiNotFoundError.TokenDoesNotExist;
         
-        database.SetUserPassword(session.User, body.NewPasswordSha512);
-        // All sessions are wiped automatically by GameDatabaseContext
+        database.SetUserPassword(token.User, body.NewPasswordSha512);
+        // All tokens are wiped automatically by GameDatabaseContext
 
         return new ApiOkResponse();
     }
 
-    [ApiEndpoint("account/sendRemovalSession", HttpMethods.Post)]
+    [ApiEndpoint("account/sendRemovalToken", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Banned)]
-    [DocSummary("Sends an email containing a session ID that is required to delete your account.")]
+    [DocSummary("Sends an email containing a token ID that is required to delete your account.")]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
-    public ApiOkResponse SendUserRemovalSession(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
+    public ApiOkResponse SendUserRemovalToken(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
     {
-        GenerateAccountRemovalSessionId(database);
-        GameSession removalSession = database.CreateSession(user, SessionType.AccountRemoval, Globals.TenMinutesInSeconds);
+        GenerateAccountRemovalTokenId(database);
+        AuthToken removalToken = database.CreateToken(user, TokenType.AccountRemoval, Globals.TenMinutesInSeconds);
 
         string emailBody = $"Dear {user.Username},\n\n" +
-                           "Here is your account removal code: " + removalSession.Id + "\n" +
+                           "Here is your account removal code: " + removalToken.Id + "\n" +
                            "If this wasn't you, change your password immediately. Code expires in 10 minutes.";
         
         if (emailService.SendEmail(user.Email!, "Sound Shapes Account Removal Code", emailBody))
@@ -151,14 +151,14 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
 
     [ApiEndpoint("account", HttpMethods.Delete), Authentication(false)]
     [DocSummary("Deletes your account.")]
-    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.SessionDoesNotExistWhen)]
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.TokenDoesNotExistWhen)]
     public ApiOkResponse RemoveAccount(RequestContext context, GameDatabaseContext database, IDataStore dataStore, ApiRemoveAccountRequest body)
     {
-        GameSession? session = database.GetSessionWithId(body.AccountRemovalSessionId);
-        if (session == null)
-            return ApiNotFoundError.SessionDoesNotExist;
+        AuthToken? token = database.GetTokenWithId(body.AccountRemovalTokenId);
+        if (token == null)
+            return ApiNotFoundError.TokenDoesNotExist;
         
-        database.RemoveUser(session.User, dataStore);
+        database.RemoveUser(token.User, dataStore);
         return new ApiOkResponse();
     }
 }

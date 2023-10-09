@@ -3,6 +3,7 @@ using Realms;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
@@ -10,14 +11,13 @@ using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Reports;
-using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 69;
+    protected override ulong SchemaVersion => 70;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -28,7 +28,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         typeof(LevelUniquePlayRelation),
         typeof(GameUser),
         typeof(GameIp),
-        typeof(GameSession),
+        typeof(AuthToken),
         typeof(GameLevel),
         typeof(NewsEntry),
         typeof(LeaderboardEntry),
@@ -112,15 +112,14 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             }
         }
         
-        migration.OldRealm.DynamicApi.All("GameSession");
-        IQueryable<GameSession> newSessions = migration.NewRealm.All<GameSession>();
-        for (int i = 0; i < newSessions.Count(); i++)
+        IQueryable<AuthToken> newTokens = migration.NewRealm.All<AuthToken>();
+        for (int i = 0; i < newTokens.Count(); i++)
         {
-            GameSession newSession = newSessions.ElementAt(i);
+            AuthToken newToken = newTokens.ElementAt(i);
 
-            if (oldVersion < 64)
+            if (oldVersion < 70)
             {
-                migration.NewRealm.Remove(newSession);
+                migration.NewRealm.Remove(newToken);
             }
         }
         

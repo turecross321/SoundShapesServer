@@ -5,6 +5,6 @@ namespace SoundShapesServer.Requests.Api.Account;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class ApiSetPasswordRequest
 {
-    public string SetPasswordSessionId { get; set; }
+    public string SetPasswordTokenId { get; set; }
     public string NewPasswordSha512 { get; set; }
 }

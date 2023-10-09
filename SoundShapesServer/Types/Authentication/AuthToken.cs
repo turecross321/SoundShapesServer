@@ -1,23 +1,24 @@
 using Bunkum.Core.Authentication;
 using Realms;
 using SoundShapesServer.Types.Users;
+
 #pragma warning disable CS8618
 
-namespace SoundShapesServer.Types.Sessions;
+namespace SoundShapesServer.Types.Authentication;
 
-public class GameSession : RealmObject, IToken<GameUser>
+public class AuthToken : RealmObject, IToken<GameUser>
 {
     [Required] [PrimaryKey] public string Id { get; init; }
     public GameUser User { get; init; }
     
     // Realm can't store enums, use recommended workaround
-    // ReSharper disable once InconsistentNaming (can't fix due to conflict with SessionType)
+    // ReSharper disable once InconsistentNaming (can't fix due to conflict with TokenType)
     // ReSharper disable once MemberCanBePrivate.Global
-    internal int _SessionType { get; set; }
-    public SessionType SessionType
+    internal int _TokenType { get; set; }
+    public TokenType TokenType
     {
-        get => (SessionType)_SessionType;
-        set => _SessionType = (int)value;
+        get => (TokenType)_TokenType;
+        set => _TokenType = (int)value;
     }
     
     // ReSharper disable once InconsistentNaming (can't fix due to conflict with PlatformType)
@@ -31,6 +32,6 @@ public class GameSession : RealmObject, IToken<GameUser>
     public DateTimeOffset CreationDate { get; init; }
     public DateTimeOffset ExpiryDate { get; set; }
     public bool? GenuineNpTicket { get; init; }
-    public GameSession? RefreshSession { get; init; }
-    [Backlink(nameof(RefreshSession))] public IQueryable<GameSession> RefreshableSessions { get; }
+    public AuthToken? RefreshToken { get; init; }
+    [Backlink(nameof(RefreshToken))] public IQueryable<AuthToken> RefreshableTokens { get; }
 }

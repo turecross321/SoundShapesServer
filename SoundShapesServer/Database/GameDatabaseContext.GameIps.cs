@@ -1,6 +1,6 @@
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.Sessions;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Database;
@@ -36,9 +36,9 @@ public partial class GameDatabaseContext
             gameIp.OneTimeUse = oneTime;
             gameIp.ModificationDate = DateTimeOffset.UtcNow;
 
-            foreach (GameSession session in gameIp.Sessions.Where(s=>s._SessionType == (int)SessionType.GameUnAuthorized))
+            foreach (AuthToken token in gameIp.Tokens.Where(s=>s._TokenType == (int)TokenType.GameUnAuthorized))
             {
-                session.SessionType = SessionType.Game;
+                token.TokenType = TokenType.GameAccess;
             }
         });
 
@@ -51,10 +51,10 @@ public partial class GameDatabaseContext
     {
         _realm.Write(() =>
         {
-            // Remove all sessions with ip address
-            foreach (GameSession session in gameIp.Sessions)
+            // Remove all tokens with ip address
+            foreach (AuthToken token in gameIp.Tokens)
             {
-                _realm.Remove(session);
+                _realm.Remove(token);
             }
             
             _realm.Remove(gameIp);

@@ -1,7 +1,7 @@
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Responses.Moderation;
 using SoundShapesServer.Responses.Api.Responses.Users;
-using SoundShapesServer.Types.Sessions;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Api.Responses;
@@ -11,17 +11,17 @@ public class ApiLoginResponse
     [Obsolete("Empty constructor for deserialization.", true)]
     public ApiLoginResponse() {}
     
-    public ApiLoginResponse(GameUser user, GameSession session, GameSession? refreshSession)
+    public ApiLoginResponse(GameUser user, AuthToken accessToken, AuthToken? refreshToken)
     {
-        Session = new ApiSessionResponse(session);
-        if (refreshSession != null) 
-            RefreshSession = new ApiSessionResponse(refreshSession);
-        User = new ApiUserBriefResponse(session.User);
+        AccessToken = new ApiTokenResponse(accessToken);
+        if (refreshToken != null) 
+            RefreshToken = new ApiTokenResponse(refreshToken);
+        User = new ApiUserBriefResponse(accessToken.User);
         ActivePunishments = PunishmentHelper.GetActivePunishments(user).AsEnumerable().Select(p => new ApiPunishmentResponse(p)).ToArray();
     }
 
-    public ApiSessionResponse Session { get; set; }
-    public ApiSessionResponse? RefreshSession { get; set; }
+    public ApiTokenResponse AccessToken { get; set; }
+    public ApiTokenResponse? RefreshToken { get; set; }
     public ApiUserBriefResponse User { get; set; }
     public ApiPunishmentResponse[] ActivePunishments { get; set; }
 }

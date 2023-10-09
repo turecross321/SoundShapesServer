@@ -2,5 +2,5 @@
 
 public class ApiRemoveAccountRequest
 {
-    public string AccountRemovalSessionId { get; set; } = null!;
+    public string AccountRemovalTokenId { get; set; } = null!;
 }

@@ -7,9 +7,9 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Game;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.LeaderboardHelper;
 
@@ -19,7 +19,7 @@ public class LeaderboardEndpoints : EndpointGroup
 {
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.post", HttpMethods.Post)]
     [GameEndpoint("~identity:{userId}/~record:%2F~level%3A{arguments}", HttpMethods.Post)]
-    public Response SubmitScore(RequestContext context, GameDatabaseContext database, GameUser user, GameSession session, string userId, string? arguments, string body, string levelId)
+    public Response SubmitScore(RequestContext context, GameDatabaseContext database, GameUser user, AuthToken token, string userId, string? arguments, string body, string levelId)
     {
         if (arguments != null)
         {
@@ -45,7 +45,7 @@ public class LeaderboardEndpoints : EndpointGroup
         database.AddDeathsToLevel(user, level, deSerializedRequest.Deaths);
         database.SetLevelDifficulty(level);
 
-        database.CreateLeaderboardEntry(deSerializedRequest, user, level, session.PlatformType);
+        database.CreateLeaderboardEntry(deSerializedRequest, user, level, token.PlatformType);
 
         return HttpStatusCode.OK;
     }

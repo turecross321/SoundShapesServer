@@ -14,8 +14,8 @@ using SoundShapesServer.Middlewares;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Services;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer;
@@ -25,21 +25,21 @@ public class GameServer
     protected readonly BunkumHttpServer ServerInstance;
     protected readonly GameDatabaseProvider DatabaseProvider;
     private readonly IDataStore _dataStore;
-    private readonly SessionProvider _authProvider;
+    private readonly AuthenticationProvider _authProvider;
     protected GameServerConfig? Config;
 
     public GameServer(BunkumListener? listener = null,
         GameDatabaseProvider? databaseProvider = null,
-        IAuthenticationProvider<GameSession>? authProvider = null,
+        IAuthenticationProvider<AuthToken>? authProvider = null,
         IDataStore? dataStore = null)
     {
         databaseProvider ??= new GameDatabaseProvider();
-        authProvider ??= new SessionProvider();
+        authProvider ??= new AuthenticationProvider();
         dataStore ??= new FileSystemDataStore();
 
         DatabaseProvider = databaseProvider;
         _dataStore = dataStore;
-        _authProvider = (SessionProvider)authProvider;
+        _authProvider = (AuthenticationProvider)authProvider;
         ServerInstance = listener == null ? new BunkumHttpServer() : new BunkumHttpServer(listener);
         
         ServerInstance.UseDatabaseProvider(databaseProvider);

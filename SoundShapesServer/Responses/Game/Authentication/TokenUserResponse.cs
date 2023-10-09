@@ -1,11 +1,11 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Responses.Game.Sessions;
+namespace SoundShapesServer.Responses.Game.Authentication;
 
-public class SessionUserResponse : IResponse
+public class TokenUserResponse : IResponse
 {
-    public SessionUserResponse(GameUser user)
+    public TokenUserResponse(GameUser user)
     {
         Username = user.Username;
         Id = user.Id;

@@ -48,7 +48,7 @@ public partial class GameDatabaseContext
         
         _realm.Write(() =>
         {
-            _realm.RemoveRange(user.Sessions);
+            _realm.RemoveRange(user.Tokens);
             _realm.RemoveRange(user.IpAddresses);
             _realm.RemoveRange(user.FollowersRelations);
             _realm.RemoveRange(user.FollowingRelations);
@@ -124,7 +124,7 @@ public partial class GameDatabaseContext
         if (!registered) 
             CreateEvent(user, EventType.AccountRegistration, PlatformType.Unknown, user);
 
-        RemoveAllSessionsWithUser(user);
+        RemoveTokensByUser(user);
 
         _realm.Refresh();
     }

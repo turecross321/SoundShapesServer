@@ -2,13 +2,14 @@ using Bunkum.Core.RateLimit;
 using Realms;
 using Realms.Sync;
 using SoundShapesServer.Helpers;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Relations;
-using SoundShapesServer.Types.Sessions;
+
 #pragma warning disable CS8618
 
 namespace SoundShapesServer.Types.Users;
@@ -64,7 +65,7 @@ public class GameUser : RealmObject, IRateLimitUser
     public int FollowersCount { get; set; }
     [Backlink(nameof(FollowRelation.Follower))] public IQueryable<FollowRelation> FollowingRelations { get; }
     public int FollowingCount { get; set; }
-    [Backlink(nameof(GameSession.User))] public IQueryable<GameSession> Sessions { get; }
+    [Backlink(nameof(AuthToken.User))] public IQueryable<AuthToken> Tokens { get; }
     [Backlink(nameof(GameLevel.Author))] public IQueryable<GameLevel> Levels { get; }
     public int LevelsCount { get; set; }
     [Backlink(nameof(Punishment.Recipient))] public IQueryable<Punishment> Punishments { get; }

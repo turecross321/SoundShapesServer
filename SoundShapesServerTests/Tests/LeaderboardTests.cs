@@ -3,9 +3,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using SoundShapesServerTests.Server;
 
@@ -67,7 +67,7 @@ public class LeaderboardTests: ServerTest
         context.FillLeaderboard(level, userAmount, scoresPerUser, user);
         context.Database.Refresh();
         
-        using HttpClient client = context.GetAuthenticatedClient(SessionType.Game, user);
+        using HttpClient client = context.GetAuthenticatedClient(TokenType.GameAccess, user);
         
         string payload = $"/otg/~level:{level.Id}/~leaderboard.page";
         ListResponse<LeaderboardEntryResponse> response = JsonConvert.DeserializeObject<ListResponse<LeaderboardEntryResponse>>(await client.GetStringAsync(payload))!;
@@ -90,7 +90,7 @@ public class LeaderboardTests: ServerTest
         GameUser user = context.CreateUser();
         GameLevel level = context.CreateLevel(user);
 
-        using HttpClient client = context.GetAuthenticatedClient(SessionType.Game, user);
+        using HttpClient client = context.GetAuthenticatedClient(TokenType.GameAccess, user);
 
         const string payload = $@"golded=1&playTime=0&tokenCount=0&date=0&deaths=0&score=0&completed=1";
         

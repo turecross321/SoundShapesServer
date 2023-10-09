@@ -5,8 +5,8 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Levels;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using ContentType = Bunkum.Listener.Protocol.ContentType;
 
@@ -18,23 +18,23 @@ public class LevelEndpoints : EndpointGroup
     [GameEndpoint("~index:level.page")]
     [NullStatusCode(HttpStatusCode.Forbidden)]
     [Authentication(false)]
-    public ListResponse<LevelResponse>? GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user, GameSession? session)
+    public ListResponse<LevelResponse>? GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user, AuthToken? token)
     {
         string? query = context.QueryString["query"];
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
         string searchString = context.QueryString["search"] ?? "all";
 
         // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
-        if (session == null || user == null)
+        if (token == null || user == null)
         {
             if (searchString == "tagged3") 
                 return new ListResponse<LevelResponse>();
             
             return null;
         }
-        if (session.SessionType != SessionType.Game)
+        if (token.TokenType != TokenType.GameAccess)
         {
-            if (session.SessionType != SessionType.GameUnAuthorized || searchString != "tagged3")
+            if (token.TokenType != TokenType.GameUnAuthorized || searchString != "tagged3")
                 return null;
         }
 

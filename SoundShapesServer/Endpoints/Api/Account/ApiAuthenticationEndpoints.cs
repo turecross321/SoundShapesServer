@@ -12,7 +12,7 @@ using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Responses.Api.Responses;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.Sessions;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api.Account;
@@ -31,41 +31,41 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         if (!database.ValidatePassword(user, body.PasswordSha512))
             return ApiForbiddenError.EmailOrPasswordIsWrong;
 
-        GameSession refreshSession = database.CreateSession(user, SessionType.ApiRefresh, Globals.OneMonthInSeconds);
-        GameSession session = database.CreateSession(user, SessionType.Api, refreshSession:refreshSession);
+        AuthToken refreshToken = database.CreateToken(user, TokenType.ApiRefresh, Globals.OneMonthInSeconds);
+        AuthToken accessToken = database.CreateToken(user, TokenType.ApiAccess, refreshToken:refreshToken);
 
-        return new ApiLoginResponse(user, session, refreshSession);
+        return new ApiLoginResponse(user, accessToken, refreshToken);
     }
     
-    [ApiEndpoint("account/refreshSession", HttpMethods.Post), Authentication(false)]
+    [ApiEndpoint("account/refreshToken", HttpMethods.Post), Authentication(false)]
     [RateLimitSettings(300, 10, 300, "authentication")]
-    [DocSummary("Generates a new session with an old refresh session serving as authentication.")]
-    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.RefreshSessionDoesNotExistWhen)]
-    public ApiResponse<ApiLoginResponse> RefreshSession(RequestContext context, GameDatabaseContext database, ApiRefreshSessionRequest body)
+    [DocSummary("Generates a new access token with a refresh token serving as authentication.")]
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.RefreshTokenDoesNotExistWhen)]
+    public ApiResponse<ApiLoginResponse> RefreshToken(RequestContext context, GameDatabaseContext database, ApiRefreshTokenRequest body)
     {
-        GameSession? refreshSession = database.GetSessionWithId(body.RefreshSessionId);
-        if (refreshSession is not { SessionType: SessionType.ApiRefresh } || DateTimeOffset.UtcNow > refreshSession.ExpiryDate)
-            return ApiNotFoundError.RefreshSessionDoesNotExist;
+        AuthToken? refreshToken = database.GetTokenWithId(body.RefreshTokenId);
+        if (refreshToken is not { TokenType: TokenType.ApiRefresh } || DateTimeOffset.UtcNow > refreshToken.ExpiryDate)
+            return ApiNotFoundError.RefreshTokenDoesNotExist;
         
-        database.RefreshSession(refreshSession, Globals.OneMonthInSeconds);
-        GameSession session = database.CreateSession(refreshSession.User, SessionType.Api, refreshSession:refreshSession);
+        database.RefreshToken(refreshToken, Globals.OneMonthInSeconds);
+        AuthToken accessToken = database.CreateToken(refreshToken.User, TokenType.ApiAccess, refreshToken:refreshToken);
         
-        return new ApiLoginResponse(session.User, session, refreshSession);
+        return new ApiLoginResponse(accessToken.User, accessToken, refreshToken);
     }
     
     [ApiEndpoint("account/logOut", HttpMethods.Post)]
-    [DocSummary("Revokes the session (and the associated refresh session if it exists) used to make this request.")]
-    public ApiOkResponse Logout(RequestContext context, GameDatabaseContext database, GameSession session)
+    [DocSummary("Revokes the access token (and the associated refresh token if it exists) used to make this request.")]
+    public ApiOkResponse Logout(RequestContext context, GameDatabaseContext database, AuthToken token)
     {
-        if (session.RefreshSession != null)
+        if (token.RefreshToken != null)
         {
-            GameSession refreshSession = session.RefreshSession;
-            database.RemoveSessions(refreshSession.RefreshableSessions);
-            database.RemoveSession(refreshSession);
+            AuthToken refreshToken = token.RefreshToken;
+            database.RemoveToken(refreshToken.RefreshableTokens);
+            database.RemoveToken(refreshToken);
         }
         else
         {
-            database.RemoveSession(session);
+            database.RemoveToken(token);
         }
         
         return new ApiOkResponse();

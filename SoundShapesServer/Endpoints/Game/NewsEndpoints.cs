@@ -3,8 +3,8 @@ using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.News;
-using SoundShapesServer.Types.Sessions;
 
 namespace SoundShapesServer.Endpoints.Game;
 
@@ -12,7 +12,7 @@ public class NewsEndpoints : EndpointGroup
 {
     [GameEndpoint("global/news/~metadata:*.get")]
     [GameEndpoint("global/news/{language}/~metadata:*.get")]
-    public NewsResponse GetNews(RequestContext context, GameDatabaseContext database, string? language, GameSession session)
+    public NewsResponse GetNews(RequestContext context, GameDatabaseContext database, string? language, AuthToken token)
     {
         NewsFilters filters = new (language);
 
@@ -21,7 +21,7 @@ public class NewsEndpoints : EndpointGroup
         NewsEntry? entry = entries.LastOrDefault();
 
         // News images make the vita version crash, so this is a workaround that only lets non-vita view them
-        bool isUserOnVita = session.PlatformType == PlatformType.PsVita;
+        bool isUserOnVita = token.PlatformType == PlatformType.PsVita;
         return new NewsResponse(entry, !isUserOnVita);
     }
 }

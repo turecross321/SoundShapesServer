@@ -9,16 +9,16 @@ using Bunkum.Listener.Request;
 using NotEnoughLogs;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.Sessions;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Services;
 
 public class MinimumPermissionsService : Service
 {
-    private readonly IAuthenticationProvider<GameSession>? _authProvider;
+    private readonly IAuthenticationProvider<AuthToken>? _authProvider;
     
-    internal MinimumPermissionsService(Logger logger, IAuthenticationProvider<GameSession>? authProvider) : base(logger)
+    internal MinimumPermissionsService(Logger logger, IAuthenticationProvider<AuthToken>? authProvider) : base(logger)
     {
         _authProvider = authProvider;
     }

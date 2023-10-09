@@ -10,8 +10,8 @@ using SoundShapesServer.Responses.Game.Albums;
 using SoundShapesServer.Responses.Game.Albums.LevelInfo;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Albums;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game;
@@ -19,7 +19,7 @@ namespace SoundShapesServer.Endpoints.Game;
 public class AlbumEndpoints : EndpointGroup
 {
     [GameEndpoint("~albums/~link:*.page")]
-    public ListResponse<AlbumResponse> GetAlbums(RequestContext context, GameDatabaseContext database, GameSession session)
+    public ListResponse<AlbumResponse> GetAlbums(RequestContext context, GameDatabaseContext database, AuthToken token)
     {
         (int from, int count, bool _) = PaginationHelper.GetPageData(context);
 

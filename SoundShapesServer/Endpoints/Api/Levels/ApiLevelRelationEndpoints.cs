@@ -9,7 +9,6 @@ using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Responses.Api.Responses.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Api.Levels;

@@ -2,8 +2,8 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Sessions;
 using SoundShapesServer.Types.Users;
 using SoundShapesServerTests.Server;
 
@@ -16,7 +16,7 @@ public class PermissionTests : ServerTest
     {
         TestContext context = GetServer();
         GameUser user = context.CreateUser();
-        HttpClient client = context.GetAuthenticatedClient(SessionType.Api, user);
+        HttpClient client = context.GetAuthenticatedClient(TokenType.ApiAccess, user);
         
         // Administrator test
         context.Database.SetUserPermissions(user, PermissionsType.Default);
