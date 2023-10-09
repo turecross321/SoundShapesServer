@@ -1,8 +1,8 @@
-namespace SoundShapesServer.Types.Sessions;
-public enum SessionType
+namespace SoundShapesServer.Types.Authentication;
+public enum TokenType
 {
-    Game = 0,
-    Api = 1,
+    GameAccess = 0,
+    ApiAccess = 1,
     ApiRefresh = 2,
     SetPassword = 3,
     SetEmail = 4,
