@@ -67,6 +67,25 @@ public partial class GameDatabaseContext
         _realm.Refresh();
     }
 
+    private void RemoveIpAddresses(IQueryable<GameIp> ips)
+    {
+        _realm.Write(() =>
+        {
+            foreach (GameIp gameIp in ips)
+            {
+                // Remove all tokens with ip address
+                foreach (AuthToken token in gameIp.Tokens)
+                {
+                    _realm.Remove(token);
+                }
+            
+                _realm.Remove(gameIp);
+            }
+        });
+
+        _realm.Refresh();
+    }
+
     public void UseOneTimeIpAddress(GameIp gameIp)
     {
         _realm.Write(() =>

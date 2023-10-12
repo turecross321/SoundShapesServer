@@ -166,7 +166,7 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             if (user.AllowIpAuthentication && !request.AllowIpAuthentication)
-                _realm.RemoveRange(user.IpAddresses);
+                RemoveIpAddresses(user.IpAddresses);
             
             user.AllowPsnAuthentication = request.AllowPsnAuthentication;
             user.AllowRpcnAuthentication = request.AllowRpcnAuthentication;
