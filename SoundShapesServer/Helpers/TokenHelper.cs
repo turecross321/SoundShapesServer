@@ -41,8 +41,8 @@ public static partial class TokenHelper
         {
             return true;
         }
-        if (uriPath.StartsWith(GameEndpointAttribute.BaseRoute) 
-            || uriPath.StartsWith("/identity/")
+        if ((uriPath.StartsWith(GameEndpointAttribute.BaseRoute) 
+            || uriPath.StartsWith("/identity/"))
             && token.TokenType == TokenType.GameAccess)
         { 
             return true;
