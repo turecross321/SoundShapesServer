@@ -9,7 +9,13 @@ public partial class GameDatabaseContext
 {
     private GameIp CreateIpAddress(GameUser user, string ipAddress)
     {
-        GameIp gameIp = new(ipAddress, user);
+        GameIp gameIp = new()
+        {
+            IpAddress = ipAddress,
+            User = user,
+            CreationDate = DateTimeOffset.UtcNow,
+            ModificationDate = DateTimeOffset.UtcNow
+        };
         
         _realm.Write(() =>
         {
@@ -28,8 +34,6 @@ public partial class GameDatabaseContext
     }
     public bool AuthorizeIpAddress(GameIp gameIp, bool oneTime)
     {
-        if (gameIp.Authorized) return false;
-        
         _realm.Write(() =>
         {
             gameIp.Authorized = true;

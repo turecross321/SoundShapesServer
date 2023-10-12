@@ -16,8 +16,6 @@ public class ApiConflictError : ApiError
     public static readonly ApiConflictError AlreadyQueuedLevel = new(AlreadyQueuedLevelWhen);
     public const string AlreadyFollowingWhen = "You are already following this user.";
     public static readonly ApiConflictError AlreadyFollowing = new(AlreadyFollowingWhen);
-    public const string AlreadyAuthenticatedIpWhen = "You have already authenticated this IP.";
-    public static readonly ApiConflictError AlreadyAuthenticatedIp = new(AlreadyAuthenticatedIpWhen);
 
     public ApiConflictError(string message) : base(message, HttpStatusCode.Conflict)
     {

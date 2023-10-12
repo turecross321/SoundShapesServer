@@ -88,13 +88,10 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     
     [ApiEndpoint("gameAuth/ip/authorize", HttpMethods.Post)]
     [DocSummary("Authorizes specified IP address.")]
-    [DocError(typeof(ApiConflictError), ApiConflictError.AlreadyAuthenticatedIpWhen)]
     public ApiOkResponse AuthorizeIpAddress(RequestContext context, GameDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
     {
         GameIp gameIp = database.GetIpFromAddress(user, body.IpAddress);
-
-        if (!database.AuthorizeIpAddress(gameIp, body.OneTimeUse))
-            return ApiConflictError.AlreadyAuthenticatedIp;
+        database.AuthorizeIpAddress(gameIp, body.OneTimeUse);
 
         return new ApiOkResponse();
     }

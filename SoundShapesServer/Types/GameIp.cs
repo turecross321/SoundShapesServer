@@ -8,17 +8,6 @@ namespace SoundShapesServer.Types;
 
 public class GameIp : RealmObject
 {
-    public GameIp(string ipAddress, GameUser user)
-    {
-        IpAddress = ipAddress;
-        User = user;
-        CreationDate = DateTimeOffset.UtcNow;
-        ModificationDate = DateTimeOffset.UtcNow;
-    }
-    
-    // Realm cries if this doesn't exist
-    public GameIp() {}
-    
     public string IpAddress { get; init; }
     public bool Authorized { get; set; }
     public bool OneTimeUse { get; set; }

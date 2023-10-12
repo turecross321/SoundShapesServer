@@ -78,15 +78,14 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         GameUser? userWithEmail = database.GetUserWithEmail(body.NewEmail);
         if (userWithEmail != null) 
             return ApiConflictError.EmailAlreadyTaken;
-
-
         
         database.SetUserEmail(token.User, body.NewEmail);
-        database.RemoveToken(token);
         
+        // Automatically send password reset mail if user hasn't finished registration
         if (!token.User.HasFinishedRegistration)
             return SendPasswordToken(context, database, new ApiPasswordTokenRequest {Email = body.NewEmail}, emailService);
 
+        database.RemoveToken(token);
         return new ApiOkResponse();
     }
 
