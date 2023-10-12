@@ -163,11 +163,11 @@ public partial class GameDatabaseContext
 
     public void SetUserGameAuthenticationSettings(GameUser user, ApiSetGameAuthenticationSettingsRequest request)
     {
+        if (user.AllowIpAuthentication && !request.AllowIpAuthentication)
+            RemoveIpAddresses(user.IpAddresses);
+        
         _realm.Write(() =>
         {
-            if (user.AllowIpAuthentication && !request.AllowIpAuthentication)
-                RemoveIpAddresses(user.IpAddresses);
-            
             user.AllowPsnAuthentication = request.AllowPsnAuthentication;
             user.AllowRpcnAuthentication = request.AllowRpcnAuthentication;
             user.AllowIpAuthentication = request.AllowIpAuthentication;
