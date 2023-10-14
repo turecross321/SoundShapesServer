@@ -2,10 +2,14 @@
 
 public class ApiEulaResponse
 {
-    public ApiEulaResponse(string eula)
+    public ApiEulaResponse(string content)
     {
-        Content = eula;
+        CustomContent = content;
+        License = Globals.AGPLLicense;
+        GitRepo = "https://github.com/turecross321/SoundShapesServer"; // TODO: THIS SHOULD OBVIOUSLY BE AUTOMATIC
     }
 
-    public string Content { get; set; }
+    public string CustomContent { get; set; }
+    public string License { get; set; }
+    public string GitRepo { get; set; }
 }
