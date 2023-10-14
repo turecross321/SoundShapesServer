@@ -1,4 +1,3 @@
-using Bunkum.Listener.Protocol;
 using Bunkum.Protocols.Http;
 
 namespace SoundShapesServer.Endpoints;
@@ -9,7 +8,7 @@ public class ApiEndpointAttribute : HttpEndpointAttribute
     
     public string RouteWithParameters { get; set; }
 
-    public ApiEndpointAttribute(string route, HttpMethods method = HttpMethods.Get, ContentType contentType = ContentType.Json)
+    public ApiEndpointAttribute(string route, HttpMethods method = HttpMethods.Get, string contentType = Bunkum.Listener.Protocol.ContentType.Json)
         : base(BaseRoute + route, method, contentType)
     {
         RouteWithParameters = '/' + route;
