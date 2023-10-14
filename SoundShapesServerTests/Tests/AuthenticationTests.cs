@@ -24,7 +24,7 @@ public class AuthenticationTests : ServerTest
 
         HttpClient authedClient = context.GetAuthenticatedClient(TokenType.GameAccess, out string tokenId);
         
-        AuthToken? token = context.Database.GetTokenWithId(tokenId);
+        GameToken? token = context.Database.GetTokenWithId(tokenId, TokenType.GameAccess);
         Assert.That(token, Is.Not.Null, "Check if provided token exists");
 
         HttpResponseMessage authedRequest = await authedClient.GetAsync("/otg/~index:activity.page");
@@ -41,7 +41,7 @@ public class AuthenticationTests : ServerTest
 
         HttpClient authedClient = context.GetAuthenticatedClient(TokenType.ApiAccess, out string tokenId);
         
-        AuthToken? token = context.Database.GetTokenWithId(tokenId);
+        GameToken? token = context.Database.GetTokenWithId(tokenId, TokenType.ApiAccess);
         Assert.That(token, Is.Not.Null);
         Assert.That(token?.User, Is.Not.Null);
 
@@ -80,16 +80,16 @@ public class AuthenticationTests : ServerTest
         
         context.Database.Refresh();
 
-        Assert.That(context.Database.GetTokenWithId(accessToken.Id)!.TokenType == TokenType.ApiAccess,
+        Assert.That(context.Database.GetTokenWithId(accessToken.Id, TokenType.ApiAccess)!.TokenType == TokenType.ApiAccess,
             "Check if provided access token is actually an API access token");
-        Assert.That(context.Database.GetTokenWithId(refreshToken.Id)!.TokenType == TokenType.ApiRefresh,
+        Assert.That(context.Database.GetTokenWithId(refreshToken.Id, TokenType.ApiRefresh)!.TokenType == TokenType.ApiRefresh,
             "Check if provided refresh token is actually an API refresh token");
         
         context.Http.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", accessToken.Id);
         response = await context.Http.GetAsync("/api/v1/gameAuth/settings");
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), "Checks if provided access token works");
         
-        context.Database.RemoveToken(context.Database.GetTokenWithId(accessToken.Id)!);
+        context.Database.RemoveToken(context.Database.GetTokenWithId(accessToken.Id, TokenType.ApiAccess)!);
         context.Database.Refresh();
         context.Http.DefaultRequestHeaders.Remove("Authorization");
         response = await context.Http.GetAsync("/api/v1/gameAuth/settings");

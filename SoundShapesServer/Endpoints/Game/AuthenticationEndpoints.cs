@@ -89,7 +89,7 @@ public class AuthenticationEndpoints : EndpointGroup
         if (user.Deleted || user.PermissionsType == PermissionsType.Banned)
             tokenType = TokenType.GameUnAuthorized;
         
-        AuthToken token = database.CreateToken(user, (TokenType)tokenType, Globals.FourHoursInSeconds, platformType, genuineTicket);
+        GameToken token = database.CreateToken(user, (TokenType)tokenType, Globals.FourHoursInSeconds, platformType, genuineTicket);
         AuthenticationResponse responseWrapper = new (token);
 
         context.Logger.LogInfo(BunkumCategory.Authentication, $"{token.User.Username} has logged in.");
@@ -125,7 +125,7 @@ public class AuthenticationEndpoints : EndpointGroup
     }
     
     [GameEndpoint("{platform}/{publisher}/{language}/~eula.get"), Authentication(false)]
-    public string? Eula(RequestContext context, GameServerConfig config, GameDatabaseContext database, string platform, string publisher, string language, AuthToken? token, GameUser? user)
+    public string? Eula(RequestContext context, GameServerConfig config, GameDatabaseContext database, string platform, string publisher, string language, GameToken? token, GameUser? user)
     {
         if (token?.TokenType == TokenType.GameAccess)
             return EulaEndpoint.NormalEula(config);
@@ -153,10 +153,10 @@ public class AuthenticationEndpoints : EndpointGroup
         }
         if (user.HasFinishedRegistration == false)
         {
-            AuthToken emailToken = database.CreateToken(user, TokenType.SetEmail, Globals.TenMinutesInSeconds);
+            GameToken registerToken = database.CreateToken(user, TokenType.AccountRegistration, Globals.TenMinutesInSeconds);
             return $"Your account is not registered.\n \n" +
                    $"To proceed, you will have to register an account at {config.WebsiteUrl}/register\n" +
-                   $"Your email code is: {emailToken.Id}" + eulaEnd;
+                   $"Your registration code is: {registerToken.Id}" + eulaEnd;
         }
         
         string unAuthorizedBase = $"Your token has not been authenticated.\n \n" +

@@ -30,7 +30,7 @@ public class GameServer
 
     public GameServer(BunkumListener? listener = null,
         GameDatabaseProvider? databaseProvider = null,
-        IAuthenticationProvider<AuthToken>? authProvider = null,
+        IAuthenticationProvider<GameToken>? authProvider = null,
         IDataStore? dataStore = null)
     {
         databaseProvider ??= new GameDatabaseProvider();

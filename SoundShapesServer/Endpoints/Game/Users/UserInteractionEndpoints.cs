@@ -15,7 +15,7 @@ public class UserInteractionEndpoints : EndpointGroup
 {
 
     [GameEndpoint("~identity:{followerId}/~follow:%2F~identity%3A{arguments}")]
-    public Response FollowRequests(RequestContext context, GameDatabaseContext database, GameUser user, AuthToken token, string followerId, string arguments)
+    public Response FollowRequests(RequestContext context, GameDatabaseContext database, GameUser user, GameToken token, string followerId, string arguments)
     {
         string[] argumentArray = arguments.Split("."); // This is to separate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
         string userId = argumentArray[0];

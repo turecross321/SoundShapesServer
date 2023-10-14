@@ -19,7 +19,7 @@ public class LeaderboardEndpoints : EndpointGroup
 {
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.post", HttpMethods.Post)]
     [GameEndpoint("~identity:{userId}/~record:%2F~level%3A{arguments}", HttpMethods.Post)]
-    public Response SubmitScore(RequestContext context, GameDatabaseContext database, GameUser user, AuthToken token, string userId, string? arguments, string body, string levelId)
+    public Response SubmitScore(RequestContext context, GameDatabaseContext database, GameUser user, GameToken token, string userId, string? arguments, string body, string levelId)
     {
         if (arguments != null)
         {

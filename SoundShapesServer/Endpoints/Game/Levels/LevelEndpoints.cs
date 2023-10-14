@@ -18,7 +18,7 @@ public class LevelEndpoints : EndpointGroup
     [GameEndpoint("~index:level.page")]
     [NullStatusCode(HttpStatusCode.Forbidden)]
     [Authentication(false)]
-    public ListResponse<LevelResponse>? GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user, AuthToken? token)
+    public ListResponse<LevelResponse>? GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user, GameToken? token)
     {
         string? query = context.QueryString["query"];
         (int from, int count, bool descending) = PaginationHelper.GetPageData(context);

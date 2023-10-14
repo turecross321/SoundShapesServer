@@ -112,21 +112,25 @@ public partial class GameDatabaseContext
     public void SetUserPassword(GameUser user, string hash)
     {
         string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(hash.ToLower(), WorkFactor);
-        bool registered = user.HasFinishedRegistration;
         
         _realm.Write(() =>
         {
             user.PasswordBcrypt = passwordBcrypt;
-            user.HasFinishedRegistration = true;
         });
-        
-        // Only create the event when the user has finished registration and can actually connect.
-        if (!registered) 
-            CreateEvent(user, EventType.AccountRegistration, PlatformType.Unknown, user);
 
         RemoveTokensByUser(user);
 
         _realm.Refresh();
+    }
+
+    public void FinishRegistration(GameUser user)
+    {
+        _realm.Write(() =>
+        {
+            user.HasFinishedRegistration = true;
+        });
+        
+        CreateEvent(user, EventType.AccountRegistration, PlatformType.Unknown, user);
     }
     
     public void SetUserEmail(GameUser user, string email)

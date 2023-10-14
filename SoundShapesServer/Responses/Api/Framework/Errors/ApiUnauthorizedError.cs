@@ -10,6 +10,8 @@ public class ApiUnauthorizedError : ApiError
     public static readonly ApiUnauthorizedError NoDeletionPermission = new(NoDeletionPermissionWhen);
     public const string NoPermissionWhen = "You do not have permission to do that.";
     public static readonly ApiUnauthorizedError NoPermission = new(NoPermissionWhen);
+    public const string EulaNotAcceptedWhen = "You have to accept the eula to register an account.";
+    public static readonly ApiUnauthorizedError EulaNotAccepted = new(EulaNotAcceptedWhen);
 
     public ApiUnauthorizedError(string message) : base(message, HttpStatusCode.Unauthorized)
     {

@@ -16,9 +16,9 @@ namespace SoundShapesServer.Services;
 
 public class MinimumPermissionsService : Service
 {
-    private readonly IAuthenticationProvider<AuthToken>? _authProvider;
+    private readonly IAuthenticationProvider<GameToken>? _authProvider;
     
-    internal MinimumPermissionsService(Logger logger, IAuthenticationProvider<AuthToken>? authProvider) : base(logger)
+    internal MinimumPermissionsService(Logger logger, IAuthenticationProvider<GameToken>? authProvider) : base(logger)
     {
         _authProvider = authProvider;
     }

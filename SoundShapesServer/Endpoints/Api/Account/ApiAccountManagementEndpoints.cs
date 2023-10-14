@@ -41,13 +41,34 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         return new ApiOkResponse();
     }
 
+    [ApiEndpoint("account/register", HttpMethods.Post), Authentication(false)]
+    [DocSummary("Used to create an account.")]
+    [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.EulaNotAcceptedWhen)]
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.TokenDoesNotExistWhen)]
+    public ApiOkResponse RegisterAccount(RequestContext context, GameDatabaseContext database, ApiRegisterAccountRequest body)
+    {
+        if (!body.AcceptEula)
+            return ApiUnauthorizedError.EulaNotAccepted;
+        
+        GameToken? registrationToken = database.GetTokenWithId(body.RegistrationCode, TokenType.AccountRegistration);
+        if (registrationToken == null)
+            return ApiNotFoundError.TokenDoesNotExist;
+
+        GameUser user = registrationToken.User;
+        database.SetUserEmail(user, body.Email);
+        database.SetUserPassword(user, body.PasswordSha512);
+        database.FinishRegistration(user);
+
+        return new ApiOkResponse();
+    }
+
     [ApiEndpoint("account/sendEmailToken", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Banned)]
     [DocSummary("Sends an email containing a token ID that is required to change your email address.")]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
     public ApiOkResponse SendEmailToken(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
     {
-        AuthToken emailToken = database.CreateToken(user, TokenType.SetEmail, Globals.TenMinutesInSeconds);
+        GameToken emailToken = database.CreateToken(user, TokenType.SetEmail, Globals.TenMinutesInSeconds);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your new email code: " + emailToken.Id + "\n" +
@@ -66,7 +87,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.TokenDoesNotExistWhen)]
     public ApiOkResponse SetUserEmail(RequestContext context, GameDatabaseContext database, EmailService emailService, ApiSetEmailRequest body)
     {
-        AuthToken? token = database.GetTokenWithId(body.SetEmailTokenId);
+        GameToken? token = database.GetTokenWithId(body.SetEmailTokenId, TokenType.SetEmail);
         if (token == null)
             return ApiNotFoundError.TokenDoesNotExist;
         
@@ -80,10 +101,8 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
             return ApiConflictError.EmailAlreadyTaken;
         
         database.SetUserEmail(token.User, body.NewEmail);
-        
-        // Automatically send password reset mail if user hasn't finished registration
-        if (!token.User.HasFinishedRegistration)
-            return SendPasswordToken(context, database, new ApiPasswordTokenRequest {Email = body.NewEmail}, emailService);
+
+        // todo: email verification
 
         database.RemoveToken(token);
         return new ApiOkResponse();
@@ -98,7 +117,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         if (user == null) 
             return new ApiOkResponse();
         
-        AuthToken passwordToken = database.CreateToken(user, TokenType.SetPassword, Globals.TenMinutesInSeconds);
+        GameToken passwordToken = database.CreateToken(user, TokenType.SetPassword, Globals.TenMinutesInSeconds);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your password code: " + passwordToken.Id + "\n" +
@@ -119,12 +138,11 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         if (!Sha512Regex().IsMatch(body.NewPasswordSha512))
             return ApiBadRequestError.PasswordIsNotHashed;
 
-        AuthToken? token = database.GetTokenWithId(body.SetPasswordTokenId);
+        GameToken? token = database.GetTokenWithId(body.SetPasswordTokenId, TokenType.SetPassword);
         if (token == null)
             return ApiNotFoundError.TokenDoesNotExist;
         
         database.SetUserPassword(token.User, body.NewPasswordSha512);
-        // All tokens are wiped automatically by GameDatabaseContext
 
         return new ApiOkResponse();
     }
@@ -135,8 +153,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
     public ApiOkResponse SendUserRemovalToken(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
     {
-        GenerateAccountRemovalTokenId(database);
-        AuthToken removalToken = database.CreateToken(user, TokenType.AccountRemoval, Globals.TenMinutesInSeconds);
+        GameToken removalToken = database.CreateToken(user, TokenType.AccountRemoval, Globals.TenMinutesInSeconds);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your account removal code: " + removalToken.Id + "\n" +
@@ -153,7 +170,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.TokenDoesNotExistWhen)]
     public ApiOkResponse RemoveAccount(RequestContext context, GameDatabaseContext database, IDataStore dataStore, ApiRemoveAccountRequest body)
     {
-        AuthToken? token = database.GetTokenWithId(body.AccountRemovalTokenId);
+        GameToken? token = database.GetTokenWithId(body.AccountRemovalTokenId, TokenType.AccountRemoval);
         if (token == null)
             return ApiNotFoundError.TokenDoesNotExist;
         

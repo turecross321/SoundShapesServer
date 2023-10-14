@@ -5,7 +5,7 @@ namespace SoundShapesServer.Responses.Game.Authentication;
 
 public class AuthenticationResponse : IResponse
 {
-    public AuthenticationResponse(AuthToken token)
+    public AuthenticationResponse(GameToken token)
     {
         Token = new TokenResponse(token);
     }

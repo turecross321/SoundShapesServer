@@ -17,7 +17,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 70;
+    protected override ulong SchemaVersion => 71;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -28,7 +28,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         typeof(LevelUniquePlayRelation),
         typeof(GameUser),
         typeof(GameIp),
-        typeof(AuthToken),
+        typeof(GameToken),
         typeof(GameLevel),
         typeof(NewsEntry),
         typeof(LeaderboardEntry),
@@ -112,12 +112,12 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             }
         }
         
-        IQueryable<AuthToken> newTokens = migration.NewRealm.All<AuthToken>();
+        IQueryable<GameToken> newTokens = migration.NewRealm.All<GameToken>();
         for (int i = 0; i < newTokens.Count(); i++)
         {
-            AuthToken newToken = newTokens.ElementAt(i);
+            GameToken newToken = newTokens.ElementAt(i);
 
-            if (oldVersion < 70)
+            if (oldVersion < 72)
             {
                 migration.NewRealm.Remove(newToken);
             }

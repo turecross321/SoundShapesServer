@@ -22,7 +22,7 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class LevelManagementEndpoints : EndpointGroup
 {
     // Gets called by Endpoints.cs
-    public static Response CreateLevel(RequestContext context, GameServerConfig config, IDataStore dataStore, ProfanityService profanity, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user, AuthToken token)
+    public static Response CreateLevel(RequestContext context, GameServerConfig config, IDataStore dataStore, ProfanityService profanity, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user, GameToken token)
     {
         if (user.Levels.Count() >= config.LevelPublishLimit) return HttpStatusCode.Forbidden;
 

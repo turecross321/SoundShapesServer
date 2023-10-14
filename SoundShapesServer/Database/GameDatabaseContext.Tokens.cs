@@ -10,19 +10,21 @@ public partial class GameDatabaseContext
     public const int DefaultTokenExpirySeconds = Globals.OneDayInSeconds;
     private const int SimultaneousTokensLimit = 3;
 
-    public AuthToken CreateToken(GameUser user, TokenType tokenType, 
+    public GameToken CreateToken(GameUser user, TokenType tokenType, 
         double expirationSeconds = DefaultTokenExpirySeconds, PlatformType platformType = PlatformType.Unknown, 
-        bool? genuineTicket = null, AuthToken? refreshToken = null)
+        bool? genuineTicket = null, GameToken? refreshToken = null)
     {
         string id = tokenType switch
         {
-            TokenType.SetPassword => GeneratePasswordTokenId(this),
-            TokenType.SetEmail => GenerateEmailTokenId(this),
-            TokenType.AccountRemoval => GenerateAccountRemovalTokenId(this),
+            TokenType.SetPassword => GenerateSimpleTokenId(this, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 8, TokenType.SetPassword),
+            TokenType.SetEmail => GenerateSimpleTokenId(this, "123456789!#¤%&/()=?", 8, TokenType.SetEmail),
+            TokenType.AccountRemoval => GenerateSimpleTokenId(this,
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789", 8, TokenType.AccountRemoval),
+            TokenType.AccountRegistration => GenerateSimpleTokenId(this, "123456789", 8, TokenType.SetEmail),
             _ => GenerateGuid()
         };
         
-        AuthToken token = new()
+        GameToken token = new()
         {
             Id = id,
             User = user,
@@ -34,14 +36,14 @@ public partial class GameDatabaseContext
             RefreshToken = refreshToken
         };
 
-        IEnumerable<AuthToken> tokensToDelete = _realm.All<AuthToken>()
+        IEnumerable<GameToken> tokensToDelete = _realm.All<GameToken>()
             .Where(s=> s.User == user && s._TokenType == (int)tokenType)
             .AsEnumerable()
             .SkipLast(SimultaneousTokensLimit - 1);
 
         _realm.Write(() =>
         {
-            foreach (AuthToken tokenToDelete in tokensToDelete)
+            foreach (GameToken tokenToDelete in tokensToDelete)
             {
                 _realm.Remove(tokenToDelete);
             }
@@ -56,7 +58,7 @@ public partial class GameDatabaseContext
         return token;
     }
 
-    public void RefreshToken(AuthToken token, long expirySecondsFromNow)
+    public void RefreshToken(GameToken token, long expirySecondsFromNow)
     {
         _realm.Write(() =>
         {
@@ -64,7 +66,7 @@ public partial class GameDatabaseContext
         });
     }
 
-    public void RemoveToken(AuthToken token)
+    public void RemoveToken(GameToken token)
     {
         _realm.Write(() =>
         {
@@ -72,7 +74,7 @@ public partial class GameDatabaseContext
         });
     }
 
-    public void RemoveToken(IQueryable<AuthToken> token)
+    public void RemoveToken(IQueryable<GameToken> token)
     {
         _realm.Write(() =>
         {
@@ -88,11 +90,13 @@ public partial class GameDatabaseContext
         });
     }
     
-    public AuthToken? GetTokenWithId(string tokenId)
+    // null type = all
+    public GameToken? GetTokenWithId(string tokenId, TokenType? type)
     {
-        AuthToken? token = _realm.All<AuthToken>()
-            .FirstOrDefault(s => s.Id == tokenId);
+        IQueryable<GameToken> tokens = _realm.All<GameToken>();
+        if (type != null)
+            tokens = tokens.Where(t => t._TokenType == (int)type);
         
-        return token;
+        return tokens.FirstOrDefault(t => t.Id == tokenId);
     }
 }

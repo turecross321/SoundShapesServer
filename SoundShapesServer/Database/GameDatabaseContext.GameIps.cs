@@ -40,7 +40,7 @@ public partial class GameDatabaseContext
             gameIp.OneTimeUse = oneTime;
             gameIp.ModificationDate = DateTimeOffset.UtcNow;
 
-            foreach (AuthToken token in gameIp.Tokens.Where(s=>s._TokenType == (int)TokenType.GameUnAuthorized))
+            foreach (GameToken token in gameIp.Tokens.Where(s=>s._TokenType == (int)TokenType.GameUnAuthorized))
             {
                 token.TokenType = TokenType.GameAccess;
             }
@@ -56,7 +56,7 @@ public partial class GameDatabaseContext
         _realm.Write(() =>
         {
             // Remove all tokens with ip address
-            foreach (AuthToken token in gameIp.Tokens)
+            foreach (GameToken token in gameIp.Tokens)
             {
                 _realm.Remove(token);
             }
@@ -74,7 +74,7 @@ public partial class GameDatabaseContext
             foreach (GameIp gameIp in ips)
             {
                 // Remove all tokens with ip address
-                foreach (AuthToken token in gameIp.Tokens)
+                foreach (GameToken token in gameIp.Tokens)
                 {
                     _realm.Remove(token);
                 }

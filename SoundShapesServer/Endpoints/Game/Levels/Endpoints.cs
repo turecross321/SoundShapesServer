@@ -39,7 +39,7 @@ public class Endpoints : EndpointGroup
     }
 
     [GameEndpoint("~level:{args}", HttpMethods.Post)]
-    public Response PostEndpoints(RequestContext context, IDataStore dataStore, ProfanityService profanity, Stream body, GameDatabaseContext database, GameServerConfig config, GameUser user, AuthToken token, string args)
+    public Response PostEndpoints(RequestContext context, IDataStore dataStore, ProfanityService profanity, Stream body, GameDatabaseContext database, GameServerConfig config, GameUser user, GameToken token, string args)
     {
         string[] arguments = args.Split('.');
 

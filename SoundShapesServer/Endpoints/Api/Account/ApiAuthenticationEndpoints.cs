@@ -31,8 +31,8 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         if (!database.ValidatePassword(user, body.PasswordSha512))
             return ApiForbiddenError.EmailOrPasswordIsWrong;
 
-        AuthToken refreshToken = database.CreateToken(user, TokenType.ApiRefresh, Globals.OneMonthInSeconds);
-        AuthToken accessToken = database.CreateToken(user, TokenType.ApiAccess, refreshToken:refreshToken);
+        GameToken refreshToken = database.CreateToken(user, TokenType.ApiRefresh, Globals.OneMonthInSeconds);
+        GameToken accessToken = database.CreateToken(user, TokenType.ApiAccess, refreshToken:refreshToken);
 
         return new ApiLoginResponse(user, accessToken, refreshToken);
     }
@@ -43,23 +43,23 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.RefreshTokenDoesNotExistWhen)]
     public ApiResponse<ApiLoginResponse> RefreshToken(RequestContext context, GameDatabaseContext database, ApiRefreshTokenRequest body)
     {
-        AuthToken? refreshToken = database.GetTokenWithId(body.RefreshTokenId);
-        if (refreshToken is not { TokenType: TokenType.ApiRefresh } || DateTimeOffset.UtcNow > refreshToken.ExpiryDate)
+        GameToken? refreshToken = database.GetTokenWithId(body.RefreshTokenId, TokenType.ApiRefresh);
+        if (refreshToken == null || DateTimeOffset.UtcNow > refreshToken.ExpiryDate)
             return ApiNotFoundError.RefreshTokenDoesNotExist;
         
         database.RefreshToken(refreshToken, Globals.OneMonthInSeconds);
-        AuthToken accessToken = database.CreateToken(refreshToken.User, TokenType.ApiAccess, refreshToken:refreshToken);
+        GameToken accessToken = database.CreateToken(refreshToken.User, TokenType.ApiAccess, refreshToken:refreshToken);
         
         return new ApiLoginResponse(accessToken.User, accessToken, refreshToken);
     }
     
     [ApiEndpoint("account/logOut", HttpMethods.Post)]
     [DocSummary("Revokes the access token (and the associated refresh token if it exists) used to make this request.")]
-    public ApiOkResponse Logout(RequestContext context, GameDatabaseContext database, AuthToken token)
+    public ApiOkResponse Logout(RequestContext context, GameDatabaseContext database, GameToken token)
     {
         if (token.RefreshToken != null)
         {
-            AuthToken refreshToken = token.RefreshToken;
+            GameToken refreshToken = token.RefreshToken;
             database.RemoveToken(refreshToken.RefreshableTokens);
             database.RemoveToken(refreshToken);
         }

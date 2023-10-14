@@ -5,7 +5,7 @@ namespace SoundShapesServer.Responses.Game.Authentication;
 
 public class TokenResponse : IResponse
 {
-    public TokenResponse(AuthToken token)
+    public TokenResponse(GameToken token)
     {
         // Game doesn't actually listen to expiry date, until it disconnects, and it will only try to get a new token
         // if the old one is already expired. This can only lead to problems, hence this always being set to 0

@@ -53,7 +53,7 @@ public class TestContext : IDisposable
         if (tokenType == TokenType.GameAccess)
             genuineTicket = true;
         
-        AuthToken token = Database.CreateToken(user, tokenType, tokenExpirySeconds, platformType, genuineTicket);
+        GameToken token = Database.CreateToken(user, tokenType, tokenExpirySeconds, platformType, genuineTicket);
         tokenId = token.Id;
         
         HttpClient client = Listener.GetClient();

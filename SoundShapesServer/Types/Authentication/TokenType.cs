@@ -7,5 +7,6 @@ public enum TokenType
     SetPassword = 3,
     SetEmail = 4,
     AccountRemoval = 5,
-    GameUnAuthorized = 6
+    GameUnAuthorized = 6,
+    AccountRegistration = 7
 }

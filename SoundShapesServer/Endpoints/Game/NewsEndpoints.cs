@@ -12,7 +12,7 @@ public class NewsEndpoints : EndpointGroup
 {
     [GameEndpoint("global/news/~metadata:*.get")]
     [GameEndpoint("global/news/{language}/~metadata:*.get")]
-    public NewsResponse GetNews(RequestContext context, GameDatabaseContext database, string? language, AuthToken token)
+    public NewsResponse GetNews(RequestContext context, GameDatabaseContext database, string? language, GameToken token)
     {
         NewsFilters filters = new (language);
 

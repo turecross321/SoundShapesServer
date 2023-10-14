@@ -6,7 +6,7 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Types.Authentication;
 
-public class AuthToken : RealmObject, IToken<GameUser>
+public class GameToken : RealmObject, IToken<GameUser>
 {
     [Required] [PrimaryKey] public string Id { get; init; }
     public GameUser User { get; init; }
@@ -32,6 +32,6 @@ public class AuthToken : RealmObject, IToken<GameUser>
     public DateTimeOffset CreationDate { get; init; }
     public DateTimeOffset ExpiryDate { get; set; }
     public bool? GenuineNpTicket { get; init; }
-    public AuthToken? RefreshToken { get; init; }
-    [Backlink(nameof(RefreshToken))] public IQueryable<AuthToken> RefreshableTokens { get; }
+    public GameToken? RefreshToken { get; init; }
+    [Backlink(nameof(RefreshToken))] public IQueryable<GameToken> RefreshableTokens { get; }
 }

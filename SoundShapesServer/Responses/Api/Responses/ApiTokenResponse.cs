@@ -9,7 +9,7 @@ public class ApiTokenResponse
     {
         
     }
-    public ApiTokenResponse(AuthToken token)
+    public ApiTokenResponse(GameToken token)
     {
         Id = token.Id;
         CreationDate = token.CreationDate.ToUnixTimeSeconds();

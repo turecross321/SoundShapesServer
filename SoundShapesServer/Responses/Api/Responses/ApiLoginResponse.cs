@@ -11,7 +11,7 @@ public class ApiLoginResponse
     [Obsolete("Empty constructor for deserialization.", true)]
     public ApiLoginResponse() {}
     
-    public ApiLoginResponse(GameUser user, AuthToken accessToken, AuthToken? refreshToken)
+    public ApiLoginResponse(GameUser user, GameToken accessToken, GameToken? refreshToken)
     {
         AccessToken = new ApiTokenResponse(accessToken);
         if (refreshToken != null) 

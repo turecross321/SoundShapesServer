@@ -43,7 +43,7 @@ public class LevelRelationEndpoints : EndpointGroup
     }
     
     [GameEndpoint("~identity:{userId}/~like:%2F~level%3A{arguments}")]
-    public Response LevelLikeRequests(RequestContext context, GameDatabaseContext database, GameUser user, AuthToken token, string userId, string arguments)
+    public Response LevelLikeRequests(RequestContext context, GameDatabaseContext database, GameUser user, GameToken token, string userId, string arguments)
     {
         string[] argumentArray = arguments.Split("."); // This is to separate the .put / .get / delete from the id, which Bunkum currently cannot do by it self
         string levelId = argumentArray[0];

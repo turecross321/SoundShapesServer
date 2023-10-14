@@ -19,7 +19,7 @@ namespace SoundShapesServer.Endpoints.Game;
 public class AlbumEndpoints : EndpointGroup
 {
     [GameEndpoint("~albums/~link:*.page")]
-    public ListResponse<AlbumResponse> GetAlbums(RequestContext context, GameDatabaseContext database, AuthToken token)
+    public ListResponse<AlbumResponse> GetAlbums(RequestContext context, GameDatabaseContext database, GameToken token)
     {
         (int from, int count, bool _) = PaginationHelper.GetPageData(context);
 

@@ -12,7 +12,7 @@ public class GameIp : RealmObject
     public bool Authorized { get; set; }
     public bool OneTimeUse { get; set; }
     public GameUser User { get; init; }
-    public IList<AuthToken> Tokens { get; }
+    public IList<GameToken> Tokens { get; }
     public DateTimeOffset CreationDate { get; set; }
     public DateTimeOffset ModificationDate { get; set; }
 }

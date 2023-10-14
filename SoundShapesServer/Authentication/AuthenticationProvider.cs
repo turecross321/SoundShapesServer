@@ -8,7 +8,7 @@ using static SoundShapesServer.Helpers.TokenHelper;
 
 namespace SoundShapesServer.Authentication;
 
-public class AuthenticationProvider : IAuthenticationProvider<AuthToken>
+public class AuthenticationProvider : IAuthenticationProvider<GameToken>
 {
     public GameUser? AuthenticateUser(ListenerContext request, Lazy<IDatabaseContext> db)
     {
@@ -19,7 +19,7 @@ public class AuthenticationProvider : IAuthenticationProvider<AuthToken>
         return user;
     }
 
-    public AuthToken? AuthenticateToken(ListenerContext request, Lazy<IDatabaseContext> db)
+    public GameToken? AuthenticateToken(ListenerContext request, Lazy<IDatabaseContext> db)
     {
         // check the session header. this is what the game uses
         string? tokenId = request.RequestHeaders["X-OTG-Identity-SessionId"];
@@ -32,7 +32,7 @@ public class AuthenticationProvider : IAuthenticationProvider<AuthToken>
 
         GameDatabaseContext database = (GameDatabaseContext)db.Value;
 
-        AuthToken? token = database.GetTokenWithId(tokenId);
+        GameToken? token = database.GetTokenWithId(tokenId, null);
         if (token == null) return null;
 
         if (token.ExpiryDate < DateTimeOffset.UtcNow)
