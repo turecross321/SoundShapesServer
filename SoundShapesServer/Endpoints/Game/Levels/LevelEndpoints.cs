@@ -8,7 +8,6 @@ using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
-using ContentType = Bunkum.Listener.Protocol.ContentType;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
 

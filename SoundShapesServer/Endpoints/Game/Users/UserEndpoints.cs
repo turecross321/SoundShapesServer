@@ -1,14 +1,9 @@
-using System.Net;
 using Bunkum.Core;
 using Bunkum.Core.Endpoints;
-using Bunkum.Core.Responses;
-using Bunkum.Listener.Protocol;
-using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Users;
-using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Users;

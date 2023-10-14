@@ -1,6 +1,5 @@
 using Bunkum.Core.RateLimit;
 using Realms;
-using Realms.Sync;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Events;

@@ -6,7 +6,7 @@ using SoundShapesServer.Services;
 
 namespace SoundShapesServer.Endpoints.Api;
 
-public class ApiDocumentationEndpoint : EndpointGroup
+public class ApiDocumentationEndpoints : EndpointGroup
 {
     [ApiEndpoint("documentation"), Authentication(false)]
     [DocSummary("Retrieves a JSON object containing documentation about the API.")]

@@ -1,5 +1,4 @@
 using SoundShapesServer.Responses.Api.Framework;
-using SoundShapesServer.Responses.Api.Responses.Levels;
 using SoundShapesServer.Responses.Api.Responses.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Leaderboard;

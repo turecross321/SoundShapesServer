@@ -1,6 +1,5 @@
 using System.Net;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Types.Authentication;

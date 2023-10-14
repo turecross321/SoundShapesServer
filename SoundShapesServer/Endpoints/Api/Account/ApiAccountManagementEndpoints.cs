@@ -15,7 +15,6 @@ using SoundShapesServer.Services;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.TokenHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Account;
 
