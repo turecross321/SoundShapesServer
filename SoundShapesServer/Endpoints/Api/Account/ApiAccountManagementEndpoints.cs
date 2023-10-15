@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using AttribDoc.Attributes;
 using Bunkum.Core;
 using Bunkum.Core.Endpoints;
+using Bunkum.Core.RateLimit;
 using Bunkum.Core.Storage;
 using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
@@ -44,6 +45,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [DocSummary("Used to create an account.")]
     [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.EulaNotAcceptedWhen)]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.RegistrationTokenDoesNotExistWhen)]
+    [RateLimitSettings(Globals.FourHoursInSeconds, 3, Globals.FourHoursInSeconds, "registration")]
     public ApiOkResponse RegisterAccount(RequestContext context, GameDatabaseContext database, ApiRegisterAccountRequest body)
     {
         if (!body.AcceptEula)
@@ -65,6 +67,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [MinimumPermissions(PermissionsType.Banned)]
     [DocSummary("Sends an email containing a token ID that is required to change your email address.")]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
+    [RateLimitSettings(Globals.OneHourInSeconds, 10, Globals.OneHourInSeconds, "sendEmail")]
     public ApiOkResponse SendEmailToken(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
     {
         GameToken emailToken = database.CreateToken(user, TokenType.SetEmail, Globals.TenMinutesInSeconds);
@@ -110,6 +113,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [ApiEndpoint("account/sendPasswordToken", HttpMethods.Post), Authentication(false)]
     [DocSummary("Sends an email containing a token ID that is required to change your password.")]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
+    [RateLimitSettings(Globals.OneHourInSeconds, 10, Globals.OneHourInSeconds, "sendEmail")]
     public ApiOkResponse SendPasswordToken(RequestContext context, GameDatabaseContext database, ApiPasswordTokenRequest body, EmailService emailService)
     {
         GameUser? user = database.GetUserWithEmail(body.Email);
@@ -150,6 +154,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [MinimumPermissions(PermissionsType.Banned)]
     [DocSummary("Sends an email containing a token ID that is required to delete your account.")]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
+    [RateLimitSettings(Globals.OneHourInSeconds, 10, Globals.OneHourInSeconds, "sendEmail")]
     public ApiOkResponse SendUserRemovalToken(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
     {
         GameToken removalToken = database.CreateToken(user, TokenType.AccountRemoval, Globals.TenMinutesInSeconds);

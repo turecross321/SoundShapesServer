@@ -93,7 +93,7 @@ public class AuthenticationEndpoints : EndpointGroup
         GameToken token = database.CreateToken(user, (TokenType)tokenType, Globals.FourHoursInSeconds, platformType, genuineTicket);
         AuthenticationResponse responseWrapper = new (token);
 
-        context.Logger.LogInfo(BunkumCategory.Authentication, $"{token.User.Username} has logged in.");
+        context.Logger.LogInfo(BunkumCategory.Authentication, $"{token.User.Username} has logged in. TokenType:" + Enum.GetName(token.TokenType));
 
         context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={token.Id};Version=1;Path=/");
         return new Response(responseWrapper, ContentType.Json, HttpStatusCode.Created);
