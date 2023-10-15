@@ -4,6 +4,7 @@ using Bunkum.Core.Endpoints;
 using Bunkum.Core.Responses;
 using Bunkum.Listener.Protocol;
 using SoundShapesServer.Database;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Albums;
@@ -21,7 +22,7 @@ public class AlbumEndpoints : EndpointGroup
     [GameEndpoint("~albums/~link:*.page")]
     public ListResponse<AlbumResponse> GetAlbums(RequestContext context, GameDatabaseContext database, GameToken token)
     {
-        (int from, int count, bool _) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool _) = context.GetPageData();
 
         (GameAlbum[] albums, int totalAlbums) = database.GetPaginatedAlbums(AlbumOrderType.CreationDate, true, from, count);
 
@@ -32,7 +33,7 @@ public class AlbumEndpoints : EndpointGroup
     public Response GetAlbumLevels
         (RequestContext context, GameDatabaseContext database, GameUser user, string albumId)
     {
-        (int from, int count, bool _) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool _) = context.GetPageData();
         string? order = context.QueryString["order"];
 
         GameAlbum? album = database.GetAlbumWithId(albumId);

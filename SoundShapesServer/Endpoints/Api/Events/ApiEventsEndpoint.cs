@@ -3,6 +3,7 @@ using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Responses;
@@ -18,7 +19,7 @@ public class ApiEventsEndpoint : EndpointGroup
     [DocSummary("Lists events.")]
     public ApiListResponse<ApiEventResponse> GetEvents(RequestContext context, GameDatabaseContext database, GameUser? user)
     {
-        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool descending) = context.GetPageData();
 
         EventFilters filters = EventHelper.GetEventFilters(context, database);
         EventOrderType orderType = EventHelper.GetEventOrder(context);

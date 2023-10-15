@@ -1,5 +1,6 @@
 using Bunkum.Core.RateLimit;
 using Realms;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Events;
@@ -29,7 +30,7 @@ public class GameUser : RealmObject, IRateLimitUser
             if (Deleted)
                 return PermissionsType.Deleted;
             
-            if (PunishmentHelper.GetActiveUserBans(this).Any())
+            if (Punishments.ActiveBans().Any())
                 return PermissionsType.Banned;
             
             return (PermissionsType)_PermissionsType;

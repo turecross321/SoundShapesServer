@@ -2,6 +2,8 @@ using Bunkum.Listener.Request;
 using Bunkum.Core.Authentication;
 using Bunkum.Core.Database;
 using SoundShapesServer.Database;
+using SoundShapesServer.Endpoints;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.TokenHelper;
@@ -40,8 +42,27 @@ public class AuthenticationProvider : IAuthenticationProvider<GameToken>
             database.RemoveToken(token);
             return null;
         }
+
+        string uriPath = request.Uri.AbsolutePath;
         
-        if (!IsTokenAllowedToAccessEndpoint(token, request.Uri.AbsolutePath)) return null;
-        return token;
+        if (uriPath == GameEndpointAttribute.BaseRoute + "~identity:*.hello"
+            || TokenHelper.EulaRegex().IsMatch(uriPath)
+            && token.TokenType == TokenType.GameUnAuthorized)
+        {
+            return token;
+        }
+        if ((uriPath.StartsWith(GameEndpointAttribute.BaseRoute) 
+             || uriPath.StartsWith("/identity/"))
+            && token.TokenType == TokenType.GameAccess)
+        { 
+            return token;
+        }
+        
+        if (uriPath.StartsWith(ApiEndpointAttribute.BaseRoute) && token.TokenType == TokenType.ApiAccess)
+        {
+            return token;
+        }
+
+        return null;
     }
 }

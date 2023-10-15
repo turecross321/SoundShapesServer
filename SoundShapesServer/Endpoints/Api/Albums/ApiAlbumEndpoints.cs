@@ -3,6 +3,7 @@ using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
@@ -31,7 +32,7 @@ public class ApiAlbumEndpoints : EndpointGroup
     [DocSummary("Lists albums.")]
     public ApiListResponse<ApiAlbumResponse> GetAlbums(RequestContext context, GameDatabaseContext database)
     {
-        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool descending) = context.GetPageData();
         
         string? orderString = context.QueryString["orderBy"];
 

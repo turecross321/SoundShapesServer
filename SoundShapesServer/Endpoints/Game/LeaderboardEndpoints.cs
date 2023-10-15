@@ -4,6 +4,7 @@ using Bunkum.Core.Endpoints;
 using Bunkum.Core.Responses;
 using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Game;
@@ -55,7 +56,7 @@ public class LeaderboardEndpoints : EndpointGroup
     [GameEndpoint("{levelId}/~leaderboard.page")] // recent activity community levels 
     public ListResponse<LeaderboardEntryResponse>? GetLeaderboard(RequestContext context, GameDatabaseContext database, GameUser user, string levelId)
     {
-        (int from, int count, bool _) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool _) = context.GetPageData();
         const bool descending = false;
 
         GameLevel? level = database.GetLevelWithId(levelId);

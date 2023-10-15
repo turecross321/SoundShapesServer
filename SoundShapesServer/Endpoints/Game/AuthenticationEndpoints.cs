@@ -12,14 +12,13 @@ using NPTicket.Verification.Keys;
 using SoundShapesServer.Database;
 using SoundShapesServer.Types;
 using SoundShapesServer.Configuration;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Authentication;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Users;
 using SoundShapesServer.Verification;
-using static SoundShapesServer.Helpers.IpHelper;
-using static SoundShapesServer.Helpers.PunishmentHelper;
 
 namespace SoundShapesServer.Endpoints.Game;
 
@@ -53,13 +52,16 @@ public class AuthenticationEndpoints : EndpointGroup
         user ??= database.CreateUser(ticket.Username);
 
         PlatformType platformType = PlatformHelper.GetPlatformType(ticket);
-        GameIp gameIp = GetGameIpFromRequestContext(context, database, user);
+        GameIp? gameIp = context.GetGameIp(database, user);
         bool genuineTicket = VerifyTicket(context, (MemoryStream)body, ticket);
 
         TokenType? tokenType;
 
         if (config.RequireAuthentication)
         {
+            if (user.AllowIpAuthentication)
+                gameIp ??= database.CreateGameIp(user, context.GetIpAddress());
+            
             if (!user.HasFinishedRegistration)
             {
                 tokenType = TokenType.GameUnAuthorized;
@@ -69,7 +71,7 @@ public class AuthenticationEndpoints : EndpointGroup
             {
                 tokenType = TokenType.GameAccess;
             }
-            else if (gameIp.Authorized)
+            else if (gameIp?.Authorized == true)
             {
                 tokenType = TokenType.GameAccess;
                 if (gameIp.OneTimeUse) 
@@ -143,7 +145,7 @@ public class AuthenticationEndpoints : EndpointGroup
         
         if (user.PermissionsType == PermissionsType.Banned)
         {
-            IQueryable<Punishment> bans = GetActiveUserBans(user);
+            IQueryable<Punishment> bans = user.Punishments.ActiveBans();
             Punishment longestBan = bans.Last();
             
             return "You are banned.\n" +

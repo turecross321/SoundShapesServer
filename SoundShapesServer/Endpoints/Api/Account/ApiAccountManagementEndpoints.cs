@@ -43,7 +43,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [ApiEndpoint("account/register", HttpMethods.Post), Authentication(false)]
     [DocSummary("Used to create an account.")]
     [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.EulaNotAcceptedWhen)]
-    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.TokenDoesNotExistWhen)]
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.RegistrationTokenDoesNotExistWhen)]
     public ApiOkResponse RegisterAccount(RequestContext context, GameDatabaseContext database, ApiRegisterAccountRequest body)
     {
         if (!body.AcceptEula)
@@ -51,7 +51,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         
         GameToken? registrationToken = database.GetTokenWithId(body.RegistrationCode, TokenType.AccountRegistration);
         if (registrationToken == null)
-            return ApiNotFoundError.TokenDoesNotExist;
+            return ApiNotFoundError.RegistrationTokenDoesNotExist;
 
         GameUser user = registrationToken.User;
         database.SetUserEmail(user, body.Email);

@@ -30,6 +30,10 @@ public class ApiNotFoundError : ApiError
     public static readonly ApiNotFoundError RefreshTokenDoesNotExist = new(RefreshTokenDoesNotExistWhen);
     public const string TokenDoesNotExistWhen = "Token with specified ID does not exist.";
     public static readonly ApiNotFoundError TokenDoesNotExist = new(TokenDoesNotExistWhen);
+    public const string RegistrationTokenDoesNotExistWhen = "Registration token with specified ID does not exist.";
+    public static readonly ApiNotFoundError RegistrationTokenDoesNotExist = new(RegistrationTokenDoesNotExistWhen);
+    public const string IpDoesNotExistWhen = "IP with specified address does not exist.";
+    public static readonly ApiNotFoundError IpDoesNotExist = new(IpDoesNotExistWhen);
     
     public const string NotLikedLevelWhen = "You have not liked this level.";
     public static readonly ApiNotFoundError NotLikedLevel = new(NotLikedLevelWhen);

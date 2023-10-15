@@ -2,6 +2,7 @@ using System.Net;
 using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Levels;
@@ -20,7 +21,7 @@ public class LevelEndpoints : EndpointGroup
     public ListResponse<LevelResponse>? GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user, GameToken? token)
     {
         string? query = context.QueryString["query"];
-        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool descending) = context.GetPageData();
         string searchString = context.QueryString["search"] ?? "all";
 
         // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.

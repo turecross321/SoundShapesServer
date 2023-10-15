@@ -5,6 +5,7 @@ using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Framework;
@@ -80,7 +81,7 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
     [DocSummary("Lists punishments.")]
     public ApiListResponse<ApiPunishmentResponse> GetPunishments(RequestContext context, GameDatabaseContext database, GameUser user)
     {
-        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool descending) = context.GetPageData();
 
         string? authorString = context.QueryString["author"];
         GameUser? author = null;

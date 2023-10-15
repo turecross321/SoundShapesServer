@@ -13,7 +13,7 @@ public static partial class UserHelper
         return UsernameRegex().IsMatch(username);
     }
     
-    public static UserOrderType GetUserOrderType(RequestContext context)
+    public static UserOrderType GetUserOrderType(this RequestContext context)
     {
         string? orderString = context.QueryString["orderBy"];
         

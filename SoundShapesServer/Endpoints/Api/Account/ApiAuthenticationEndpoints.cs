@@ -5,6 +5,7 @@ using Bunkum.Core.RateLimit;
 using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Requests.Api.Account;
@@ -90,16 +91,20 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     [DocSummary("Authorizes specified IP address.")]
     public ApiOkResponse AuthorizeIpAddress(RequestContext context, GameDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
     {
-        GameIp gameIp = database.GetIpFromAddress(user, body.IpAddress);
+        GameIp? gameIp = database.GetIpWithAddress(user, body.IpAddress);
+        gameIp ??= database.CreateGameIp(user, body.IpAddress);
         database.AuthorizeIpAddress(gameIp, body.OneTimeUse);
 
         return new ApiOkResponse();
     }
     [ApiEndpoint("gameAuth/ip/address/{address}", HttpMethods.Delete)]
     [DocSummary("Deletes specified IP address.")]
-    public ApiOkResponse UnAuthorizeIpAddress(RequestContext context, GameDatabaseContext database, string address, GameUser user)
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.IpDoesNotExistWhen)]
+    public ApiOkResponse RemoveIpAddress(RequestContext context, GameDatabaseContext database, string address, GameUser user)
     {
-        GameIp gameIp = database.GetIpFromAddress(user, address);
+        GameIp? gameIp = database.GetIpWithAddress(user, address);
+        if (gameIp == null)
+            return ApiNotFoundError.IpDoesNotExist;
 
         database.RemoveIpAddress(gameIp);
         return new ApiOkResponse();
@@ -111,7 +116,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     [DocQueryParam("authorized", "Filters authorized/unauthorized IP addresses from result.")]
     public ApiListResponse<ApiIpResponse> GetAddresses(RequestContext context, GameDatabaseContext database, GameUser user)
     {
-        (int from, int count, bool _) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool _) = context.GetPageData();
         
         bool? authorized = null;
         if (bool.TryParse(context.QueryString["authorized"], out bool authorizedTemp)) authorized = authorizedTemp;

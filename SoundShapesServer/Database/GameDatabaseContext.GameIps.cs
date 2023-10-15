@@ -7,7 +7,7 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    private GameIp CreateIpAddress(GameUser user, string ipAddress)
+    public GameIp CreateGameIp(GameUser user, string ipAddress)
     {
         GameIp gameIp = new()
         {
@@ -25,30 +25,20 @@ public partial class GameDatabaseContext
         return gameIp;
     }
 
-    public GameIp GetIpFromAddress(GameUser user, string ipAddress)
+    public GameIp? GetIpWithAddress(GameUser user, string ipAddress)
     {
-        _realm.Refresh();
-        
-        GameIp? ip = user.IpAddresses.FirstOrDefault(i => i.IpAddress == ipAddress);
-        return ip ?? CreateIpAddress(user, ipAddress);
+        return user.IpAddresses.FirstOrDefault(i => i.IpAddress == ipAddress);
     }
-    public bool AuthorizeIpAddress(GameIp gameIp, bool oneTime)
+    public void AuthorizeIpAddress(GameIp gameIp, bool oneTime)
     {
         _realm.Write(() =>
         {
             gameIp.Authorized = true;
             gameIp.OneTimeUse = oneTime;
             gameIp.ModificationDate = DateTimeOffset.UtcNow;
-
-            foreach (GameToken token in gameIp.Tokens.Where(s=>s._TokenType == (int)TokenType.GameUnAuthorized))
-            {
-                token.TokenType = TokenType.GameAccess;
-            }
         });
 
         _realm.Refresh();
-        
-        return true;
     }
 
     public void RemoveIpAddress(GameIp gameIp)

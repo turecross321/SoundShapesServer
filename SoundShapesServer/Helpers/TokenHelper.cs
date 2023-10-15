@@ -21,28 +21,5 @@ public static partial class TokenHelper
     }
 
     [GeneratedRegex("^/otg/[a-zA-Z0-9]+/[A-Z]+/[a-zA-Z0-9_]+/~eula.get$")]
-    private static partial Regex EulaRegex();
-    
-    public static bool IsTokenAllowedToAccessEndpoint(GameToken token, string uriPath)
-    {
-        if (uriPath == GameEndpointAttribute.BaseRoute + "~identity:*.hello"
-            || EulaRegex().IsMatch(uriPath)
-            && token.TokenType == TokenType.GameUnAuthorized)
-        {
-            return true;
-        }
-        if ((uriPath.StartsWith(GameEndpointAttribute.BaseRoute) 
-            || uriPath.StartsWith("/identity/"))
-            && token.TokenType == TokenType.GameAccess)
-        { 
-            return true;
-        }
-        
-        if (uriPath.StartsWith(ApiEndpointAttribute.BaseRoute) && token.TokenType == TokenType.ApiAccess)
-        {
-            return true;
-        }
-
-        return false;
-    }
+    public static partial Regex EulaRegex();
 }

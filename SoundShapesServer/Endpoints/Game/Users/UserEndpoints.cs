@@ -1,6 +1,7 @@
 using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Users;
@@ -13,7 +14,7 @@ public class UserEndpoints : EndpointGroup
     [GameEndpoint("~index:identity.page")]
     public ListResponse<UserBriefResponse> GetUsers(RequestContext context, GameDatabaseContext database, GameUser user)
     {
-        (int from, int count, bool descending) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool descending) = context.GetPageData();
 
         UserFilters filters = UserHelper.GetUserFilters(context, database);
         UserOrderType order = UserHelper.GetUserOrderType(context);
@@ -32,7 +33,7 @@ public class UserEndpoints : EndpointGroup
     [GameEndpoint("~identity:{id}/~follow:*.page")]
     public ListResponse<UserBriefResponse>? GetFollowing(RequestContext context, string id, GameDatabaseContext database, GameUser user)
     {
-        (int from, int count, bool _) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool _) = context.GetPageData();
 
         GameUser? followingUser = database.GetUserWithId(id);
         if (followingUser == null) return null;
@@ -44,7 +45,7 @@ public class UserEndpoints : EndpointGroup
     [GameEndpoint("~identity:{id}/~followers.page")]
     public ListResponse<UserBriefResponse>? GetFollowers(RequestContext context, string id, GameDatabaseContext database, GameUser user)
     {
-        (int from, int count, bool _) = PaginationHelper.GetPageData(context);
+        (int from, int count, bool _) = context.GetPageData();
 
         GameUser? recipient = database.GetUserWithId(id);
         if (recipient == null) return null;
