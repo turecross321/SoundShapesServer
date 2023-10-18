@@ -8,7 +8,6 @@ namespace SoundShapesServer.Database;
 public partial class GameDatabaseContext
 {
     public const int DefaultTokenExpirySeconds = Globals.OneDayInSeconds;
-    private const int SimultaneousTokensLimit = 3;
 
     public GameToken CreateToken(GameUser user, TokenType tokenType, 
         double expirationSeconds = DefaultTokenExpirySeconds, PlatformType platformType = PlatformType.Unknown, 
@@ -36,18 +35,8 @@ public partial class GameDatabaseContext
             RefreshToken = refreshToken
         };
 
-        IEnumerable<GameToken> tokensToDelete = _realm.All<GameToken>()
-            .Where(s=> s.User == user && s._TokenType == (int)tokenType)
-            .AsEnumerable()
-            .SkipLast(SimultaneousTokensLimit - 1);
-
         _realm.Write(() =>
         {
-            foreach (GameToken tokenToDelete in tokensToDelete)
-            {
-                _realm.Remove(tokenToDelete);
-            }
-            
             _realm.Add(token);
             if (tokenType == TokenType.GameAccess) 
                 user.LastGameLogin = DateTimeOffset.UtcNow;
