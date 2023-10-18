@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using AttribDoc;
 using Bunkum.Core.Responses;
 using Bunkum.Listener.Protocol;
 
@@ -18,4 +19,18 @@ public class ApiError
 
     public static implicit operator Response(ApiError error) 
         => new(error, ContentType.Json, error.StatusCode);
+
+    private ApiError() {}
+    private ApiError FromError(Error error)
+    {
+        return new ApiError
+        {
+            Name = error.Name,
+            Message = error.OccursWhen
+        };
+    }
+    public List<ApiError> FromErrorList(List<Error> errors)
+    {
+        return errors.Select(FromError).ToList();
+    }
 }

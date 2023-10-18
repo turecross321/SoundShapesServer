@@ -1,4 +1,5 @@
 using AttribDoc;
+using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Responses.Api.Framework.Documentation;
@@ -11,7 +12,7 @@ public class ApiRouteResponse : IApiResponse
     public required bool AuthenticationRequired { get; set; }
     public PermissionsType MinimumPermissionsType { get; set; }
     public required IEnumerable<ApiParameterResponse> Parameters { get; set; }
-    public required IEnumerable<ApiErrorResponse> PotentialErrors { get; set; }
+    public required IEnumerable<ApiDocumentationErrorResponse> PotentialErrors { get; set; }
 
     private static ApiRouteResponse FromRoute(Route old)
     {
@@ -23,7 +24,7 @@ public class ApiRouteResponse : IApiResponse
             AuthenticationRequired = old.AuthenticationRequired,
             MinimumPermissionsType = PermissionsType.Default,  // todo: make this actually work
             Parameters = ApiParameterResponse.FromParameterList(old.Parameters),
-            PotentialErrors = ApiErrorResponse.FromErrorList(old.PotentialErrors),
+            PotentialErrors = ApiDocumentationErrorResponse.FromErrorList(old.PotentialErrors),
         };
     }
 

@@ -1,8 +1,9 @@
 using System.Reflection;
+using AttribDoc;
 using Bunkum.Core.Services;
 using NotEnoughLogs;
-using SoundShapesServer.Documentation;
 using SoundShapesServer.Responses.Api.Framework.Documentation;
+using DocumentationGenerator = SoundShapesServer.Documentation.DocumentationGenerator;
 
 namespace SoundShapesServer.Services;
 
@@ -15,11 +16,11 @@ public class DocumentationService : EndpointService
     public override void Initialize()
     {
         AttribDoc.Documentation documentation = _generator.Document(Assembly.GetExecutingAssembly());
-        _docs.AddRange(ApiRouteResponse.FromRouteList(documentation.Routes.OrderBy(r => r.RouteUri)));
+        _docs.AddRange(documentation.Routes.OrderBy(r => r.RouteUri));
     }
 
     private readonly DocumentationGenerator _generator = new();
     
-    private readonly List<ApiRouteResponse> _docs = new();
-    public IEnumerable<ApiRouteResponse> Documentation => _docs.AsReadOnly();
+    private readonly List<Route> _docs = new();
+    public IEnumerable<Route> Documentation => _docs.AsReadOnly();
 }

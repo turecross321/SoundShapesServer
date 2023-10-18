@@ -22,6 +22,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 {
     [ApiEndpoint("account/logIn", HttpMethods.Post), Authentication(false)]
     [RateLimitSettings(300, 10, 300, "authentication")]
+    [DocSummary("Returns an access token used to access endpoints that require authentication.")]
     [DocError(typeof(ApiForbiddenError), ApiForbiddenError.EmailOrPasswordIsWrongWhen)]
     public ApiResponse<ApiLoginResponse> Login(RequestContext context, GameDatabaseContext database, ApiLoginRequest body)
     {
