@@ -27,7 +27,7 @@ public class ApiDailyLevelEndpoint : EndpointGroup
         if (dateLong != null) date = DateTimeOffset.FromUnixTimeSeconds((long)dateLong);
         
         bool? lastDate = null;
-        if (bool.TryParse(context.QueryString["lastDate"], out bool lastDateTemp)) lastDate = lastDateTemp;
+        if (bool.TryParse(context.QueryString["latestDate"], out bool latestDate)) lastDate = latestDate;
 
         DailyLevelFilters filters = new (date, lastDate);
         

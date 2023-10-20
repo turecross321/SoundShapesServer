@@ -10,7 +10,7 @@ namespace SoundShapesServer.Responses.Api.Responses.Moderation;
 
 public class ApiReportResponse : IApiResponse
 {
-    public ApiReportResponse(GameDatabaseContext database, Report report, GameUser accessor)
+    public ApiReportResponse(GameDatabaseContext database, Report report)
     {
         Id = report.Id;
         if (report.ContentUser != null)
@@ -18,7 +18,7 @@ public class ApiReportResponse : IApiResponse
         if (report.ContentLevel != null)
             ContentLevel = new ApiLevelBriefResponse(report.ContentLevel);
         if (report.ContentLeaderboardEntry != null)
-            ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(report.ContentLeaderboardEntry, database.GetLeaderboardEntryPosition(report.ContentLeaderboardEntry, accessor));
+            ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(report.ContentLeaderboardEntry, report.ContentLeaderboardEntry.Position());
         ContentType = report.ContentType;
         ReasonType = report.ReasonType;
         CreationDate = report.CreationDate.ToUnixTimeSeconds();

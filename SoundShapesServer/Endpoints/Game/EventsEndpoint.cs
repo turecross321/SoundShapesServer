@@ -14,9 +14,9 @@ public class EventsEndpoint : EndpointGroup
 {
     private readonly EventType[] _gameEventTypes =
     {
-        EventType.Publish,
-        EventType.Like,
-        EventType.Follow
+        EventType.LevelPublish,
+        EventType.LevelLike,
+        EventType.UserFollow
     };
     
     [GameEndpoint("~identity:{id}/~stream:news.page")]

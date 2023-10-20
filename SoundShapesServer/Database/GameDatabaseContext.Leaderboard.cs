@@ -1,3 +1,5 @@
+using SoundShapesServer.Extensions;
+using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Events;
@@ -38,17 +40,6 @@ public partial class GameDatabaseContext
         
         return entry;
     }
-
-    public int GetLeaderboardEntryPosition(LeaderboardEntry entry, GameUser? accessor)
-    {
-        IQueryable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>();
-        
-        IQueryable<LeaderboardEntry> filteredEntries = FilterLeaderboard(entries,
-            new LeaderboardFilters(onLevel: entry.Level, completed: true, obsolete: false), accessor);
-        IQueryable<LeaderboardEntry> orderedEntries = OrderLeaderboardByScore(filteredEntries, false);
-
-        return orderedEntries.ToList().IndexOf(entry);
-    }
     
     public void RemoveLeaderboardEntry(LeaderboardEntry entry)
     {
@@ -65,122 +56,15 @@ public partial class GameDatabaseContext
         return _realm.All<LeaderboardEntry>().FirstOrDefault(e => e.Id == id);
     }
 
-    public (int, LeaderboardEntry[]) GetPaginatedLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters, int from, int count, GameUser? accessor)
+    public (LeaderboardEntry[], int) GetPaginatedLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters, int from, int count, GameUser? accessor)
     {
-        IQueryable<LeaderboardEntry> orderedEntries = GetLeaderboardEntries(order, descending, filters, accessor);
-        LeaderboardEntry[] paginatedEntries = PaginateLeaderboardEntries(orderedEntries, from, count);
-
-        return (orderedEntries.Count(), paginatedEntries);
-    }
-    
-    public IQueryable<LeaderboardEntry> GetLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters, GameUser? accessor)
-    {
-        IQueryable<LeaderboardEntry> entries = _realm.All<LeaderboardEntry>();
-        IQueryable<LeaderboardEntry> filteredEntries = FilterLeaderboard(entries, filters, accessor);
-        IQueryable<LeaderboardEntry> orderedEntries = OrderLeaderboard(filteredEntries, order, descending);
-
-        return orderedEntries;
+        IQueryable<LeaderboardEntry> entries = GetLeaderboardEntries(order, descending, filters);
+        return (entries.Paginate(from, count), entries.Count());
     }
 
-    private static IQueryable<LeaderboardEntry> FilterLeaderboard(IQueryable<LeaderboardEntry> entries,
-        LeaderboardFilters filters, GameUser? accessor)
+    public IQueryable<LeaderboardEntry> GetLeaderboardEntries(LeaderboardOrderType order, bool descending,
+        LeaderboardFilters filters)
     {
-        entries = entries.Where(e => e.Level == filters.OnLevel);
-
-        if (filters.ByUser != null)
-        {
-            entries = entries.Where(e => e.User == filters.ByUser);
-        }
-
-        if (filters.Completed != null)
-        {
-            entries = entries.Where(e => e.Completed == filters.Completed);
-        }
-
-        if (filters.Obsolete != null)
-        {
-            List<LeaderboardEntry> newEntries = new();
-            if (filters.Obsolete == true)
-                newEntries = entries.ToList();
-            
-            
-            List<string> previousUserIds = new();
-            // The lower "Score", the higher the score actually is because scores don't start from 0, and they decrease.
-            foreach (LeaderboardEntry entry in entries.OrderBy(e => e.Score))
-            {
-                if (previousUserIds.Contains(entry.User.Id)) 
-                    continue;
-
-                if (filters.Obsolete == true)
-                    newEntries.Remove(entry);
-                else if (filters.Obsolete == false)
-                {
-                    newEntries.Add(entry);
-                }
-                
-                previousUserIds.Add(entry.User.Id);
-            }
-
-            entries = newEntries.AsQueryable();
-        }
-
-        // Automatically remove private and unlisted results
-        if ((accessor?.PermissionsType ?? PermissionsType.Default) < PermissionsType.Moderator)
-        {
-            List<LeaderboardEntry> privateLevelEntries = new();
-
-            foreach (LeaderboardEntry entry in entries)
-            {
-                if (entry.Level.Author.Id != accessor?.Id && entry.Level.Visibility == LevelVisibility.Private)
-                {
-                    privateLevelEntries.Add(entry);
-                }
-
-                entries = entries.AsEnumerable().Except(privateLevelEntries).AsQueryable();
-            }
-        }
-
-        return entries;
-        }
-
-    #region Leaderboard Ordering
-
-    private static IQueryable<LeaderboardEntry> OrderLeaderboard(IQueryable<LeaderboardEntry> entries,
-        LeaderboardOrderType order, bool descending)
-    {
-        return order switch
-        {
-            LeaderboardOrderType.Score => OrderLeaderboardByScore(entries, descending),
-            LeaderboardOrderType.PlayTime => OrderLeaderboardByPlayTime(entries, descending),
-            LeaderboardOrderType.Notes => OrderLeaderboardByTokenCount(entries, descending),
-            LeaderboardOrderType.CreationDate => OrderLeaderboardByDate(entries, descending),
-            _ => OrderLeaderboardByScore(entries, descending),
-        };
+        return _realm.All<LeaderboardEntry>().FilterLeaderboard(filters).OrderLeaderboard(order, descending);
     }
-    
-    private static IQueryable<LeaderboardEntry> OrderLeaderboardByScore(IQueryable<LeaderboardEntry> entries, bool descending)
-    {
-        if (descending) return entries.OrderByDescending(e => e.Score);
-        return entries.OrderBy(e => e.Score);
-    }
-
-    private static IQueryable<LeaderboardEntry> OrderLeaderboardByPlayTime(IQueryable<LeaderboardEntry> entries, bool descending)
-    {
-        if (descending) return entries.OrderByDescending(e => e.PlayTime);
-        return entries.OrderBy(e => e.PlayTime);
-    }
-    
-    private static IQueryable<LeaderboardEntry> OrderLeaderboardByTokenCount(IQueryable<LeaderboardEntry> entries, bool descending)
-    {
-        if (descending) return entries.OrderByDescending(e => e.Notes);
-        return entries.OrderBy(e => e.Notes);
-    }
-    
-    private static IQueryable<LeaderboardEntry> OrderLeaderboardByDate(IQueryable<LeaderboardEntry> entries, bool descending)
-    {
-        if (descending) return entries.OrderByDescending(e => e.CreationDate);
-        return entries.OrderBy(e => e.CreationDate);
-    }
-    
-    #endregion
 }

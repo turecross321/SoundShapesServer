@@ -63,7 +63,7 @@ public class LeaderboardEndpoints : EndpointGroup
         if (level == null) return null;
 
         LeaderboardFilters filters = new (level, obsolete: false, completed: true);
-        (int totalEntries, LeaderboardEntry[] paginatedEntries) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, from, count, user);
+        (LeaderboardEntry[] paginatedEntries, int totalEntries) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, from, count, user);
 
         List<LeaderboardEntryResponse> responses = 
             paginatedEntries.Select((t, i) => 
@@ -82,8 +82,8 @@ public class LeaderboardEndpoints : EndpointGroup
         
         LeaderboardFilters filters = new (level, user, completed:true, obsolete:false);
 
-        (int _, LeaderboardEntry[] paginatedEntries) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 1, user);
+        (LeaderboardEntry[] paginatedEntries, int _) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 1, user);
         
-        return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e, database.GetLeaderboardEntryPosition(e, user) + 1)).ToArray();
+        return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e, e.Position() + 1)).ToArray();
     }
 }

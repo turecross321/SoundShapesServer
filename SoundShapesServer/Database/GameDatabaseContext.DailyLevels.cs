@@ -1,3 +1,5 @@
+using SoundShapesServer.Extensions;
+using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
@@ -53,74 +55,12 @@ public partial class GameDatabaseContext
     
     public (DailyLevel[], int) GetPaginatedDailyLevels(DailyLevelOrderType order, bool descending, DailyLevelFilters filters, int from, int count)
     {
-        IQueryable<DailyLevel> orderedDailyLevels = GetDailyLevels(order, descending, filters);
-        DailyLevel[] paginatedDailyLevels = PaginationHelper.PaginateDailyLevels(orderedDailyLevels, from, count);
-        
-        return (paginatedDailyLevels, orderedDailyLevels.Count());
+        IQueryable<DailyLevel> dailyLevels = GetDailyLevels(order, descending, filters);
+        return (dailyLevels.Paginate(from, count), dailyLevels.Count());
     }
 
-    private IQueryable<DailyLevel> GetDailyLevels(DailyLevelOrderType order, bool descending, DailyLevelFilters filters)
+    public IQueryable<DailyLevel> GetDailyLevels(DailyLevelOrderType order, bool descending, DailyLevelFilters filters)
     {
-        IQueryable<DailyLevel> dailyLevels = _realm.All<DailyLevel>();
-        IQueryable<DailyLevel> filteredDailyLevels = FilterDailyLevels(dailyLevels, filters);
-        IQueryable<DailyLevel> orderedDailyLevels = OrderDailyLevels(filteredDailyLevels, order, descending);
-
-        return orderedDailyLevels;
+        return _realm.All<DailyLevel>().FilterDailyLevels(filters).OrderDailyLevels(order, descending);
     }
-
-    private static IQueryable<DailyLevel> FilterDailyLevels(IQueryable<DailyLevel> dailyLevels, DailyLevelFilters filters)
-    {
-        if (filters.LastDate == true)
-        {
-            dailyLevels = dailyLevels
-                .OrderByDescending(d => d.Date);
-
-            IList<DailyLevel> dailiesOnLastDate = new List<DailyLevel>();
-
-            if (dailyLevels.Any())
-            {
-                DateTimeOffset lastDate = dailyLevels.ToArray()[0].Date.Date;
-
-                foreach (DailyLevel dailyLevel in dailyLevels)
-                {
-                    if (dailyLevel.Date < lastDate) break;
-                    
-                    dailiesOnLastDate.Add(dailyLevel);
-                }
-            }
-
-            dailyLevels = dailiesOnLastDate.AsQueryable();
-        }
-
-        if (filters.Date != null)
-        {
-            dailyLevels = dailyLevels
-                .AsEnumerable()
-                .Where(d => d.Date.Date == filters.Date?.Date)
-                .AsQueryable();
-        }
-
-        return dailyLevels;
-    }
-    
-
-    #region Daily Level Ordering
-
-    private static IQueryable<DailyLevel> OrderDailyLevels(IQueryable<DailyLevel> dailyLevels, DailyLevelOrderType order,
-        bool descending)
-    {
-        return order switch
-        {
-            DailyLevelOrderType.Date => OrderDailyLevelsByDate(dailyLevels, descending),
-            _ => OrderDailyLevelsByDate(dailyLevels, descending)
-        };
-    }
-    
-    private static IQueryable<DailyLevel> OrderDailyLevelsByDate(IQueryable<DailyLevel> dailyLevels, bool descending)
-    {
-        if (descending) return dailyLevels.OrderByDescending(d => d.Date);
-        return dailyLevels.OrderBy(d => d.Date);
-    }
-
-    #endregion
 }

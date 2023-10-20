@@ -1,4 +1,7 @@
 using Realms;
+using SoundShapesServer.Database;
+using SoundShapesServer.Extensions;
+using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 
@@ -27,5 +30,13 @@ public class LeaderboardEntry : RealmObject
     {
         get => (PlatformType)_PlatformType;
         init => _PlatformType = (int)value;
+    }
+    
+    public int Position()
+    {
+        IQueryable<LeaderboardEntry> entries = Level.LeaderboardEntries.FilterLeaderboard(new LeaderboardFilters(Level))
+            .OrderLeaderboard(LeaderboardOrderType.Score, false);
+
+        return entries.ToList().IndexOf(this);
     }
 }

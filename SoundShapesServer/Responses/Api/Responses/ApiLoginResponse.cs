@@ -1,4 +1,5 @@
 using SoundShapesServer.Extensions;
+using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Responses.Moderation;
 using SoundShapesServer.Responses.Api.Responses.Users;

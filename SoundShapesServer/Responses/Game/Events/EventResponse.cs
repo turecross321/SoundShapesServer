@@ -16,17 +16,17 @@ public class EventResponse : IResponse
         
         switch (gameEventObject.EventType)
         {
-            case Types.Events.EventType.Publish:
+            case Types.Events.EventType.LevelPublish:
                 Content = new EventLevelResponse(gameEventObject.ContentLevel ?? new GameLevel());
                 Timestamp = (gameEventObject.ContentLevel?.ModificationDate.ToUnixTimeMilliseconds() ?? 0).ToString();
                 break;
 
-            case Types.Events.EventType.Like:
+            case Types.Events.EventType.LevelLike:
                 Content = new EventLevelResponse(gameEventObject.ContentLevel ?? new GameLevel());
                 Timestamp = (gameEventObject.ContentLevel?.ModificationDate.ToUnixTimeMilliseconds() ?? 0).ToString();
                 break;
                 
-            case Types.Events.EventType.Follow:
+            case Types.Events.EventType.UserFollow:
                 Content = new UserTargetResponse(gameEventObject.ContentUser ?? new GameUser());
                 Timestamp = gameEventObject.CreationDate.ToString();
                 break;

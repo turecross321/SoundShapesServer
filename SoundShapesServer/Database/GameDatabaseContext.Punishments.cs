@@ -1,3 +1,5 @@
+using SoundShapesServer.Extensions;
+using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types.Punishments;
@@ -60,54 +62,8 @@ public partial class GameDatabaseContext
     
     public (Punishment[], int) GetPaginatedPunishments(PunishmentOrderType order, bool descending, PunishmentFilters filters, int from, int count)
     {
-        IQueryable<Punishment> orderedPunishments = GetPunishments(order, descending, filters);
-        Punishment[] paginatedPunishments = PaginationHelper.PaginatePunishments(orderedPunishments, from, count);
-        
-        return (paginatedPunishments, orderedPunishments.Count());
-    }
-
-    private IQueryable<Punishment> GetPunishments(PunishmentOrderType order, bool descending, PunishmentFilters filters)
-    {
-        IQueryable<Punishment> punishments = _realm.All<Punishment>();
-        IQueryable<Punishment> filteredPunishments = FilterPunishments(punishments, filters);
-        IQueryable<Punishment> orderedPunishments = OrderPunishments(filteredPunishments, order, descending);
-
-        return orderedPunishments;
-    }
-
-    private static IQueryable<Punishment> FilterPunishments(IQueryable<Punishment> punishments, PunishmentFilters filters)
-    {
-        if (filters.Author != null)
-        {
-            punishments = punishments.Where(p => p.Author == filters.Author);
-        }
-
-        if (filters.Recipient != null)
-        {
-            punishments = punishments.Where(p => p.Recipient == filters.Recipient);
-        }
-
-        if (filters.Revoked != null)
-        {
-            punishments = punishments.Where(p => p.Revoked == filters.Revoked);
-        }
-
-        return punishments;
-    }
-
-    private static IQueryable<Punishment> OrderPunishments(IQueryable<Punishment> punishments, PunishmentOrderType order,
-        bool descending)
-    {
-        return order switch
-        {
-            PunishmentOrderType.CreationDate => OrderPunishmentsByCreationDate(punishments, descending),
-            _ => punishments
-        };
-    }
-    
-    private static IQueryable<Punishment> OrderPunishmentsByCreationDate(IQueryable<Punishment> punishments, bool descending)
-    {
-        if (descending) return punishments.OrderByDescending(p => p.CreationDate);
-        return punishments.OrderBy(p => p.CreationDate);
+        IQueryable<Punishment> punishments =
+            _realm.All<Punishment>().FilterPunishments(filters).OrderPunishments(order, descending);
+        return (punishments.Paginate(from, count), punishments.Count());
     }
 }

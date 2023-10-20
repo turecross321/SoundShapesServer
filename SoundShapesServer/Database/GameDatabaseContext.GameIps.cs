@@ -1,3 +1,5 @@
+using SoundShapesServer.Extensions;
+using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Authentication;
@@ -89,29 +91,13 @@ public partial class GameDatabaseContext
     public (GameIp[], int) GetPaginatedIps(GameUser user, bool? authorized, int from, int count)
     {
         IQueryable<GameIp> filteredAddresses = GetIps(user, authorized);
-        GameIp[] paginatedAddresses = PaginationHelper.PaginateIpAddresses(filteredAddresses, from, count);
+        GameIp[] paginatedAddresses = filteredAddresses.Paginate(from, count);
 
         return (paginatedAddresses, filteredAddresses.Count());
     }
 
     private IQueryable<GameIp> GetIps(GameUser user, bool? authorized)
     {
-        IQueryable<GameIp> addresses = _realm.All<GameIp>().Where(i => i.User == user);
-        IQueryable<GameIp> filteredAddresses = FilterIpAddresses(addresses, authorized);
-
-        return filteredAddresses;
-    }
-
-    private static IQueryable<GameIp> FilterIpAddresses(IQueryable<GameIp> addresses,
-        bool? authorized)
-    {
-        IQueryable<GameIp> response = addresses;
-
-        if (authorized != null)
-        {
-            response = response.Where(i => i.Authorized == authorized);
-        }
-
-        return response;
+        return _realm.All<GameIp>().Where(i => i.User == user).FilterIpAddresses(authorized);
     }
 }

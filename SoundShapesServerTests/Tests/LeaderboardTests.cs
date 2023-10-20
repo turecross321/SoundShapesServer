@@ -35,21 +35,21 @@ public class LeaderboardTests: ServerTest
         
         // Only best entries on first level
         IEnumerable<LeaderboardEntry> entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
-            false, new LeaderboardFilters(obsolete: true, onLevel:firstLevel), null);
+            false, new LeaderboardFilters(obsolete: true, onLevel:firstLevel));
         Assert.That(entries.Count(), Is.EqualTo(usersOnFirstLevel));
         
         // All entries on second level
         entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
-            false, new LeaderboardFilters(obsolete: null, onLevel:secondLevel), null);
+            false, new LeaderboardFilters(obsolete: null, onLevel:secondLevel));
         Assert.That(entries.Count(), Is.EqualTo(usersOnSecondLevel * scoresPerUser));
         
         // Ordering
         entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
-            false, new LeaderboardFilters(obsolete: null, onLevel:firstLevel), null);
+            false, new LeaderboardFilters(obsolete: null, onLevel:firstLevel));
         Assert.That(entries.First().Score, Is.LessThan(entries.Last().Score));
         
         entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
-            true, new LeaderboardFilters(obsolete: null, onLevel:secondLevel), null);
+            true, new LeaderboardFilters(obsolete: null, onLevel:secondLevel));
         Assert.That(entries.First().Score, Is.GreaterThan(entries.Last().Score));
     }
     
@@ -102,7 +102,7 @@ public class LeaderboardTests: ServerTest
         context.Database.Refresh();
 
         LeaderboardFilters filters = new(onLevel: level, byUser:user);
-        IQueryable<LeaderboardEntry> entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters, null);
+        IQueryable<LeaderboardEntry> entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters);
         
         Assert.That(entries.Count(), Is.EqualTo(1));
     }

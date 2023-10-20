@@ -2,11 +2,11 @@ namespace SoundShapesServer.Types.Levels;
 
 public class DailyLevelFilters
 {
-    public DailyLevelFilters(DateTimeOffset? date = null, bool? lastDate = null)
+    public DailyLevelFilters(DateTimeOffset? date = null, bool? latestDate = null)
     {
         Date = date?.Date;
-        LastDate = lastDate;
+        LatestDate = latestDate;
     }
     public DateTimeOffset? Date { get; set; }
-    public bool? LastDate { get; set; }
+    public bool? LatestDate { get; set; }
 }

@@ -126,8 +126,8 @@ public static class LevelHelper
         DateTimeOffset? inDailyDate = null;
         if (inDailyDateLong != null) inDailyDate = DateTimeOffset.FromUnixTimeSeconds((long)inDailyDateLong);
 
-        bool? lastDate = null;
-        if (bool.TryParse(context.QueryString["inLastDaily"], out bool lastDateTemp)) lastDate = lastDateTemp;
+        bool? latestDaily = null;
+        if (bool.TryParse(context.QueryString["inLatestDaily"], out bool latestDateTemp)) latestDaily = latestDateTemp;
 
         string? bpmString = context.QueryString["bpm"];
         int? bpm = null;
@@ -157,7 +157,7 @@ public static class LevelHelper
             uploadPlatforms.AddRange(uploadPlatformsString.Split(",").Select(Enum.Parse<PlatformType>));
         }
         
-        return new LevelFilters(byUser, likedBy, queuedBy, likedOrQueuedBy, inAlbum, inDaily, inDailyDate, lastDate, 
+        return new LevelFilters(byUser, likedBy, queuedBy, likedOrQueuedBy, inAlbum, inDaily, inDailyDate, latestDaily, 
             searchQuery, completedBy, bpm, scaleIndex, transposeValue, hasCar, hasExplodingCar, uploadPlatforms);
     }
 

@@ -26,6 +26,6 @@ public class ApiEventsEndpoint : EndpointGroup
         
         (GameEvent[] events, int totalEvents) = database.GetPaginatedEvents(orderType, descending, filters, from, count, user);
         
-        return new ApiListResponse<ApiEventResponse>(events.Select(e=>new ApiEventResponse(database, e, user)), totalEvents);
+        return new ApiListResponse<ApiEventResponse>(events.Select(e=>new ApiEventResponse(database, e)), totalEvents);
     }
 }

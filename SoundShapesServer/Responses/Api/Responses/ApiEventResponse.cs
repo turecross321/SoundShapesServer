@@ -11,7 +11,7 @@ namespace SoundShapesServer.Responses.Api.Responses;
 
 public class ApiEventResponse : IApiResponse
 {
-    public ApiEventResponse(GameDatabaseContext database, GameEvent eventObject, GameUser? accessor)
+    public ApiEventResponse(GameDatabaseContext database, GameEvent eventObject)
     {
         Id = eventObject.Id;
         EventType = eventObject.EventType;
@@ -20,7 +20,7 @@ public class ApiEventResponse : IApiResponse
         if (eventObject.ContentUser != null)
             ContentUser = new ApiUserBriefResponse(eventObject.ContentUser);
         else if (eventObject.ContentLeaderboardEntry != null)
-            ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(eventObject.ContentLeaderboardEntry, database.GetLeaderboardEntryPosition(eventObject.ContentLeaderboardEntry, accessor));
+            ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(eventObject.ContentLeaderboardEntry, eventObject.ContentLeaderboardEntry.Position());
         else if (eventObject.ContentLevel != null)
             ContentLevel = new ApiLevelBriefResponse(eventObject.ContentLevel);
         

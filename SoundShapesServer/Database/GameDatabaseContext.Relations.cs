@@ -25,7 +25,7 @@ public partial class GameDatabaseContext
             recipient.FollowersCount = recipient.FollowersRelations.Count();
         });
 
-        CreateEvent(follower, EventType.Follow, platformType, recipient);
+        CreateEvent(follower, EventType.UserFollow, platformType, recipient);
         
         return true;
     }
@@ -61,7 +61,7 @@ public partial class GameDatabaseContext
             level.LikesCount = level.Likes.Count();
         });
         
-        CreateEvent(user, EventType.Like, platformType, null, level);
+        CreateEvent(user, EventType.LevelLike, platformType, null, level);
 
         return true;
     }
@@ -102,7 +102,7 @@ public partial class GameDatabaseContext
             level.QueuesCount = level.Queues.Count();
         });
         
-        CreateEvent(user, EventType.Queue, platformType, null, level);
+        CreateEvent(user, EventType.LevelQueue, platformType, null, level);
 
         return true;
     }

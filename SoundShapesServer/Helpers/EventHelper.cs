@@ -12,10 +12,10 @@ public static class EventHelper
     {
         return type switch
         {
-            EventType.Publish => "publish",
-            EventType.Follow => "follow",
-            EventType.Like => "like",
-            _ => EventEnumToGameString(EventType.Publish)
+            EventType.LevelPublish => "publish",
+            EventType.UserFollow => "follow",
+            EventType.LevelLike => "like",
+            _ => EventEnumToGameString(EventType.LevelPublish)
         };
     }
 

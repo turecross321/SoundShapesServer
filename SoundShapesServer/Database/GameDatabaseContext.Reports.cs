@@ -1,3 +1,5 @@
+using SoundShapesServer.Extensions;
+using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Reports;
@@ -66,67 +68,8 @@ public partial class GameDatabaseContext
     
     public (Report[], int) GetPaginatedReports(ReportOrderType order, bool descending, ReportFilters filters, int from, int count)
     {
-        IQueryable<Report> orderedReports = GetReports(order, descending, filters);
-        Report[] paginatedReports = PaginateReports(orderedReports, from, count);
-        
-        return (paginatedReports, orderedReports.Count());
+        IQueryable<Report> reports =
+            _realm.All<Report>().FilterReports(filters).OrderReports(order, descending);
+        return (reports.Paginate(from, count), reports.Count());
     }
-
-    private IQueryable<Report> GetReports(ReportOrderType order, bool descending, ReportFilters filters)
-    {
-        IQueryable<Report> reports = _realm.All<Report>();
-        IQueryable<Report> filteredReports = FilterReports(reports, filters);
-        IQueryable<Report> orderedReports = OrderReports(filteredReports, order, descending);
-
-        return orderedReports;
-    }
-
-    private static IQueryable<Report> FilterReports(IQueryable<Report> reports, ReportFilters filters)
-    {
-        if (filters.ContentUser != null)
-        {
-            reports = reports.Where(r => r.ContentUser == filters.ContentUser);
-        }
-        
-        if (filters.ContentLevel != null)
-        {
-            reports = reports.Where(r => r.ContentLevel == filters.ContentLevel);
-        }
-        
-        if (filters.ContentLeaderboardEntry != null)
-        {
-            reports = reports.Where(r => r.ContentLeaderboardEntry == filters.ContentLeaderboardEntry);
-        }
-
-        if (filters.ContentType != null)
-        {
-            reports = reports.Where(r => r._ContentType == (int)filters.ContentType);
-        }
-
-        if (filters.ReasonType != null)
-        {
-            reports = reports.Where(r => r._ReasonType == (int)filters.ReasonType);
-        }
-
-        return reports;
-    }
-
-    #region Report Ordering
-
-    private static IQueryable<Report> OrderReports(IQueryable<Report> reports, ReportOrderType order, bool descending)
-    {
-        return order switch
-        {
-            ReportOrderType.Date => OrderReportsByDate(reports, descending),
-            _ => reports
-        };
-    }
-    
-    private static IQueryable<Report> OrderReportsByDate(IQueryable<Report> reports, bool descending)
-    {
-        if (descending) return reports.OrderByDescending(r => r.CreationDate);
-        return reports.OrderBy(r => r.CreationDate);
-    }
-    
-    #endregion
 }

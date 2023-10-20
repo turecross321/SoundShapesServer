@@ -147,7 +147,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             if (oldVersion < 28)
             {
                 // Added the Queue event type
-                if (newEvent.EventType >= EventType.Queue)
+                if (newEvent.EventType >= EventType.LevelQueue)
                 {
                     newEvent.EventType += 1;
                 }

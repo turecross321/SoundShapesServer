@@ -1,4 +1,6 @@
 using Bunkum.Core.Storage;
+using SoundShapesServer.Extensions;
+using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Framework;
@@ -98,86 +100,7 @@ public partial class GameDatabaseContext
     
     public (GameAlbum[], int) GetPaginatedAlbums(AlbumOrderType order, bool descending, int from, int count)
     {
-        IQueryable<GameAlbum> orderedAlbums = GetAlbums(order, descending);
-
-        GameAlbum[] paginatedAlbums = PaginationHelper.PaginateAlbums(orderedAlbums, from, count);
-        return (paginatedAlbums, orderedAlbums.Count());
+        IQueryable<GameAlbum> albums = _realm.All<GameAlbum>().OrderAlbums(order, descending);
+        return (albums.Paginate(from, count), albums.Count());
     }
-
-    private IQueryable<GameAlbum> GetAlbums(AlbumOrderType order, bool descending)
-    {
-        IQueryable<GameAlbum> albums = _realm.All<GameAlbum>();
-        IQueryable<GameAlbum> orderedAlbums = OrderAlbums(albums, order, descending);
-
-        return orderedAlbums;
-    }
-
-    #region Album Ordering
-
-    private static IQueryable<GameAlbum> OrderAlbums(IQueryable<GameAlbum> albums, AlbumOrderType order, bool descending)
-    {
-        return order switch
-        {
-            AlbumOrderType.CreationDate => OrderAlbumsByCreationDate(albums, descending),
-            AlbumOrderType.ModificationDate => OrderAlbumsByModificationDate(albums, descending),
-            AlbumOrderType.Plays => OrderAlbumsByPlays(albums, descending),
-            AlbumOrderType.UniquePlays => OrderAlbumsByUniquePlays(albums, descending),
-            AlbumOrderType.Levels => OrderAlbumsByLevelsCount(albums, descending),
-            AlbumOrderType.FileSize => OrderAlbumsByFileSize(albums, descending),
-            AlbumOrderType.Difficulty => OrderAlbumsByDifficulty(albums, descending),
-            _ => OrderAlbumsByCreationDate(albums, descending)
-        };
-    }
-
-    private static IQueryable<GameAlbum> OrderAlbumsByCreationDate(IQueryable<GameAlbum> albums, bool descending)
-    {
-        if (descending) return albums.OrderByDescending(a => a.CreationDate);
-        return albums.OrderBy(a => a.CreationDate);
-    }
-    private static IQueryable<GameAlbum> OrderAlbumsByModificationDate(IQueryable<GameAlbum> albums, bool descending)
-    {
-        if (descending) return albums.OrderByDescending(a => a.ModificationDate);
-        return albums.OrderBy(a => a.ModificationDate);
-    }
-    private static IQueryable<GameAlbum> OrderAlbumsByPlays(IQueryable<GameAlbum> albums, bool descending)
-    {
-        if (descending) return albums
-            .AsEnumerable()
-            .OrderByDescending(a=> a.Levels.Sum(l=>l.PlaysCount)).AsQueryable();
-        return albums.OrderBy(a=> a.Levels.Sum(l=>l.PlaysCount)).AsQueryable();
-    }
-    private static IQueryable<GameAlbum> OrderAlbumsByUniquePlays(IQueryable<GameAlbum> albums, bool descending)
-    {
-        if (descending) return albums
-            .AsEnumerable()
-            .OrderByDescending(a=> a.Levels.Sum(l=>l.UniquePlaysCount)).AsQueryable();
-        return albums.OrderBy(a=> a.Levels.Sum(l=>l.UniquePlaysCount)).AsQueryable();
-    }
-    private static IQueryable<GameAlbum> OrderAlbumsByLevelsCount(IQueryable<GameAlbum> albums, bool descending)
-    {
-        if (descending) return albums
-            .AsEnumerable()
-            .OrderByDescending(a => a.Levels.Count)
-            .AsQueryable();
-        return albums
-            .AsEnumerable()
-            .OrderBy(a => a.Levels.Count)
-            .AsQueryable();
-    }
-    private static IQueryable<GameAlbum> OrderAlbumsByFileSize(IQueryable<GameAlbum> albums, bool descending)
-    {
-        if (descending) return albums
-            .AsEnumerable()
-            .OrderByDescending(a=> a.Levels.Sum(l=>l.FileSize)).AsQueryable();
-        return albums.OrderBy(a=> a.Levels.Sum(l=>l.FileSize)).AsQueryable();
-    }
-    private static IQueryable<GameAlbum> OrderAlbumsByDifficulty(IQueryable<GameAlbum> albums, bool descending)
-    {
-        if (descending) return albums
-            .AsEnumerable()
-            .OrderByDescending(a=> a.Levels.Sum(l=>l.Difficulty)).AsQueryable();
-        return albums.OrderBy(a=> a.Levels.Sum(l=>l.Difficulty)).AsQueryable();
-    }
-    
-    #endregion
 }
