@@ -30,6 +30,6 @@ public class EventsEndpoint : EndpointGroup
         EventOrderType order = EventHelper.GetEventOrder(context);
         
         (GameEvent[] events, int totalEvents) = database.GetPaginatedEvents(order, descending, filters, from, count, user);
-        return new ListResponse<EventResponse>(events.Select(e => new EventResponse(e)), totalEvents, from, count);
+        return new ListResponse<EventResponse>(events.Select(e => new EventResponse(database, e)), totalEvents, from, count);
     }
 }

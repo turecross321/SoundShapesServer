@@ -1,9 +1,7 @@
-using System.Security.Cryptography;
 using Bunkum.Core.Storage;
 using Newtonsoft.Json.Linq;
 using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
@@ -11,7 +9,6 @@ using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.LevelHelper;
 using static SoundShapesServer.Helpers.ResourceHelper;
@@ -23,7 +20,18 @@ public partial class GameDatabaseContext
     public GameLevel CreateLevel(GameUser user, PublishLevelRequest request, PlatformType uploadPlatform, bool createEvent = true, string? levelId = null)
     {
         levelId ??= GenerateLevelId();
-        GameLevel level = new(levelId, user, AdhereToLevelNameCharacterLimit(request.Name), request.Language, request.FileSize, request.CreationDate, request.Visibility, uploadPlatform);
+        GameLevel level = new GameLevel()
+        {
+            Id = levelId,
+            Author = user,
+            Name = request.Name,
+            Language = request.Language,
+            CreationDate = request.CreationDate,
+            FileSize = request.FileSize,
+            ModificationDate = DateTimeOffset.UtcNow,
+            Visibility = LevelVisibility.Public,
+            UploadPlatform = uploadPlatform,
+        };
 
         _realm.Write(() =>
         {
@@ -31,7 +39,7 @@ public partial class GameDatabaseContext
             user.LevelsCount = user.Levels.Count();
         });
 
-        if (createEvent) CreateEvent(user, EventType.LevelPublish, uploadPlatform, null, level);
+        if (createEvent) CreateEvent(user, EventType.LevelPublish, uploadPlatform, EventDataType.Level, level.Id);
         
         return level;
     }
@@ -68,7 +76,7 @@ public partial class GameDatabaseContext
 
     private bool SetLevelInfo(GameLevel level, byte[] levelFile)
     {
-        JObject? deCompressedLevel = LevelFileToJObject(levelFile);
+        JObject? deCompressedLevel = levelFile.LevelFileToJObject();
         if (deCompressedLevel == null)
             return false;
         
@@ -111,7 +119,7 @@ public partial class GameDatabaseContext
     public ApiOkResponse UploadLevelResource(IDataStore dataStore, GameLevel level,
         byte[] file, FileType fileType)
     {
-        if (fileType == FileType.Image && !IsByteArrayPng(file))
+        if (fileType == FileType.Image && !file.IsPng())
             return ApiBadRequestError.FileIsNotPng;
 
         if (fileType == FileType.Level)
@@ -161,6 +169,7 @@ public partial class GameDatabaseContext
     {
         RemoveLevelResources(level, dataStore);
         RemoveAllReportsWithContentLevel(level);
+        RemoveEventsOnLevel(level);
         
         _realm.Write(() =>
         {

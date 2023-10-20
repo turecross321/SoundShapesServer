@@ -1,13 +1,10 @@
 using Bunkum.Core.Storage;
-using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Levels;
-using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.PaginationHelper;
 
 namespace SoundShapesServer.Database;
 
@@ -58,7 +55,7 @@ public partial class GameDatabaseContext
             _realm.RemoveRange(user.PlayedLevelRelations);
             _realm.RemoveRange(user.QueuedLevelRelations);
             _realm.RemoveRange(user.Events);
-            _realm.RemoveRange(user.EventsWhereUserIsRecipient);
+            RemoveEventsOnUser(user);
             _realm.RemoveRange(user.LeaderboardEntries);
             _realm.RemoveRange(user.NewsEntries);
 
@@ -132,7 +129,7 @@ public partial class GameDatabaseContext
             user.HasFinishedRegistration = true;
         });
         
-        CreateEvent(user, EventType.AccountRegistration, PlatformType.Unknown, user);
+        CreateEvent(user, EventType.AccountRegistration, PlatformType.Unknown, EventDataType.User, user.Id);
     }
     
     public void SetUserEmail(GameUser user, string email)

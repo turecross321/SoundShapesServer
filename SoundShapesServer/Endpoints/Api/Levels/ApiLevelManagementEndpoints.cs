@@ -14,7 +14,6 @@ using SoundShapesServer.Responses.Api.Responses.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.PermissionHelper;
 
 namespace SoundShapesServer.Endpoints.Api.Levels;
 
@@ -82,7 +81,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
 
         if (level.Author.Id != user.Id)
         {
-            if (IsUserModeratorOrMore(user) == false)
+            if (user.PermissionsType > PermissionsType.Moderator)
                 return ApiUnauthorizedError.NoEditPermission;
         }
 
@@ -103,7 +102,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
 
         if (level.Author.Id != user.Id)
         {
-            if (IsUserModeratorOrMore(user) == false)
+            if (user.PermissionsType >= PermissionsType.Moderator)
                 return ApiUnauthorizedError.NoDeletionPermission;
         }
 

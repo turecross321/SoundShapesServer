@@ -6,7 +6,6 @@ using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Extensions;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
@@ -83,18 +82,9 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
     {
         (int from, int count, bool descending) = context.GetPageData();
 
-        string? authorString = context.QueryString["author"];
-        GameUser? author = null;
-        if (authorString != null)
-            author = database.GetUserWithId(authorString);
-        
-        string? recipientString = context.QueryString["recipient"];
-        GameUser? recipient = null;
-        if (recipientString != null)
-            recipient = database.GetUserWithId(recipientString);
-
-        bool? revoked = null;
-        if (bool.TryParse(context.QueryString["revoked"], out bool revokedTemp)) revoked = revokedTemp;
+        GameUser? author = context.QueryString["author"].ToUser(database);
+        GameUser? recipient = context.QueryString["recipient"].ToUser(database);
+        bool? revoked = context.QueryString["revoked"].ToBool();
 
         PunishmentFilters filters = new (author, recipient, revoked);
         (Punishment[] punishments, int totalPunishments) = database.GetPaginatedPunishments(PunishmentOrderType.CreationDate, descending, filters, from, count);

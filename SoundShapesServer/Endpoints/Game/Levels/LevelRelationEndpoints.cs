@@ -25,7 +25,7 @@ public class LevelRelationEndpoints : EndpointGroup
         GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
         if (userToGetLevelsFrom == null) return null;
         
-        (GameLevel[] levels, int totalLevels) = database.GetPaginatedLevels(LevelOrderType.DoNotOrder, true, new LevelFilters(likedOrQueuedByUser: userToGetLevelsFrom), from, count, user);
+        (GameLevel[] levels, int totalLevels) = database.GetPaginatedLevels(LevelOrderType.DoNotOrder, true, new LevelFilters{LikedOrQueuedByUser = userToGetLevelsFrom}, from, count, user);
         
         return new ListResponse<RelationLevelResponse>(levels.Select(l=>new RelationLevelResponse(l, user)), totalLevels, from, count);
     }
@@ -38,7 +38,7 @@ public class LevelRelationEndpoints : EndpointGroup
         GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
         if (userToGetLevelsFrom == null) return null;
         
-        (GameLevel[] levels, int totalLevels) = database.GetPaginatedLevels(LevelOrderType.DoNotOrder, true, new LevelFilters(likedByUser: userToGetLevelsFrom), from, count, user);
+        (GameLevel[] levels, int totalLevels) = database.GetPaginatedLevels(LevelOrderType.DoNotOrder, true, new LevelFilters{LikedByUser = userToGetLevelsFrom}, from, count, user);
         
         return new ListResponse<RelationLevelResponse>(levels.Select(l=>new RelationLevelResponse(l, user)), totalLevels, from, count);
     }

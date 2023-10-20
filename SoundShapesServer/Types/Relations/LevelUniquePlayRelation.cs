@@ -6,18 +6,6 @@ namespace SoundShapesServer.Types.Relations;
 
 public class LevelUniquePlayRelation : RealmObject
 {
-    public LevelUniquePlayRelation(GameUser user, GameLevel level, DateTimeOffset date)
-    {
-        User = user;
-        Level = level;
-        Date = date;
-    }
-
-    // Realm cries if this doesn't exist
-#pragma warning disable CS8618
-    public LevelUniquePlayRelation() {}
-#pragma warning restore CS8618
-    
     public GameUser User { get; init; }
     public GameLevel Level { get; init; }
     public DateTimeOffset Date { get; set; }

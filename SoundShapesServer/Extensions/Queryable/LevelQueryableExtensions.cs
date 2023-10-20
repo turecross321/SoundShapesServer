@@ -13,7 +13,7 @@ public static class LevelQueryableExtensions
     {
         if (filters.InDailyDate != null || filters.InLatestDaily == true)
         {
-            IEnumerable<DailyLevel> dailyLevelObjects = database.GetDailyLevels(DailyLevelOrderType.Date, true, new DailyLevelFilters(filters.InDailyDate, filters.InLatestDaily));
+            IEnumerable<DailyLevel> dailyLevelObjects = database.GetDailyLevels(DailyLevelOrderType.Date, true, new DailyLevelFilters{Date = filters.InDailyDate, LatestDate = filters.InLatestDaily});
             IEnumerable<GameLevel> temp = new List<GameLevel>();
             temp = dailyLevelObjects.Aggregate(temp, (current, d) => current.Append(d.Level));
 
@@ -152,7 +152,6 @@ public static class LevelQueryableExtensions
             LevelOrderType.Queues => levels.OrderByDynamic(l => l.QueuesCount, descending),
             LevelOrderType.FileSize => levels.OrderByDynamic(l => l.FileSize, descending),
             LevelOrderType.Difficulty => levels.OrderByDynamic(l => l.Difficulty, descending),
-            LevelOrderType.Relevance => levels.OrderByDynamic(l => l.CreationDate.ToUnixTimeSeconds() + l.UniquePlaysCount * 5000, descending),
             LevelOrderType.Random => levels.OrderLevelsByRandom(descending),
             LevelOrderType.TotalDeaths => levels.OrderByDynamic(l => l.TotalDeaths, descending),
             LevelOrderType.TotalPlayTime => levels.OrderByDynamic(l => l.TotalPlayTime, descending),

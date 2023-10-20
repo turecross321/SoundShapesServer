@@ -1,11 +1,10 @@
 namespace SoundShapesServer.Requests.Api;
 
-// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiCreateNewsEntryRequest
 {
-    public string? Language { get; set; }
-    public string? Title { get; set; }
-    public string? Summary { get; set; }
-    public string? FullText { get; set; }
-    public string? Url { get; set; }
+    public string Language { get; set; } = null!;
+    public string Title { get; set; } = null!;
+    public string Summary { get; set; } = null!;
+    public string FullText { get; set; } = null!;
+    public string Url { get; set; } = null!;
 }

@@ -1,4 +1,5 @@
 using Bunkum.RealmDatabase;
+using MongoDB.Bson;
 using Realms;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
@@ -17,11 +18,11 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 71;
+    protected override ulong SchemaVersion => 75;
 
     protected override List<Type> SchemaTypes => new()
     {
-        typeof(FollowRelation),
+        typeof(UserFollowRelation),
         typeof(LevelLikeRelation),
         typeof(LevelQueueRelation),
         typeof(LevelPlayRelation),
@@ -110,6 +111,11 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                 // just make it empty because i cant be bothered making a html to xml thing just for a migration
                 newAlbum.LinerNotes = "<linerNotes></linerNotes>";
             }
+
+            if (oldVersion < 75)
+            {
+                newAlbum.Author = migration.NewRealm.All<GameUser>().First(u => u.Id == GameDatabaseContext.AdminId);
+            }
         }
         
         IQueryable<GameToken> newTokens = migration.NewRealm.All<GameToken>();
@@ -136,40 +142,25 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             }
         }
         
-        IQueryable<dynamic> oldEvents = migration.OldRealm.DynamicApi.All("GameEvent");
-        IQueryable<GameEvent> events = migration.NewRealm.All<GameEvent>();
-
-        for (int i = 0; i < events.Count(); i++)
+        IQueryable<dynamic> oldQueueRelations = migration.OldRealm.DynamicApi.All("LevelQueueRelation");
+        IQueryable<LevelQueueRelation> newQueueRelations = migration.NewRealm.All<LevelQueueRelation>();
+        for (int i = 0; i < newQueueRelations.Count(); i++)
         {
-            dynamic oldEvent = oldEvents.ElementAt(i);
-            GameEvent newEvent = events.ElementAt(i);
-            
-            if (oldVersion < 28)
-            {
-                // Added the Queue event type
-                if (newEvent.EventType >= EventType.LevelQueue)
-                {
-                    newEvent.EventType += 1;
-                }
-            }
+            dynamic oldRelation = oldQueueRelations.ElementAt(i);
+            LevelQueueRelation newRelation = newQueueRelations.ElementAt(i);
+        }
 
-            if (oldVersion < 35)
-            {
-                // Renamed EventType to _EventType
-                newEvent._EventType = (int)oldEvent.EventType;
-            }
-
-            if (oldVersion < 48)
-            {
-                // Renamed Date to CreationDate
-                newEvent.CreationDate = (DateTimeOffset)oldEvent.Date;
-            }
-
-            if (oldVersion < 58)
-            {
-                if (newEvent.ContentLeaderboardEntry != null)
-                    newEvent.ContentLevel = newEvent.ContentLeaderboardEntry.Level;
-            }
+        IQueryable<dynamic> oldFollowRelations;
+        if (oldVersion < 72) 
+            oldFollowRelations = migration.OldRealm.DynamicApi.All("FollowRelation");
+        else 
+            oldFollowRelations = migration.OldRealm.DynamicApi.All("UserFollowRelation");
+        
+        IQueryable<UserFollowRelation> newFollowRelations = migration.NewRealm.All<UserFollowRelation>();
+        for (int i = 0; i < newFollowRelations.Count(); i++)
+        {
+            dynamic oldRelation = oldFollowRelations.ElementAt(i);
+            UserFollowRelation newRelation = newFollowRelations.ElementAt(i);
         }
         
         IQueryable<dynamic> oldLeaderboardEntries = migration.OldRealm.DynamicApi.All("LeaderboardEntry");
@@ -217,6 +208,15 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 if (newEntry.User == null)
                     migration.NewRealm.Remove(newEntry);
+            }
+
+            if (oldVersion < 72)
+            {
+                // switched from sha512 string to objectid
+                // this is a dumb workaround to keep the ids
+                string id = (string)oldEntry.Id;
+                id = new string(id.Where(c => c != '-').Take(24).ToArray());
+                newEntry.Id = ObjectId.Parse(id);
             }
         }
 
@@ -289,6 +289,134 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             if (oldVersion < 62)
             {
                 migration.NewRealm.Remove(newIp);
+            }
+        }
+        
+        IQueryable<dynamic> oldEvents = migration.OldRealm.DynamicApi.All("GameEvent");
+        IQueryable<GameEvent> events = migration.NewRealm.All<GameEvent>();
+
+        for (int i = 0; i < events.Count(); i++)
+        {
+            dynamic oldEvent = oldEvents.ElementAt(i);
+            GameEvent newEvent = events.ElementAt(i);
+            
+            if (oldVersion < 28)
+            {
+                // Added the Queue event type
+                if (newEvent.EventType >= EventType.LevelQueue)
+                {
+                    newEvent.EventType += 1;
+                }
+            }
+
+            if (oldVersion < 35)
+            {
+                // Renamed EventType to _EventType
+                newEvent._EventType = (int)oldEvent.EventType;
+            }
+
+            if (oldVersion < 48)
+            {
+                // Renamed Date to CreationDate
+                newEvent.CreationDate = (DateTimeOffset)oldEvent.Date;
+            }
+
+            if (oldVersion < 72)
+            {
+                if (oldEvent.ContentUser == null && oldEvent.ContentLevel == null &&
+                    oldEvent.ContentLeaderboardEntry == null)
+                {
+                    migration.NewRealm.Remove(newEvent);
+                    continue;
+                }
+                
+                newEvent.Id = ObjectId.GenerateNewId();
+                dynamic oldUser = oldEvent.Actor;
+                
+                string? oldUserId = (string?)oldUser.Id;
+                if (oldUserId == null)
+                {
+                    migration.NewRealm.Remove(newEvent);
+                    continue;
+                }
+
+                dynamic oldContentLevel = oldEvent.ContentLevel;
+                string? oldContentLevelId = (string?)oldContentLevel?.Id;
+                
+                dynamic oldContentUser = oldEvent.ContentUser;
+                string? oldContentUserId = (string?)oldContentUser?.Id;
+                
+                dynamic oldContentLeaderboardEntry = oldEvent.ContentLeaderboardEntry;
+                string? oldContentLeaderboardEntryId = (string?)oldContentLeaderboardEntry?.Id;
+                ObjectId newLeaderboardEntryId = ObjectId.Empty;
+                if (oldContentLeaderboardEntryId != null)
+                {
+                    string id = oldContentLeaderboardEntryId;
+                    id = new string(id.Where(c => c != '-').Take(24).ToArray());
+                    newLeaderboardEntryId = ObjectId.Parse(id);
+                }
+
+                bool remove = false;
+                switch ((int)oldEvent._EventType)
+                {
+                    case 0: // publishing
+                    case 1: // like
+                    case 2: // queue
+                        if (oldContentLevelId == null ||
+                            newLevels.FirstOrDefault(l => l.Id == oldContentLevelId) == null)
+                            remove = true;
+                        break;
+                    case 3: // follow
+                        if (oldContentUserId == null || newUsers.FirstOrDefault(l => l.Id == oldContentUserId) == null)
+                            remove = true;
+                        break;
+                    case 4: // score submission
+
+                        if (oldContentLevelId == null || newLevels.FirstOrDefault(l => l.Id == oldContentLevelId) == null || 
+                            oldContentLeaderboardEntryId == null || newLeaderboardEntries.FirstOrDefault(e => e.Id == newLeaderboardEntryId) == null)
+                            remove = true;
+                        break;
+                }
+
+                if (remove)
+                {
+                    migration.NewRealm.Remove(newEvent);
+                    continue;
+                }
+                
+                switch ((int)oldEvent._EventType)
+                {
+                    case 0: // publishing
+                        newEvent.EventType = EventType.LevelPublish;
+                        newEvent.DataType = EventDataType.Level;
+                        newEvent.DataId = oldContentLevelId!;
+                        break;
+                    case 1: // like
+                        newEvent.EventType = EventType.LevelLike;
+                        newEvent.DataType = EventDataType.Level;
+                        newEvent.DataId = oldContentLevelId!;
+                        break;
+                    case 2: // queue
+                        newEvent.EventType = EventType.LevelQueue;
+                        newEvent.DataType = EventDataType.Level;
+                        newEvent.DataId = oldContentLevelId!;
+                        break;
+                    case 3: // follow
+                        newEvent.EventType = EventType.UserFollow;
+                        newEvent.DataType = EventDataType.User;
+                        newEvent.DataId = oldContentUserId!;
+                        break;
+                    case 4: // score submission
+                        newEvent.EventType = EventType.ScoreSubmission;
+                        newEvent.DataType = EventDataType.LeaderboardEntry;
+                        newEvent.DataId = newLeaderboardEntryId.ToString()!;
+                        break;
+                    case 5: // account registration
+                        newEvent.EventType = EventType.AccountRegistration;
+                        newEvent.DataType = EventDataType.User;
+                        newEvent.DataId = oldUserId;
+                        break;
+                }
             }
         }
     }

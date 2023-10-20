@@ -1,13 +1,8 @@
-using SoundShapesServer.Database;
-using SoundShapesServer.Types;
-using SoundShapesServer.Types.Events;
-using SoundShapesServer.Types.Notifications;
-
 namespace SoundShapesServer.Helpers;
 
 public static class NotificationHelper
 {
-    public static List<NotificationType> GetNotificationTypesFromEvent(GameDatabaseContext database, GameEvent gameEvent)
+    /*public static List<NotificationType> GetNotificationTypesFromEvent(GameDatabaseContext database, GameEvent gameEvent)
     {
         List<NotificationType> types = new List<NotificationType>();
         
@@ -47,5 +42,5 @@ public static class NotificationHelper
     private static readonly int[] playMilestones =
     {
         50, 100, 200, 500, 1000
-    };
+    };*/
 }

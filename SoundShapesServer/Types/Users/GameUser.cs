@@ -1,8 +1,6 @@
 using Bunkum.Core.RateLimit;
 using Realms;
-using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Leaderboard;
@@ -62,9 +60,9 @@ public class GameUser : RealmObject, IRateLimitUser
     public int PlayedLevelsCount { get; set; }
     [Backlink(nameof(GameLevel.UniqueCompletions))] public IQueryable<GameLevel> CompletedLevels { get; }
     public int CompletedLevelsCount { get; set; }
-    [Backlink(nameof(FollowRelation.Recipient))] public IQueryable<FollowRelation> FollowersRelations { get; }
+    [Backlink(nameof(UserFollowRelation.Recipient))] public IQueryable<UserFollowRelation> FollowersRelations { get; }
     public int FollowersCount { get; set; }
-    [Backlink(nameof(FollowRelation.Follower))] public IQueryable<FollowRelation> FollowingRelations { get; }
+    [Backlink(nameof(UserFollowRelation.Follower))] public IQueryable<UserFollowRelation> FollowingRelations { get; }
     public int FollowingCount { get; set; }
     [Backlink(nameof(GameToken.User))] public IQueryable<GameToken> Tokens { get; }
     [Backlink(nameof(GameLevel.Author))] public IQueryable<GameLevel> Levels { get; }
@@ -73,7 +71,6 @@ public class GameUser : RealmObject, IRateLimitUser
     [Backlink(nameof(LeaderboardEntry.User))] public IQueryable<LeaderboardEntry> LeaderboardEntries { get; }
     [Backlink(nameof(GameEvent.Actor))] public IQueryable<GameEvent> Events { get; }
     public int EventsCount { get; set; }
-    [Backlink(nameof(GameEvent.ContentUser))] public IQueryable<GameEvent> EventsWhereUserIsRecipient { get; }
     [Backlink(nameof(NewsEntry.Author))] public IQueryable<NewsEntry> NewsEntries { get; }
     public int Deaths { get; set; }
     public long TotalPlayTime { get; set; }

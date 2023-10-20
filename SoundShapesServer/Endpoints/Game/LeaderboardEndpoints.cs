@@ -12,7 +12,6 @@ using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.LeaderboardHelper;
 
 namespace SoundShapesServer.Endpoints.Game;
 
@@ -38,7 +37,7 @@ public class LeaderboardEndpoints : EndpointGroup
         if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
             return HttpStatusCode.NotFound;
 
-        LeaderboardSubmissionRequest deSerializedRequest = DeSerializeSubmission(body);
+        LeaderboardSubmissionRequest deSerializedRequest = LeaderboardSubmissionRequest.DeSerializeSubmission(body);
         
         
         if (deSerializedRequest.Completed) database.AddCompletionToLevel(user, level);
@@ -65,11 +64,8 @@ public class LeaderboardEndpoints : EndpointGroup
         LeaderboardFilters filters = new (level, obsolete: false, completed: true);
         (LeaderboardEntry[] paginatedEntries, int totalEntries) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, from, count, user);
 
-        List<LeaderboardEntryResponse> responses = 
-            paginatedEntries.Select((t, i) => 
-                new LeaderboardEntryResponse(t, CalculateEntryPlacement(totalEntries, from, i, descending, false))).ToList();
-
-        return new ListResponse<LeaderboardEntryResponse>(responses, totalEntries, from, count);
+        return new ListResponse<LeaderboardEntryResponse>(
+            paginatedEntries.Select(t => new LeaderboardEntryResponse(t)), totalEntries, from, count);
     }
 
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near")] // campaign levels
@@ -84,6 +80,6 @@ public class LeaderboardEndpoints : EndpointGroup
 
         (LeaderboardEntry[] paginatedEntries, int _) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 1, user);
         
-        return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e, e.Position() + 1)).ToArray();
+        return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e)).ToArray();
     }
 }

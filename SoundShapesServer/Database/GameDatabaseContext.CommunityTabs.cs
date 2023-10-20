@@ -1,4 +1,5 @@
 using Bunkum.Core.Storage;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
@@ -59,7 +60,7 @@ public partial class GameDatabaseContext
     
     public ApiOkResponse UploadCommunityTabResource(IDataStore dataStore, CommunityTab communityTab, byte[] file)
     {
-        if (!IsByteArrayPng(file)) 
+        if (!file.IsPng()) 
             return ApiBadRequestError.FileIsNotPng;
 
         string key = GetCommunityTabResourceKey(communityTab.Id);

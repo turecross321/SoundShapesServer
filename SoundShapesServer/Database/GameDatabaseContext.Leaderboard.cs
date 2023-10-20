@@ -1,4 +1,4 @@
-using SoundShapesServer.Extensions;
+using MongoDB.Bson;
 using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
@@ -6,7 +6,6 @@ using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.PaginationHelper;
 
 namespace SoundShapesServer.Database;
 
@@ -16,7 +15,6 @@ public partial class GameDatabaseContext
     {
         LeaderboardEntry entry = new()
         {
-            Id = GenerateGuid(),
             User = user,
             Level = level,
             Score = request.Score,
@@ -35,7 +33,7 @@ public partial class GameDatabaseContext
         });
         
         SetLevelPlayTime(level);
-        CreateEvent(user, EventType.ScoreSubmission, platformType, null, level, entry);
+        CreateEvent(user, EventType.ScoreSubmission, platformType, EventDataType.LeaderboardEntry, entry.Id.ToString()!);
         SetUserPlayTime(user);
         
         return entry;
@@ -51,9 +49,11 @@ public partial class GameDatabaseContext
         });
     }
     
-    public LeaderboardEntry? GetLeaderboardEntryWithId(string id)
+    public LeaderboardEntry? GetLeaderboardEntry(string id)
     {
-        return _realm.All<LeaderboardEntry>().FirstOrDefault(e => e.Id == id);
+        if (!ObjectId.TryParse(id, out ObjectId objectId)) 
+            return null;
+        return _realm.All<LeaderboardEntry>().FirstOrDefault(e => e.Id == objectId);
     }
 
     public (LeaderboardEntry[], int) GetPaginatedLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters, int from, int count, GameUser? accessor)

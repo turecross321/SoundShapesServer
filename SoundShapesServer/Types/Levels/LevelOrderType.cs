@@ -12,7 +12,6 @@ public enum LevelOrderType
     Queues,
     FileSize,
     Difficulty,
-    Relevance,
     Random,
     TotalDeaths,
     TotalPlayTime,

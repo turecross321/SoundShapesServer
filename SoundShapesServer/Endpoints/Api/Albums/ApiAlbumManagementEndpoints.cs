@@ -22,7 +22,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     [DocSummary("Creates an album.")]
     public ApiResponse<ApiAlbumResponse> CreateAlbum(RequestContext context, GameDatabaseContext database, GameUser user, ApiCreateAlbumRequest body)
     {
-        GameAlbum album = database.CreateAlbum(body);
+        GameAlbum album = database.CreateAlbum(body, user);
         return new ApiAlbumResponse(album);
     }
 
@@ -36,7 +36,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
         if (album == null) 
             return ApiNotFoundError.AlbumNotFound;
         
-        GameAlbum editedAlbum = database.EditAlbum(album, body);
+        GameAlbum editedAlbum = database.EditAlbum(album, body, user);
         return new ApiAlbumResponse(editedAlbum);
     }
 

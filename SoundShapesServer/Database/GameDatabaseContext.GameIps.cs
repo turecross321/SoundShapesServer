@@ -1,6 +1,4 @@
-using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Users;

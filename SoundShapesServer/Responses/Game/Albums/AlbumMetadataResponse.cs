@@ -11,7 +11,7 @@ public class AlbumMetadataResponse : IResponse
         LinerNotesWrapper linerNoteWrapper = new (AlbumHelper.XmlToLinerNotes(album.LinerNotes));
         string linerNotesString = JsonConvert.SerializeObject(linerNoteWrapper);
         
-        Author = album.Author;
+        Author = album.Author.Username;
         LinerNotes = linerNotesString;
         SidePanelUrl = ResourceHelper.GetAlbumResourceUrl(album.Id, AlbumResourceType.SidePanel);
         CreationDate = album.CreationDate.ToString();

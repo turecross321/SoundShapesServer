@@ -9,11 +9,11 @@ public static class UserQueryableExtensions
     {
         if (filters.IsFollowingUser != null)
         {
-            IQueryable<FollowRelation> relations = filters.IsFollowingUser.FollowersRelations;
+            IQueryable<UserFollowRelation> relations = filters.IsFollowingUser.FollowersRelations;
 
             List<GameUser> tempResponse = new();
 
-            foreach (FollowRelation relation in relations)
+            foreach (UserFollowRelation relation in relations)
             {
                 GameUser follower = relation.Follower;
                 GameUser? responseUser = users.FirstOrDefault(u => u.Id == follower.Id);
@@ -25,11 +25,11 @@ public static class UserQueryableExtensions
         
         if (filters.FollowedByUser != null)
         {
-            IQueryable<FollowRelation> relations = filters.FollowedByUser.FollowingRelations;
+            IQueryable<UserFollowRelation> relations = filters.FollowedByUser.FollowingRelations;
 
             List<GameUser> tempResponse = new();
 
-            foreach (FollowRelation relation in relations)
+            foreach (UserFollowRelation relation in relations)
             {
                 GameUser recipient = relation.Recipient;
                 GameUser? responseUser = users.FirstOrDefault(u => u.Id == recipient.Id);

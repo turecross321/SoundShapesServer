@@ -1,6 +1,8 @@
 using System.Net.Http.Json;
 using Newtonsoft.Json.Linq;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Responses.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Levels;
@@ -24,7 +26,7 @@ public class LevelTests: ServerTest
         context.Database.Refresh();
 
         // Filtration
-        IEnumerable<GameLevel> levels = context.Database.GetLevels(LevelOrderType.CreationDate, true, new LevelFilters(search: firstLevel.Name), null);
+        IEnumerable<GameLevel> levels = context.Database.GetLevels(LevelOrderType.CreationDate, true, new LevelFilters(){Search = firstLevel.Name}, null);
         Assert.That(levels.Count(), Is.EqualTo(1), "Check if filtration works");
 
         // Ordering
@@ -69,13 +71,11 @@ public class LevelTests: ServerTest
         
         using HttpClient client = context.GetAuthenticatedClient(TokenType.ApiAccess, user);
         
-        // TODO: Fix broken relation checking tests
-        
         // Check Relation
-        /*string relationPayload = $"/api/v1/levels/id/{level.Id}/relationWith/id/{user.Id}";
+        string relationPayload = $"/api/v1/levels/id/{level.Id}/relationWith/id/{user.Id}";
         ApiResponse<ApiLevelRelationResponse>? relationResponse = 
             await client.GetFromJsonAsync<ApiResponse<ApiLevelRelationResponse>>(relationPayload);
-        Assert.That(relationResponse?.Data is { Liked: false, Queued:false }, "Get relation of level");*/
+        Assert.That(relationResponse?.Data is { Liked: false, Queued:false }, "Get relation of level");
         
         // Like Level
         string payload = $"/api/v1/levels/id/{level.Id}/like";

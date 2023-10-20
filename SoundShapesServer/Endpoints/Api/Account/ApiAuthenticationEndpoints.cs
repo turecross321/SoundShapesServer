@@ -6,7 +6,6 @@ using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Extensions;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Requests.Api.Account;
 using SoundShapesServer.Responses.Api.Framework;
@@ -118,9 +117,8 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     public ApiListResponse<ApiIpResponse> GetAddresses(RequestContext context, GameDatabaseContext database, GameUser user)
     {
         (int from, int count, bool _) = context.GetPageData();
-        
-        bool? authorized = null;
-        if (bool.TryParse(context.QueryString["authorized"], out bool authorizedTemp)) authorized = authorizedTemp;
+
+        bool? authorized = context.QueryString["authorized"].ToBool();
         
         (GameIp[] addresses, int totalAddresses) =
             database.GetPaginatedIps(user, authorized, from, count);

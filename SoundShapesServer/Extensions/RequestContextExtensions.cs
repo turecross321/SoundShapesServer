@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Bunkum.Core;
-using JetBrains.Annotations;
 using SoundShapesServer.Database;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Users;
@@ -14,9 +13,7 @@ public static class RequestContextExtensions
         int from = int.Parse(context.QueryString["from"] ?? "0");
         int count = int.Parse(context.QueryString["count"] ?? "9");
 
-        bool descending = descendingIfNull;
-        if (bool.TryParse(context.QueryString["descending"], out bool tempDescending))
-            descending = tempDescending;
+        bool descending = context.QueryString["descending"].ToBool() ?? descendingIfNull;
         
         return (from, count, descending);
     }

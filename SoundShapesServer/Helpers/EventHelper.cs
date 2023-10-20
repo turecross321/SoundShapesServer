@@ -1,5 +1,6 @@
 using Bunkum.Core;
 using SoundShapesServer.Database;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
@@ -21,44 +22,10 @@ public static class EventHelper
 
     public static EventFilters GetEventFilters(RequestContext context, GameDatabaseContext database)
     {
-        string? actorIds = context.QueryString["actors"];
-
-        List<GameUser>? actors = null;
-
-        if (actorIds != null)
-        {
-            actors = new List<GameUser>();
-
-            // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (string actorId in actorIds.Split(","))
-            {
-                GameUser? actor = database.GetUserWithId(actorId);
-                if (actor != null) actors.Add(actor);
-            }
-        }
-
-        string? onUserId = context.QueryString["onUser"];
-        GameUser? onUser = null;
-        if (onUserId != null)
-        {
-            onUser = database.GetUserWithId(onUserId);
-        }
-        
-        string? levelIds = context.QueryString["onLevel"];
-        GameLevel? onLevel = null;
-        if (levelIds != null)
-        {
-            onLevel = database.GetLevelWithId(levelIds);
-        }
-
-        string? eventTypesString = context.QueryString["eventTypes"];
-        List<EventType>? eventTypes = null;
-
-        if (eventTypesString != null)
-        {
-            eventTypes = new List<EventType>();
-            eventTypes.AddRange(eventTypesString.Split(",").Select(Enum.Parse<EventType>));
-        }
+        List<GameUser>? actors = context.QueryString["actors"].ToUsers(database);
+        GameUser? onUser = context.QueryString["onUser"].ToUser(database);
+        GameLevel? onLevel = context.QueryString["onLevel"].ToLevel(database);
+        List<EventType>? eventTypes = context.QueryString["eventTypes"].ToEnumList<EventType>();
 
         return new EventFilters(actors?.ToArray(), onUser, onLevel, eventTypes?.ToArray());
     }

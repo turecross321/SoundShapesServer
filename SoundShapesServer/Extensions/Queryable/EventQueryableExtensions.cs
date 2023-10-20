@@ -1,3 +1,4 @@
+using SoundShapesServer.Database;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Levels;
@@ -7,7 +8,7 @@ namespace SoundShapesServer.Extensions.Queryable;
 
 public static class EventQueryableExtensions
 {
-    public static IQueryable<GameEvent> FilterEvents(this IQueryable<GameEvent> events, EventFilters filters, GameUser? accessor)
+    public static IQueryable<GameEvent> FilterEvents(this IQueryable<GameEvent> events, GameDatabaseContext database, EventFilters filters, GameUser? accessor)
     {
         if (filters.Actors != null)
         {
@@ -24,12 +25,12 @@ public static class EventQueryableExtensions
         
         if (filters.OnUser != null)
         {
-            events = events.Where(e => e.ContentUser == filters.OnUser);
+            events = events.Where(e => e._DataType == (int)EventDataType.User && e.DataId == filters.OnUser.Id);
         }
         
         if (filters.OnLevel != null)
         {
-            events = events.Where(e => e.ContentLevel == filters.OnLevel);
+            events = events.Where(e => e._DataType == (int)EventDataType.Level && e.DataId == filters.OnLevel.Id);
         }
 
         if (filters.EventTypes != null)
@@ -45,26 +46,20 @@ public static class EventQueryableExtensions
             events = tempEvents.AsQueryable();
         }
         
-        // Automatically remove private results, and remove unlisted results if the level hasn't been specified
-        if ((accessor?.PermissionsType ?? PermissionsType.Default) < PermissionsType.Moderator)
+        if ((accessor?.PermissionsType ?? PermissionsType.Default) < PermissionsType.Moderator
+            && filters.OnLevel is not { Visibility: LevelVisibility.Unlisted })
         {
-            List<GameEvent> nonPublicLevelEventsList = new ();
-
-            foreach (GameEvent e in events)
+            IQueryable<GameEvent> levelEvents = events.Where(e => e._DataType == (int)EventDataType.Level);
+            List<GameEvent> nonPublicLevelEvents = new ();
+            foreach (GameEvent e in levelEvents)
             {
-                if (e.ContentLevel != null && e.ContentLevel.Author.Id != accessor?.Id &&
-                    e.ContentLevel._Visibility != (int)LevelVisibility.Public)
+                GameLevel? level = database.GetLevelWithId(e.DataId);
+                
+                if (level != null && level.Author.Id != accessor?.Id &&
+                    level._Visibility != (int)LevelVisibility.Public)
                 {
-                    nonPublicLevelEventsList.Add(e);
+                    nonPublicLevelEvents.Add(e);
                 }
-            }
-
-            IQueryable<GameEvent> nonPublicLevelEvents = nonPublicLevelEventsList.AsQueryable();
-
-            // If an OnLevel has been specified and the specified level is unlisted, don't count it as non public.
-            if (filters.OnLevel is { Visibility: LevelVisibility.Unlisted })
-            {
-                nonPublicLevelEvents = nonPublicLevelEvents.Where(e => e.ContentLevel != null && e.ContentLevel.Id != filters.OnLevel.Id);
             }
                 
             events = events.AsEnumerable().Except(nonPublicLevelEvents).AsQueryable();

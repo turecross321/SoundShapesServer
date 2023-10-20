@@ -4,9 +4,9 @@ using SoundShapesServer.Types.News;
 
 namespace SoundShapesServer.Responses.Api.Responses;
 
-public class ApiNewsResponse : IApiResponse
+public class ApiNewsEntryResponse : IApiResponse
 {
-    public ApiNewsResponse(NewsEntry entry)
+    public ApiNewsEntryResponse(NewsEntry entry)
     {
         Id = entry.Id;
         CreationDate = entry.CreationDate.ToUnixTimeSeconds();

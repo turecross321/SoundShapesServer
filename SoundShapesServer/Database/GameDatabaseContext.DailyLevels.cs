@@ -1,6 +1,6 @@
-using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
-using SoundShapesServer.Helpers;
+using SoundShapesServer.Types;
+using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 
@@ -24,6 +24,8 @@ public partial class GameDatabaseContext
         {
             _realm.Add(dailyLevel);
         });
+        
+        CreateEvent(user, EventType.DailyCreation, PlatformType.Unknown, EventDataType.Level, level.Id);
 
         return dailyLevel;
     }

@@ -4,7 +4,6 @@ using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Responses.Levels;
 using SoundShapesServer.Responses.Api.Responses.Users;
 using SoundShapesServer.Types.Reports;
-using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Api.Responses.Moderation;
 
@@ -18,7 +17,7 @@ public class ApiReportResponse : IApiResponse
         if (report.ContentLevel != null)
             ContentLevel = new ApiLevelBriefResponse(report.ContentLevel);
         if (report.ContentLeaderboardEntry != null)
-            ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(report.ContentLeaderboardEntry, report.ContentLeaderboardEntry.Position());
+            ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(report.ContentLeaderboardEntry);
         ContentType = report.ContentType;
         ReasonType = report.ReasonType;
         CreationDate = report.CreationDate.ToUnixTimeSeconds();

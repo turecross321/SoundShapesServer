@@ -2,7 +2,6 @@ using System.Reflection;
 using AttribDoc;
 using Bunkum.Core.Services;
 using NotEnoughLogs;
-using SoundShapesServer.Responses.Api.Framework.Documentation;
 using DocumentationGenerator = SoundShapesServer.Documentation.DocumentationGenerator;
 
 namespace SoundShapesServer.Services;

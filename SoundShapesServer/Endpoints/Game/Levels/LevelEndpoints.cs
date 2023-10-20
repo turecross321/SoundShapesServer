@@ -47,7 +47,11 @@ public class LevelEndpoints : EndpointGroup
         // search
         if (query != null && query.StartsWith(searchQuery))
         {
-            filters = new LevelFilters(search: string.Concat(query.Skip(searchQuery.Length)));
+            filters = new LevelFilters()
+            {
+                Search = string.Concat(query.Skip(searchQuery.Length))
+            };
+            
             order = LevelOrderType.UniquePlays;
         }
         
@@ -58,20 +62,30 @@ public class LevelEndpoints : EndpointGroup
             GameUser? usersToGetLevelsFrom = database.GetUserWithId(byUserId);
             if (usersToGetLevelsFrom == null) return new ListResponse<LevelResponse>();
 
-            filters = new LevelFilters(usersToGetLevelsFrom);
+            filters = new LevelFilters
+            {
+                ByUser = usersToGetLevelsFrom
+            };
             order = LevelOrderType.CreationDate;
         }
 
         else switch (searchString)
         {
             case "tagged3":
-                filters = new LevelFilters(inDaily:true, inLatestDaily:true);
+                filters = new LevelFilters
+                {
+                    InDaily = true,
+                    InLatestDaily = true   
+                };
                 order = LevelOrderType.UniquePlays;
                 break;
             // ReSharper disable once StringLiteralTypo
             case "greatesthits":
-                filters = new LevelFilters();
-                order = LevelOrderType.Relevance;
+                filters = new LevelFilters()
+                {
+                    CreatedAfter = DateTimeOffset.UtcNow.AddDays(-7)
+                };
+                order = LevelOrderType.UniquePlays;
                 break;
         }
 

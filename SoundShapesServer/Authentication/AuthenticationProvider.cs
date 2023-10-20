@@ -6,7 +6,6 @@ using SoundShapesServer.Endpoints;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.TokenHelper;
 
 namespace SoundShapesServer.Authentication;
 

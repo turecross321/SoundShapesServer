@@ -1,10 +1,8 @@
-using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Reports;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.PaginationHelper;
 
 namespace SoundShapesServer.Database;
 

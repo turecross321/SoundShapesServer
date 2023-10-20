@@ -1,6 +1,4 @@
-using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Users;

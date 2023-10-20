@@ -1,6 +1,5 @@
 using Realms;
 using SoundShapesServer.Types.Albums;
-using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
@@ -10,24 +9,6 @@ namespace SoundShapesServer.Types.Levels;
 
 public class GameLevel : RealmObject
 {
-    public GameLevel(string id, GameUser author, string name, int language, long fileSize, DateTimeOffset creationDate, LevelVisibility visibility, PlatformType uploadPlatform)
-    {
-        Id = id;
-        Author = author;
-        Name = name;
-        Language = language;
-        CreationDate = creationDate;
-        FileSize = fileSize;
-        ModificationDate = creationDate;
-        Visibility = visibility;
-        UploadPlatform = uploadPlatform;
-    }
-    
-    // Realm cries if this doesn't exist
-#pragma warning disable CS8618
-    public GameLevel() { }
-#pragma warning restore CS8618
-
     [PrimaryKey] [Required] public string Id { get; init; }
     public GameUser Author { get; init; }
     public string Name { get; set; }
@@ -69,7 +50,6 @@ public class GameLevel : RealmObject
     public int QueuesCount { get; set; }
     [Backlink(nameof(GameAlbum.Levels))] public IQueryable<GameAlbum> Albums { get; }
     [Backlink(nameof(DailyLevel.Level))] public IQueryable<DailyLevel> DailyLevels { get; }
-    [Backlink(nameof(GameEvent.ContentLevel))] public IQueryable<GameEvent> Events { get; }
     [Backlink(nameof(LeaderboardEntry.Level))] public IQueryable<LeaderboardEntry> LeaderboardEntries { get; }
     // ReSharper restore UnassignedGetOnlyAutoProperty
     public long FileSize { get; set; }

@@ -8,13 +8,13 @@ using Bunkum.ProfanityFilter;
 using HttpMultipartParser;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
-using static SoundShapesServer.Helpers.ResourceHelper;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
 
@@ -70,8 +70,8 @@ public class LevelManagementEndpoints : EndpointGroup
         
         foreach (FilePart? file in parser.Files)
         {
-            byte[] bytes = FilePartToBytes(file);
-            FileType fileType = GetFileTypeFromFilePart(file);
+            byte[] bytes = file.ToByteArray();
+            FileType fileType = file.SSFileType();
 
             switch (fileType)
             {

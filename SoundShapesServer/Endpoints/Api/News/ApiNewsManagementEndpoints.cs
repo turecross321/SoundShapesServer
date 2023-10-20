@@ -20,18 +20,18 @@ public class ApiNewsManagementEndpoints : EndpointGroup
     [ApiEndpoint("news/create", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Creates news entry.")]
-    public ApiResponse<ApiNewsResponse> CreateNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
+    public ApiResponse<ApiNewsEntryResponse> CreateNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
         GameUser user, ApiCreateNewsEntryRequest body)
     {
         NewsEntry createdNewsEntry = database.CreateNewsEntry(body, user);
-        return new ApiNewsResponse(createdNewsEntry);
+        return new ApiNewsEntryResponse(createdNewsEntry);
     }
 
     [ApiEndpoint("news/id/{id}/edit", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Edits news entry with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.NewsEntryNotFoundWhen)]
-    public ApiResponse<ApiNewsResponse> EditNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
+    public ApiResponse<ApiNewsEntryResponse> EditNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
         GameUser user, ApiCreateNewsEntryRequest body, string id)
     {
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
@@ -39,7 +39,7 @@ public class ApiNewsManagementEndpoints : EndpointGroup
             return ApiNotFoundError.NewsEntryNotFound;
 
         NewsEntry editedNewsEntry = database.EditNewsEntry(newsEntry, body, user);
-        return new ApiNewsResponse(editedNewsEntry);
+        return new ApiNewsEntryResponse(editedNewsEntry);
     }
     
     [ApiEndpoint("news/id/{id}/setThumbnail", HttpMethods.Post)]

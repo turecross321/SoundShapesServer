@@ -1,5 +1,4 @@
 using AttribDoc;
-using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Responses.Api.Framework.Documentation;

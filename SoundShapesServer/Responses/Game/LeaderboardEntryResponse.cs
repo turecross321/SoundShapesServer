@@ -6,9 +6,9 @@ namespace SoundShapesServer.Responses.Game;
 
 public class LeaderboardEntryResponse : IResponse
 {
-    public LeaderboardEntryResponse(LeaderboardEntry entry, int position)
+    public LeaderboardEntryResponse(LeaderboardEntry entry)
     {
-        Position = position;
+        Position = entry.Position() + 1;
         Entrant = new UserTargetResponse(entry.User);
         Score = entry.Score;
     }

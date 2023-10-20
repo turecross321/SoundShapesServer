@@ -1,5 +1,6 @@
 using Bunkum.Core;
 using SoundShapesServer.Database;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
@@ -78,7 +79,6 @@ public static class LevelHelper
             "queues" => LevelOrderType.Queues,
             "fileSize" => LevelOrderType.FileSize,
             "difficulty" => LevelOrderType.Difficulty,
-            "relevance" => LevelOrderType.Relevance,
             "random" => LevelOrderType.Random,
             "totalDeaths" => LevelOrderType.TotalDeaths,
             "totalPlayTime" => LevelOrderType.TotalPlayTime,
@@ -93,72 +93,44 @@ public static class LevelHelper
     
     public static LevelFilters GetLevelFilters(RequestContext context, GameDatabaseContext database)
     {
-        string? byUserId = context.QueryString["createdBy"];
-        GameUser? byUser = null;
-        if (byUserId != null) byUser = database.GetUserWithId(byUserId);
-        
-        string? likedByUserId = context.QueryString["likedBy"];
-        GameUser? likedBy = null;
-        if (likedByUserId != null) likedBy = database.GetUserWithId(likedByUserId);
-        
-        string? queuedByUserId = context.QueryString["queuedBy"];
-        GameUser? queuedBy = null;
-        if (queuedByUserId != null) queuedBy = database.GetUserWithId(queuedByUserId);
-        
-        string? likedOrQueuedByUserId = context.QueryString["likedOrQueuedBy"];
-        GameUser? likedOrQueuedBy = null;
-        if (likedOrQueuedByUserId != null) likedOrQueuedBy = database.GetUserWithId(likedOrQueuedByUserId);
-        
-        string? completedByString = context.QueryString["completedBy"];
-        GameUser? completedBy = null;
-        if (completedByString != null) completedBy = database.GetUserWithId(completedByString);
-        
-        string? inAlbumId = context.QueryString["inAlbum"];
-        GameAlbum? inAlbum = null;
-        if (inAlbumId != null) inAlbum = database.GetAlbumWithId(inAlbumId);
-        
-        bool? inDaily = null;
-        if (bool.TryParse(context.QueryString["inDaily"], out bool inDailyTemp)) inDaily = inDailyTemp;
-        
-        string? inDailyDateString = context.QueryString["inDailyDate"];
-        long? inDailyDateLong = null;
-        if (inDailyDateString != null) inDailyDateLong = long.Parse(inDailyDateString);
-        DateTimeOffset? inDailyDate = null;
-        if (inDailyDateLong != null) inDailyDate = DateTimeOffset.FromUnixTimeSeconds((long)inDailyDateLong);
-
-        bool? latestDaily = null;
-        if (bool.TryParse(context.QueryString["inLatestDaily"], out bool latestDateTemp)) latestDaily = latestDateTemp;
-
-        string? bpmString = context.QueryString["bpm"];
-        int? bpm = null;
-        if (bpmString != null) bpm = int.Parse(bpmString);
-
-        string? transposeValueString = context.QueryString["transposeValue"];
-        int? transposeValue = null;
-        if (transposeValueString != null) transposeValue = int.Parse(transposeValueString);
-
-        int? scaleIndex = null;
-        if (int.TryParse(context.QueryString["scaleIndex"], out int scaleIndexTemp)) scaleIndex = scaleIndexTemp;
-
-        bool? hasCar = null;
-        if (bool.TryParse(context.QueryString["hasCar"], out bool hasCarTemp)) hasCar = hasCarTemp;
-        
-        bool? hasExplodingCar = null;
-        if (bool.TryParse(context.QueryString["hasExplodingCar"], out bool hasExplodingCarTemp)) hasExplodingCar = hasExplodingCarTemp;
-        
+        GameUser? byUser = context.QueryString["createdBy"].ToUser(database);
+        GameUser? likedBy = context.QueryString["likedBy"].ToUser(database);
+        GameUser? queuedBy =  context.QueryString["queuedBy"].ToUser(database);
+        GameUser? likedOrQueuedBy = context.QueryString["likedOrQueuedBy"].ToUser(database);
+        GameUser? completedBy = context.QueryString["completedBy"].ToUser(database);
+        GameAlbum? inAlbum = context.QueryString["inAlbum"].ToAlbum(database);
+        bool? inDaily = context.QueryString["inDaily"].ToBool();
+        DateTimeOffset? inDailyDate = context.QueryString["inDailyDate"].ToDateFromUnix();
+        bool? latestDaily = context.QueryString["inLatestDaily"].ToBool();
+        int? bpm = context.QueryString["bpm"].ToInt();
+        int? transposeValue = context.QueryString["transposeValue"].ToInt();
+        int? scaleIndex = context.QueryString["scaleIndex"].ToInt();
+        bool? hasCar = context.QueryString["hasCar"].ToBool();
+        bool? hasExplodingCar = context.QueryString["hasExplodingCar"].ToBool();
         string? searchQuery = context.QueryString["search"];
+        List<PlatformType>? uploadPlatforms = context.QueryString["uploadPlatforms"].ToEnumList<PlatformType>();
+        DateTimeOffset? createdAfter = context.QueryString["createdAfter"].ToDateFromUnix();
         
-        string? uploadPlatformsString = context.QueryString["uploadPlatforms"];
-        List<PlatformType>? uploadPlatforms = null;
-
-        if (uploadPlatformsString != null)
+        return new LevelFilters
         {
-            uploadPlatforms = new List<PlatformType>();
-            uploadPlatforms.AddRange(uploadPlatformsString.Split(",").Select(Enum.Parse<PlatformType>));
-        }
-        
-        return new LevelFilters(byUser, likedBy, queuedBy, likedOrQueuedBy, inAlbum, inDaily, inDailyDate, latestDaily, 
-            searchQuery, completedBy, bpm, scaleIndex, transposeValue, hasCar, hasExplodingCar, uploadPlatforms);
+            ByUser = byUser,
+            LikedByUser = likedBy,
+            QueuedByUser = queuedBy,
+            LikedOrQueuedByUser = likedOrQueuedBy,
+            InAlbum = inAlbum,
+            InDaily = inDaily,
+            InDailyDate = inDailyDate,
+            InLatestDaily = latestDaily,
+            Search = searchQuery,
+            CompletedBy = completedBy,
+            Bpm = bpm,
+            ScaleIndex = scaleIndex,
+            TransposeValue = transposeValue,
+            HasCar = hasCar,
+            HasExplodingCar = hasExplodingCar,
+            UploadPlatforms = uploadPlatforms,
+            CreatedAfter = createdAfter
+        };
     }
 
     public static readonly List<string> OfflineLevelIds = new()

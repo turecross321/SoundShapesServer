@@ -5,7 +5,6 @@ namespace SoundShapesServer.Requests.Api;
 public class ApiCreateAlbumRequest
 {
     public string Name { get; set; }
-    public string Author { get; set; }
     public string LinerNotes { get; set; }
     public string[] LevelIds { get; set; }
 }

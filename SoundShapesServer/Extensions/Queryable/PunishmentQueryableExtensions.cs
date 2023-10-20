@@ -44,6 +44,7 @@ public static class PunishmentQueryableExtensions
         return order switch
         {
             PunishmentOrderType.CreationDate => punishments.OrderByDynamic(p => p.CreationDate, descending),
+            PunishmentOrderType.ExpiryDate => punishments.OrderByDynamic(p => p.ExpiryDate, descending),
             _ => punishments.OrderPunishments(PunishmentOrderType.CreationDate, descending)
         };
     }

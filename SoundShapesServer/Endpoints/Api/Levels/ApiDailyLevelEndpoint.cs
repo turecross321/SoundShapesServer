@@ -4,7 +4,6 @@ using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Extensions;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Responses.Levels;
 using SoundShapesServer.Types.Levels;
@@ -19,17 +18,15 @@ public class ApiDailyLevelEndpoint : EndpointGroup
     public ApiListResponse<ApiDailyLevelResponse> GetDailyLevelObjects(RequestContext context, GameDatabaseContext database)
     {
         (int from, int count, bool descending) = context.GetPageData();
-
-        string? dateString = context.QueryString["date"];
-        long? dateLong = null;
-        if (dateString != null) dateLong = long.Parse(dateString);
-        DateTimeOffset? date = null;
-        if (dateLong != null) date = DateTimeOffset.FromUnixTimeSeconds((long)dateLong);
         
-        bool? lastDate = null;
-        if (bool.TryParse(context.QueryString["latestDate"], out bool latestDate)) lastDate = latestDate;
+        DateTimeOffset? date = context.QueryString["date"].ToDateFromUnix();
+        bool? latestDate = context.QueryString["latestDate"].ToBool();
 
-        DailyLevelFilters filters = new (date, lastDate);
+        DailyLevelFilters filters = new DailyLevelFilters
+        {
+            Date = date,
+            LatestDate = latestDate
+        };
         
         string? orderString = context.QueryString["orderBy"];
         DailyLevelOrderType order = orderString switch

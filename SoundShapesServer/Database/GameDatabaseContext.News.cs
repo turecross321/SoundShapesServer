@@ -1,10 +1,11 @@
 using Bunkum.Core.Storage;
 using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
+using SoundShapesServer.Types;
+using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.ResourceHelper;
@@ -15,13 +16,27 @@ public partial class GameDatabaseContext
 {
     public NewsEntry CreateNewsEntry(ApiCreateNewsEntryRequest request, GameUser user)
     {
-        NewsEntry entry = new (user, request);
+        NewsEntry entry = new NewsEntry
+        {
+            Id = Guid.NewGuid().ToString(),
+            CreationDate = DateTimeOffset.UtcNow,
+            ModificationDate = DateTimeOffset.UtcNow,
+            Author = user,
+            Language = request.Language ?? "global",
+            Title = request.Title ?? "",
+            Summary = request.Summary ?? "",
+            FullText = request.FullText ?? "",
+            Url = string.IsNullOrEmpty(request.Url) ? "0.0.0.0" : request.Url, // A url crashes the Vita version
+            CharacterCount = request.FullText.Length,
+        };
         
         _realm.Write(() =>
         {
             _realm.Add(entry);
         });
 
+        CreateEvent(user, EventType.NewsCreation, PlatformType.Unknown, EventDataType.NewsEntry, entry.Id);        
+        
         return entry;
     }
 
@@ -29,11 +44,11 @@ public partial class GameDatabaseContext
     {
         _realm.Write(() =>
         {
-            entry.Language = request.Language ?? "global";
-            entry.Title = request.Title ?? "";
-            entry.Summary = request.Summary ?? "";
-            entry.FullText = request.FullText ?? "";
-            entry.Url = request.Url ?? "";
+            entry.Language = request.Language;
+            entry.Title = request.Title;
+            entry.Summary = request.Summary;
+            entry.FullText = request.FullText;
+            entry.Url = request.Url;
             entry.ModificationDate = DateTimeOffset.UtcNow;
             entry.CharacterCount = entry.FullText.Length;
             entry.Author = user;
@@ -44,7 +59,8 @@ public partial class GameDatabaseContext
 
     public ApiOkResponse UploadNewsResource(IDataStore dataStore, NewsEntry newsEntry, byte[] file)
     {
-        if (!IsByteArrayPng(file)) return ApiBadRequestError.FileIsNotPng;
+        if (!file.IsPng()) return
+            ApiBadRequestError.FileIsNotPng;
 
         string key = GetNewsResourceKey(newsEntry.Id);
         dataStore.WriteToStore(key, file);

@@ -7,10 +7,10 @@ namespace SoundShapesServer.Responses.Api.Responses;
 
 public class ApiLeaderboardEntryResponse : IApiResponse
 {
-    public ApiLeaderboardEntryResponse(LeaderboardEntry entry, int position)
+    public ApiLeaderboardEntryResponse(LeaderboardEntry entry)
     {
-        Id = entry.Id;
-        Position = position;
+        Id = entry.Id.ToString()!;
+        Position = entry.Position();
         User = new ApiUserBriefResponse(entry.User);
         Score = entry.Score;
         PlayTime = entry.PlayTime;

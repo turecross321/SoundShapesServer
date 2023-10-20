@@ -8,11 +8,13 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
+    #region User Following
     public bool FollowUser(GameUser follower, GameUser recipient, PlatformType platformType)
     {
-        if (IsUserFollowingOtherUser(follower, recipient)) return false;
+        if (IsUserFollowingOtherUser(follower, recipient)) 
+            return false;
 
-        FollowRelation relation = new()
+        UserFollowRelation relation = new()
         {
             Date = DateTimeOffset.UtcNow,
             Follower = follower,
@@ -25,7 +27,7 @@ public partial class GameDatabaseContext
             recipient.FollowersCount = recipient.FollowersRelations.Count();
         });
 
-        CreateEvent(follower, EventType.UserFollow, platformType, recipient);
+        CreateEvent(follower, EventType.UserFollow, platformType, EventDataType.User, relation.Recipient.Id);
         
         return true;
     }
@@ -34,7 +36,7 @@ public partial class GameDatabaseContext
     {
         if (!IsUserFollowingOtherUser(follower, recipient)) return false;
         
-        FollowRelation? relation = _realm.All<FollowRelation>().FirstOrDefault(f => f.Follower == follower && f.Recipient == recipient);
+        UserFollowRelation? relation = _realm.All<UserFollowRelation>().FirstOrDefault(f => f.Follower == follower && f.Recipient == recipient);
 
         if (relation == null) return false;
         
@@ -47,12 +49,26 @@ public partial class GameDatabaseContext
         
         return true;
     }
+    
+    public bool IsUserFollowingOtherUser(GameUser follower, GameUser userBeingFollowed)
+    {
+        int count = _realm.All<UserFollowRelation>().Count(f => f.Follower == follower && f.Recipient == userBeingFollowed);
+        return count > 0;
+    }
+    
+    #endregion
 
+    #region Level Liking
     public bool LikeLevel(GameUser user, GameLevel level, PlatformType platformType)
     { 
         if (HasUserLikedLevel(user, level)) return false;
-        
-        LevelLikeRelation relation = new(DateTimeOffset.UtcNow, user, level);
+
+        LevelLikeRelation relation = new LevelLikeRelation()
+        {
+            Date = DateTimeOffset.UtcNow,
+            User = user,
+            Level = level
+        };
         
         _realm.Write(() =>
         {
@@ -61,7 +77,7 @@ public partial class GameDatabaseContext
             level.LikesCount = level.Likes.Count();
         });
         
-        CreateEvent(user, EventType.LevelLike, platformType, null, level);
+        CreateEvent(user, EventType.LevelLike, platformType, EventDataType.Level, relation.Level.Id);
 
         return true;
     }
@@ -89,11 +105,19 @@ public partial class GameDatabaseContext
         return relation != null;
     }
     
+    #endregion
+    
+    #region Level Queuing
     public bool QueueLevel(GameUser user, GameLevel level, PlatformType platformType)
     {
         if (HasUserQueuedLevel(user, level)) return false;
-        
-        LevelQueueRelation relation = new(DateTimeOffset.UtcNow, user, level);
+
+        LevelQueueRelation relation = new LevelQueueRelation()
+        {
+            Date = DateTimeOffset.UtcNow,
+            Level = level,
+            User = user
+        };
         
         _realm.Write(() =>
         {
@@ -102,7 +126,7 @@ public partial class GameDatabaseContext
             level.QueuesCount = level.Queues.Count();
         });
         
-        CreateEvent(user, EventType.LevelQueue, platformType, null, level);
+        CreateEvent(user, EventType.LevelQueue, platformType, EventDataType.Level, relation.Level.Id);
 
         return true;
     }
@@ -130,13 +154,9 @@ public partial class GameDatabaseContext
         LevelQueueRelation? relation = _realm.All<LevelQueueRelation>().FirstOrDefault(l => l.User == user && l.Level == level);
         return relation != null;
     }
-    
-    public bool IsUserFollowingOtherUser(GameUser follower, GameUser userBeingFollowed)
-    {
-        int count = _realm.All<FollowRelation>().Count(f => f.Follower == follower && f.Recipient == userBeingFollowed);
-        return count > 0;
-    }
-    
+    #endregion
+
+    #region Level Plays
     public void CreatePlay(GameUser user, GameLevel level)
     {
         LevelPlayRelation relation = new (user, level, DateTimeOffset.UtcNow);
@@ -149,10 +169,17 @@ public partial class GameDatabaseContext
             level.PlaysCount = level.Plays.Count();
             if (uniqueRelation != null) return;
             
-            uniqueRelation = new LevelUniquePlayRelation(user, level, DateTimeOffset.UtcNow); 
+            uniqueRelation = new LevelUniquePlayRelation()
+            {
+                Date = DateTimeOffset.UtcNow,
+                Level = level,
+                User = user
+            }; 
             _realm.Add(uniqueRelation);
             level.UniquePlaysCount = level.UniquePlays.Count();
             user.PlayedLevelsCount = user.PlayedLevelRelations.Count();
         });
     }
+    
+    #endregion
 }

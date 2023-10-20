@@ -5,22 +5,41 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
+using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public GameAlbum CreateAlbum(ApiCreateAlbumRequest request)
+    public GameAlbum CreateAlbum(ApiCreateAlbumRequest request, GameUser user)
     {
         GameLevel[] levels = GetLevelsWithIds(request.LevelIds.AsEnumerable()).ToArray();
-        GameAlbum album = new(GenerateGuid(), request, DateTimeOffset.UtcNow, levels);
+        
+        GameAlbum album = new GameAlbum
+        {
+            Id = GenerateGuid(),
+            Name = request.Name,
+            Author = user,
+            CreationDate = DateTimeOffset.UtcNow,
+            ModificationDate = DateTimeOffset.UtcNow,
+            LinerNotes = request.LinerNotes,
+        };
+
+        foreach (GameLevel level in levels)
+        {
+            album.Levels.Add(level);
+        }
 
         _realm.Write(() =>
         {
             _realm.Add(album);
         });
+        
+        CreateEvent(user, EventType.AlbumCreation, PlatformType.Unknown, EventDataType.Album, album.Id);
 
         return album;
     }
@@ -39,7 +58,7 @@ public partial class GameDatabaseContext
     public ApiOkResponse UploadAlbumResource(IDataStore dataStore, GameAlbum album, byte[] file, AlbumResourceType resourceType)
     {
         // Album Files should always be Images
-        if (!ResourceHelper.IsByteArrayPng(file))
+        if (!file.IsPng())
             return ApiBadRequestError.FileIsNotPng;
 
         string key = ResourceHelper.GetAlbumResourceKey(album.Id, resourceType);
@@ -73,12 +92,12 @@ public partial class GameDatabaseContext
         if (album.SidePanelFilePath != null) dataStore.RemoveFromStore(album.SidePanelFilePath);
     }
     
-    public GameAlbum EditAlbum(GameAlbum album, ApiCreateAlbumRequest request)
+    public GameAlbum EditAlbum(GameAlbum album, ApiCreateAlbumRequest request, GameUser user)
     {
         _realm.Write(() =>
         {
             album.Name = request.Name;
-            album.Author = request.Author;
+            album.Author = user;
             album.ModificationDate = DateTimeOffset.UtcNow;
             album.LinerNotes = request.LinerNotes;
             

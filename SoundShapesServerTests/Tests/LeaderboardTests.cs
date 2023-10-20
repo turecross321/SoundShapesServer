@@ -73,7 +73,7 @@ public class LeaderboardTests: ServerTest
         
         Assert.That(response.Count == userAmount, "Check if all scores were included");
         Assert.That(response.Items.First().Position == 1, "Check if position has been correctly set");
-        Assert.That(response.Items.First().Entrant?.Id != response.Items[1].Entrant?.Id, "Check if obsolete scores are shown");
+        Assert.That(response.Items.First().Entrant?.Id != response.Items.ElementAt(1).Entrant?.Id, "Check if obsolete scores are shown");
 
         payload = $"/otg/{level.Id}/~leaderboard.near";
         LeaderboardEntryResponse[] nearResponse = JsonConvert.DeserializeObject<LeaderboardEntryResponse[]>(await client.GetStringAsync(payload))!;

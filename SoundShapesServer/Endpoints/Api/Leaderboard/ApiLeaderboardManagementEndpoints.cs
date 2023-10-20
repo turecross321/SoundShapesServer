@@ -20,7 +20,7 @@ public class ApiLeaderboardManagementEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LeaderboardEntryNotFoundWhen)]
     public ApiOkResponse RemoveEntry(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
-        LeaderboardEntry? entry = database.GetLeaderboardEntryWithId(id);
+        LeaderboardEntry? entry = database.GetLeaderboardEntry(id);
         if (entry == null)
             return ApiNotFoundError.LeaderboardEntryNotFound;
         

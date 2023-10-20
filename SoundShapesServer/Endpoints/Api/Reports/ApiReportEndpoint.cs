@@ -44,7 +44,7 @@ public class ApiReportEndpoint : EndpointGroup
             }
             case ReportContentType.LeaderboardEntry:
             {
-                leaderboardEntry = database.GetLeaderboardEntryWithId(body.ContentId);
+                leaderboardEntry = database.GetLeaderboardEntry(body.ContentId);
                 if (leaderboardEntry == null)
                     return ApiNotFoundError.LeaderboardEntryNotFound;
                 break;

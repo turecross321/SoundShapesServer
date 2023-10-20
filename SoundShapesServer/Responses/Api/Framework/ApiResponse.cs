@@ -1,9 +1,11 @@
 ﻿using System.Net;
 using Bunkum.Core.Responses;
+using Newtonsoft.Json;
 using SoundShapesServer.Responses.Api.Framework.Errors;
 
 namespace SoundShapesServer.Responses.Api.Framework;
 
+[JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
 public class ApiResponse<T> : IHasResponseCode where T : class
 {
     /// <summary>
@@ -33,10 +35,8 @@ public class ApiResponse<T> : IHasResponseCode where T : class
         StatusCode = error.StatusCode;
     }
 
-    public static implicit operator ApiResponse<T>(T? data)
+    public static implicit operator ApiResponse<T>(T data)
     {
-        if (data == null) 
-            return new ApiResponse<T>(new ApiError("Data was null, maybe internal validation failed?"));
         return new ApiResponse<T>(data);
     }
     
