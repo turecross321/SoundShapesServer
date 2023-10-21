@@ -1,5 +1,6 @@
 using System.Net;
 using Bunkum.Core;
+using Bunkum.Core.Configuration;
 using Bunkum.Core.Endpoints;
 using Bunkum.Core.RateLimit;
 using Bunkum.Core.Responses;
@@ -127,7 +128,7 @@ public class AuthenticationEndpoints : EndpointGroup
     }
     
     [GameEndpoint("{platform}/{publisher}/{language}/~eula.get"), Authentication(false)]
-    public string? Eula(RequestContext context, GameServerConfig config, GameDatabaseContext database, string platform, string publisher, string language, GameToken? token, GameUser? user)
+    public string? Eula(RequestContext context, GameServerConfig config, BunkumConfig bunkumConfig, GameDatabaseContext database, string platform, string publisher, string language, GameToken? token, GameUser? user)
     {
         if (token?.TokenType == TokenType.GameAccess)
             return EulaEndpoint.NormalEula(config);
@@ -157,12 +158,12 @@ public class AuthenticationEndpoints : EndpointGroup
         {
             GameToken registerToken = database.CreateToken(user, TokenType.AccountRegistration, Globals.TenMinutesInSeconds);
             return $"Your account is not registered.\n \n" +
-                   $"To proceed, you will have to register an account at {config.WebsiteUrl}/register\n" +
+                   $"To proceed, you will have to register an account at {bunkumConfig.ExternalUrl}/register\n" +
                    $"Your registration code is: {registerToken.Id}" + eulaEnd;
         }
         
         string unAuthorizedBase = $"Your token has not been authenticated.\n \n" +
-                             $"To proceed, you will have to log into your account at {config.WebsiteUrl}/authentication " +
+                             $"To proceed, you will have to log into your account at {bunkumConfig.ExternalUrl}/authentication " +
                              $"and perform one of the following actions:\n";
                 
         List<string> authorizationMethods = new ();
