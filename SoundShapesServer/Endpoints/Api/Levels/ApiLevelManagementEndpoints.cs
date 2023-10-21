@@ -81,7 +81,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
 
         if (level.Author.Id != user.Id)
         {
-            if (user.PermissionsType > PermissionsType.Moderator)
+            if (user.PermissionsType < PermissionsType.Moderator)
                 return ApiUnauthorizedError.NoEditPermission;
         }
 
@@ -102,7 +102,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
 
         if (level.Author.Id != user.Id)
         {
-            if (user.PermissionsType >= PermissionsType.Moderator)
+            if (user.PermissionsType < PermissionsType.Moderator)
                 return ApiUnauthorizedError.NoDeletionPermission;
         }
 
