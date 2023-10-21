@@ -2,6 +2,7 @@ using Bunkum.Core.Storage;
 using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
@@ -117,7 +118,7 @@ public partial class GameDatabaseContext
             user.PasswordBcrypt = passwordBcrypt;
         });
 
-        RemoveTokensByUser(user);
+        RemoveUserTokens(user);
 
         _realm.Refresh();
     }
@@ -166,8 +167,15 @@ public partial class GameDatabaseContext
 
     public void SetUserGameAuthenticationSettings(GameUser user, ApiSetGameAuthenticationSettingsRequest request)
     {
-        if (user.AllowIpAuthentication && !request.AllowIpAuthentication)
+        if (!request.AllowPsnAuthentication)
+            RemoveUserTokensOfAuthenticationType(user, TokenAuthenticationType.Psn);
+        if (!request.AllowRpcnAuthentication)
+            RemoveUserTokensOfAuthenticationType(user, TokenAuthenticationType.Rpcn);
+        if (!request.AllowIpAuthentication)
+        {
             RemoveIpAddresses(user.IpAddresses);
+            RemoveUserTokensOfAuthenticationType(user, TokenAuthenticationType.Ip);
+        }
         
         _realm.Write(() =>
         {

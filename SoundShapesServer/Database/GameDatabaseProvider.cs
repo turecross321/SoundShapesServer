@@ -18,7 +18,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 76;
+    protected override ulong SchemaVersion => 77;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -123,7 +123,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         {
             GameToken newToken = newTokens.ElementAt(i);
 
-            if (oldVersion < 72)
+            if (oldVersion < 77)
             {
                 migration.NewRealm.Remove(newToken);
             }

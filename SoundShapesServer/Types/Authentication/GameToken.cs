@@ -8,14 +8,14 @@ namespace SoundShapesServer.Types.Authentication;
 
 public class GameToken : RealmObject, IToken<GameUser>
 {
-    [Required] [PrimaryKey] public string Id { get; init; }
-    public GameUser User { get; init; }
+    [Required] [PrimaryKey] public required string Id { get; init; }
+    public required GameUser User { get; init; }
     
     // Realm can't store enums, use recommended workaround
     // ReSharper disable once InconsistentNaming (can't fix due to conflict with TokenType)
     // ReSharper disable once MemberCanBePrivate.Global
     internal int _TokenType { get; set; }
-    public TokenType TokenType
+    public required TokenType TokenType
     {
         get => (TokenType)_TokenType;
         set => _TokenType = (int)value;
@@ -24,14 +24,24 @@ public class GameToken : RealmObject, IToken<GameUser>
     // ReSharper disable once InconsistentNaming (can't fix due to conflict with PlatformType)
     // ReSharper disable once MemberCanBePrivate.Global
     internal int _PlatformType { get; set; }
-    public PlatformType PlatformType
+    public required PlatformType PlatformType
     {
         get => (PlatformType)_PlatformType;
         init => _PlatformType = (int)value;
     }
-    public DateTimeOffset CreationDate { get; init; }
-    public DateTimeOffset ExpiryDate { get; set; }
+    
+    // ReSharper disable once InconsistentNaming
+    // ReSharper disable once MemberCanBePrivate.Global
+    internal int _TokenAuthenticationType { get; set; }
+
+    public required TokenAuthenticationType TokenAuthenticationType
+    {
+        get => (TokenAuthenticationType)_TokenAuthenticationType;
+        set => _TokenAuthenticationType = (int)value;
+    }
+    public required DateTimeOffset CreationDate { get; init; }
+    public required DateTimeOffset ExpiryDate { get; set; }
     public bool? GenuineNpTicket { get; init; }
     public GameToken? RefreshToken { get; init; }
-    [Backlink(nameof(RefreshToken))] public IQueryable<GameToken> RefreshableTokens { get; }
+    [Backlink(nameof(RefreshToken))] public IQueryable<GameToken> RefreshableTokens { get; } = null!;
 }

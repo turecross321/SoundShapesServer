@@ -9,7 +9,7 @@ public partial class GameDatabaseContext
 {
     public const int DefaultTokenExpirySeconds = Globals.OneDayInSeconds;
 
-    public GameToken CreateToken(GameUser user, TokenType tokenType, 
+    public GameToken CreateToken(GameUser user, TokenType tokenType,  TokenAuthenticationType authenticationType,
         double expirationSeconds = DefaultTokenExpirySeconds, PlatformType platformType = PlatformType.Unknown, 
         bool? genuineTicket = null, GameToken? refreshToken = null)
     {
@@ -29,6 +29,7 @@ public partial class GameDatabaseContext
             User = user,
             TokenType = tokenType,
             PlatformType = platformType,
+            TokenAuthenticationType = authenticationType,
             ExpiryDate = DateTimeOffset.UtcNow.AddSeconds(expirationSeconds),
             CreationDate = DateTimeOffset.UtcNow,
             GenuineNpTicket = genuineTicket,
@@ -63,7 +64,7 @@ public partial class GameDatabaseContext
         });
     }
 
-    public void RemoveToken(IQueryable<GameToken> token)
+    public void RemoveTokens(IQueryable<GameToken> token)
     {
         _realm.Write(() =>
         {
@@ -71,15 +72,23 @@ public partial class GameDatabaseContext
         });
     }
 
-    private void RemoveTokensByUser(GameUser user)
+    private void RemoveUserTokens(GameUser user)
     {
         _realm.Write(() =>
         {
             _realm.RemoveRange(user.Tokens);
         });
     }
+
+    private void RemoveUserTokensOfAuthenticationType(GameUser user, TokenAuthenticationType type)
+    {
+        _realm.Write(() =>
+        {
+            _realm.RemoveRange(user.Tokens.Where(t => t._TokenAuthenticationType == (int)type));
+        });
+    }
     
-    // null type = all
+    /// TokenType = null means that it looks for all tokens
     public GameToken? GetTokenWithId(string tokenId, TokenType? type)
     {
         IQueryable<GameToken> tokens = _realm.All<GameToken>();

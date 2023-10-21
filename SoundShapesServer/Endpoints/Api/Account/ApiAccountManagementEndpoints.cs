@@ -70,7 +70,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [RateLimitSettings(Globals.OneHourInSeconds, 10, Globals.OneHourInSeconds, "sendEmail")]
     public ApiOkResponse SendEmailToken(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
     {
-        GameToken emailToken = database.CreateToken(user, TokenType.SetEmail, Globals.TenMinutesInSeconds);
+        GameToken emailToken = database.CreateToken(user, TokenType.SetEmail, TokenAuthenticationType.PreExistingToken, Globals.TenMinutesInSeconds);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your new email code: " + emailToken.Id + "\n" +
@@ -120,7 +120,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         if (user == null) 
             return new ApiOkResponse();
         
-        GameToken passwordToken = database.CreateToken(user, TokenType.SetPassword, Globals.TenMinutesInSeconds);
+        GameToken passwordToken = database.CreateToken(user, TokenType.SetPassword, TokenAuthenticationType.None, Globals.TenMinutesInSeconds);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your password code: " + passwordToken.Id + "\n" +
@@ -157,7 +157,7 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [RateLimitSettings(Globals.OneHourInSeconds, 10, Globals.OneHourInSeconds, "sendEmail")]
     public ApiOkResponse SendUserRemovalToken(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
     {
-        GameToken removalToken = database.CreateToken(user, TokenType.AccountRemoval, Globals.TenMinutesInSeconds);
+        GameToken removalToken = database.CreateToken(user, TokenType.AccountRemoval, TokenAuthenticationType.PreExistingToken, Globals.TenMinutesInSeconds);
 
         string emailBody = $"Dear {user.Username},\n\n" +
                            "Here is your account removal code: " + removalToken.Id + "\n" +

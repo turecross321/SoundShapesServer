@@ -56,21 +56,13 @@ public partial class GameDatabaseContext
 
         _realm.Refresh();
     }
-
+    
     private void RemoveIpAddresses(IQueryable<GameIp> ips)
     {
         _realm.Write(() =>
         {
-            foreach (GameIp gameIp in ips)
-            {
-                // Remove all tokens with ip address
-                foreach (GameToken token in gameIp.Tokens)
-                {
-                    _realm.Remove(token);
-                }
-            
-                _realm.Remove(gameIp);
-            }
+            // Not removing tokens here because that is handled by Tok
+            _realm.RemoveRange(ips);
         });
 
         _realm.Refresh();

@@ -32,8 +32,8 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         if (!database.ValidatePassword(user, body.PasswordSha512))
             return ApiForbiddenError.EmailOrPasswordIsWrong;
 
-        GameToken refreshToken = database.CreateToken(user, TokenType.ApiRefresh, Globals.OneMonthInSeconds);
-        GameToken accessToken = database.CreateToken(user, TokenType.ApiAccess, refreshToken:refreshToken);
+        GameToken refreshToken = database.CreateToken(user, TokenType.ApiRefresh, TokenAuthenticationType.Credentials, Globals.OneMonthInSeconds);
+        GameToken accessToken = database.CreateToken(user, TokenType.ApiAccess, TokenAuthenticationType.Credentials, refreshToken:refreshToken);
 
         return new ApiLoginResponse(user, accessToken, refreshToken);
     }
@@ -49,7 +49,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
             return ApiNotFoundError.RefreshTokenDoesNotExist;
         
         database.RefreshToken(refreshToken, Globals.OneMonthInSeconds);
-        GameToken accessToken = database.CreateToken(refreshToken.User, TokenType.ApiAccess, refreshToken:refreshToken);
+        GameToken accessToken = database.CreateToken(refreshToken.User, TokenType.ApiAccess, TokenAuthenticationType.PreExistingToken, refreshToken:refreshToken);
         
         return new ApiLoginResponse(accessToken.User, accessToken, refreshToken);
     }
@@ -61,7 +61,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         if (token.RefreshToken != null)
         {
             GameToken refreshToken = token.RefreshToken;
-            database.RemoveToken(refreshToken.RefreshableTokens);
+            database.RemoveTokens(refreshToken.RefreshableTokens);
             database.RemoveToken(refreshToken);
         }
         else

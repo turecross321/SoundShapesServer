@@ -58,6 +58,7 @@ public class AuthenticationEndpoints : EndpointGroup
         bool genuineTicket = VerifyTicket(context, (MemoryStream)body, ticket);
 
         TokenType? tokenType;
+        TokenAuthenticationType authenticationType;
 
         if (config.RequireAuthentication)
         {
@@ -67,32 +68,41 @@ public class AuthenticationEndpoints : EndpointGroup
             if (!user.HasFinishedRegistration)
             {
                 tokenType = TokenType.GameUnAuthorized;
+                authenticationType = TokenAuthenticationType.Ip;
             }
-            else if (genuineTicket && ((platformType is PlatformType.Ps3 or PlatformType.PsVita && user.AllowPsnAuthentication) || 
-                                       (platformType is PlatformType.Rpcs3 && user.AllowRpcnAuthentication)))
+            else if (genuineTicket && platformType is PlatformType.Ps3 or PlatformType.PsVita && user.AllowPsnAuthentication)
             {
                 tokenType = TokenType.GameAccess;
+                authenticationType = TokenAuthenticationType.Psn;
+            }
+            else if (genuineTicket && platformType is PlatformType.Rpcs3 && user.AllowRpcnAuthentication)
+            {
+                tokenType = TokenType.GameAccess;
+                authenticationType = TokenAuthenticationType.Rpcn;
             }
             else if (gameIp?.Authorized == true)
             {
                 tokenType = TokenType.GameAccess;
+                authenticationType = TokenAuthenticationType.Ip;
                 if (gameIp.OneTimeUse) 
                     database.UseOneTimeIpAddress(gameIp);
             }
             else
             {
                 tokenType = TokenType.GameUnAuthorized;
+                authenticationType = TokenAuthenticationType.None;
             }
         }
         else
         {
-            tokenType = TokenType.GameAccess;   
+            tokenType = TokenType.GameAccess;
+            authenticationType = TokenAuthenticationType.None;
         }
         
         if (user.Deleted || user.PermissionsType == PermissionsType.Banned)
             tokenType = TokenType.GameUnAuthorized;
         
-        GameToken token = database.CreateToken(user, (TokenType)tokenType, Globals.FourHoursInSeconds, platformType, genuineTicket);
+        GameToken token = database.CreateToken(user, (TokenType)tokenType, authenticationType, Globals.FourHoursInSeconds, platformType, genuineTicket);
         AuthenticationResponse responseWrapper = new (token);
 
         context.Logger.LogInfo(BunkumCategory.Authentication, $"{token.User.Username} has logged in. TokenType:" + Enum.GetName(token.TokenType));
@@ -156,7 +166,7 @@ public class AuthenticationEndpoints : EndpointGroup
         }
         if (user.HasFinishedRegistration == false)
         {
-            GameToken registerToken = database.CreateToken(user, TokenType.AccountRegistration, Globals.TenMinutesInSeconds);
+            GameToken registerToken = database.CreateToken(user, TokenType.AccountRegistration, TokenAuthenticationType.PreExistingToken, Globals.TenMinutesInSeconds);
             return $"Your account is not registered.\n \n" +
                    $"To proceed, you will have to register an account at {bunkumConfig.ExternalUrl}/register\n" +
                    $"Your registration code is: {registerToken.Id}" + eulaEnd;
