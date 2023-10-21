@@ -28,5 +28,9 @@ public class DocumentationGenerator : AttribDoc.DocumentationGenerator
         route.AuthenticationRequired = authentication == null || authentication.Required;
 
         MinimumPermissionsAttribute? minimumPermissions = method.GetCustomAttribute<MinimumPermissionsAttribute>();
+        if (minimumPermissions != null)
+        {
+            route.ExtraProperties.Add("MinimumPermissionsType", minimumPermissions.MinimumPermissions);
+        }
     }
 }

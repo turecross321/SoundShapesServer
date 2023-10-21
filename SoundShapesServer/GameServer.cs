@@ -45,7 +45,6 @@ public class GameServer
         ServerInstance.UseDatabaseProvider(databaseProvider);
         ServerInstance.AddStorageService(dataStore);
         ServerInstance.AddAuthenticationService(_authProvider, true);
-        
         ServerInstance.DiscoverEndpointsFromAssembly(Assembly.GetExecutingAssembly());
     }
     
@@ -66,7 +65,7 @@ public class GameServer
         SetUpConfiguration();
         SetUpServices();
         SetUpMiddlewares();
-        ServerInstance.AddAutoDiscover(serverBrand: "SoundShapesServer", GameEndpointAttribute.BaseRoute[..^1]);
+        ServerInstance.AddAutoDiscover(serverBrand: "SoundShapesServer", GameEndpointAttribute.BaseRoute[..^1] );
     }
 
     protected virtual void SetUpConfiguration()

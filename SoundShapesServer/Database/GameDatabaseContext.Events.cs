@@ -11,7 +11,7 @@ public partial class GameDatabaseContext
 {
     private void CreateEvent(GameUser actor, EventType eventType, PlatformType platformType, EventDataType dataType, string dataId)
     {
-        GameEvent eventObject = new()
+        GameEvent gameEvent = new()
         {
             Actor = actor,
             DataType = dataType,
@@ -25,15 +25,17 @@ public partial class GameDatabaseContext
         {
             // return if there are any pre-existing identical events
             if (_realm.All<GameEvent>().FirstOrDefault(e =>
-                    e.Actor == actor && eventObject._EventType == (int)eventType && e.DataId == dataId) != null)
+                    e.Actor == actor && gameEvent._EventType == (int)eventType && e.DataId == dataId) != null)
                 return;   
         }
         
         _realm.Write(() =>
         {
-            _realm.Add(eventObject);
+            _realm.Add(gameEvent);
             actor.EventsCount = actor.Events.Count();
         });
+        
+        CreateNotification(gameEvent);
     }
 
     public void RemoveEvent(GameEvent eventObject)
