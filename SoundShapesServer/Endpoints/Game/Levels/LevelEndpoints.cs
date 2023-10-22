@@ -3,6 +3,7 @@ using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Extensions;
+using SoundShapesServer.Extensions.RequestContextExtensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Levels;
@@ -79,8 +80,8 @@ public class LevelEndpoints : EndpointGroup
                 break;
         }
         
-        filters ??= LevelHelper.GetLevelFilters(context, database);
-        order ??= LevelHelper.GetLevelOrderType(context);
+        filters ??= context.GetLevelFilters(database);
+        order ??= context.GetLevelOrderType();
 
         (GameLevel[] levels, int totalLevels) = database.GetPaginatedLevels((LevelOrderType)order, descending, filters, from, count, user);
 

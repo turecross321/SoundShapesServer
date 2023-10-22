@@ -6,6 +6,7 @@ using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Extensions;
+using SoundShapesServer.Extensions.RequestContextExtensions;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;

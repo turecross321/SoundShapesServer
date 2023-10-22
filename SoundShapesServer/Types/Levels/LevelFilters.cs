@@ -20,6 +20,10 @@ public class LevelFilters
     public int? TransposeValue { get; init; }
     public bool? HasCar { get; init; }
     public bool? HasExplodingCar { get; init; }
+    public bool? HasUfo { get; init; }
+    public bool? HasFirefly { get; init; }
     public List<PlatformType>? UploadPlatforms { get; init; }
-    public DateTimeOffset? CreatedAfter { get; set; }
+    public DateTimeOffset? CreatedBefore { get; init; }
+    public DateTimeOffset? CreatedAfter { get; init; }
+    public bool? AnyCompletions { get; init; }
 }

@@ -11,10 +11,14 @@ public static class LevelQueryableExtensions
 {
     public static IQueryable<GameLevel> FilterLevels(this IQueryable<GameLevel> levels, GameDatabaseContext database, LevelFilters filters, GameUser? accessor)
     {
+        if (filters.AnyCompletions != null)
+            levels = levels.Where(l => l.UniqueCompletionsCount > 0 == filters.AnyCompletions);
+        
+        if (filters.CreatedBefore != null)
+            levels = levels.Where(l => l.CreationDate <= filters.CreatedBefore);
+        
         if (filters.CreatedAfter != null)
-        {
             levels = levels.Where(l => l.CreationDate >= filters.CreatedAfter);
-        }
         
         if (filters.InDailyDate != null || filters.InLatestDaily == true)
         {
@@ -96,29 +100,25 @@ public static class LevelQueryableExtensions
         }
 
         if (filters.Bpm != null)
-        {
             levels = levels.Where(l => l.Bpm == filters.Bpm);
-        }
 
         if (filters.ScaleIndex != null)
-        {
             levels = levels.Where(l => l.ScaleIndex == filters.ScaleIndex);
-        }
 
         if (filters.TransposeValue != null)
-        {
             levels = levels.Where(l => l.TransposeValue == filters.TransposeValue);
-        }
 
         if (filters.HasCar != null)
-        {
             levels = levels.Where(l => l.HasCar == filters.HasCar);
-        }
 
         if (filters.HasExplodingCar != null)
-        {
             levels = levels.Where(l => l.HasExplodingCar == filters.HasExplodingCar);
-        }
+        
+        if (filters.HasUfo != null)
+            levels = levels.Where(l => l.HasUfo == filters.HasUfo);
+        
+        if (filters.HasFirefly != null)
+            levels = levels.Where(l => l.HasExplodingCar == filters.HasFirefly);
 
         if (filters.UploadPlatforms != null)
         {

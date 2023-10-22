@@ -10,6 +10,12 @@ public static class EventQueryableExtensions
 {
     public static IQueryable<GameEvent> FilterEvents(this IQueryable<GameEvent> events, GameDatabaseContext database, EventFilters filters, GameUser? accessor)
     {
+        if (filters.CreatedBefore != null)
+            events = events.Where(l => l.CreationDate <= filters.CreatedBefore);
+        
+        if (filters.CreatedAfter != null)
+            events = events.Where(l => l.CreationDate >= filters.CreatedAfter);
+        
         if (filters.Actors != null)
         {
             IEnumerable<GameEvent> tempResponse = new List<GameEvent>();

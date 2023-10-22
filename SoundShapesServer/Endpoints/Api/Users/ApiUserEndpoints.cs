@@ -4,6 +4,8 @@ using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Extensions;
+using SoundShapesServer.Extensions.Queryable;
+using SoundShapesServer.Extensions.RequestContextExtensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
@@ -45,8 +47,8 @@ public class ApiUserEndpoints : EndpointGroup
     {
         (int from, int count, bool descending) = context.GetPageData();
 
-        UserFilters filters = UserHelper.GetUserFilters(context, database);
-        UserOrderType order = UserHelper.GetUserOrderType(context);
+        UserFilters filters = context.GetUserFilters(database);
+        UserOrderType order = context.GetUserOrderType();
 
         (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(order, descending, filters, from, count);
         return new ApiListResponse<ApiUserBriefResponse>(users.Select(u=>new ApiUserBriefResponse(u)), totalUsers);

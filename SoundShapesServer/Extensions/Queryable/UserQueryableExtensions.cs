@@ -7,6 +7,12 @@ public static class UserQueryableExtensions
 {
     public static IQueryable<GameUser> FilterUsers(this IQueryable<GameUser> users, UserFilters filters)
     {
+        if (filters.CreatedBefore != null)
+            users = users.Where(l => l.CreationDate <= filters.CreatedBefore);
+        
+        if (filters.CreatedAfter != null)
+            users = users.Where(l => l.CreationDate >= filters.CreatedAfter);
+        
         if (filters.IsFollowingUser != null)
         {
             IQueryable<UserFollowRelation> relations = filters.IsFollowingUser.FollowersRelations;

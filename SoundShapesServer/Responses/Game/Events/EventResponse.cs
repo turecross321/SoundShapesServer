@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Database;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types.Events;
@@ -16,14 +17,20 @@ public class EventResponse : IResponse
 
         Content = gameEvent.EventType switch
         {
-            Types.Events.EventType.LevelPublish => new EventLevelResponse((GameLevel?)gameEvent.Data(database)!),
-            Types.Events.EventType.LevelLike => new EventLevelResponse((GameLevel?)gameEvent.Data(database)!),
-            Types.Events.EventType.UserFollow => new UserTargetResponse((GameUser)gameEvent.Data(database)),
+            EventType.LevelPublish => new EventLevelResponse((GameLevel?)gameEvent.Data(database)!),
+            EventType.LevelLike => new EventLevelResponse((GameLevel?)gameEvent.Data(database)!),
+            EventType.UserFollow => new UserTargetResponse((GameUser)gameEvent.Data(database)),
             _ => null
         };
 
         Timestamp = gameEvent.CreationDate.ToUnixTimeMilliseconds().ToString();
-        EventType = EventHelper.EventEnumToGameString(gameEvent.EventType);
+        Type = gameEvent.EventType switch
+        {
+            EventType.LevelPublish => "publish",
+            EventType.UserFollow => "follow",
+            EventType.LevelLike => "like",
+            _ => "publish"
+        };
     }
     
     
@@ -31,6 +38,6 @@ public class EventResponse : IResponse
     
     [JsonProperty("type")] public string ContentType = ContentHelper.GetContentTypeString(Types.GameContentType.Event);
     [JsonProperty("object")] public object? Content { get; set; }
-    [JsonProperty("verb")] public string EventType { get; set; }
+    [JsonProperty("verb")] public string Type { get; set; }
     [JsonProperty("timestamp")] public string Timestamp { get; set; }
 }

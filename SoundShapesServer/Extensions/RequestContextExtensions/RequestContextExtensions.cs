@@ -4,7 +4,7 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Extensions;
+namespace SoundShapesServer.Extensions.RequestContextExtensions;
 
 public static class RequestContextExtensions
 {

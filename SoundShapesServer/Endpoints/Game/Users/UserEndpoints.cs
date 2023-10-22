@@ -2,6 +2,8 @@ using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Extensions;
+using SoundShapesServer.Extensions.Queryable;
+using SoundShapesServer.Extensions.RequestContextExtensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Users;
@@ -16,8 +18,8 @@ public class UserEndpoints : EndpointGroup
     {
         (int from, int count, bool descending) = context.GetPageData();
 
-        UserFilters filters = UserHelper.GetUserFilters(context, database);
-        UserOrderType order = UserHelper.GetUserOrderType(context);
+        UserFilters filters = context.GetUserFilters(database);
+        UserOrderType order = context.GetUserOrderType();
 
         (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(order, descending, filters, from, count);
         return new ListResponse<UserBriefResponse>(users.Select(u => new UserBriefResponse(user, u)), totalUsers, from, count);
@@ -31,16 +33,16 @@ public class UserEndpoints : EndpointGroup
     }
 
     [GameEndpoint("~identity:{id}/~follow:*.page")]
-    public ListResponse<UserBriefResponse>? GetFollowing(RequestContext context, string id, GameDatabaseContext database, GameUser user)
+    public ListResponse<UserBriefResponse> GetFollowing(RequestContext context, string id, GameDatabaseContext database, GameUser user)
     {
         (int from, int count, bool _) = context.GetPageData();
 
-        GameUser? followingUser = database.GetUserWithId(id);
-        if (followingUser == null)             
+        GameUser? followedByUser = database.GetUserWithId(id);
+        if (followedByUser == null)             
             // game will get stuck if this isn't done
             return new ListResponse<UserBriefResponse>();
 
-        (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(UserOrderType.DoNotOrder, true, new UserFilters(followedByUser:followingUser), from, count);
+        (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(UserOrderType.DoNotOrder, true, new UserFilters{FollowedByUser = followedByUser}, from, count);
         return new ListResponse<UserBriefResponse>(users.Select(u=>new UserBriefResponse(user, u)), totalUsers, from, count);
     }
 
@@ -54,7 +56,7 @@ public class UserEndpoints : EndpointGroup
             // game will get stuck if this isn't done
             return new ListResponse<UserBriefResponse>();
         
-        (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(UserOrderType.DoNotOrder, true, new UserFilters(isFollowingUser:recipient), from, count);
+        (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(UserOrderType.DoNotOrder, true, new UserFilters{IsFollowingUser = recipient}, from, count);
         return new ListResponse<UserBriefResponse>(users.Select(u => new UserBriefResponse(user, u)), totalUsers, from, count);
     }
 }

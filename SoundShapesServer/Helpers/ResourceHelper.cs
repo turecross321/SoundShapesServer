@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
@@ -12,6 +13,29 @@ public static class ResourceHelper
     {
         byte[] bytes = Encoding.UTF8.GetBytes(input);
         return HashFile(bytes);
+    }
+    
+    public static string? DecompressZlib(Stream compressedStream)
+    {
+        using InflaterInputStream inflater = new(compressedStream);
+        using MemoryStream outputMemoryStream = new();
+        byte[] buffer = new byte[4096];
+        try
+        {
+            int bytesRead;
+            while ((bytesRead = inflater.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                outputMemoryStream.Write(buffer, 0, bytesRead);
+            }
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+
+        outputMemoryStream.Seek(0, SeekOrigin.Begin);
+        using StreamReader reader = new(outputMemoryStream, Encoding.UTF8);
+        return reader.ReadToEnd();
     }
 
     private static string HashFile(byte[] file)

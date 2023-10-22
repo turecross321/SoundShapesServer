@@ -5,16 +5,10 @@ namespace SoundShapesServer.Types.Events;
 
 public class EventFilters
 {
-    public GameUser[]? Actors { get; set; }
+    public List<GameUser>? Actors { get; set; }
     public GameUser? OnUser { get; set; }
     public GameLevel? OnLevel { get; set; }
-    public EventType[]? EventTypes { get; set; }
-
-    public EventFilters(GameUser[]? actors = null, GameUser? onUser = null, GameLevel? onLevel = null, EventType[]? eventTypes = null)
-    {
-        Actors = actors;
-        OnUser = onUser;
-        OnLevel = onLevel;
-        EventTypes = eventTypes;
-    }
+    public List<EventType>? EventTypes { get; set; }
+    public DateTimeOffset? CreatedBefore { get; init; }
+    public DateTimeOffset? CreatedAfter { get; init; }
 }

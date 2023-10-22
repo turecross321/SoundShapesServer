@@ -1,3 +1,4 @@
+using Bunkum.Core;
 using Bunkum.RealmDatabase;
 using MongoDB.Bson;
 using Realms;
@@ -18,7 +19,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 77;
+    protected override ulong SchemaVersion => 78;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -42,6 +43,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
     };
 
     protected override string Filename => "database.realm";
+    private readonly string DataStorePath = Path.Combine(BunkumFileSystem.DataDirectory, "dataStore");
     
     public override void Warmup()
     {
@@ -86,17 +88,21 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             }
         }
         
-        migration.OldRealm.DynamicApi.All("GameLevel");
+        IQueryable<dynamic> oldLevels = migration.OldRealm.DynamicApi.All("GameLevel");
         IQueryable<GameLevel> newLevels = migration.NewRealm.All<GameLevel>();
-        if (oldVersion < 59)
+        if (oldVersion < 78)
         {
             for (int i = 0; i < newLevels.Count(); i++)
             {
+                Console.WriteLine($"Reanalyzing levels... ({i}/{newLevels.Count()})");
+                dynamic oldLevel = oldLevels.ElementAt(i);
                 GameLevel newLevel = newLevels.ElementAt(i);
-            
-                Console.WriteLine("Performing Level UploadPlatform Migration. This may take a while. (" + i  + "/" + newLevels.Count() + ")");
-                // Implemented UploadPlatform
-                newLevel.UploadPlatform = PlatformType.Unknown;
+
+                if (!File.Exists(newLevel.LevelFilePath))
+                    continue;
+                
+                byte[] levelFile = File.ReadAllBytes(newLevel.LevelFilePath);
+                newLevel = LevelHelper.AnalyzeLevel(newLevel, levelFile);
             }
         }
         

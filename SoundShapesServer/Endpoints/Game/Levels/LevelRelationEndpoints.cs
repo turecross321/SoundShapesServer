@@ -6,6 +6,7 @@ using Bunkum.Listener.Protocol;
 using SoundShapesServer.Database;
 using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
+using SoundShapesServer.Extensions.RequestContextExtensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Levels;
@@ -21,7 +22,7 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class LevelRelationEndpoints : EndpointGroup
 {
     [GameEndpoint("~identity:{userId}/~queued:*.page")]
-    public ListResponse<RelationLevelResponse>? QueuedAndLiked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
+    public ListResponse<RelationLevelResponse> QueuedAndLiked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
     {
         (int from, int count, bool _) = context.GetPageData();
         
@@ -40,7 +41,7 @@ public class LevelRelationEndpoints : EndpointGroup
     }
     
     [GameEndpoint("~identity:{userId}/~like:*.page")]
-    public ListResponse<RelationLevelResponse>? Liked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
+    public ListResponse<RelationLevelResponse> Liked(RequestContext context, GameDatabaseContext database, GameUser user, string userId)
     {
         (int from, int count, bool _) = context.GetPageData();
         

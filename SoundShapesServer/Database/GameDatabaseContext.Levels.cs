@@ -9,6 +9,7 @@ using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Levels.SSLevel;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.LevelHelper;
 using static SoundShapesServer.Helpers.ResourceHelper;
@@ -73,48 +74,6 @@ public partial class GameDatabaseContext
         UploadLevelResource(dataStore, level, thumbnailFile, FileType.Image);
         UploadLevelResource(dataStore, level, soundFile, FileType.Sound);
     }
-
-    private bool SetLevelInfo(GameLevel level, byte[] levelFile)
-    {
-        JObject? deCompressedLevel = levelFile.LevelFileToJObject();
-        if (deCompressedLevel == null)
-            return false;
-        
-        int bpm = deCompressedLevel.Value<int?>("bpm") ?? 120;
-        int transposeValue = deCompressedLevel.Value<int?>("transposeValue") ?? 0;
-        int scaleIndex = deCompressedLevel.Value<int?>("scaleIndex") ?? 0;
-        int screensCount = (deCompressedLevel.GetValue("screenData") ?? throw new InvalidOperationException()).Count();
-
-        int totalEntities = deCompressedLevel.GetValue("entities")?.Count() ?? 0;
-        // This was added in later versions of the game, and it replaces entities
-        int totalEntitiesB = deCompressedLevel.GetValue("entitiesB")?.Count() ?? 0;
-
-        int entitiesCount = Math.Max(totalEntities, totalEntitiesB);
-
-        bool hasCar = deCompressedLevel.GetValue("entityTypesUsed")
-            ?.Values<string>().FirstOrDefault
-                // ReSharper disable once StringLiteralTypo
-                (e => e == "Platformer_EntityPacks_GameStuff_CarCheckpoint") != null;
-        
-        bool hasExplodingCar = deCompressedLevel.GetValue("entityTypesUsed")
-            ?.Values<string>().FirstOrDefault
-                // ReSharper disable once StringLiteralTypo
-                (e => e == "Platformer_EntityPacks_GameStuff_ExplodingCarCheckpoint") != null;
-
-        _realm.Write(() =>
-        {
-            level.FileSize = levelFile.Length;
-            level.Bpm = bpm;
-            level.TransposeValue = transposeValue;
-            level.ScaleIndex = scaleIndex;
-            level.TotalScreens = screensCount;
-            level.TotalEntities = entitiesCount;
-            level.HasCar = hasCar;
-            level.HasExplodingCar = hasExplodingCar;
-        });
-
-        return true;
-    }
     
     public ApiOkResponse UploadLevelResource(IDataStore dataStore, GameLevel level,
         byte[] file, FileType fileType)
@@ -124,8 +83,14 @@ public partial class GameDatabaseContext
 
         if (fileType == FileType.Level)
         {
-            if (!SetLevelInfo(level, file))
+            GameLevel? result = AnalyzeLevel(level, file);
+            if (result == null)
                 return ApiBadRequestError.CorruptLevel;
+            
+            _realm.Write(() =>
+            {
+                level = result;
+            });
         }
         
         string key = GetLevelResourceKey(level, fileType);

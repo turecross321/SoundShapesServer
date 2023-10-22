@@ -61,6 +61,8 @@ public class GameLevel : RealmObject
     public int TotalEntities { get; set; }
     public bool HasCar { get; set; }
     public bool HasExplodingCar { get; set; }
+    public bool HasUfo { get; set; }
+    public bool HasFirefly { get; set; }
     public long TotalPlayTime { get; set; }
     public int TotalDeaths { get; set; }
 }

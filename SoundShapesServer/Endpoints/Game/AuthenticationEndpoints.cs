@@ -15,6 +15,7 @@ using SoundShapesServer.Types;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
+using SoundShapesServer.Extensions.RequestContextExtensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Authentication;
 using SoundShapesServer.Types.Authentication;
