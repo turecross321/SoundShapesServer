@@ -12,7 +12,6 @@ public static class ContentHelper
             GameContentType.Level => "level",
             GameContentType.Album => "album",
             GameContentType.PublishedLevel => "upload",
-            GameContentType.RemovedLevelAuthor => "alias",
             GameContentType.Like => "like",
             GameContentType.Queued => "queued",
             GameContentType.Follow => "follow",

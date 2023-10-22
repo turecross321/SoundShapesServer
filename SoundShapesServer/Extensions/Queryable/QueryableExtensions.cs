@@ -9,10 +9,11 @@ public static class QueryableExtensions
     {
         return descending ? source.OrderByDescending(keySelector) : source.OrderBy(keySelector);
     }
-    
-    private static readonly int _maxItems = 100;
-    public static T[] Paginate<T>(this IQueryable<T> entries, int from, int count)
+
+    private const int MaxItems = 100;
+
+    public static (T[], int) Paginate<T>(this IQueryable<T> entries, int from, int count)
     {
-        return entries.AsEnumerable().Skip(from).Take(Math.Min(count, _maxItems)).ToArray();
+        return (entries.AsEnumerable().Skip(from).Take(Math.Min(count, MaxItems)).ToArray(), entries.Count());
     }
 }

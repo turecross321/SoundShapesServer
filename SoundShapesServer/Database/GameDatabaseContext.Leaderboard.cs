@@ -58,8 +58,7 @@ public partial class GameDatabaseContext
 
     public (LeaderboardEntry[], int) GetPaginatedLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters, int from, int count, GameUser? accessor)
     {
-        IQueryable<LeaderboardEntry> entries = GetLeaderboardEntries(order, descending, filters);
-        return (entries.Paginate(from, count), entries.Count());
+        return GetLeaderboardEntries(order, descending, filters).Paginate(from, count);
     }
 
     public IQueryable<LeaderboardEntry> GetLeaderboardEntries(LeaderboardOrderType order, bool descending,

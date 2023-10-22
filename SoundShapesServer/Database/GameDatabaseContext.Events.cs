@@ -76,9 +76,7 @@ public partial class GameDatabaseContext
     
     public (GameEvent[], int) GetPaginatedEvents(EventOrderType order, bool descending,  EventFilters filters, int from, int count, GameUser? accessor)
     {
-        IQueryable<GameEvent> events = _realm.All<GameEvent>().FilterEvents(this, filters, accessor)
-            .OrderEvents(order, descending);
-
-        return (events.Paginate(from, count), events.Count());
+        return _realm.All<GameEvent>().FilterEvents(this, filters, accessor)
+            .OrderEvents(order, descending).Paginate(from, count);
     }
 }

@@ -9,9 +9,11 @@ public class LevelVersionResponse : IResponse
 {
     public LevelVersionResponse(GameLevel level)
     {
-        Id = IdHelper.FormatVersionId(level.ModificationDate.ToUnixTimeMilliseconds().ToString());
+        Id = IdHelper.FormatVersionId(level.ModificationDate);
     }
 
-    [JsonProperty("id")] public string Id { get; }
+    public LevelVersionResponse() { }
+
+    [JsonProperty("id")] public string Id { get; } = IdHelper.FormatVersionId(DateTimeOffset.UnixEpoch);
     [JsonProperty("type")] public string Type { get; } = ContentHelper.GetContentTypeString(GameContentType.Version);
 }

@@ -90,7 +90,6 @@ public partial class GameDatabaseContext
     
     public (NewsEntry[], int) GetPaginatedNews(NewsOrderType order, bool descending, NewsFilters filters, int from, int count)
     {
-        IQueryable<NewsEntry> entries = _realm.All<NewsEntry>().FilterNews(filters).OrderNews(order, descending);
-        return (entries.Paginate(from, count), entries.Count());
+        return _realm.All<NewsEntry>().FilterNews(filters).OrderNews(order, descending).Paginate(from, count);
     }
 }

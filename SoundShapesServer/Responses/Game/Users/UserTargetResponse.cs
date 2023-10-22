@@ -7,29 +7,22 @@ namespace SoundShapesServer.Responses.Game.Users;
 
 public class UserTargetResponse : IResponse
 {
-    public UserTargetResponse(GameUser? user)
+    public UserTargetResponse(GameUser user)
     {
-        if (user == null)
-        {
-            Type = ContentHelper.GetContentTypeString(GameContentType.RemovedLevelAuthor);
-        }
-        
-        Id = IdHelper.FormatUserId(user?.Id ?? "");
-        DisplayName = user?.Username ?? "";
-        Metadata = user != null ? new UserMetadataResponse(user) : new UserMetadataResponse();
+        Id = IdHelper.FormatUserId(user.Id);
+        DisplayName = user.Username;
+        Metadata = new UserMetadataResponse(user);
     }
-
+    
     public UserTargetResponse()
     {
-        Id = "";
-        DisplayName = "";
+        Id = IdHelper.FormatUserId("________-____-____-____-____________");
+        DisplayName = "Unknown User";
         Metadata = new UserMetadataResponse();
     }
 
     [JsonProperty("id")] public string Id { get; set; }
     [JsonProperty("type")] public string Type { get; set; } = ContentHelper.GetContentTypeString(GameContentType.User);
-
     [JsonProperty("displayName")] public string DisplayName { get; set; }
-
     [JsonProperty("metadata")] public UserMetadataResponse Metadata { get; set; }
 }

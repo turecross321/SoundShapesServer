@@ -3,6 +3,7 @@ using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
@@ -29,7 +30,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         if (user == null)
             return ApiNotFoundError.UserNotFound;
 
-        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+        if (!level.HasUserAccess(user))
             return ApiNotFoundError.LevelNotFound;
 
         return new ApiLevelRelationResponse
@@ -50,7 +51,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         if (level == null) 
             return ApiNotFoundError.LevelNotFound;
         
-        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+        if (!level.HasUserAccess(user))
             return ApiNotFoundError.LevelNotFound;
 
         if (!database.LikeLevel(user, level, PlatformType.Unknown)) 
@@ -69,7 +70,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         if (level == null) 
             return ApiNotFoundError.LevelNotFound;
 
-        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+        if (!level.HasUserAccess(user))
             return ApiNotFoundError.LevelNotFound;
         
         if (!database.UnLikeLevel(user, level))
@@ -88,7 +89,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         if (level == null) 
             return ApiNotFoundError.LevelNotFound;
 
-        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+        if (!level.HasUserAccess(user))
             return ApiNotFoundError.LevelNotFound;
         
         if (!database.QueueLevel(user, level, PlatformType.Unknown)) 
@@ -107,7 +108,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
         if (level == null) 
             return ApiNotFoundError.LevelNotFound;
 
-        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+        if (!level.HasUserAccess(user))
             return ApiNotFoundError.LevelNotFound;
         
         if (!database.UnQueueLevel(user, level))         

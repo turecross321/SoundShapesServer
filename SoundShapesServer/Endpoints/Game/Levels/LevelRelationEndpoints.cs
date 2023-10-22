@@ -5,12 +5,15 @@ using Bunkum.Core.Responses;
 using Bunkum.Listener.Protocol;
 using SoundShapesServer.Database;
 using SoundShapesServer.Extensions;
+using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Levels;
+using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Endpoints.Game.Levels;
@@ -23,11 +26,17 @@ public class LevelRelationEndpoints : EndpointGroup
         (int from, int count, bool _) = context.GetPageData();
         
         GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
-        if (userToGetLevelsFrom == null) return null;
+        if (userToGetLevelsFrom == null) 
+            // game will get stuck if this isn't done
+            return new ListResponse<RelationLevelResponse>();
         
-        (GameLevel[] levels, int totalLevels) = database.GetPaginatedLevels(LevelOrderType.DoNotOrder, true, new LevelFilters{LikedOrQueuedByUser = userToGetLevelsFrom}, from, count, user);
+        (LevelQueueRelation[] queued, int totalQueued) = userToGetLevelsFrom.QueuedLevelRelations.Paginate(from, count);
+        (LevelLikeRelation[] liked, int totalLiked) = userToGetLevelsFrom.LikedLevelRelations.Paginate(from, count);
+        // Combines queue relations and level relations into one RelationLevelResponse list
+        IEnumerable<RelationLevelResponse> levels = queued.Select(r => new RelationLevelResponse(r, user))
+            .Concat(liked.Select(r => new RelationLevelResponse(r, user)));
         
-        return new ListResponse<RelationLevelResponse>(levels.Select(l=>new RelationLevelResponse(l, user)), totalLevels, from, count);
+        return new ListResponse<RelationLevelResponse>(levels, totalQueued + totalLiked, from, count);
     }
     
     [GameEndpoint("~identity:{userId}/~like:*.page")]
@@ -36,11 +45,12 @@ public class LevelRelationEndpoints : EndpointGroup
         (int from, int count, bool _) = context.GetPageData();
         
         GameUser? userToGetLevelsFrom = database.GetUserWithId(userId);
-        if (userToGetLevelsFrom == null) return null;
-        
-        (GameLevel[] levels, int totalLevels) = database.GetPaginatedLevels(LevelOrderType.DoNotOrder, true, new LevelFilters{LikedByUser = userToGetLevelsFrom}, from, count, user);
-        
-        return new ListResponse<RelationLevelResponse>(levels.Select(l=>new RelationLevelResponse(l, user)), totalLevels, from, count);
+        if (userToGetLevelsFrom == null) 
+            // game will get stuck if this isn't done
+            return new ListResponse<RelationLevelResponse>();
+
+        (LevelLikeRelation[] relations, int totalLevels) = userToGetLevelsFrom.LikedLevelRelations.Paginate(from, count);
+        return new ListResponse<RelationLevelResponse>(relations.Select(r=>new RelationLevelResponse(r, user)), totalLevels, from, count);
     }
     
     [GameEndpoint("~identity:{userId}/~like:%2F~level%3A{arguments}")]
@@ -51,10 +61,8 @@ public class LevelRelationEndpoints : EndpointGroup
         string requestType = argumentArray[1];
 
         GameLevel? level = database.GetLevelWithId(levelId);
-        if (level == null) return new Response(HttpStatusCode.NotFound);
-        
-        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
-            return HttpStatusCode.NotFound;
+        if (level == null) 
+            return new Response(HttpStatusCode.NotFound);
         
         if (requestType == "put") return LikeLevel(database, user, level, token.PlatformType);
         if (requestType == "get") return CheckIfUserHasLikedLevel(database, user, level);
@@ -71,10 +79,8 @@ public class LevelRelationEndpoints : EndpointGroup
         string requestType = argumentArray[1];
         
         GameLevel? level = database.GetLevelWithId(levelId);
-        if (level == null) return new Response(HttpStatusCode.NotFound);
-        
-        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
-            return HttpStatusCode.NotFound;
+        if (level == null) 
+            return new Response(HttpStatusCode.NotFound);
         
         // There is no queue button, and this is always called when the like button is pressed, so ignore it.
         if (requestType == "put") return HttpStatusCode.NotFound;
@@ -96,13 +102,18 @@ public class LevelRelationEndpoints : EndpointGroup
     }
     private Response LikeLevel(GameDatabaseContext database, GameUser user, GameLevel level, PlatformType platformType)
     {
-        if (database.LikeLevel(user, level, platformType)) return new Response(HttpStatusCode.OK);
+        if (!level.HasUserAccess(user))
+            return HttpStatusCode.NotFound;
+        
+        if (database.LikeLevel(user, level, platformType)) 
+            return new Response(HttpStatusCode.OK);
         return new Response(HttpStatusCode.Conflict);
     }
 
     private Response UnLikeLevel(GameDatabaseContext database, GameUser user, GameLevel level)
     {
-        if (database.UnLikeLevel(user, level)) return new Response(HttpStatusCode.OK);
+        if (database.UnLikeLevel(user, level)) 
+            return new Response(HttpStatusCode.OK);
         return new Response(HttpStatusCode.BadRequest);
     }
 
@@ -119,7 +130,11 @@ public class LevelRelationEndpoints : EndpointGroup
 
     private Response UnQueueLevel(GameDatabaseContext database, GameUser user, GameLevel level)
     {
-        if (database.UnQueueLevel(user, level)) return new Response(HttpStatusCode.OK);
+        if (!level.HasUserAccess(user))
+            return HttpStatusCode.NotFound;
+        
+        if (database.UnQueueLevel(user, level)) 
+            return new Response(HttpStatusCode.OK);
         return new Response(HttpStatusCode.BadRequest);
     }
 }

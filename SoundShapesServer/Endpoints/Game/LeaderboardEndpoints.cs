@@ -34,7 +34,7 @@ public class LeaderboardEndpoints : EndpointGroup
         if (level == null) 
             return HttpStatusCode.NotFound;
         
-        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+        if (!level.HasUserAccess(user))
             return HttpStatusCode.NotFound;
 
         LeaderboardSubmissionRequest deSerializedRequest = LeaderboardSubmissionRequest.DeSerializeSubmission(body);
@@ -59,7 +59,11 @@ public class LeaderboardEndpoints : EndpointGroup
         const bool descending = false;
 
         GameLevel? level = database.GetLevelWithId(levelId);
-        if (level == null) return null;
+        if (level == null) 
+            return null;
+
+        if (!level.HasUserAccess(user))
+            return null;
 
         LeaderboardFilters filters = new (level, obsolete: false, completed: true);
         (LeaderboardEntry[] paginatedEntries, int totalEntries) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, from, count, user);
@@ -75,6 +79,9 @@ public class LeaderboardEndpoints : EndpointGroup
     {
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return null;
+        
+        if (!level.HasUserAccess(user))
+            return null;
         
         LeaderboardFilters filters = new (level, user, completed:true, obsolete:false);
 

@@ -36,19 +36,23 @@ public class UserEndpoints : EndpointGroup
         (int from, int count, bool _) = context.GetPageData();
 
         GameUser? followingUser = database.GetUserWithId(id);
-        if (followingUser == null) return null;
+        if (followingUser == null)             
+            // game will get stuck if this isn't done
+            return new ListResponse<UserBriefResponse>();
 
         (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(UserOrderType.DoNotOrder, true, new UserFilters(followedByUser:followingUser), from, count);
         return new ListResponse<UserBriefResponse>(users.Select(u=>new UserBriefResponse(user, u)), totalUsers, from, count);
     }
 
     [GameEndpoint("~identity:{id}/~followers.page")]
-    public ListResponse<UserBriefResponse>? GetFollowers(RequestContext context, string id, GameDatabaseContext database, GameUser user)
+    public ListResponse<UserBriefResponse> GetFollowers(RequestContext context, string id, GameDatabaseContext database, GameUser user)
     {
         (int from, int count, bool _) = context.GetPageData();
 
         GameUser? recipient = database.GetUserWithId(id);
-        if (recipient == null) return null;
+        if (recipient == null) 
+            // game will get stuck if this isn't done
+            return new ListResponse<UserBriefResponse>();
         
         (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(UserOrderType.DoNotOrder, true, new UserFilters(isFollowingUser:recipient), from, count);
         return new ListResponse<UserBriefResponse>(users.Select(u => new UserBriefResponse(user, u)), totalUsers, from, count);

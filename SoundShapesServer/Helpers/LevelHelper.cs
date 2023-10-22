@@ -58,11 +58,6 @@ public static class LevelHelper
         return name[..Math.Min(name.Length, LevelNameCharacterLimit)];
     }
 
-    public static bool IsUserAllowedToAccessLevel(GameLevel level, GameUser? user)
-    {
-        return !(level.Visibility == LevelVisibility.Private && level.Author.Id != user?.Id && user?.PermissionsType < PermissionsType.Moderator);
-    }
-
     public static LevelOrderType GetLevelOrderType(RequestContext context)
     {
         string? orderString = context.QueryString["orderBy"];

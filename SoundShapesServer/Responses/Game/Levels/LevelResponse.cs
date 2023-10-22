@@ -20,7 +20,7 @@ public class LevelResponse : IResponse
         Metadata = new LevelMetadataResponse(level);
     }
 
-    [JsonProperty("id")] public string Id { get; }
+    [JsonProperty("id")] public string? Id { get; }
     [JsonProperty("author")] public UserTargetResponse Author { get;  }
     [JsonProperty("latestVersion", NullValueHandling = NullValueHandling.Ignore)] public string LatestVersion { get; }
     [JsonProperty("title")] public string Title { get; set; }

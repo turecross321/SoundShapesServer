@@ -207,7 +207,6 @@ public partial class GameDatabaseContext
 
     public (GameUser[], int) GetPaginatedUsers(UserOrderType order, bool descending, UserFilters filters, int from, int count)
     {
-        IQueryable<GameUser> users = _realm.All<GameUser>().FilterUsers(filters).OrderUsers(order, descending);
-        return (users.Paginate(from, count), users.Count());
+        return _realm.All<GameUser>().FilterUsers(filters).OrderUsers(order, descending).Paginate(from, count);
     }
 }

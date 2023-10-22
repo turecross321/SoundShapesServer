@@ -5,6 +5,7 @@ using Bunkum.Core.Responses;
 using Bunkum.Core.Storage;
 using Bunkum.Listener.Protocol;
 using SoundShapesServer.Database;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
@@ -19,10 +20,11 @@ public class ResourceEndpoints : EndpointGroup
 {
     [GameEndpoint("~level:{levelId}/~version:{versionId}/~content:{file}/data.get"), Authentication(false)]
     public Response GetLevelResource
-        (RequestContext context, IDataStore dataStore, GameDatabaseContext database, GameUser user, string levelId, string versionId, string file)
+        (RequestContext context, IDataStore dataStore, GameDatabaseContext database, GameUser? user, string levelId, string versionId, string file)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
-        if (level == null) return HttpStatusCode.NotFound;
+        if (level == null || !level.HasUserAccess(user)) 
+            return HttpStatusCode.NotFound;
 
         FileType fileType = GetFileTypeFromName(file);
 

@@ -55,8 +55,8 @@ public static class IdHelper
         return $"/~album:{albumId}/~link:/~level:{levelId}";
     }
 
-    public static string FormatVersionId(string id)
+    public static string FormatVersionId(DateTimeOffset date)
     {
-        return $"~version:{id}";
+        return $"~version:{date.ToUnixTimeMilliseconds().ToString()}";
     }
 }

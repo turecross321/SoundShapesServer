@@ -11,6 +11,6 @@ public class LevelParentResponse : IResponse
         Id = IdHelper.FormatLevelId(level.Id);
     }
 
-    public string Id { get; set; }
+    public string? Id { get; set; }
     public string Type = ContentHelper.GetContentTypeString(GameContentType.Level);
 }

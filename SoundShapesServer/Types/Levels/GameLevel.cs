@@ -9,9 +9,9 @@ namespace SoundShapesServer.Types.Levels;
 
 public class GameLevel : RealmObject
 {
-    [PrimaryKey] [Required] public string Id { get; init; }
-    public GameUser Author { get; init; }
-    public string Name { get; set; }
+    [PrimaryKey] [Required] public required string Id { get; init; }
+    public required GameUser Author { get; init; }
+    public required string Name { get; set; }
     public int Language { get; set; }
     
     // Realm can't store enums, use recommended workaround

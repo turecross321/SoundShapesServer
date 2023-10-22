@@ -119,7 +119,6 @@ public partial class GameDatabaseContext
     
     public (GameAlbum[], int) GetPaginatedAlbums(AlbumOrderType order, bool descending, int from, int count)
     {
-        IQueryable<GameAlbum> albums = _realm.All<GameAlbum>().OrderAlbums(order, descending);
-        return (albums.Paginate(from, count), albums.Count());
+        return _realm.All<GameAlbum>().OrderAlbums(order, descending).Paginate(from, count);
     }
 }

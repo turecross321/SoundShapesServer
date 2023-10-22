@@ -66,8 +66,6 @@ public partial class GameDatabaseContext
     
     public (Report[], int) GetPaginatedReports(ReportOrderType order, bool descending, ReportFilters filters, int from, int count)
     {
-        IQueryable<Report> reports =
-            _realm.All<Report>().FilterReports(filters).OrderReports(order, descending);
-        return (reports.Paginate(from, count), reports.Count());
+        return _realm.All<Report>().FilterReports(filters).OrderReports(order, descending).Paginate(from, count);
     }
 }

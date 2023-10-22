@@ -2,23 +2,25 @@ using Newtonsoft.Json;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Game.Levels;
 
 public class RelationLevelResponse : IResponse
 {
-    public RelationLevelResponse(GameLevel level, GameUser user)
+    public RelationLevelResponse(LevelLikeRelation relation, GameUser accessor)
     {
-        Id = IdHelper.FormatRelationLevelId(user.Id, level.Id);
-        
-        DateTimeOffset likeDate = level.Likes.FirstOrDefault(r => r.User == user && r.Level == level)?.Date ?? DateTimeOffset.UnixEpoch;
-        DateTimeOffset queueDate = level.Queues.FirstOrDefault(r => r.User == user && r.Level == level)?.Date ?? DateTimeOffset.UnixEpoch;
-        DateTimeOffset mostRecentDate = likeDate > queueDate ? likeDate : queueDate;
-        if (mostRecentDate == DateTimeOffset.UnixEpoch) throw new Exception();
-        
-        Timestamp = mostRecentDate.ToUnixTimeMilliseconds();
-        Level = new LevelTargetResponse(level, user);
+        Id = IdHelper.FormatRelationLevelId(relation.User.Id, relation.Level.Id);
+        Timestamp = relation.Date.ToUnixTimeMilliseconds();
+        Level = new LevelTargetResponse(relation.Level, accessor);
+    }
+    
+    public RelationLevelResponse(LevelQueueRelation relation, GameUser accessor)
+    {
+        Id = IdHelper.FormatRelationLevelId(relation.User.Id, relation.Level.Id);
+        Timestamp = relation.Date.ToUnixTimeMilliseconds();
+        Level = new LevelTargetResponse(relation.Level, accessor);
     }
     
     [JsonProperty("id")] public string Id { get; set; }

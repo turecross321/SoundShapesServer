@@ -16,7 +16,7 @@ public class UserMetadataResponse : IResponse
 
     public UserMetadataResponse()
     {
-        Username = "";
+        Username = "Unknown User";
     }
 
     [JsonProperty("displayName")] public string Username { get; set; }

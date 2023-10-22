@@ -5,6 +5,7 @@ using Bunkum.Core.Responses;
 using Bunkum.Protocols.Http;
 using HttpMultipartParser;
 using SoundShapesServer.Database;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Reports;
@@ -25,7 +26,8 @@ public class ReportEndpoints : EndpointGroup
         string formattedLevelId = parser.GetParameterValue("item");
         string levelId = IdHelper.DeFormatLevelIdAndVersion(formattedLevelId);
         GameLevel? level = database.GetLevelWithId(levelId);
-        if (level == null) return HttpStatusCode.NotFound;
+        if (level == null || !level.HasUserAccess(user)) 
+            return HttpStatusCode.NotFound;
 
         if (level.Author.Id == user.Id) return HttpStatusCode.BadRequest;
         

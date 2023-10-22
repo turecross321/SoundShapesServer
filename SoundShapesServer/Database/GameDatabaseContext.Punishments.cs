@@ -60,8 +60,6 @@ public partial class GameDatabaseContext
     
     public (Punishment[], int) GetPaginatedPunishments(PunishmentOrderType order, bool descending, PunishmentFilters filters, int from, int count)
     {
-        IQueryable<Punishment> punishments =
-            _realm.All<Punishment>().FilterPunishments(filters).OrderPunishments(order, descending);
-        return (punishments.Paginate(from, count), punishments.Count());
+        return _realm.All<Punishment>().FilterPunishments(filters).OrderPunishments(order, descending).Paginate(from, count);
     }
 }

@@ -16,10 +16,8 @@ public class EventResponse : IResponse
 
         Content = gameEvent.EventType switch
         {
-            Types.Events.EventType.LevelPublish => new EventLevelResponse((GameLevel?)gameEvent.Data(database) ??
-                                                                          new GameLevel()),
-            Types.Events.EventType.LevelLike => new EventLevelResponse((GameLevel?)gameEvent.Data(database) ??
-                                                                       new GameLevel()),
+            Types.Events.EventType.LevelPublish => new EventLevelResponse((GameLevel?)gameEvent.Data(database)!),
+            Types.Events.EventType.LevelLike => new EventLevelResponse((GameLevel?)gameEvent.Data(database)!),
             Types.Events.EventType.UserFollow => new UserTargetResponse((GameUser)gameEvent.Data(database)),
             _ => null
         };

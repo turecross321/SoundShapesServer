@@ -39,7 +39,7 @@ public class ApiLevelEndpoints: EndpointGroup
         if (level == null)
             return ApiNotFoundError.LevelNotFound;
 
-        if (!LevelHelper.IsUserAllowedToAccessLevel(level, user))
+        if (!level.HasUserAccess(user))
             return ApiNotFoundError.LevelNotFound;
             
         return new ApiLevelFullResponse(level);

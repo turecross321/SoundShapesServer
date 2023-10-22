@@ -15,7 +15,7 @@ public class AlbumLevelInfoTargetResponse : IResponse
         Completed = level.UniqueCompletions.Contains(user);
     }
 
-    [JsonProperty("id")] public string Id { get; set; }
+    [JsonProperty("id")] public string? Id { get; set; }
     [JsonProperty("type")] public string Type { get; set; }
     [JsonProperty("completed")] public bool Completed { get; set; }
 }

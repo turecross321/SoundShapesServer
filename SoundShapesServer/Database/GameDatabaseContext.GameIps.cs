@@ -80,10 +80,7 @@ public partial class GameDatabaseContext
 
     public (GameIp[], int) GetPaginatedIps(GameUser user, bool? authorized, int from, int count)
     {
-        IQueryable<GameIp> filteredAddresses = GetIps(user, authorized);
-        GameIp[] paginatedAddresses = filteredAddresses.Paginate(from, count);
-
-        return (paginatedAddresses, filteredAddresses.Count());
+        return GetIps(user, authorized).Paginate(from, count);
     }
 
     private IQueryable<GameIp> GetIps(GameUser user, bool? authorized)

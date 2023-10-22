@@ -57,8 +57,7 @@ public partial class GameDatabaseContext
     
     public (DailyLevel[], int) GetPaginatedDailyLevels(DailyLevelOrderType order, bool descending, DailyLevelFilters filters, int from, int count)
     {
-        IQueryable<DailyLevel> dailyLevels = GetDailyLevels(order, descending, filters);
-        return (dailyLevels.Paginate(from, count), dailyLevels.Count());
+        return GetDailyLevels(order, descending, filters).Paginate(from, count);
     }
 
     public IQueryable<DailyLevel> GetDailyLevels(DailyLevelOrderType order, bool descending, DailyLevelFilters filters)

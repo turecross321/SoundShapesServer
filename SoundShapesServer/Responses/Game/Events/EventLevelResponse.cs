@@ -17,7 +17,10 @@ public class EventLevelResponse : IResponse
     }
 
     [JsonProperty("id")] public string Id { get; set; }
-    [JsonProperty("latestVersion")] public EventLevelVersionResponse LatestEventLevelVersionResponse { get; set; }
-    [JsonProperty("metadata")] public LevelMetadataResponse Metadata { get; set; }
+
+    [JsonProperty("latestVersion")]
+    public EventLevelVersionResponse LatestEventLevelVersionResponse { get; set; }
+
+    [JsonProperty("metadata")] public LevelMetadataResponse Metadata { get; set; } 
     [JsonProperty("author")] public UserTargetResponse Author { get; set; }
 }
