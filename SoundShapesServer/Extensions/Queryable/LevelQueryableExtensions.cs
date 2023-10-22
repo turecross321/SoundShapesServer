@@ -11,6 +11,11 @@ public static class LevelQueryableExtensions
 {
     public static IQueryable<GameLevel> FilterLevels(this IQueryable<GameLevel> levels, GameDatabaseContext database, LevelFilters filters, GameUser? accessor)
     {
+        if (filters.CreatedAfter != null)
+        {
+            levels = levels.Where(l => l.CreationDate >= filters.CreatedAfter);
+        }
+        
         if (filters.InDailyDate != null || filters.InLatestDaily == true)
         {
             IEnumerable<DailyLevel> dailyLevelObjects = database.GetDailyLevels(DailyLevelOrderType.Date, true, new DailyLevelFilters{Date = filters.InDailyDate, LatestDate = filters.InLatestDaily});

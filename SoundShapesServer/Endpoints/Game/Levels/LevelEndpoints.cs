@@ -71,7 +71,7 @@ public class LevelEndpoints : EndpointGroup
                 break;
             // ReSharper disable once StringLiteralTypo
             case "greatesthits":
-                filters = new LevelFilters()
+                filters = new LevelFilters
                 {
                     CreatedAfter = DateTimeOffset.UtcNow.AddDays(-7)
                 };
