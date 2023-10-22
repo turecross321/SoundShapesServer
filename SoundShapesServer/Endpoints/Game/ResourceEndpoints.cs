@@ -17,7 +17,7 @@ namespace SoundShapesServer.Endpoints.Game;
 
 public class ResourceEndpoints : EndpointGroup
 {
-    [GameEndpoint("~level:{levelId}/~version:{versionId}/~content:{file}/data.get")]
+    [GameEndpoint("~level:{levelId}/~version:{versionId}/~content:{file}/data.get"), Authentication(false)]
     public Response GetLevelResource
         (RequestContext context, IDataStore dataStore, GameDatabaseContext database, GameUser user, string levelId, string versionId, string file)
     {

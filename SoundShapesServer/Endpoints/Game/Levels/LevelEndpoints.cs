@@ -24,25 +24,15 @@ public class LevelEndpoints : EndpointGroup
         (int from, int count, bool descending) = context.GetPageData();
         string searchString = context.QueryString["search"] ?? "all";
 
-        // Doing this so the game doesn't disconnect for unauthenticated users before getting to the EULA.
-        if (token == null || user == null)
-        {
-            if (searchString == "tagged3") 
-                return new ListResponse<LevelResponse>();
-            
-            return null;
-        }
-        if (token.TokenType != TokenType.GameAccess)
-        {
-            if (token.TokenType != TokenType.GameUnAuthorized || searchString != "tagged3")
-                return null;
-        }
-
         LevelOrderType? order = null;
         LevelFilters? filters = null;
         
         const string searchQuery = "metadata.displayName:";
         const string byUserQuery = "author.id:/~identity:";
+        
+        // Daily levels should be the only levels type that works for unauthenticated users. This is because it's required to show the EULA.
+        if (token is not { TokenType: TokenType.GameAccess } && searchString != "tagged3")
+            return null;
         
         // search
         if (query != null && query.StartsWith(searchQuery))
@@ -88,7 +78,7 @@ public class LevelEndpoints : EndpointGroup
                 order = LevelOrderType.UniquePlays;
                 break;
         }
-
+        
         filters ??= LevelHelper.GetLevelFilters(context, database);
         order ??= LevelHelper.GetLevelOrderType(context);
 
