@@ -52,27 +52,6 @@ public static class LevelHelper
 
         return 0;
     }
-    
-    public static GameLevel? AnalyzeLevel(GameLevel level, byte[] levelFile)
-    {
-        SSLevel? ssLevel = SSLevel.FromLevelFile(levelFile);
-        if (ssLevel == null)
-            return null;
-
-        GameLevel copy = level;
-        copy.FileSize = levelFile.Length;
-        copy.Bpm = ssLevel.Bpm;
-        copy.TransposeValue = ssLevel.TransposeValue;
-        copy.ScaleIndex = ssLevel.ScaleIndex;
-        copy.TotalScreens = ssLevel.ScreenData.Count();
-        copy.TotalEntities = ssLevel.Entities.Count() + ssLevel.EntitiesB.Count();
-        copy.HasCar = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_CarCheckpoint");
-        copy.HasExplodingCar = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_ExplodingCarCheckpoint");
-        copy.HasUfo = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_UFOCheckpoint");
-        copy.HasFirefly = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_FireflyCheckpoint");
-
-        return copy;
-    }
 
     private const int LevelNameCharacterLimit = 26;
     public static string AdhereToLevelNameCharacterLimit(string name)

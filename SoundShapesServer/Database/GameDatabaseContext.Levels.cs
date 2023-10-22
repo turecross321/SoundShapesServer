@@ -75,6 +75,30 @@ public partial class GameDatabaseContext
         UploadLevelResource(dataStore, level, soundFile, FileType.Sound);
     }
     
+    public bool AnalyzeLevel(GameLevel level, byte[] levelFile)
+    {
+        SSLevel? ssLevel = SSLevel.FromLevelFile(levelFile);
+        if (ssLevel == null)
+            return false;
+
+        _realm.Write(() =>
+        {
+            level.FileSize = levelFile.Length;
+            level.Bpm = ssLevel.Bpm;
+            level.TransposeValue = ssLevel.TransposeValue;
+            level.ScaleIndex = ssLevel.ScaleIndex;
+            level.TotalScreens = ssLevel.ScreenData.Count();
+            level.TotalEntities = ssLevel.Entities.Count() + ssLevel.EntitiesB.Count();
+            level.HasCar = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_CarCheckpoint");
+            level.HasExplodingCar = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_ExplodingCarCheckpoint");
+            level.HasUfo = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_UFOCheckpoint");
+            level.HasFirefly = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_FireflyCheckpoint");
+
+        });
+
+        return true;
+    }
+    
     public ApiOkResponse UploadLevelResource(IDataStore dataStore, GameLevel level,
         byte[] file, FileType fileType)
     {
@@ -83,14 +107,8 @@ public partial class GameDatabaseContext
 
         if (fileType == FileType.Level)
         {
-            GameLevel? result = AnalyzeLevel(level, file);
-            if (result == null)
+            if (!AnalyzeLevel(level, file))
                 return ApiBadRequestError.CorruptLevel;
-            
-            _realm.Write(() =>
-            {
-                level = result;
-            });
         }
         
         string key = GetLevelResourceKey(level, fileType);

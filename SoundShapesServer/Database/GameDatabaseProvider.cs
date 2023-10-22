@@ -9,6 +9,7 @@ using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Levels.SSLevel;
 using SoundShapesServer.Types.News;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Relations;
@@ -94,15 +95,19 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         {
             for (int i = 0; i < newLevels.Count(); i++)
             {
-                Console.WriteLine($"Reanalyzing levels... ({i}/{newLevels.Count()})");
+                Console.WriteLine($"Getting hasUfo & hasFirefly data from levels... ({i}/{newLevels.Count()})");
                 dynamic oldLevel = oldLevels.ElementAt(i);
                 GameLevel newLevel = newLevels.ElementAt(i);
 
                 if (!File.Exists(newLevel.LevelFilePath))
                     continue;
-                
                 byte[] levelFile = File.ReadAllBytes(newLevel.LevelFilePath);
-                newLevel = LevelHelper.AnalyzeLevel(newLevel, levelFile);
+                
+                SSLevel? ssLevel = SSLevel.FromLevelFile(levelFile);
+                if (ssLevel == null)
+                    continue;
+                newLevel.HasUfo = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_UFOCheckpoint");
+                newLevel.HasFirefly = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_FireflyCheckpoint");
             }
         }
         
