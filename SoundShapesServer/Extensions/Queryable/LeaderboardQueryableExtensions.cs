@@ -13,12 +13,12 @@ public static class LeaderboardQueryableExtensions
         {
             entries = entries.Where(e => e.User == filters.ByUser);
         }
-
+        
         if (filters.Completed != null)
         {
             entries = entries.Where(e => e.Completed == filters.Completed);
         }
-
+        
         if (filters.Obsolete != null)
         {
             List<LeaderboardEntry> newEntries = new();
@@ -28,7 +28,7 @@ public static class LeaderboardQueryableExtensions
             
             List<string> previousUserIds = new();
             // The lower "Score", the higher the score actually is because scores don't start from 0, and they decrease.
-            foreach (LeaderboardEntry entry in entries.OrderBy(e => e.Score))
+            foreach (LeaderboardEntry entry in entries.OrderByDescending(e => e.Completed).ThenBy(e => e.Score))
             {
                 if (previousUserIds.Contains(entry.User.Id)) 
                     continue;

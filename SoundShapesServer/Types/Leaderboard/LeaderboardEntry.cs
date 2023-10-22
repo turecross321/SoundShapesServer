@@ -32,9 +32,10 @@ public class LeaderboardEntry : RealmObject
     
     public int Position()
     {
-        IQueryable<LeaderboardEntry> entries = Level.LeaderboardEntries.FilterLeaderboard(new LeaderboardFilters(Level))
+        IQueryable<LeaderboardEntry> entries = Level.LeaderboardEntries
+            .FilterLeaderboard(new LeaderboardFilters(Level, obsolete: false))
             .OrderLeaderboard(LeaderboardOrderType.Score, false);
-
+        
         return entries.ToList().IndexOf(this);
     }
 }
