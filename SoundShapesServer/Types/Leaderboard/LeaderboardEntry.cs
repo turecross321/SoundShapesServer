@@ -30,12 +30,21 @@ public class LeaderboardEntry : RealmObject
         init => _PlatformType = (int)value;
     }
     
-    public int Position()
+    public int GetPosition(LeaderboardOrderType order, LeaderboardFilters filters)
     {
         IQueryable<LeaderboardEntry> entries = Level.LeaderboardEntries
-            .FilterLeaderboard(new LeaderboardFilters(Level, obsolete: false))
-            .OrderLeaderboard(LeaderboardOrderType.Score, false);
+            .FilterLeaderboard(filters)
+            .OrderLeaderboard(order, false);
         
         return entries.ToList().IndexOf(this);
+    }
+
+    public bool Obsolete()
+    {
+        IQueryable<LeaderboardEntry> entries = Level.LeaderboardEntries
+            .FilterLeaderboard(new LeaderboardFilters{OnLevel = Level, ByUser = User, Obsolete = false})
+            .OrderLeaderboard(LeaderboardOrderType.Score, false);
+
+        return !entries.ToList().Contains(this);
     }
 }

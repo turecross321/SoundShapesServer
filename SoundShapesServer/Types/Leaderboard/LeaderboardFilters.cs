@@ -5,16 +5,8 @@ namespace SoundShapesServer.Types.Leaderboard;
 
 public class LeaderboardFilters
 {
-    public LeaderboardFilters(GameLevel onLevel, GameUser? byUser = null, bool? completed = null, bool? obsolete = false)
-    {
-        OnLevel = onLevel;
-        ByUser = byUser;
-        Completed = completed;
-        Obsolete = obsolete;
-    }
-    
-    public readonly GameLevel OnLevel;
-    public readonly GameUser? ByUser;
+    public GameLevel OnLevel;
+    public GameUser? ByUser;
     public bool? Completed;
     public bool? Obsolete;
 }

@@ -29,9 +29,8 @@ public class ApiLeaderboardEndpoints : EndpointGroup
             return ApiNotFoundError.LevelNotFound;
         
         GameUser? byUser = context.QueryString["byUser"].ToUser(database);
-        bool? obsolete = context.QueryString["obsolete"].ToBool();
-        bool? completed = context.QueryString["completed"].ToBool();
-        
+        bool? obsolete = context.QueryString["obsolete"].ToBool() ?? false;
+        bool? completed = context.QueryString["completed"].ToBool() ?? true;
         string? orderString = context.QueryString["orderBy"];
 
         LeaderboardOrderType order = orderString switch
@@ -43,11 +42,10 @@ public class ApiLeaderboardEndpoints : EndpointGroup
             _ => LeaderboardOrderType.Score
         };
 
-        LeaderboardFilters filters = new (level, byUser, completed, obsolete);
-        (LeaderboardEntry[] paginatedEntries, int totalEntries) =
-            database.GetPaginatedLeaderboardEntries(order, descending, filters, from, count, user);
+        LeaderboardFilters filters = new LeaderboardFilters{OnLevel = level, ByUser = byUser, Completed = completed, Obsolete = obsolete};
+        (LeaderboardEntry[] paginatedEntries, int totalEntries) = database.GetPaginatedLeaderboardEntries(order, descending, filters, from, count, user);
 
         return new ApiListResponse<ApiLeaderboardEntryResponse>(paginatedEntries.Select(e =>
-            new ApiLeaderboardEntryResponse(e)), totalEntries);
+            new ApiLeaderboardEntryResponse(e, order, filters)), totalEntries);
     }
 }

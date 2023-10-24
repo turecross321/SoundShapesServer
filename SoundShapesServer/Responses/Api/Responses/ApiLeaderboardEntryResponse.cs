@@ -7,10 +7,11 @@ namespace SoundShapesServer.Responses.Api.Responses;
 
 public class ApiLeaderboardEntryResponse : IApiResponse
 {
-    public ApiLeaderboardEntryResponse(LeaderboardEntry entry)
+    public ApiLeaderboardEntryResponse(LeaderboardEntry entry, LeaderboardOrderType order, LeaderboardFilters filters)
     {
         Id = entry.Id.ToString()!;
-        Position = entry.Position();
+        Position = entry.GetPosition(order, filters);
+        Obsolete = entry.Obsolete();
         User = new ApiUserBriefResponse(entry.User);
         Score = entry.Score;
         PlayTime = entry.PlayTime;
@@ -23,6 +24,7 @@ public class ApiLeaderboardEntryResponse : IApiResponse
 
     public string Id { get; set; }
     public int Position { get; set; }
+    public bool Obsolete { get; set; }
     public ApiUserBriefResponse User { get; set; }
     public long Score { get; set; }
     public long PlayTime { get; set; }

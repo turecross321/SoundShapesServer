@@ -57,7 +57,6 @@ public class LeaderboardEndpoints : EndpointGroup
     public ListResponse<LeaderboardEntryResponse>? GetLeaderboard(RequestContext context, GameDatabaseContext database, GameUser user, string levelId)
     {
         (int from, int count, bool _) = context.GetPageData();
-        const bool descending = false;
 
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) 
@@ -66,11 +65,14 @@ public class LeaderboardEndpoints : EndpointGroup
         if (!level.HasUserAccess(user))
             return null;
 
-        LeaderboardFilters filters = new (level, obsolete: false, completed: true);
-        (LeaderboardEntry[] paginatedEntries, int totalEntries) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, descending, filters, from, count, user);
+        LeaderboardOrderType order = LeaderboardOrderType.Score;
+        const bool descending = false;
+        LeaderboardFilters filters = new LeaderboardFilters{OnLevel = level, Completed = true, Obsolete = false};
+
+        (LeaderboardEntry[] paginatedEntries, int totalEntries) = database.GetPaginatedLeaderboardEntries(order, descending, filters, from, count, user);
 
         return new ListResponse<LeaderboardEntryResponse>(
-            paginatedEntries.Select(t => new LeaderboardEntryResponse(t)), totalEntries, from, count);
+            paginatedEntries.Select(t => new LeaderboardEntryResponse(t, order, filters)), totalEntries, from, count);
     }
 
     [GameEndpoint("global/~campaign:{levelId}/~leaderboard.near")] // campaign levels
@@ -83,11 +85,12 @@ public class LeaderboardEndpoints : EndpointGroup
         
         if (!level.HasUserAccess(user))
             return null;
-        
-        LeaderboardFilters filters = new (level, user, completed:true, obsolete:false);
 
-        (LeaderboardEntry[] paginatedEntries, int _) = database.GetPaginatedLeaderboardEntries(LeaderboardOrderType.Score, false, filters, 0, 1, user);
-        
-        return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e)).ToArray();
+        const LeaderboardOrderType order = LeaderboardOrderType.Score;
+        const bool descending = false;
+        LeaderboardFilters filters = new LeaderboardFilters{OnLevel = level, ByUser = user, Completed = true, Obsolete = false};
+
+        (LeaderboardEntry[] paginatedEntries, int _) = database.GetPaginatedLeaderboardEntries(order, descending, filters, 0, 1, user);
+        return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e, order, filters)).ToArray();
     }
 }

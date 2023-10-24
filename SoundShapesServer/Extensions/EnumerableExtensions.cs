@@ -2,7 +2,7 @@ namespace SoundShapesServer.Extensions;
 
 public static class EnumerableExtensions
 {
-    public static IEnumerable<T> OrderByDynamic<T, TKey>(this IEnumerable<T> source, Func<T, TKey> keySelector, bool descending)
+    public static IOrderedEnumerable<T> OrderByDynamic<T, TKey>(this IEnumerable<T> source, Func<T, TKey> keySelector, bool descending)
     {
         if (source == null)
         {

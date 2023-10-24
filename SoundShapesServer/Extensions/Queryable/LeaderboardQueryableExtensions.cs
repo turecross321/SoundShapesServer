@@ -52,14 +52,16 @@ public static class LeaderboardQueryableExtensions
     public static IQueryable<LeaderboardEntry> OrderLeaderboard(this IQueryable<LeaderboardEntry> entries,
         LeaderboardOrderType order, bool descending)
     {
-        return order switch
+        IOrderedQueryable<LeaderboardEntry> ordered = order switch
         {
             LeaderboardOrderType.Score => entries.OrderByDynamic(e => e.Score, descending),
             LeaderboardOrderType.PlayTime => entries.OrderByDynamic(e => e.PlayTime, descending),
             LeaderboardOrderType.Notes => entries.OrderByDynamic(e => e.Notes, descending),
             LeaderboardOrderType.CreationDate => entries.OrderByDynamic(e => e.CreationDate, descending),
-            _ => entries.OrderLeaderboard(LeaderboardOrderType.Score, descending)
+            _ => throw new ArgumentOutOfRangeException(nameof(order), order, "Invalid leaderboard order type")
         };
+        
+        return ordered.ThenByDynamic(e => e.CreationDate, descending);
     }
 
 }
