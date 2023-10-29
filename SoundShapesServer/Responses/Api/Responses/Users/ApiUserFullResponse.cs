@@ -13,16 +13,16 @@ public class ApiUserFullResponse : IApiResponse
         Id = user.Id;
         Username = user.Username;
         PermissionsType = user.PermissionsType;
-        CreationDate = user.CreationDate.ToUnixTimeSeconds();
-        LastGameLogin = user.LastGameLogin.ToUnixTimeSeconds();
-        LastEventDate = user.Events.Last().CreationDate.ToUnixTimeSeconds();
-        Followers = user.FollowersRelations.Count();
-        Following = user.FollowingRelations.Count();
-        LikedLevels = user.LikedLevelRelations.Count();
-        QueuedLevels = user.QueuedLevelRelations.Count();
-        PublishedLevels = user.Levels.Count();
-        TotalEvents = user.Events.Count();
-        PlayedLevels = user.PlayedLevelRelations.Count();
+        CreationDate = user.CreationDate;
+        LastGameLogin = user.LastGameLogin;
+        LastEventDate = user.Events.Last().CreationDate;
+        FollowersCount = user.FollowersRelations.Count();
+        FollowingCount = user.FollowingRelations.Count();
+        LikedLevelsCount = user.LikedLevelRelations.Count();
+        QueuedLevelsCount = user.QueuedLevelRelations.Count();
+        PublishedLevelsCount = user.Levels.Count();
+        EventsCount = user.Events.Count();
+        PlayedLevelsCount = user.PlayedLevelRelations.Count();
         TotalDeaths = user.Deaths;
         TotalPlayTime = user.TotalPlayTime;
     }
@@ -30,16 +30,16 @@ public class ApiUserFullResponse : IApiResponse
     public string Id { get; set; }
     public string Username { get; set; }
     public PermissionsType PermissionsType { get; set; }
-    public long CreationDate { get; set; }
-    public long LastGameLogin { get; set; }
-    public long LastEventDate { get; set; }
-    public int Followers { get; set; }
-    public int Following { get; set; }
-    public int LikedLevels { get; set; }
-    public int QueuedLevels { get; set; }
-    public int PublishedLevels { get; set; }
-    public int PlayedLevels { get; set; }
-    public int TotalEvents { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
+    public DateTimeOffset LastGameLogin { get; set; }
+    public DateTimeOffset LastEventDate { get; set; }
+    public int FollowersCount { get; set; }
+    public int FollowingCount { get; set; }
+    public int LikedLevelsCount { get; set; }
+    public int QueuedLevelsCount { get; set; }
+    public int PublishedLevelsCount { get; set; }
+    public int PlayedLevelsCount { get; set; }
+    public int EventsCount { get; set; }
     public int TotalDeaths { get; set; }
     public long TotalPlayTime { get; set; }
 }

@@ -14,8 +14,8 @@ public class ApiCommunityTabResponse : IApiResponse
         Description = communityTab.Description;
         ButtonLabel = communityTab.ButtonLabel;
         Query = communityTab.Query;
-        CreationDate = communityTab.CreationDate.ToUnixTimeSeconds();
-        ModificationDate = communityTab.ModificationDate.ToUnixTimeSeconds();
+        CreationDate = communityTab.CreationDate;
+        ModificationDate = communityTab.ModificationDate;
         Author = new ApiUserBriefResponse(communityTab.Author);
     }
 
@@ -26,6 +26,6 @@ public class ApiCommunityTabResponse : IApiResponse
     public string ButtonLabel { get; set; }
     public string Query { get; set; }
     public ApiUserBriefResponse Author { get; set; }
-    public long CreationDate { get; set; }
-    public long ModificationDate { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
+    public DateTimeOffset ModificationDate { get; set; }
 }

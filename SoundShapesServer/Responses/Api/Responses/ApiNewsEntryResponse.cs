@@ -9,8 +9,8 @@ public class ApiNewsEntryResponse : IApiResponse
     public ApiNewsEntryResponse(NewsEntry entry)
     {
         Id = entry.Id;
-        CreationDate = entry.CreationDate.ToUnixTimeSeconds();
-        ModificationDate = entry.ModificationDate.ToUnixTimeSeconds();
+        CreationDate = entry.CreationDate;
+        ModificationDate = entry.ModificationDate;
         Language = entry.Language;
         Author = new ApiUserBriefResponse(entry.Author);
         Title = entry.Title;
@@ -20,8 +20,8 @@ public class ApiNewsEntryResponse : IApiResponse
     }
     
     public string Id { get; set; }
-    public long CreationDate { get; set; }
-    public long ModificationDate { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
+    public DateTimeOffset ModificationDate { get; set; }
     public ApiUserBriefResponse Author { get; set; }
     public string Language { get; set; }
     public string Title { get; set; }

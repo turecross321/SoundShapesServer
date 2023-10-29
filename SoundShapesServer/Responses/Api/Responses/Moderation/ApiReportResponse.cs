@@ -33,7 +33,7 @@ public class ApiReportResponse : IApiResponse
         
         ContentType = report.ContentType;
         ReasonType = report.ReasonType;
-        CreationDate = report.CreationDate.ToUnixTimeSeconds();
+        CreationDate = report.CreationDate;
         Author = new ApiUserBriefResponse(report.Author);
     }
 
@@ -44,6 +44,6 @@ public class ApiReportResponse : IApiResponse
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLeaderboardEntryResponse? ContentLeaderboardEntry { get; set; }
     public ReportContentType ContentType { get; set; }
     public ReportReasonType ReasonType { get; set; }
-    public long CreationDate { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
     public ApiUserBriefResponse Author { get; set; }
 }

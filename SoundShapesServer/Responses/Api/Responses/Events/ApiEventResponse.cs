@@ -23,7 +23,7 @@ public class ApiEventResponse : IApiResponse
         EventType = gameEvent.EventType;
         Actor = new ApiUserBriefResponse(gameEvent.Actor);
         DataType = gameEvent.DataType;
-        CreationDate = gameEvent.CreationDate.ToUnixTimeSeconds();
+        CreationDate = gameEvent.CreationDate;
         PlatformType = gameEvent.PlatformType;
 
         switch (gameEvent.DataType)
@@ -55,7 +55,7 @@ public class ApiEventResponse : IApiResponse
     public EventType EventType { get; set; }
     public ApiUserBriefResponse Actor { get; set; }
 
-    public long CreationDate { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
     public PlatformType PlatformType { get; set; }
     public EventDataType DataType { get; set; }
     

@@ -12,11 +12,11 @@ public class ApiTokenResponse
     public ApiTokenResponse(GameToken token)
     {
         Id = token.Id;
-        CreationDate = token.CreationDate.ToUnixTimeSeconds();
-        ExpiryDate = token.ExpiryDate.ToUnixTimeSeconds();
+        CreationDate = token.CreationDate;
+        ExpiryDate = token.ExpiryDate;
     }
 
     public string Id { get; set; }
-    public long CreationDate { get; set; }
-    public long ExpiryDate { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
+    public DateTimeOffset ExpiryDate { get; set; }
 }

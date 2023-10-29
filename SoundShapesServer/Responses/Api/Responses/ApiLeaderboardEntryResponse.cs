@@ -18,7 +18,7 @@ public class ApiLeaderboardEntryResponse : IApiResponse
         Notes = entry.Notes;
         Deaths = entry.Deaths;
         Completed = entry.Completed;
-        CreationDate = entry.CreationDate.ToUnixTimeSeconds();
+        CreationDate = entry.CreationDate;
         PlatformType = entry.PlatformType;
     }
 
@@ -31,6 +31,6 @@ public class ApiLeaderboardEntryResponse : IApiResponse
     public int Notes { get; set; }
     public int Deaths { get; set; }
     public bool Completed { get; set; }
-    public long CreationDate { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
     public PlatformType PlatformType { get; set; }
 }

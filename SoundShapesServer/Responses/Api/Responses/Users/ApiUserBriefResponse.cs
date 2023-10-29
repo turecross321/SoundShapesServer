@@ -12,15 +12,15 @@ public class ApiUserBriefResponse : IApiResponse
         Id = user.Id;
         Username = user.Username;
         PermissionsType = (int)user.PermissionsType;
-        Followers = user.FollowersRelations.Count();
-        Following = user.FollowingRelations.Count();
-        PublishedLevels = user.Levels.Count();
+        FollowersCount = user.FollowersRelations.Count();
+        FollowingCount = user.FollowingRelations.Count();
+        PublishedLevelsCount = user.Levels.Count();
     }
 
     public string Id { get; set; }
     public string Username { get; set; }
     public int PermissionsType { get; set; }
-    public int Followers { get; set; }
-    public int Following { get; set; }
-    public int PublishedLevels { get; set; }
+    public int FollowersCount { get; set; }
+    public int FollowingCount { get; set; }
+    public int PublishedLevelsCount { get; set; }
 }

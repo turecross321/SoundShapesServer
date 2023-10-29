@@ -10,13 +10,13 @@ public class ApiIpResponse : IApiResponse
         IpAddress = gameIp.IpAddress;
         Authorized = gameIp.Authorized;
         OneTimeUse = gameIp.OneTimeUse;
-        CreationDate = gameIp.CreationDate.ToUnixTimeSeconds();
-        ModificationDate = gameIp.ModificationDate.ToUnixTimeSeconds();
+        CreationDate = gameIp.CreationDate;
+        ModificationDate = gameIp.ModificationDate;
     }
 
     public string IpAddress { get; set; }
     public bool Authorized { get; set; }
     public bool OneTimeUse { get; set; }
-    public long CreationDate { get; set; }
-    public long ModificationDate { get; set; }
+    public DateTimeOffset CreationDate { get; set; }
+    public DateTimeOffset ModificationDate { get; set; }
 }

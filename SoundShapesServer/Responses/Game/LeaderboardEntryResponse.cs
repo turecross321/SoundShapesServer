@@ -12,6 +12,11 @@ public class LeaderboardEntryResponse : IResponse
         Entrant = new UserTargetResponse(entry.User);
         Score = entry.Score;
     }
+    
+    /// <summary>
+    /// Used for deserialization in tests
+    /// </summary>
+    public LeaderboardEntryResponse() {}
 
     [JsonProperty("position")] public int Position { get; set; }
     [JsonProperty("entrant")] public UserTargetResponse? Entrant { get; set; }

@@ -1,6 +1,9 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
+using System.Reflection;
 using Bunkum.AutoDiscover.Extensions;
 using Bunkum.Core.Authentication;
+using Bunkum.Core.Responses;
+using Bunkum.Core.Responses.Serialization;
 using Bunkum.Core.Storage;
 using Bunkum.Listener;
 using Bunkum.ProfanityFilter;
@@ -12,6 +15,7 @@ using SoundShapesServer.Endpoints;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Middlewares;
 using SoundShapesServer.Requests.Game;
+using SoundShapesServer.Responses;
 using SoundShapesServer.Services;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Authentication;
@@ -46,6 +50,9 @@ public class GameServer
         ServerInstance.AddStorageService(dataStore);
         ServerInstance.AddAuthenticationService(_authProvider, true);
         ServerInstance.DiscoverEndpointsFromAssembly(Assembly.GetExecutingAssembly());
+        
+        ServerInstance.RemoveSerializer<BunkumJsonSerializer>();
+        ServerInstance.AddSerializer<CustomJsonSerializer>();
     }
     
     public virtual void Start()
