@@ -11,6 +11,6 @@ public class ApiEulaEndpoints : EndpointGroup
     [ApiEndpoint("eula"), Authentication(false)]
     public ApiResponse<ApiEulaResponse> GetEula(RequestContext context, GameServerConfig config)
     {
-        return new ApiEulaResponse(config.EulaText);
+        return new ApiEulaResponse(config.EulaText, config.SourceCodeUrl);
     }
 }

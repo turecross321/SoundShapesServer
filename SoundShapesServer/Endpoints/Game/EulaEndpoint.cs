@@ -9,6 +9,6 @@ public class EulaEndpoint : EndpointGroup
     // Gets called by AuthenticationEndpoints.cs
     public static string NormalEula(GameServerConfig config)
     {
-        return config.EulaText + "\n \n" + Globals.AGPLLicense;
+        return config.EulaText + "\n \n" + Globals.AGPLLicense + "\n \n" + "Server source code: " + config.SourceCodeUrl;
     }
 }
