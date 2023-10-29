@@ -20,7 +20,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 78;
+    protected override ulong SchemaVersion => 79;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -129,6 +129,19 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             }
         }
         
+        IQueryable<dynamic> oldNewsEntries = migration.OldRealm.DynamicApi.All("NewsEntry");
+        IQueryable<NewsEntry> newNewsEntries = migration.NewRealm.All<NewsEntry>();
+        for (int i = 0; i < newNewsEntries.Count(); i++)
+        {
+            dynamic oldEntry = oldNewsEntries.ElementAt(i);
+            NewsEntry newEntry = newNewsEntries.ElementAt(i);
+            
+            if (oldVersion < 79)
+            {
+                newEntry.Id = ObjectId.GenerateNewId();
+            }
+        }
+        
         IQueryable<GameToken> newTokens = migration.NewRealm.All<GameToken>();
         for (int i = 0; i < newTokens.Count(); i++)
         {
@@ -223,11 +236,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 
             if (oldVersion < 72)
             {
-                // switched from sha512 string to objectid
-                // this is a dumb workaround to keep the ids
-                string id = (string)oldEntry.Id;
-                id = new string(id.Where(c => c != '-').Take(24).ToArray());
-                newEntry.Id = ObjectId.Parse(id);
+                newEntry.Id = IdHelper.TrimToObjectId((string)oldEntry.Id);
             }
         }
 
@@ -255,6 +264,11 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                 // Added ModificationDate
                 newPunishment.ModificationDate = newPunishment.CreationDate;
             }
+            
+            if (oldVersion < 79)
+            {
+                newPunishment.Id = ObjectId.GenerateNewId();
+            }
         }
         
         IQueryable<dynamic> oldReports = migration.OldRealm.DynamicApi.All("Report");
@@ -276,19 +290,30 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                 newReport.Author = migration.NewRealm.All<GameUser>().First(u => u.Id == authorId);
                 newReport.CreationDate = (DateTimeOffset)oldReport.Date;
             }
+            
+            if (oldVersion < 79)
+            {
+                newReport.Id = ObjectId.GenerateNewId();
+            }
         }
         
         
-        migration.OldRealm.DynamicApi.All("DailyLevel");
+        IQueryable<dynamic> oldDailyLevels = migration.OldRealm.DynamicApi.All("DailyLevel");
         IQueryable<DailyLevel> newDailyLevels = migration.NewRealm.All<DailyLevel>();
         for (int i = 0; i < newDailyLevels.Count(); i++)
         {
-            DailyLevel newLevel = newDailyLevels.ElementAt(i);
+            DailyLevel newDaily = newDailyLevels.ElementAt(i);
+            dynamic oldDaily = oldDailyLevels.ElementAt(i);
 
             if (oldVersion < 49)
             {
-                newLevel.CreationDate = newLevel.Date;
-                newLevel.ModificationDate = newLevel.Date;
+                newDaily.CreationDate = newDaily.Date;
+                newDaily.ModificationDate = newDaily.Date;
+            }
+            
+            if (oldVersion < 79)
+            {
+                newDaily.Id = ObjectId.GenerateNewId();
             }
         }
         

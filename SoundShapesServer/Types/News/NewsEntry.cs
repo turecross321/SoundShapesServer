@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using Realms;
 using SoundShapesServer.Types.Users;
 
@@ -5,7 +6,7 @@ namespace SoundShapesServer.Types.News;
 
 public class NewsEntry : RealmObject
 {
-    [PrimaryKey] [Required] public string Id { get; init; }
+    public ObjectId Id { get; set; } = ObjectId.GenerateNewId(); 
     public DateTimeOffset CreationDate { get; init; }
     public DateTimeOffset ModificationDate { get; set; }
     public GameUser Author { get; set; }

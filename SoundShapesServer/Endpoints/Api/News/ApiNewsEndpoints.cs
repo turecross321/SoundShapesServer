@@ -39,7 +39,11 @@ public class ApiNewsEndpoints : EndpointGroup
         string? language = context.QueryString["language"];
         List<GameUser>? authors = context.QueryString["authors"].ToUsers(database);
 
-        NewsFilters filters = new (language, authors?.ToArray());
+        NewsFilters filters = new NewsFilters
+        {
+            Language = language,
+            Authors = authors?.ToArray()
+        };
 
         NewsOrderType order = orderString switch
         {

@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
@@ -43,7 +44,6 @@ public partial class GameDatabaseContext
     {
         Report report = new()
         {
-            Id = GenerateGuid(),            
             Author = reporter,
             ContentType = contentType,
             ContentUser = contentUser,
@@ -61,7 +61,10 @@ public partial class GameDatabaseContext
     
     public Report? GetReportWithId(string id)
     {
-        return _realm.All<Report>().FirstOrDefault(r => r.Id == id);
+        if (!ObjectId.TryParse(id, out ObjectId objectId)) 
+            return null;
+        
+        return _realm.All<Report>().FirstOrDefault(r => r.Id == objectId);
     }
     
     public (Report[], int) GetPaginatedReports(ReportOrderType order, bool descending, ReportFilters filters, int from, int count)

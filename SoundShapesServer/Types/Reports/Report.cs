@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using Realms;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
@@ -8,7 +9,7 @@ namespace SoundShapesServer.Types.Reports;
 
 public class Report : RealmObject
 {
-    [PrimaryKey] [Required] public string Id { get; init; } = "";
+    public ObjectId Id { get; set; } = ObjectId.GenerateNewId(); 
     
     // Realm can't store enums, use recommended workaround
     // ReSharper disable once InconsistentNaming (can't fix due to conflict with ContentType)

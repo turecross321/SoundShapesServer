@@ -8,7 +8,7 @@ public class ApiDailyLevelResponse : IApiResponse
 {
     public ApiDailyLevelResponse(DailyLevel dailyLevel)
     {
-        Id = dailyLevel.Id;
+        Id = dailyLevel.Id.ToString()!;
         Level = new ApiLevelBriefResponse(dailyLevel.Level);
         Date = dailyLevel.Date;
         CreationDate = dailyLevel.CreationDate;

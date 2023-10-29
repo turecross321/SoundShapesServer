@@ -8,7 +8,7 @@ public class ApiNewsEntryResponse : IApiResponse
 {
     public ApiNewsEntryResponse(NewsEntry entry)
     {
-        Id = entry.Id;
+        Id = entry.Id.ToString()!;
         CreationDate = entry.CreationDate;
         ModificationDate = entry.ModificationDate;
         Language = entry.Language;

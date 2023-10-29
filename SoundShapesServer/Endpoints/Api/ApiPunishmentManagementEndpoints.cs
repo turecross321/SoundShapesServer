@@ -87,7 +87,13 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
         GameUser? recipient = context.QueryString["recipient"].ToUser(database);
         bool? revoked = context.QueryString["revoked"].ToBool();
 
-        PunishmentFilters filters = new (author, recipient, revoked);
+        PunishmentFilters filters = new PunishmentFilters
+        {
+            Author = author, 
+            Recipient = recipient, 
+            Revoked = revoked
+        };
+        
         (Punishment[] punishments, int totalPunishments) = database.GetPaginatedPunishments(PunishmentOrderType.CreationDate, descending, filters, from, count);
 
         return new ApiListResponse<ApiPunishmentResponse>(punishments.Select(p=>new ApiPunishmentResponse(p)), totalPunishments);

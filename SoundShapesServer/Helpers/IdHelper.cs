@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Helpers;
@@ -58,5 +59,14 @@ public static class IdHelper
     public static string FormatVersionId(DateTimeOffset date)
     {
         return $"~version:{date.ToUnixTimeMilliseconds().ToString()}";
+    }
+
+    /// <summary>
+    /// Used in migrations to convert old string guid IDs to object IDs 
+    /// </summary>
+    public static ObjectId TrimToObjectId(string id)
+    {
+        id = new string(id.Where(c => c != '-').Take(24).ToArray());
+        return ObjectId.Parse(id);
     }
 }

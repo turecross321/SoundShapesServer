@@ -14,7 +14,10 @@ public class NewsEndpoints : EndpointGroup
     [GameEndpoint("global/news/{language}/~metadata:*.get")]
     public NewsResponse GetNews(RequestContext context, GameDatabaseContext database, string? language, GameToken token)
     {
-        NewsFilters filters = new (language);
+        NewsFilters filters = new NewsFilters
+        {
+            Language = language
+        };
 
         // Game only gets the last news entry
         (NewsEntry[] entries, int _) = database.GetPaginatedNews(NewsOrderType.CreationDate, true, filters, 0, 1);

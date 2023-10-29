@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Events;
@@ -12,7 +13,6 @@ public partial class GameDatabaseContext
     {
         DailyLevel dailyLevel = new()
         {
-            Id = GenerateGuid(), 
             Level = level, 
             Date = date.Date,
             CreationDate = DateTimeOffset.UtcNow,
@@ -52,7 +52,10 @@ public partial class GameDatabaseContext
     
     public DailyLevel? GetDailyLevelWithId(string id)
     {
-        return _realm.All<DailyLevel>().FirstOrDefault(d => d.Id == id);
+        if (!ObjectId.TryParse(id, out ObjectId objectId)) 
+            return null;
+        
+        return _realm.All<DailyLevel>().FirstOrDefault(d => d.Id == objectId);
     }
     
     public (DailyLevel[], int) GetPaginatedDailyLevels(DailyLevelOrderType order, bool descending, DailyLevelFilters filters, int from, int count)

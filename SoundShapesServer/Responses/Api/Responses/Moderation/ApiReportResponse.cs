@@ -10,9 +10,9 @@ namespace SoundShapesServer.Responses.Api.Responses.Moderation;
 
 public class ApiReportResponse : IApiResponse
 {
-    public ApiReportResponse(GameDatabaseContext database, Report report)
+    public ApiReportResponse(Report report)
     {
-        Id = report.Id;
+        Id = report.Id.ToString()!;
         if (report.ContentUser != null)
             ContentUser = new ApiUserBriefResponse(report.ContentUser);
         if (report.ContentLevel != null)

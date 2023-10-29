@@ -44,7 +44,7 @@ public class ApiReportManagementEndpoints : EndpointGroup
         if (report == null)
             return ApiNotFoundError.ReportNotFound;
 
-        return new ApiReportResponse(database, report);
+        return new ApiReportResponse(report);
     }
 
     [ApiEndpoint("reports")]
@@ -72,6 +72,6 @@ public class ApiReportManagementEndpoints : EndpointGroup
         };
 
         (Report[] reports, int totalReports) = database.GetPaginatedReports(ReportOrderType.Date, descending, filters, from, count);
-        return new ApiListResponse<ApiReportResponse>(reports.Select(r=>new ApiReportResponse(database, r)), totalReports);
+        return new ApiListResponse<ApiReportResponse>(reports.Select(r=>new ApiReportResponse(r)), totalReports);
     }
 }

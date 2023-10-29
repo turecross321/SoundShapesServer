@@ -66,7 +66,12 @@ public static class LevelImporting
 
             if (!levels.ContainsKey(identifier)) levels.Add(identifier, new List<ImportedLevelDependency>());
             
-            levels[identifier].Add(new ImportedLevelDependency(identifier, fileType, filePath));
+            levels[identifier].Add(new ImportedLevelDependency
+            {
+                LevelIdentifier = identifier, 
+                FileType = fileType, 
+                FilePath = filePath
+            });
         }
 
         return levels;

@@ -1,4 +1,5 @@
 using Bunkum.Core.Storage;
+using MongoDB.Bson;
 using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Requests.Api;
@@ -18,14 +19,13 @@ public partial class GameDatabaseContext
     {
         NewsEntry entry = new NewsEntry
         {
-            Id = Guid.NewGuid().ToString(),
             CreationDate = DateTimeOffset.UtcNow,
             ModificationDate = DateTimeOffset.UtcNow,
             Author = user,
-            Language = request.Language ?? "global",
-            Title = request.Title ?? "",
-            Summary = request.Summary ?? "",
-            FullText = request.FullText ?? "",
+            Language = request.Language,
+            Title = request.Title,
+            Summary = request.Summary,
+            FullText = request.FullText,
             Url = string.IsNullOrEmpty(request.Url) ? "0.0.0.0" : request.Url, // A url crashes the Vita version
             CharacterCount = request.FullText.Length,
         };
@@ -35,7 +35,7 @@ public partial class GameDatabaseContext
             _realm.Add(entry);
         });
 
-        CreateEvent(user, EventType.NewsCreation, PlatformType.Unknown, EventDataType.NewsEntry, entry.Id);        
+        CreateEvent(user, EventType.NewsCreation, PlatformType.Unknown, EventDataType.NewsEntry, entry.Id.ToString()!);        
         
         return entry;
     }
@@ -62,7 +62,7 @@ public partial class GameDatabaseContext
         if (!file.IsPng()) return
             ApiBadRequestError.FileIsNotPng;
 
-        string key = GetNewsResourceKey(newsEntry.Id);
+        string key = GetNewsResourceKey(newsEntry.Id.ToString()!);
         dataStore.WriteToStore(key, file);
 
         _realm.Write(() =>
@@ -85,7 +85,10 @@ public partial class GameDatabaseContext
     
     public NewsEntry? GetNewsEntryWithId(string id)
     {
-        return _realm.All<NewsEntry>().FirstOrDefault(e => e.Id == id);
+        if (!ObjectId.TryParse(id, out ObjectId objectId)) 
+            return null;
+        
+        return _realm.All<NewsEntry>().FirstOrDefault(e => e.Id == objectId);
     }
     
     public (NewsEntry[], int) GetPaginatedNews(NewsOrderType order, bool descending, NewsFilters filters, int from, int count)

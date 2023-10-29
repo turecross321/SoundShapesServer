@@ -6,7 +6,7 @@ namespace SoundShapesServer.Types.Albums;
 
 public class GameAlbum : RealmObject
 {
-    [PrimaryKey] [Required] public string Id { get; init; }
+    [PrimaryKey] [Required] public string Id { get; init; } // TODO: Sheck...
     public string Name { get; set; }
     public GameUser Author { get; set; }
     public DateTimeOffset CreationDate { get; init; }

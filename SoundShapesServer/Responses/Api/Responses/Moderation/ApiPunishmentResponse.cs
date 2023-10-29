@@ -12,7 +12,7 @@ public class ApiPunishmentResponse : IApiResponse
     
     public ApiPunishmentResponse(Punishment punishment)
     {
-        Id = punishment.Id;
+        Id = punishment.Id.ToString()!;
         Recipient = new ApiUserBriefResponse(punishment.Recipient);
         PunishmentType = punishment.PunishmentType;
         Reason = punishment.Reason;

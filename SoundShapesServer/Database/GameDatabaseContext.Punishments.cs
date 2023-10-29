@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Types.Punishments;
@@ -11,7 +12,6 @@ public partial class GameDatabaseContext
     {
         Punishment newPunishment = new()
         {
-            Id = GenerateGuid(),
             PunishmentType = request.PunishmentType,
             Recipient = recipient,
             Reason = request.Reason,
@@ -55,7 +55,10 @@ public partial class GameDatabaseContext
     
     public Punishment? GetPunishmentWithId(string id)
     {
-        return _realm.All<Punishment>().FirstOrDefault(p => p.Id == id);
+        if (!ObjectId.TryParse(id, out ObjectId objectId)) 
+            return null;
+        
+        return _realm.All<Punishment>().FirstOrDefault(p => p.Id == objectId);
     }
     
     public (Punishment[], int) GetPaginatedPunishments(PunishmentOrderType order, bool descending, PunishmentFilters filters, int from, int count)

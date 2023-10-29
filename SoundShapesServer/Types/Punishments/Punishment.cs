@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using Realms;
 using SoundShapesServer.Types.Users;
 #pragma warning disable CS8618
@@ -6,7 +7,7 @@ namespace SoundShapesServer.Types.Punishments;
 
 public class Punishment : RealmObject 
 {
-    [PrimaryKey] [Required] public string Id { get; init; }
+    public ObjectId Id { get; set; } = ObjectId.GenerateNewId(); 
     public GameUser Recipient { get; set; }
     
     // Realm can't store enums, use recommended workaround

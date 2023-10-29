@@ -159,7 +159,12 @@ public partial class GameDatabaseContext
     #region Level Plays
     public void CreatePlay(GameUser user, GameLevel level)
     {
-        LevelPlayRelation relation = new (user, level, DateTimeOffset.UtcNow);
+        LevelPlayRelation relation = new LevelPlayRelation
+        {
+            User = user, 
+            Level = level, 
+            Date = DateTimeOffset.UtcNow
+        };
         LevelUniquePlayRelation? uniqueRelation = _realm.All<LevelUniquePlayRelation>()
             .FirstOrDefault(r => r.Level == level && r.User == user);
 

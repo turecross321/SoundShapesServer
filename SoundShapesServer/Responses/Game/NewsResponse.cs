@@ -14,7 +14,7 @@ public class NewsResponse
         Summary = entry.Summary;
         FullText = entry.FullText;
         Url = string.IsNullOrEmpty(Url) ? "0.0.0.0" : entry.Url; // An empty url crashes the Vita version
-        if (includeImageUrl) ImageUrl = ResourceHelper.GetNewsThumbnailUrl(entry.Id);
+        if (includeImageUrl) ImageUrl = ResourceHelper.GetNewsThumbnailUrl(entry.Id.ToString()!);
     }
 
     public NewsResponse()
