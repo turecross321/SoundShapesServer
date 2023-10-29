@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using Realms;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
@@ -6,12 +7,12 @@ namespace SoundShapesServer.Types.Albums;
 
 public class GameAlbum : RealmObject
 {
-    [PrimaryKey] [Required] public string Id { get; init; } // TODO: Sheck...
-    public string Name { get; set; }
-    public GameUser Author { get; set; }
+    public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
+    public required string Name { get; set; }
+    public required GameUser Author { get; set; }
     public DateTimeOffset CreationDate { get; init; }
     public DateTimeOffset ModificationDate { get; set; }
-    public string LinerNotes { get; set; } = null!;
+    public required string LinerNotes { get; set; }
 
     public IList<GameLevel> Levels { get; } = null!;
     

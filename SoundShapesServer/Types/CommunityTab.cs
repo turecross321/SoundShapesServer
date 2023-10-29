@@ -1,3 +1,4 @@
+using MongoDB.Bson;
 using Realms;
 using SoundShapesServer.Types.Users;
 
@@ -7,7 +8,7 @@ namespace SoundShapesServer.Types;
 
 public class CommunityTab : RealmObject
 {
-    [PrimaryKey] public string Id { get; init; }
+    public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
     
     // Realm can't store enums, use recommended workaround
     // ReSharper disable once InconsistentNaming (can't fix due to conflict with ContentType)

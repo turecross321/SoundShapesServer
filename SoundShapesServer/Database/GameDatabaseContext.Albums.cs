@@ -1,4 +1,5 @@
 using Bunkum.Core.Storage;
+using MongoDB.Bson;
 using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Helpers;
@@ -21,7 +22,6 @@ public partial class GameDatabaseContext
         
         GameAlbum album = new GameAlbum
         {
-            Id = GenerateGuid(),
             Name = request.Name,
             Author = user,
             CreationDate = DateTimeOffset.UtcNow,
@@ -39,7 +39,7 @@ public partial class GameDatabaseContext
             _realm.Add(album);
         });
         
-        CreateEvent(user, EventType.AlbumCreation, PlatformType.Unknown, EventDataType.Album, album.Id);
+        CreateEvent(user, EventType.AlbumCreation, PlatformType.Unknown, EventDataType.Album, album.Id.ToString()!);
 
         return album;
     }
@@ -61,7 +61,7 @@ public partial class GameDatabaseContext
         if (!file.IsPng())
             return ApiBadRequestError.FileIsNotPng;
 
-        string key = ResourceHelper.GetAlbumResourceKey(album.Id, resourceType);
+        string key = ResourceHelper.GetAlbumResourceKey(album.Id.ToString()!, resourceType);
         dataStore.WriteToStore(key, file);
         
         SetAlbumFilePath(album, resourceType, key);
@@ -114,7 +114,11 @@ public partial class GameDatabaseContext
     
     public GameAlbum? GetAlbumWithId(string id)
     {
-        return _realm.All<GameAlbum>().FirstOrDefault(a => a.Id == id);
+        ObjectId? objectId = ObjectId.Parse(id);
+        if (objectId == null)
+            return null;
+        
+        return _realm.All<GameAlbum>().FirstOrDefault(a => a.Id == objectId);
     }
     
     public (GameAlbum[], int) GetPaginatedAlbums(AlbumOrderType order, bool descending, int from, int count)

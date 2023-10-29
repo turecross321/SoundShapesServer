@@ -9,7 +9,7 @@ public class AlbumResponse : IResponse
 {
     public AlbumResponse(GameAlbum album)
     {
-        Id = album.Id;
+        Id = album.Id.ToString()!;
         CreationDate = album.CreationDate.ToUnixTimeMilliseconds().ToString();
         TargetResponse = new AlbumTargetResponse(album);
     }

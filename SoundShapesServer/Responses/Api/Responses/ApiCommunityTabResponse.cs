@@ -8,7 +8,7 @@ public class ApiCommunityTabResponse : IApiResponse
 {
     public ApiCommunityTabResponse(CommunityTab communityTab)
     {
-        Id = communityTab.Id;
+        Id = communityTab.Id.ToString()!;
         ContentType = communityTab.ContentType;
         Title = communityTab.Title;
         Description = communityTab.Description;

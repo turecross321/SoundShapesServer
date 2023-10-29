@@ -47,13 +47,13 @@ public static class IdHelper
         return $"/~identity:{followerId}/~follow:/~identity:{recipientId}";
     }
 
-    public static string FormatAlbumId(string albumId)
+    public static string FormatAlbumId(ObjectId id)
     {
-        return $"/~album:{albumId}";
+        return $"/~album:{id.ToString()}";
     }
-    public static string FormatAlbumLinkId(string albumId, string levelId)
+    public static string FormatAlbumLinkId(ObjectId albumId, string levelId)
     {
-        return $"/~album:{albumId}/~link:/~level:{levelId}";
+        return $"/~album:{albumId.ToString()}/~link:/~level:{levelId}";
     }
 
     public static string FormatVersionId(DateTimeOffset date)

@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+using MongoDB.Bson;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Levels;
@@ -86,20 +87,20 @@ public static class ResourceHelper
         };
     }
 
-    public static string GetAlbumResourceUrl(string albumId, AlbumResourceType resourceType)
+    public static string GetAlbumResourceUrl(ObjectId id, AlbumResourceType resourceType)
     {
-        return $"~album:{albumId}/~content:{AlbumHelper.GetStringFromAlbumResourceType(resourceType)}/data";
+        return $"~album:{id}/~content:{AlbumHelper.GetStringFromAlbumResourceType(resourceType)}/data";
     }
 
     private const string CommunityTabsPath = "communityTabs";
 
-    public static string GetCommunityTabResourceKey(string id)
+    public static string GetCommunityTabResourceKey(ObjectId id)
     {
-        return $"{CommunityTabsPath}/{id}/-thumbnail";
+        return $"{CommunityTabsPath}/{id.ToString()}/-thumbnail";
     }
-    public static string GetCommunityTabThumbnailUrl(string id)
+    public static string GetCommunityTabThumbnailUrl(ObjectId id)
     {
-        return $"~communityTab:{id}/~content:thumbnail/data";
+        return $"~communityTab:{id.ToString()}/~content:thumbnail/data";
     }
     
     private const string SavesPath = "saves";

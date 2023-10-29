@@ -1,4 +1,5 @@
 using Bunkum.Core.Storage;
+using MongoDB.Bson;
 using SoundShapesServer.Extensions;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Framework;
@@ -13,7 +14,11 @@ public partial class GameDatabaseContext
 {
     public CommunityTab? GetCommunityTabWithId(string id)
     {
-        return _realm.All<CommunityTab>().FirstOrDefault(t => t.Id == id);
+        ObjectId? objectId = ObjectId.Parse(id);
+        if (objectId == null)
+            return null;
+        
+        return _realm.All<CommunityTab>().FirstOrDefault(t => t.Id == objectId);
     }
 
     public CommunityTab? CreateCommunityTab(ApiCreateCommunityTabRequest request, GameUser user)
@@ -23,7 +28,6 @@ public partial class GameDatabaseContext
         
         CommunityTab communityTab = new()
         {
-            Id = GenerateGuid(),
             ContentType = request.ContentType,
             Title = request.Title,
             Description = request.Description,

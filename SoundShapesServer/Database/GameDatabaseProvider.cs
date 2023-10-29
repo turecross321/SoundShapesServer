@@ -20,7 +20,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 79;
+    protected override ulong SchemaVersion => 81;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -111,7 +111,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             }
         }
         
-        migration.OldRealm.DynamicApi.All("GameAlbum");
+        IQueryable<dynamic> oldAlbums = migration.OldRealm.DynamicApi.All("GameAlbum");
         IQueryable<GameAlbum> newAlbums = migration.NewRealm.All<GameAlbum>();
         for (int i = 0; i < newAlbums.Count(); i++)
         {
@@ -126,6 +126,23 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             if (oldVersion < 75)
             {
                 newAlbum.Author = migration.NewRealm.All<GameUser>().First(u => u.Id == GameDatabaseContext.AdminId);
+            }
+            
+            if (oldVersion < 81)
+            {
+                newAlbum.Id = ObjectId.GenerateNewId();
+            }
+        }
+        
+        IQueryable<dynamic> oldCommunityTabs = migration.OldRealm.DynamicApi.All("CommunityTab");
+        IQueryable<CommunityTab> newCommunityTabs = migration.NewRealm.All<CommunityTab>();
+        for (int i = 0; i < newCommunityTabs.Count(); i++)
+        {
+            CommunityTab newTab = newCommunityTabs.ElementAt(i);
+            
+            if (oldVersion < 81)
+            {
+                newTab.Id = ObjectId.GenerateNewId();
             }
         }
         

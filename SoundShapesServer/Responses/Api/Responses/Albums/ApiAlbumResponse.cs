@@ -10,7 +10,7 @@ public class ApiAlbumResponse : IApiResponse
 {
     public ApiAlbumResponse(GameAlbum album)
     {
-        Id = album.Id;
+        Id = album.Id.ToString()!;
         Author = new ApiUserBriefResponse(album.Author);
         Name = album.Name;
         LinerNotes = album.LinerNotes;
