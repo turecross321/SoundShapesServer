@@ -14,7 +14,7 @@
       <PackageReference Include="Bunkum.AutoDiscover" Version="4.3.1" />
       <PackageReference Include="Bunkum.ProfanityFilter" Version="4.3.1" />
       <PackageReference Include="Bunkum.Protocols.Http" Version="4.3.1" />
-      <PackageReference Include="Bunkum.RealmDatabase" Version="4.3.1" />
+      <PackageReference Include="Bunkum.RealmDatabase" Version="4.3.3" />
       <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
       <PackageReference Include="HttpMultipartParser" Version="8.2.0" />
       <PackageReference Include="NPTicket" Version="3.1.0" />
