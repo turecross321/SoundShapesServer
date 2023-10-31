@@ -2,5 +2,5 @@
 
 public class ApiDeleteAccountRequest
 {
-    public string AccountDeletionTokenId { get; set; } = null!;
+    public required string AccountDeletionTokenId { get; set; }
 }

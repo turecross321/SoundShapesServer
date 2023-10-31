@@ -45,6 +45,7 @@ public partial class GameDatabaseContext
             dataStore.RemoveFromStore(user.SaveFilePath);
 
         RemoveAllReportsWithContentUser(user);
+        RemoveEventsOnUser(user);
         
         _realm.Write(() =>
         {
@@ -56,7 +57,6 @@ public partial class GameDatabaseContext
             _realm.RemoveRange(user.PlayedLevelRelations);
             _realm.RemoveRange(user.QueuedLevelRelations);
             _realm.RemoveRange(user.Events);
-            RemoveEventsOnUser(user);
             _realm.RemoveRange(user.LeaderboardEntries);
             _realm.RemoveRange(user.NewsEntries);
 
