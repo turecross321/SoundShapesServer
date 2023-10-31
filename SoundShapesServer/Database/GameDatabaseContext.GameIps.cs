@@ -9,12 +9,14 @@ public partial class GameDatabaseContext
 {
     public GameIp CreateGameIp(GameUser user, string ipAddress)
     {
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        
         GameIp gameIp = new()
         {
             IpAddress = ipAddress,
             User = user,
-            CreationDate = DateTimeOffset.UtcNow,
-            ModificationDate = DateTimeOffset.UtcNow
+            CreationDate = now,
+            ModificationDate = now
         };
         
         _realm.Write(() =>

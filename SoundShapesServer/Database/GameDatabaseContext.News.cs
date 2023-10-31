@@ -17,10 +17,12 @@ public partial class GameDatabaseContext
 {
     public NewsEntry CreateNewsEntry(ApiCreateNewsEntryRequest request, GameUser user)
     {
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        
         NewsEntry entry = new NewsEntry
         {
-            CreationDate = DateTimeOffset.UtcNow,
-            ModificationDate = DateTimeOffset.UtcNow,
+            CreationDate = now,
+            ModificationDate = now,
             Author = user,
             Language = request.Language,
             Title = request.Title,

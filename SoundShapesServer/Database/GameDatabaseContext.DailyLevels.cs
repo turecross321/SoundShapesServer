@@ -11,12 +11,14 @@ public partial class GameDatabaseContext
 {
     public DailyLevel CreateDailyLevel(GameUser user, GameLevel level, DateTimeOffset date)
     {
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        
         DailyLevel dailyLevel = new()
         {
             Level = level, 
             Date = date.Date,
-            CreationDate = DateTimeOffset.UtcNow,
-            ModificationDate = DateTimeOffset.UtcNow,
+            CreationDate = now,
+            ModificationDate = now,
             Author = user
         };
 

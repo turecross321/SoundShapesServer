@@ -26,6 +26,8 @@ public partial class GameDatabaseContext
         // More than 4 community tabs will cause performance issues
         if (_realm.All<CommunityTab>().Count() >= 4) return null;
         
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        
         CommunityTab communityTab = new()
         {
             ContentType = request.ContentType,
@@ -34,8 +36,8 @@ public partial class GameDatabaseContext
             ButtonLabel = request.ButtonLabel,
             Query = request.Query,
             Author = user,
-            CreationDate = DateTimeOffset.UtcNow,
-            ModificationDate = DateTimeOffset.UtcNow
+            CreationDate = now,
+            ModificationDate = now
         };
         
         _realm.Write(() =>

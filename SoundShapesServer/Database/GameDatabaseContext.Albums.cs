@@ -20,12 +20,14 @@ public partial class GameDatabaseContext
     {
         GameLevel[] levels = GetLevelsWithIds(request.LevelIds.AsEnumerable()).ToArray();
         
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        
         GameAlbum album = new GameAlbum
         {
             Name = request.Name,
             Author = user,
-            CreationDate = DateTimeOffset.UtcNow,
-            ModificationDate = DateTimeOffset.UtcNow,
+            CreationDate = now,
+            ModificationDate = now,
             LinerNotes = request.LinerNotes,
         };
 

@@ -28,8 +28,8 @@ public partial class GameDatabaseContext
             Name = request.Name,
             Language = request.Language,
             CreationDate = request.CreationDate,
+            ModificationDate = request.CreationDate,
             FileSize = request.FileSize,
-            ModificationDate = DateTimeOffset.UtcNow,
             Visibility = LevelVisibility.Public,
             UploadPlatform = uploadPlatform,
         };
@@ -40,7 +40,8 @@ public partial class GameDatabaseContext
             user.LevelsCount = user.Levels.Count();
         });
 
-        if (createEvent) CreateEvent(user, EventType.LevelPublish, uploadPlatform, EventDataType.Level, level.Id);
+        if (createEvent) 
+            CreateEvent(user, EventType.LevelPublish, uploadPlatform, EventDataType.Level, level.Id);
         
         return level;
     }

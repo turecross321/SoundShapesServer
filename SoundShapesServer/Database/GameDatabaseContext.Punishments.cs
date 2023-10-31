@@ -10,14 +10,16 @@ public partial class GameDatabaseContext
 {
     public Punishment CreatePunishment(GameUser author, GameUser recipient, ApiPunishRequest request)
     {
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        
         Punishment newPunishment = new()
         {
             PunishmentType = request.PunishmentType,
             Recipient = recipient,
             Reason = request.Reason,
             ExpiryDate = DateTimeOffset.FromUnixTimeSeconds(request.ExpiryDate),
-            CreationDate = DateTimeOffset.UtcNow,
-            ModificationDate = DateTimeOffset.UtcNow,
+            CreationDate = now,
+            ModificationDate = now,
             Author = author
         };
         
