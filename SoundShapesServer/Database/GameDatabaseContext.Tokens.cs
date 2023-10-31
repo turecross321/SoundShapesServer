@@ -17,8 +17,8 @@ public partial class GameDatabaseContext
         {
             TokenType.SetPassword => GenerateSimpleTokenId(this, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 8, TokenType.SetPassword),
             TokenType.SetEmail => GenerateSimpleTokenId(this, "123456789!#¤%&/()=?", 8, TokenType.SetEmail),
-            TokenType.AccountRemoval => GenerateSimpleTokenId(this,
-                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789", 8, TokenType.AccountRemoval),
+            TokenType.AccountDeletion => GenerateSimpleTokenId(this,
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789", 8, TokenType.AccountDeletion),
             TokenType.AccountRegistration => GenerateSimpleTokenId(this, "123456789", 8, TokenType.SetEmail),
             _ => GenerateGuid()
         };

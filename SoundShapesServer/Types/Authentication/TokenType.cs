@@ -6,7 +6,7 @@ public enum TokenType
     ApiRefresh = 2,
     SetPassword = 3,
     SetEmail = 4,
-    AccountRemoval = 5,
+    AccountDeletion = 5,
     GameUnAuthorized = 6,
     AccountRegistration = 7
 }

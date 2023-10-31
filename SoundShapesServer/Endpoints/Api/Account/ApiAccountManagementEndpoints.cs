@@ -150,20 +150,20 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
         return new ApiOkResponse();
     }
 
-    [ApiEndpoint("account/sendRemovalToken", HttpMethods.Post)]
+    [ApiEndpoint("account/sendDeletionToken", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Banned)]
     [DocSummary("Sends an email containing a token ID that is required to delete your account.")]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
     [RateLimitSettings(Globals.OneHourInSeconds, 10, Globals.OneHourInSeconds, "sendEmail")]
-    public ApiOkResponse SendUserRemovalToken(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
+    public ApiOkResponse SendAccountDeletionToken(RequestContext context, GameDatabaseContext database, GameUser user, EmailService emailService)
     {
-        GameToken removalToken = database.CreateToken(user, TokenType.AccountRemoval, TokenAuthenticationType.PreExistingToken, Globals.TenMinutesInSeconds);
+        GameToken removalToken = database.CreateToken(user, TokenType.AccountDeletion, TokenAuthenticationType.PreExistingToken, Globals.TenMinutesInSeconds);
 
         string emailBody = $"Dear {user.Username},\n\n" +
-                           "Here is your account removal code: " + removalToken.Id + "\n" +
+                           "Here is your account deletion code: " + removalToken.Id + "\n" +
                            "If this wasn't you, change your password immediately. Code expires in 10 minutes.";
         
-        if (emailService.SendEmail(user.Email!, "Sound Shapes Account Removal Code", emailBody))
+        if (emailService.SendEmail(user.Email!, "Sound Shapes Account Deletion Code", emailBody))
             return new ApiOkResponse();
             
         return ApiInternalServerError.CouldNotSendEmail;
@@ -172,9 +172,9 @@ public partial class ApiAccountManagementEndpoints : EndpointGroup
     [ApiEndpoint("account", HttpMethods.Delete), Authentication(false)]
     [DocSummary("Deletes your account.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.TokenDoesNotExistWhen)]
-    public ApiOkResponse RemoveAccount(RequestContext context, GameDatabaseContext database, IDataStore dataStore, ApiRemoveAccountRequest body)
+    public ApiOkResponse DeleteAccount(RequestContext context, GameDatabaseContext database, IDataStore dataStore, ApiDeleteAccountRequest body)
     {
-        GameToken? token = database.GetTokenWithId(body.AccountRemovalTokenId, TokenType.AccountRemoval);
+        GameToken? token = database.GetTokenWithId(body.AccountDeletionTokenId, TokenType.AccountDeletion);
         if (token == null)
             return ApiNotFoundError.TokenDoesNotExist;
         
