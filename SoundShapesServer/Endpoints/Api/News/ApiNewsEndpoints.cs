@@ -29,21 +29,14 @@ public class ApiNewsEndpoints : EndpointGroup
     
     [ApiEndpoint("news"), Authentication(false)]
     [DocUsesPageData]
+    [DocUsesFilter<NewsFilters>]
     [DocSummary("Lists news.")]
     public ApiListResponse<ApiNewsEntryResponse> News(RequestContext context, GameDatabaseContext database)
     {
         (int from, int count, bool descending) = context.GetPageData();
         
         string? orderString = context.QueryString["orderBy"];
-
-        string? language = context.QueryString["language"];
-        List<GameUser>? authors = context.QueryString["authors"].ToUsers(database);
-
-        NewsFilters filters = new NewsFilters
-        {
-            Language = language,
-            Authors = authors?.ToArray()
-        };
+        NewsFilters filters = context.GetFilters<NewsFilters>(database);
 
         NewsOrderType order = orderString switch
         {

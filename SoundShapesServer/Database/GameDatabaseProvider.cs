@@ -20,7 +20,7 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 81;
+    protected override ulong SchemaVersion => 82;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -96,7 +96,6 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             for (int i = 0; i < newLevels.Count(); i++)
             {
                 Console.WriteLine($"Getting hasUfo & hasFirefly data from levels... ({i}/{newLevels.Count()})");
-                dynamic oldLevel = oldLevels.ElementAt(i);
                 GameLevel newLevel = newLevels.ElementAt(i);
 
                 if (!File.Exists(newLevel.LevelFilePath))
@@ -108,6 +107,16 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                     continue;
                 newLevel.HasUfo = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_UFOCheckpoint");
                 newLevel.HasFirefly = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_FireflyCheckpoint");
+            }
+        }
+
+        if (oldVersion < 82)
+        {
+            for (int i = 0; i < newLevels.Count(); i++)
+            {
+                Console.WriteLine($"Setting level upload platform to unknown... ({i}/{newLevels.Count()})");
+                GameLevel newLevel = newLevels.ElementAt(i);
+                newLevel.UploadPlatform = PlatformType.Unknown;
             }
         }
         

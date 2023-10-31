@@ -15,19 +15,13 @@ public class ApiDailyLevelEndpoint : EndpointGroup
 {
     [ApiEndpoint("daily"), Authentication(false)]
     [DocUsesPageData]
+    [DocUsesFilter<DailyLevelFilters>]
     [DocSummary("Lists levels that have been picked as daily levels.")]
     public ApiListResponse<ApiDailyLevelResponse> GetDailyLevelObjects(RequestContext context, GameDatabaseContext database)
     {
         (int from, int count, bool descending) = context.GetPageData();
-        
-        DateTimeOffset? date = context.QueryString["date"].ToDateFromUnix();
-        bool? latestDate = context.QueryString["latestDate"].ToBool();
 
-        DailyLevelFilters filters = new DailyLevelFilters
-        {
-            Date = date,
-            LatestDate = latestDate
-        };
+        DailyLevelFilters filters = context.GetFilters<DailyLevelFilters>(database);
         
         string? orderString = context.QueryString["orderBy"];
         DailyLevelOrderType order = orderString switch

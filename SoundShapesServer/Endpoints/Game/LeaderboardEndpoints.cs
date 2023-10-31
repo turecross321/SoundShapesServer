@@ -67,9 +67,9 @@ public class LeaderboardEndpoints : EndpointGroup
 
         LeaderboardOrderType order = LeaderboardOrderType.Score;
         const bool descending = false;
-        LeaderboardFilters filters = new LeaderboardFilters{OnLevel = level, Completed = true, Obsolete = false};
+        LeaderboardFilters filters = new LeaderboardFilters{Completed = true, Obsolete = false};
 
-        (LeaderboardEntry[] paginatedEntries, int totalEntries) = database.GetPaginatedLeaderboardEntries(order, descending, filters, from, count, user);
+        (LeaderboardEntry[] paginatedEntries, int totalEntries) = database.GetPaginatedLeaderboardEntries(level, order, descending, filters, from, count, user);
 
         return new ListResponse<LeaderboardEntryResponse>(
             paginatedEntries.Select(t => new LeaderboardEntryResponse(t, order, filters)), totalEntries, from, count);
@@ -88,9 +88,9 @@ public class LeaderboardEndpoints : EndpointGroup
 
         const LeaderboardOrderType order = LeaderboardOrderType.Score;
         const bool descending = false;
-        LeaderboardFilters filters = new LeaderboardFilters{OnLevel = level, ByUser = user, Completed = true, Obsolete = false};
+        LeaderboardFilters filters = new LeaderboardFilters{ByUser = user, Completed = true, Obsolete = false};
 
-        (LeaderboardEntry[] paginatedEntries, int _) = database.GetPaginatedLeaderboardEntries(order, descending, filters, 0, 1, user);
+        (LeaderboardEntry[] paginatedEntries, int _) = database.GetPaginatedLeaderboardEntries(level, order, descending, filters, 0, 1, user);
         return paginatedEntries.Select(e=> new LeaderboardEntryResponse(e, order, filters)).ToArray();
     }
 }

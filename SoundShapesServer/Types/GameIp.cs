@@ -13,6 +13,6 @@ public class GameIp : RealmObject
     public bool OneTimeUse { get; set; }
     public GameUser User { get; init; }
     public IList<GameToken> Tokens { get; }
-    public DateTimeOffset CreationDate { get; set; }
+    public DateTimeOffset CreationDate { get; init; }
     public DateTimeOffset ModificationDate { get; set; }
 }

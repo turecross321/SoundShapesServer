@@ -22,7 +22,6 @@ public class ApiReportResponse : IApiResponse
             LeaderboardFilters filters = 
                 new LeaderboardFilters 
                 {
-                    OnLevel = report.ContentLeaderboardEntry.Level, 
                     Completed = report.ContentLeaderboardEntry.Completed, 
                     Obsolete = report.ContentLeaderboardEntry.Obsolete()
                 };

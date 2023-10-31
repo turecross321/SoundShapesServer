@@ -18,12 +18,13 @@ public class ApiLevelEndpoints: EndpointGroup
 {
     [ApiEndpoint("levels"), Authentication(false)]
     [DocUsesPageData]
+    [DocUsesFilter<LevelFilters>]
     [DocSummary("Lists levels.")]
     public ApiListResponse<ApiLevelBriefResponse> GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user)
     {
         (int from, int count, bool descending) = context.GetPageData();
 
-        LevelFilters filters = context.GetLevelFilters(database);
+        LevelFilters filters = context.GetFilters<LevelFilters>(database);
         LevelOrderType order = context.GetLevelOrderType();
 
         (GameLevel[] levels, int levelCount) = database.GetPaginatedLevels(order, descending, filters, from, count, user);

@@ -21,6 +21,19 @@ public static class StringExtensions
         return null;
     }
 
+    public static DateTimeOffset? ToDate(this string? input)
+    {
+        if (input == null)
+            return null;
+    
+        if (DateTimeOffset.TryParse(input, out DateTimeOffset result))
+        {
+            return result;
+        }
+
+        return null;
+    }
+
     public static bool? ToBool(this string? input)
     {
         if (input == null)
@@ -48,6 +61,21 @@ public static class StringExtensions
         return null;
     }
 
+    public static List<int> ToInts(this string? input)
+    {
+        List<int> list = new List<int>();
+        foreach (string number in input.Split(","))
+        {
+            int? value = number.ToInt();
+            if (value != null)
+            {
+                list.Add((int)value);
+            }
+        }
+
+        return list;
+    }
+    
 
     public static T? ToEnum<T>(this string? input) where T : struct, Enum
     {
@@ -67,6 +95,7 @@ public static class StringExtensions
         list.AddRange(input.Split(",").Select(value => Enum.TryParse(value, out T result) ? result : default));
         return list;
     }
+
 
     public static GameUser? ToUser(this string? input, GameDatabaseContext database)
     {
@@ -88,7 +117,7 @@ public static class StringExtensions
         return input == null ? null : database.GetAlbumWithId(input);
     }
 
-    public static List<GameUser>? ToUsers(this string? input, GameDatabaseContext database)
+    public static GameUser[]? ToUsers(this string? input, GameDatabaseContext database)
     {
         if (input == null)
             return null;
@@ -101,6 +130,6 @@ public static class StringExtensions
             list.Add(user);
         }
 
-        return list;
+        return list.ToArray();
     }
 }

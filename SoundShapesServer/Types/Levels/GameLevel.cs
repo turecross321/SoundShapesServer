@@ -12,7 +12,7 @@ public class GameLevel : RealmObject
     [PrimaryKey] [Required] public required string Id { get; init; }
     public required GameUser Author { get; init; }
     public required string Name { get; set; }
-    public int Language { get; set; }
+    public int Language { get; init; }
     
     // Realm can't store enums, use recommended workaround
     // ReSharper disable once InconsistentNaming (can't fix due to conflict with PunishmentType)
@@ -34,7 +34,7 @@ public class GameLevel : RealmObject
     public string? LevelFilePath { get; set; }
     public string? ThumbnailFilePath { get; set; }
     public string? SoundFilePath { get; set; }
-    public DateTimeOffset CreationDate { get; set; }
+    public DateTimeOffset CreationDate { get; init; }
     public DateTimeOffset ModificationDate { get; set; }
     // ReSharper disable UnassignedGetOnlyAutoProperty
     [Backlink(nameof(LevelPlayRelation.Level))] public IQueryable<LevelPlayRelation> Plays { get; }

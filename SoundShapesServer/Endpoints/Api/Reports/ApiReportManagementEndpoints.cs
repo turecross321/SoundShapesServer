@@ -49,27 +49,14 @@ public class ApiReportManagementEndpoints : EndpointGroup
 
     [ApiEndpoint("reports")]
     [DocUsesPageData]
+    [DocUsesFilter<ReportFilters>]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Lists reports.")]
     public ApiListResponse<ApiReportResponse> GetReports(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         (int from, int count, bool descending) = context.GetPageData();
-        
-        ReportContentType? contentType = context.QueryString["contentType"].ToEnum<ReportContentType>();
-        ReportReasonType? reasonType = context.QueryString["reasonType"].ToEnum<ReportReasonType>();
-        GameUser? contentUser = context.QueryString["userId"].ToUser(database);
-        GameLevel? contentLevel = context.QueryString["levelId"].ToLevel(database);
-        LeaderboardEntry? contentLeaderboardEntry =
-            context.QueryString["leaderboardEntryId"].ToLeaderboardEntry(database);
 
-        ReportFilters filters = new ReportFilters
-        {
-            ContentType = contentType,
-            ReasonType = reasonType,
-            ContentUser = contentUser,
-            ContentLevel = contentLevel,
-            ContentLeaderboardEntry = contentLeaderboardEntry
-        };
+        ReportFilters filters = context.GetFilters<ReportFilters>(database); 
 
         (Report[] reports, int totalReports) = database.GetPaginatedReports(ReportOrderType.Date, descending, filters, from, count);
         return new ApiListResponse<ApiReportResponse>(reports.Select(r=>new ApiReportResponse(r)), totalReports);

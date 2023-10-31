@@ -56,14 +56,14 @@ public partial class GameDatabaseContext
         return _realm.All<LeaderboardEntry>().FirstOrDefault(e => e.Id == objectId);
     }
 
-    public (LeaderboardEntry[], int) GetPaginatedLeaderboardEntries(LeaderboardOrderType order, bool descending, LeaderboardFilters filters, int from, int count, GameUser? accessor)
+    public (LeaderboardEntry[], int) GetPaginatedLeaderboardEntries(GameLevel level, LeaderboardOrderType order, bool descending, LeaderboardFilters filters, int from, int count, GameUser? accessor)
     {
-        return GetLeaderboardEntries(order, descending, filters).Paginate(from, count);
+        return GetLeaderboardEntries(level, order, descending, filters).Paginate(from, count);
     }
 
-    public IQueryable<LeaderboardEntry> GetLeaderboardEntries(LeaderboardOrderType order, bool descending,
+    public IQueryable<LeaderboardEntry> GetLeaderboardEntries(GameLevel level, LeaderboardOrderType order, bool descending,
         LeaderboardFilters filters)
     {
-        return _realm.All<LeaderboardEntry>().FilterLeaderboard(filters).OrderLeaderboard(order, descending);
+        return _realm.All<LeaderboardEntry>().FilterLeaderboard(level, filters).OrderLeaderboard(order, descending);
     }
 }

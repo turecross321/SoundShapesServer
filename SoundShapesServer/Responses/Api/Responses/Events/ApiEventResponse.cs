@@ -33,7 +33,7 @@ public class ApiEventResponse : IApiResponse
                 break;
             case EventDataType.LeaderboardEntry:
                 LeaderboardEntry entry = (LeaderboardEntry)gameEvent.Data(database);
-                LeaderboardFilters filters = new LeaderboardFilters { OnLevel = entry.Level, Completed = entry.Completed, Obsolete = entry.Obsolete() };
+                LeaderboardFilters filters = new LeaderboardFilters {Completed = entry.Completed, Obsolete = entry.Obsolete() };
                 LeaderboardOrderType order = LeaderboardOrderType.Notes;
                 DataLeaderboardEntry = new ApiLeaderboardEntryResponse(entry, order, filters);
                 break;

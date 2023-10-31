@@ -11,9 +11,11 @@ public static class LevelQueryableExtensions
 {
     public static IQueryable<GameLevel> FilterLevels(this IQueryable<GameLevel> levels, GameDatabaseContext database, LevelFilters filters, GameUser? accessor)
     {
-        if (filters.AnyCompletions != null)
-            levels = levels.Where(l => l.UniqueCompletionsCount > 0 == filters.AnyCompletions);
-        
+        if (filters.AnyCompletions == true)
+            levels = levels.Where(l => l.UniqueCompletionsCount > 0);
+        else if (filters.AnyCompletions == false) 
+            levels = levels.Where(l => l.UniqueCompletionsCount == 0);
+            
         if (filters.CreatedBefore != null)
             levels = levels.Where(l => l.CreationDate <= filters.CreatedBefore);
         
@@ -122,22 +124,19 @@ public static class LevelQueryableExtensions
 
         if (filters.UploadPlatforms != null)
         {
-            IEnumerable<GameLevel> tempLevels = new List<GameLevel>();
-
-            // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (PlatformType platformType in filters.UploadPlatforms)
+            IQueryable<GameLevel> tempLevels = new List<GameLevel>().AsQueryable();
+            foreach (int platform in filters.UploadPlatforms)
             {
-                tempLevels = tempLevels.Concat(levels.Where(e=> e._UploadPlatform == (int)platformType));
+                IQueryable<GameLevel> levelsOnPlatform = levels.Where(l => l._UploadPlatform == platform);
+                tempLevels = tempLevels.Concat(levelsOnPlatform);
             }
-
-            levels = tempLevels.AsQueryable();
+            levels = tempLevels;
         }
         
         // Automatically remove unlisted and private levels from results
         if ((accessor?.PermissionsType ?? PermissionsType.Default) < PermissionsType.Moderator)
         {
-            IQueryable<GameLevel> nonPublicLevels = levels.Where(l => l.Author != accessor && l._Visibility != (int)LevelVisibility.Public);
-            levels = levels.AsEnumerable().Except(nonPublicLevels).AsQueryable();
+            levels = levels.Where(l => l._Visibility == (int)LevelVisibility.Public || l.Author == accessor);
         }
         
         return levels;

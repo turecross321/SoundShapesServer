@@ -77,23 +77,14 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
     
     [ApiEndpoint("punishments")]
     [DocUsesPageData]
+    [DocUsesFilter<PunishmentFilters>]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Lists punishments.")]
     public ApiListResponse<ApiPunishmentResponse> GetPunishments(RequestContext context, GameDatabaseContext database, GameUser user)
     {
         (int from, int count, bool descending) = context.GetPageData();
-
-        GameUser? author = context.QueryString["author"].ToUser(database);
-        GameUser? recipient = context.QueryString["recipient"].ToUser(database);
-        bool? revoked = context.QueryString["revoked"].ToBool();
-
-        PunishmentFilters filters = new PunishmentFilters
-        {
-            Author = author, 
-            Recipient = recipient, 
-            Revoked = revoked
-        };
         
+        PunishmentFilters filters = context.GetFilters<PunishmentFilters>(database);
         (Punishment[] punishments, int totalPunishments) = database.GetPaginatedPunishments(PunishmentOrderType.CreationDate, descending, filters, from, count);
 
         return new ApiListResponse<ApiPunishmentResponse>(punishments.Select(p=>new ApiPunishmentResponse(p)), totalPunishments);

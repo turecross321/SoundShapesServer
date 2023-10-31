@@ -80,7 +80,7 @@ public class LevelEndpoints : EndpointGroup
                 break;
         }
         
-        filters ??= context.GetLevelFilters(database);
+        filters ??= context.GetFilters<LevelFilters>(database);
         order ??= context.GetLevelOrderType();
 
         (GameLevel[] levels, int totalLevels) = database.GetPaginatedLevels((LevelOrderType)order, descending, filters, from, count, user);

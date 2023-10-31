@@ -1,13 +1,14 @@
 using SoundShapesServer.Types.Leaderboard;
+using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Extensions.Queryable;
 
 public static class LeaderboardQueryableExtensions
 {
-    public static IQueryable<LeaderboardEntry> FilterLeaderboard(this IQueryable<LeaderboardEntry> entries,
+    public static IQueryable<LeaderboardEntry> FilterLeaderboard(this IQueryable<LeaderboardEntry> entries, GameLevel level,
         LeaderboardFilters filters)
     {
-        entries = entries.Where(e => e.Level == filters.OnLevel);
+        entries = entries.Where(e => e.Level == level);
 
         if (filters.ByUser != null)
         {

@@ -34,22 +34,22 @@ public class LeaderboardTests: ServerTest
         // Filtering
         
         // Only best entries on first level
-        IEnumerable<LeaderboardEntry> entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
-            false, new LeaderboardFilters{Obsolete = true, OnLevel = firstLevel});
+        IEnumerable<LeaderboardEntry> entries = context.Database.GetLeaderboardEntries(firstLevel, LeaderboardOrderType.Score,
+            false, new LeaderboardFilters{Obsolete = true});
         Assert.That(entries.Count(), Is.EqualTo(usersOnFirstLevel));
         
         // All entries on second level
-        entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
-            false, new LeaderboardFilters{Obsolete = null, OnLevel = secondLevel});
+        entries = context.Database.GetLeaderboardEntries(secondLevel, LeaderboardOrderType.Score,
+            false, new LeaderboardFilters{Obsolete = null});
         Assert.That(entries.Count(), Is.EqualTo(usersOnSecondLevel * scoresPerUser));
         
         // Ordering
-        entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
-            false, new LeaderboardFilters{Obsolete = null, OnLevel = firstLevel});
+        entries = context.Database.GetLeaderboardEntries(firstLevel, LeaderboardOrderType.Score,
+            false, new LeaderboardFilters{Obsolete = null});
         Assert.That(entries.First().Score, Is.LessThan(entries.Last().Score));
         
-        entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score,
-            true, new LeaderboardFilters{Obsolete = null, OnLevel = secondLevel});
+        entries = context.Database.GetLeaderboardEntries(secondLevel, LeaderboardOrderType.Score,
+            true, new LeaderboardFilters{Obsolete = null});
         Assert.That(entries.First().Score, Is.GreaterThan(entries.Last().Score));
     }
     
@@ -101,8 +101,8 @@ public class LeaderboardTests: ServerTest
 
         context.Database.Refresh();
 
-        LeaderboardFilters filters = new LeaderboardFilters{OnLevel = level, ByUser = user};
-        IQueryable<LeaderboardEntry> entries = context.Database.GetLeaderboardEntries(LeaderboardOrderType.Score, false, filters);
+        LeaderboardFilters filters = new LeaderboardFilters{ByUser = user};
+        IQueryable<LeaderboardEntry> entries = context.Database.GetLeaderboardEntries(level, LeaderboardOrderType.Score, false, filters);
         
         Assert.That(entries.Count(), Is.EqualTo(1));
     }

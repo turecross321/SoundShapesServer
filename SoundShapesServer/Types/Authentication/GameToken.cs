@@ -18,12 +18,12 @@ public class GameToken : RealmObject, IToken<GameUser>
     public required TokenType TokenType
     {
         get => (TokenType)_TokenType;
-        set => _TokenType = (int)value;
+        init => _TokenType = (int)value;
     }
     
     // ReSharper disable once InconsistentNaming (can't fix due to conflict with PlatformType)
     // ReSharper disable once MemberCanBePrivate.Global
-    internal int _PlatformType { get; set; }
+    internal int _PlatformType { get; init; }
     public required PlatformType PlatformType
     {
         get => (PlatformType)_PlatformType;

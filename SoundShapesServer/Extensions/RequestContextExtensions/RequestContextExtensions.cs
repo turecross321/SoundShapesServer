@@ -1,7 +1,11 @@
 ﻿using System.Net;
+using System.Reflection;
+using AttribDoc;
 using Bunkum.Core;
 using SoundShapesServer.Database;
+using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Types;
+using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Extensions.RequestContextExtensions;
@@ -16,6 +20,50 @@ public static class RequestContextExtensions
         bool descending = context.QueryString["descending"].ToBool() ?? descendingIfNull;
         
         return (from, count, descending);
+    }
+
+    public static T GetFilters<T>(this RequestContext context, GameDatabaseContext database) where T : new()
+    {
+        T instance = new T();
+        
+        foreach (PropertyInfo property in typeof(T).GetProperties())
+        {
+            DocPropertyQueryAttribute? attribute = property.GetCustomAttribute<DocPropertyQueryAttribute>();
+            if (attribute != null)
+            {
+                string? strValue = context.QueryString[attribute.ParameterName];
+                if (strValue == null)
+                    continue;
+                
+                object? value = null;
+                
+                // typeof can't be used in switch statements :/
+                if (property.PropertyType == typeof(GameUser))
+                    value = strValue.ToUser(database);
+                else if (property.PropertyType == typeof(GameAlbum))
+                    value = strValue.ToAlbum(database);
+                else if (property.PropertyType == typeof(Boolean?))
+                    value = strValue.ToBool();
+                else if (property.PropertyType == typeof(String))
+                    value = strValue;
+                else if (property.PropertyType == typeof(DateTimeOffset?))
+                    value = strValue.ToDate();
+                else if (property.PropertyType == typeof(Int32?))
+                    value = strValue.ToInt();
+                else if (property.PropertyType == typeof(Int32[]))
+                    value = Convert.ChangeType(strValue.ToInts().ToArray(), property.PropertyType);
+                else if (property.PropertyType == typeof(GameUser[]))
+                    value = strValue.ToUsers(database);
+                else
+                {
+                    throw new ArgumentOutOfRangeException(property.PropertyType.Name + " filter is not supported");
+                }
+                
+                property.SetValue(instance, value);
+            }
+        }
+
+        return instance;
     }
 
     public static string GetIpAddress(this RequestContext context)

@@ -17,12 +17,13 @@ public class ApiEventsEndpoint : EndpointGroup
 {
     [ApiEndpoint("events"), Authentication(false)]
     [DocUsesPageData]
+    [DocUsesFilter<EventFilters>]
     [DocSummary("Lists events.")]
     public ApiListResponse<ApiEventResponse> GetEvents(RequestContext context, GameDatabaseContext database, GameUser? user)
     {
         (int from, int count, bool descending) = context.GetPageData();
-
-        EventFilters filters = context.GetEventFilters(database);
+        
+        EventFilters filters = context.GetFilters<EventFilters>(database);
         EventOrderType orderType = context.GetEventOrder();
         
         (GameEvent[] events, int totalEvents) = database.GetPaginatedEvents(orderType, descending, filters, from, count, user);

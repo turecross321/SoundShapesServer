@@ -22,12 +22,12 @@ public class EventsEndpoint : EndpointGroup
     
     [GameEndpoint("~identity:{id}/~stream:news.page")]
     [GameEndpoint("~index:activity.page")]
-    public ListResponse<EventResponse> GetEvents(RequestContext context, GameDatabaseContext database, GameUser? user)
+    public ListResponse<EventResponse> GetEvents(RequestContext context, GameDatabaseContext database, GameUser user)
     {
         (int from, int count, bool descending) = context.GetPageData();
 
-        EventFilters filters = context.GetEventFilters(database);
-        filters.EventTypes ??= _gameEventTypes.ToList();
+        EventFilters filters = context.GetFilters<EventFilters>(database);
+        filters.EventTypes ??= _gameEventTypes.ToIntArray();
         EventOrderType order = context.GetEventOrder();
         
         (GameEvent[] events, int totalEvents) = database.GetPaginatedEvents(order, descending, filters, from, count, user);
