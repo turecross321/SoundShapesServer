@@ -75,26 +75,6 @@ public static class StringExtensions
 
         return list;
     }
-    
-
-    public static T? ToEnum<T>(this string? input) where T : struct, Enum
-    {
-        if (input == null)
-            return null;
-
-        if (!Enum.TryParse(input, out T result)) 
-            return null;
-        return result;
-    }
-    public static List<T>? ToEnumList<T>(this string? input) where T : struct, Enum
-    {
-        if (input == null)
-            return null;
-
-        List<T> list = new ();
-        list.AddRange(input.Split(",").Select(value => Enum.TryParse(value, out T result) ? result : default));
-        return list;
-    }
 
 
     public static GameUser? ToUser(this string? input, GameDatabaseContext database)

@@ -1,9 +1,9 @@
-namespace SoundShapesServer.Documentation.Attributes;
+namespace SoundShapesServer.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class DocPropertyQueryAttribute : Attribute
+public class FilterPropertyAttribute : Attribute
 {
-    public DocPropertyQueryAttribute(string parameterName, string summary)
+    public FilterPropertyAttribute(string parameterName, string summary)
     {
         ParameterName = parameterName;
         Summary = summary;

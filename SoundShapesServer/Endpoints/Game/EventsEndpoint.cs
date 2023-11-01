@@ -3,7 +3,6 @@ using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.RequestContextExtensions;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Events;
 using SoundShapesServer.Types.Events;
@@ -28,7 +27,7 @@ public class EventsEndpoint : EndpointGroup
 
         EventFilters filters = context.GetFilters<EventFilters>(database);
         filters.EventTypes ??= _gameEventTypes.ToIntArray();
-        EventOrderType order = context.GetEventOrder();
+        EventOrderType order = context.GetOrderType<EventOrderType>() ?? EventOrderType.CreationDate;
         
         (GameEvent[] events, int totalEvents) = database.GetPaginatedEvents(order, descending, filters, from, count, user);
         return new ListResponse<EventResponse>(events.Select(e => new EventResponse(database, e)), totalEvents, from, count);

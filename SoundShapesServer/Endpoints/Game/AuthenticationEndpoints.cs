@@ -13,7 +13,6 @@ using NPTicket.Verification.Keys;
 using SoundShapesServer.Database;
 using SoundShapesServer.Types;
 using SoundShapesServer.Configuration;
-using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Extensions.RequestContextExtensions;
 using SoundShapesServer.Helpers;

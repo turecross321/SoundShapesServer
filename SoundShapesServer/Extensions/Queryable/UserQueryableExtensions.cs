@@ -70,7 +70,7 @@ public static class UserQueryableExtensions
             UserOrderType.PlayedLevels => users.OrderByDynamic(u => u.PlayedLevelsCount, descending),
             UserOrderType.CompletedLevels => users.OrderByDynamic(u => u.CompletedLevelsCount, descending),
             UserOrderType.Deaths => users.OrderByDynamic(u => u.Deaths, descending),
-            UserOrderType.TotalPlayTime => users.OrderByDynamic(u => u.TotalPlayTime, descending),
+            UserOrderType.PlayTime => users.OrderByDynamic(u => u.TotalPlayTime, descending),
             UserOrderType.LastGameLogin => users.OrderByDynamic(u => u.LastGameLogin, descending),
             UserOrderType.Events => users.OrderByDynamic(u => u.EventsCount, descending),
             _ => users.OrderUsers(UserOrderType.CreationDate, descending)

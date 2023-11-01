@@ -5,7 +5,6 @@ using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
-using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.RequestContextExtensions;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Framework;
@@ -77,7 +76,8 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
     
     [ApiEndpoint("punishments")]
     [DocUsesPageData]
-    [DocUsesFilter<PunishmentFilters>]
+    [DocUsesFiltration<PunishmentFilters>]
+    [DocUsesOrder<PunishmentOrderType>]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Lists punishments.")]
     public ApiListResponse<ApiPunishmentResponse> GetPunishments(RequestContext context, GameDatabaseContext database, GameUser user)
@@ -85,7 +85,9 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
         (int from, int count, bool descending) = context.GetPageData();
         
         PunishmentFilters filters = context.GetFilters<PunishmentFilters>(database);
-        (Punishment[] punishments, int totalPunishments) = database.GetPaginatedPunishments(PunishmentOrderType.CreationDate, descending, filters, from, count);
+        PunishmentOrderType order = context.GetOrderType<PunishmentOrderType>() ?? PunishmentOrderType.CreationDate;
+        
+        (Punishment[] punishments, int totalPunishments) = database.GetPaginatedPunishments(order, descending, filters, from, count);
 
         return new ApiListResponse<ApiPunishmentResponse>(punishments.Select(p=>new ApiPunishmentResponse(p)), totalPunishments);
     }

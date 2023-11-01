@@ -5,7 +5,6 @@ using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.RequestContextExtensions;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Responses.Api.Responses.Levels;
@@ -18,14 +17,15 @@ public class ApiLevelEndpoints: EndpointGroup
 {
     [ApiEndpoint("levels"), Authentication(false)]
     [DocUsesPageData]
-    [DocUsesFilter<LevelFilters>]
+    [DocUsesFiltration<LevelFilters>]
+    [DocUsesOrder<LevelOrderType>]
     [DocSummary("Lists levels.")]
     public ApiListResponse<ApiLevelBriefResponse> GetLevels(RequestContext context, GameDatabaseContext database, GameUser? user)
     {
         (int from, int count, bool descending) = context.GetPageData();
 
         LevelFilters filters = context.GetFilters<LevelFilters>(database);
-        LevelOrderType order = context.GetLevelOrderType();
+        LevelOrderType order = context.GetOrderType<LevelOrderType>() ?? LevelOrderType.CreationDate;
 
         (GameLevel[] levels, int levelCount) = database.GetPaginatedLevels(order, descending, filters, from, count, user);
         

@@ -1,9 +1,8 @@
 ﻿using System.Net;
 using System.Reflection;
-using AttribDoc;
 using Bunkum.Core;
+using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
-using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Users;
@@ -28,7 +27,7 @@ public static class RequestContextExtensions
         
         foreach (PropertyInfo property in typeof(T).GetProperties())
         {
-            DocPropertyQueryAttribute? attribute = property.GetCustomAttribute<DocPropertyQueryAttribute>();
+            FilterPropertyAttribute? attribute = property.GetCustomAttribute<FilterPropertyAttribute>();
             if (attribute != null)
             {
                 string? strValue = context.QueryString[attribute.ParameterName];
@@ -64,6 +63,28 @@ public static class RequestContextExtensions
         }
 
         return instance;
+    }
+    
+    public static TEnum? GetOrderType<TEnum>(this RequestContext context) where TEnum: struct, Enum
+    {
+        Type enumType = typeof(TEnum);
+
+        foreach (TEnum value in Enum.GetValues(enumType))
+        {
+            FieldInfo? fieldInfo = enumType.GetField(value.ToString());
+            if (fieldInfo == null)
+                continue;
+            
+            // Check if the enum value has an OrderType attribute
+            OrderTypeAttribute? orderTypeAttribute = (OrderTypeAttribute?)fieldInfo.GetCustomAttribute(typeof(OrderTypeAttribute), false);
+
+            if (orderTypeAttribute != null && orderTypeAttribute.ParameterName == context.QueryString["orderBy"])
+            {
+                return value;
+            }
+        }
+
+        return null;
     }
 
     public static string GetIpAddress(this RequestContext context)

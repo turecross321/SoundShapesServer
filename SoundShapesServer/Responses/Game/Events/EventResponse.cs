@@ -1,6 +1,5 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Database;
-using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types.Events;

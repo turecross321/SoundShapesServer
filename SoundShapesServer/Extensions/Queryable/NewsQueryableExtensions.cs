@@ -34,7 +34,7 @@ public static class NewsQueryableExtensions
         {
             NewsOrderType.CreationDate => entries.OrderByDynamic(e => e.CreationDate, descending),
             NewsOrderType.ModificationDate => entries.OrderByDynamic(e => e.ModificationDate, descending),
-            NewsOrderType.CharacterCount => entries.OrderByDynamic(e => e.CharacterCount, descending),
+            NewsOrderType.Characters => entries.OrderByDynamic(e => e.CharacterCount, descending),
             _ => entries.OrderNews(NewsOrderType.CreationDate, descending)
         };
     }

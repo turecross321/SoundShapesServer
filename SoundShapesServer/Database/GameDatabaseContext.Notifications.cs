@@ -1,5 +1,4 @@
 using SoundShapesServer.Types.Events;
-using SoundShapesServer.Types.Notifications;
 
 namespace SoundShapesServer.Database;
 

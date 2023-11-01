@@ -3,7 +3,6 @@ using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
-using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.RequestContextExtensions;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
@@ -29,24 +28,13 @@ public class ApiAlbumEndpoints : EndpointGroup
 
     [ApiEndpoint("albums"), Authentication(false)]
     [DocUsesPageData]
+    [DocUsesOrder<AlbumOrderType>]
     [DocSummary("Lists albums.")]
     public ApiListResponse<ApiAlbumResponse> GetAlbums(RequestContext context, GameDatabaseContext database)
     {
         (int from, int count, bool descending) = context.GetPageData();
-        
-        string? orderString = context.QueryString["orderBy"];
 
-        AlbumOrderType order = orderString switch
-        {
-            "creationDate" => AlbumOrderType.CreationDate,
-            "modificationDate" => AlbumOrderType.ModificationDate,
-            "totalPlays" => AlbumOrderType.Plays,
-            "uniquePlays" => AlbumOrderType.UniquePlays,
-            "levels" => AlbumOrderType.Levels,
-            "fileSize" => AlbumOrderType.FileSize,
-            "difficulty" => AlbumOrderType.Difficulty,
-            _ => AlbumOrderType.CreationDate
-        };
+        AlbumOrderType order = context.GetOrderType<AlbumOrderType>() ?? AlbumOrderType.CreationDate;
 
         (GameAlbum[] albums, int totalAlbums) = database.GetPaginatedAlbums(order, descending, from, count);
         

@@ -1,7 +1,3 @@
-using System.Text;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
-using Newtonsoft.Json.Linq;
-
 namespace SoundShapesServer.Extensions;
 
 public static class ByteArrayExtensions

@@ -1,8 +1,6 @@
-﻿using System.Globalization;
-using System.Reflection;
+﻿using System.Reflection;
 using Bunkum.AutoDiscover.Extensions;
 using Bunkum.Core.Authentication;
-using Bunkum.Core.Responses;
 using Bunkum.Core.Responses.Serialization;
 using Bunkum.Core.Storage;
 using Bunkum.Listener;

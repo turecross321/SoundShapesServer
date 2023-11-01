@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Relations;
 using SoundShapesServer.Types.Users;
 

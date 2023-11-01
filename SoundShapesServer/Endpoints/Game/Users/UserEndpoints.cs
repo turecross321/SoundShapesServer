@@ -1,10 +1,8 @@
 using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
-using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Extensions.RequestContextExtensions;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game;
 using SoundShapesServer.Responses.Game.Users;
 using SoundShapesServer.Types.Users;
@@ -18,8 +16,8 @@ public class UserEndpoints : EndpointGroup
     {
         (int from, int count, bool descending) = context.GetPageData();
 
-        UserFilters filters = context.GetUserFilters(database);
-        UserOrderType order = context.GetUserOrderType();
+        UserFilters filters = context.GetFilters<UserFilters>(database);
+        UserOrderType order = context.GetOrderType<UserOrderType>() ?? UserOrderType.CreationDate;
 
         (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(order, descending, filters, from, count);
         return new ListResponse<UserBriefResponse>(users.Select(u => new UserBriefResponse(user, u)), totalUsers, from, count);

@@ -11,7 +11,6 @@ public class DocUsesPageDataAttribute : DocAttribute
     {
         route.Parameters.Add(new Parameter("from", ParameterType.Query, "The amount of items to skip."));
         route.Parameters.Add(new Parameter("count", ParameterType.Query, "The amount of items to take."));
-        route.Parameters.Add(new Parameter("orderBy", ParameterType.Query, "Specifies how list should be ordered."));
         route.Parameters.Add(new Parameter("descending", ParameterType.Query, "Specifies if list should be ascending or descending."));
     }
 }

@@ -3,7 +3,6 @@ using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
-using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.RequestContextExtensions;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
@@ -18,7 +17,8 @@ public class ApiLeaderboardEndpoints : EndpointGroup
 {
     [ApiEndpoint("levels/id/{levelId}/leaderboard"), Authentication(false)]
     [DocUsesPageData]
-    [DocUsesFilter<LeaderboardFilters>]
+    [DocUsesFiltration<LeaderboardFilters>]
+    [DocUsesOrder<LeaderboardOrderType>]
     [DocSummary("Retrieves leaderboard of level.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     public ApiListResponse<ApiLeaderboardEntryResponse> GetLeaderboard(RequestContext context, GameDatabaseContext database, string levelId, GameUser? user)
@@ -28,18 +28,10 @@ public class ApiLeaderboardEndpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null)
             return ApiNotFoundError.LevelNotFound;
-        
-        string? orderString = context.QueryString["orderBy"];
-        LeaderboardOrderType order = orderString switch
-        {
-            "score" => LeaderboardOrderType.Score,
-            "playTime" => LeaderboardOrderType.PlayTime,
-            "notes" => LeaderboardOrderType.Notes,
-            "creationDate" => LeaderboardOrderType.CreationDate,
-            _ => LeaderboardOrderType.Score
-        };
 
         LeaderboardFilters filters = context.GetFilters<LeaderboardFilters>(database);
+        LeaderboardOrderType order = context.GetOrderType<LeaderboardOrderType>() ?? LeaderboardOrderType.Score;
+        
         (LeaderboardEntry[] paginatedEntries, int totalEntries) = database.GetPaginatedLeaderboardEntries(level, order, descending, filters, from, count, user);
 
         return new ApiListResponse<ApiLeaderboardEntryResponse>(paginatedEntries.Select(e =>

@@ -3,10 +3,8 @@ using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
-using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Extensions.RequestContextExtensions;
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Responses.Api.Responses.Users;
@@ -42,13 +40,15 @@ public class ApiUserEndpoints : EndpointGroup
 
     [ApiEndpoint("users"), Authentication(false)]
     [DocUsesPageData]
+    [DocUsesFiltration<UserFilters>]
+    [DocUsesOrder<UserOrderType>]
     [DocSummary("Lists users.")]
     public ApiListResponse<ApiUserBriefResponse> GetUsers(RequestContext context, GameDatabaseContext database)
     {
         (int from, int count, bool descending) = context.GetPageData();
 
-        UserFilters filters = context.GetUserFilters(database);
-        UserOrderType order = context.GetUserOrderType();
+        UserFilters filters = context.GetFilters<UserFilters>(database);
+        UserOrderType order = context.GetOrderType<UserOrderType>() ?? UserOrderType.CreationDate;
 
         (GameUser[] users, int totalUsers) = database.GetPaginatedUsers(order, descending, filters, from, count);
         return new ApiListResponse<ApiUserBriefResponse>(users.Select(u=>new ApiUserBriefResponse(u)), totalUsers);

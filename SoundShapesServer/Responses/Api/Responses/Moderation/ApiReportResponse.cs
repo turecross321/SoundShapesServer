@@ -1,5 +1,4 @@
 using Newtonsoft.Json;
-using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Responses.Levels;
 using SoundShapesServer.Responses.Api.Responses.Users;

@@ -1,7 +1,11 @@
+using SoundShapesServer.Attributes;
+
 namespace SoundShapesServer.Types.Punishments;
 
 public enum PunishmentOrderType
 {
-    CreationDate = 0,
-    ExpiryDate = 1,
+    [OrderType("creationDate", "Creation date")]
+    CreationDate,
+    [OrderType("expiryDate", "Expiry date")]
+    ExpiryDate,
 }

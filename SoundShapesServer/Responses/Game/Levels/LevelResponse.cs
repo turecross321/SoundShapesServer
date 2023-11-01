@@ -10,14 +10,14 @@ namespace SoundShapesServer.Responses.Game.Levels;
 
 public class LevelResponse : IResponse
 {
-    public LevelResponse(GameLevel level, GameUser user)
+    public LevelResponse(GameLevel level, GameUser? accessor)
     {
         Id = FormatLevelId(level.Id);
         Author = new UserTargetResponse(level.Author);
         LatestVersion = FormatLevelIdAndVersion(level);
         Title = level.Name;
-        Completed = level.UniqueCompletions.Contains(user);
         Metadata = new LevelMetadataResponse(level);
+        Completed = accessor != null && level.UniqueCompletions.Contains(accessor);
     }
 
     [JsonProperty("id")] public string? Id { get; }

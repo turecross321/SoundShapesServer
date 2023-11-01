@@ -78,8 +78,8 @@ public static class EventQueryableExtensions
     {
         return order switch
         {
-            EventOrderType.Date => events.OrderByDynamic(e => e.CreationDate, descending),
-            _ => events.OrderEvents(EventOrderType.Date, descending)
+            EventOrderType.CreationDate => events.OrderByDynamic(e => e.CreationDate, descending),
+            _ => events.OrderEvents(EventOrderType.CreationDate, descending)
         };
     }
 }

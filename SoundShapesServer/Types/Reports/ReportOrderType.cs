@@ -1,6 +1,9 @@
+using SoundShapesServer.Attributes;
+
 namespace SoundShapesServer.Types.Reports;
 
 public enum ReportOrderType
 {
-    Date
+    [OrderType("creationDate", "Creation date")]
+    CreationDate
 }

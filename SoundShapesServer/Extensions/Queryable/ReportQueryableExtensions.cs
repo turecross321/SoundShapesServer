@@ -38,8 +38,8 @@ public static class ReportQueryableExtensions
     {
         return order switch
         {
-            ReportOrderType.Date => reports.OrderByDynamic(r => r.CreationDate, descending),
-            _ => reports.OrderReports(ReportOrderType.Date, descending)
+            ReportOrderType.CreationDate => reports.OrderByDynamic(r => r.CreationDate, descending),
+            _ => reports.OrderReports(ReportOrderType.CreationDate, descending)
         };
     }
 }
