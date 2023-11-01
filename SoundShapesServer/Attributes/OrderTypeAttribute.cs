@@ -3,13 +3,13 @@ namespace SoundShapesServer.Attributes;
 [AttributeUsage(AttributeTargets.Field)]
 public class OrderTypeAttribute : Attribute
 {
-    public OrderTypeAttribute(string parameterName, string summary)
+    public OrderTypeAttribute(string value, string summary)
     {
-        ParameterName = parameterName;
+        Value = value;
         Summary = summary;
     }
 
-    public string ParameterName { get; }
+    public string Value { get; }
 
     public string Summary { get; }
 }

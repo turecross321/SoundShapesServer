@@ -78,7 +78,7 @@ public static class RequestContextExtensions
             // Check if the enum value has an OrderType attribute
             OrderTypeAttribute? orderTypeAttribute = (OrderTypeAttribute?)fieldInfo.GetCustomAttribute(typeof(OrderTypeAttribute), false);
 
-            if (orderTypeAttribute != null && orderTypeAttribute.ParameterName == context.QueryString["orderBy"])
+            if (orderTypeAttribute != null && orderTypeAttribute.Value == context.QueryString["orderBy"])
             {
                 return value;
             }

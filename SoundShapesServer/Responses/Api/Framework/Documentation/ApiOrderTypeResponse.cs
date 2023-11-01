@@ -9,11 +9,11 @@ public class ApiOrderTypeResponse
 {
     public ApiOrderTypeResponse(OrderTypeAttribute attribute)
     {
-        ParameterName = attribute.ParameterName;
+        Value = attribute.Value;
         Summary = attribute.Summary;
     }
 
-    public string ParameterName { get; set; }
+    public string Value { get; set; }
 
     public string Summary { get; set; }
 }
