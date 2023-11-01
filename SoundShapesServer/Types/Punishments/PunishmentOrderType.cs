@@ -4,8 +4,8 @@ namespace SoundShapesServer.Types.Punishments;
 
 public enum PunishmentOrderType
 {
-    [OrderType("creationDate", "Creation date")]
+    [OrderType("creationDate", "Creation date.")]
     CreationDate,
-    [OrderType("expiryDate", "Expiry date")]
+    [OrderType("expiryDate", "Expiry date.")]
     ExpiryDate,
 }

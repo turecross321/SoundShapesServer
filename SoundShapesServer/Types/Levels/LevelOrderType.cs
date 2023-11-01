@@ -4,41 +4,41 @@ namespace SoundShapesServer.Types.Levels;
 
 public enum LevelOrderType
 {
-    [OrderType("creationDate", "Creation date")]
+    [OrderType("creationDate", "Creation date.")]
     CreationDate,
-    [OrderType("modificationDate", "Modification date")]
+    [OrderType("modificationDate", "Modification date.")]
     ModificationDate,
-    [OrderType("plays", "Total amount of plays")]
+    [OrderType("plays", "Total amount of plays.")]
     Plays,
-    [OrderType("uniquePlays", "Total amount of unique plays")]
+    [OrderType("uniquePlays", "Total amount of unique plays.")]
     UniquePlays,
-    [OrderType("uniqueCompletions", "Total amount of unique completions")]
+    [OrderType("uniqueCompletions", "Total amount of unique completions.")]
     UniqueCompletions,
-    [OrderType("completions", "Total amount of completions")]
+    [OrderType("completions", "Total amount of completions.")]
     Completions,
-    [OrderType("likes", "Total amount of likes")]
+    [OrderType("likes", "Total amount of likes.")]
     Likes,
-    [OrderType("queues", "Total amount of queues")]
+    [OrderType("queues", "Total amount of queues.")]
     Queues,
-    [OrderType("fileSize", "File size of level file")]
+    [OrderType("fileSize", "File size of level file.")]
     FileSize,
-    [OrderType("difficulty", "Difficulty")]
+    [OrderType("difficulty", "Difficulty.")]
     Difficulty,
-    [OrderType("random", "Random - uses current date as seed")]
+    [OrderType("random", "Random - uses current date as seed.")]
     Random,
-    [OrderType("deaths", "Total amount of deaths")]
+    [OrderType("deaths", "Total amount of deaths.")]
     Deaths,
-    [OrderType("playTime", "Total play time")]
+    [OrderType("playTime", "Total play time.")]
     PlayTime,
-    [OrderType("averagePlayTime", "Total play time divided by total plays")]
+    [OrderType("averagePlayTime", "Total play time divided by total plays.")]
     AveragePlayTime,
-    [OrderType("screens", "Total amount of screens in level")]
+    [OrderType("screens", "Total amount of screens in level.")]
     Screens,
-    [OrderType("entities", "Total amount of entities in level")]
+    [OrderType("entities", "Total amount of entities in level.")]
     Entities,
-    [OrderType("bpm", "BPM")]
+    [OrderType("bpm", "BPM.")]
     Bpm,
-    [OrderType("transposeValue", "Transpose value")]
+    [OrderType("transposeValue", "Transpose value.")]
     TransposeValue,
     DoNotOrder
 }

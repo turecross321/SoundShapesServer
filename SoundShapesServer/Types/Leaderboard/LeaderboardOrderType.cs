@@ -4,12 +4,12 @@ namespace SoundShapesServer.Types.Leaderboard;
 
 public enum LeaderboardOrderType
 {
-    [OrderType("score", "First by notes, and then by play time")]
+    [OrderType("score", "First by notes, and then by play time.")]
     Score,
-    [OrderType("playTime", "Play time")]
+    [OrderType("playTime", "Play time.")]
     PlayTime,
-    [OrderType("notes", "Amount of collected notes")]
+    [OrderType("notes", "Amount of collected notes.")]
     Notes,
-    [OrderType("creationDate", "Creation date")]
+    [OrderType("creationDate", "Creation date.")]
     CreationDate
 }

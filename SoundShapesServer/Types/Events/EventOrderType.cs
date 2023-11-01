@@ -4,6 +4,6 @@ namespace SoundShapesServer.Types.Events;
 
 public enum EventOrderType
 {
-    [OrderType("creationDate", "Creation date")]
+    [OrderType("creationDate", "Creation date.")]
     CreationDate
 }
