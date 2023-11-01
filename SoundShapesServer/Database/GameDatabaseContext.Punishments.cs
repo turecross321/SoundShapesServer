@@ -1,6 +1,7 @@
 using MongoDB.Bson;
 using SoundShapesServer.Extensions.Queryable;
 using SoundShapesServer.Requests.Api;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Punishments;
 using SoundShapesServer.Types.Users;
 
@@ -63,8 +64,8 @@ public partial class GameDatabaseContext
         return _realm.All<Punishment>().FirstOrDefault(p => p.Id == objectId);
     }
     
-    public (Punishment[], int) GetPaginatedPunishments(PunishmentOrderType order, bool descending, PunishmentFilters filters, int from, int count)
+    public PaginatedList<Punishment> GetPaginatedPunishments(PunishmentOrderType order, bool descending, PunishmentFilters filters, int from, int count)
     {
-        return _realm.All<Punishment>().FilterPunishments(filters).OrderPunishments(order, descending).Paginate(from, count);
+        return new PaginatedList<Punishment>(_realm.All<Punishment>().FilterPunishments(filters).OrderPunishments(order, descending), from, count);
     }
 }

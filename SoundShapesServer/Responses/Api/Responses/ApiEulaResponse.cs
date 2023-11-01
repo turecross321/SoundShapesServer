@@ -1,15 +1,20 @@
-﻿namespace SoundShapesServer.Responses.Api.Responses;
+﻿using SoundShapesServer.Responses.Api.Framework;
 
-public class ApiEulaResponse
+namespace SoundShapesServer.Responses.Api.Responses;
+
+public class ApiEulaResponse : IApiResponse
 {
-    public ApiEulaResponse(string content, string sourceCodeUrl)
-    {
-        CustomContent = content;
-        License = Globals.AGPLLicense;
-        SourceCodeUrl = sourceCodeUrl;
-    }
+    public required string CustomContent { get; set; }
+    public required string License { get; set; }
+    public required string SourceCodeUrl { get; set; }
 
-    public string CustomContent { get; set; }
-    public string License { get; set; }
-    public string SourceCodeUrl { get; set; }
+    public static ApiEulaResponse FromOld(string content, string sourceCodeUrl)
+    {
+        return new ApiEulaResponse
+        {
+            CustomContent = content,
+            License = Globals.AGPLLicense,
+            SourceCodeUrl = sourceCodeUrl
+        };
+    }
 }

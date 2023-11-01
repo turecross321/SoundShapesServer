@@ -9,7 +9,8 @@ public class ListResponse<T> : IResponse where T : IResponse
     {
         Items = items;
         Count = totalItems;
-        (PreviousToken, NextToken) = PaginationHelper.GetPageTokens(totalItems, from, count);
+        PreviousToken = PaginationHelper.GetPreviousToken(totalItems, from, count);
+        NextToken = PaginationHelper.GetNextToken(totalItems, from, count);
     }
 
     public ListResponse()
@@ -20,6 +21,10 @@ public class ListResponse<T> : IResponse where T : IResponse
 
     [JsonProperty("items")] public IEnumerable<T> Items { get; set; }
     [JsonProperty("count")] public int Count { get; set; }
-    [JsonProperty("previousToken", NullValueHandling=NullValueHandling.Ignore)] public int? PreviousToken { get; set; }
-    [JsonProperty("nextToken", NullValueHandling=NullValueHandling.Ignore)] public int? NextToken { get; set; }
+
+    [JsonProperty("previousToken", NullValueHandling = NullValueHandling.Ignore)]
+    public int? PreviousToken { get; set; }
+
+    [JsonProperty("nextToken", NullValueHandling = NullValueHandling.Ignore)]
+    public int? NextToken { get; set; }
 }

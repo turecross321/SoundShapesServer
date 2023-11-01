@@ -1,22 +1,26 @@
-﻿using SoundShapesServer.Types.Authentication;
+﻿using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Types.Authentication;
 
 namespace SoundShapesServer.Responses.Api.Responses;
 
-public class ApiTokenResponse
+public class ApiTokenResponse : IApiResponse, IDataConvertableFrom<ApiTokenResponse, GameToken>
 {
-    [Obsolete("Empty constructor for deserialization.", true)]
-    public ApiTokenResponse()
+    public required string Id { get; set; }
+    public required DateTimeOffset CreationDate { get; set; }
+    public required DateTimeOffset ExpiryDate { get; set; }
+
+    public static ApiTokenResponse FromOld(GameToken old)
     {
-        
-    }
-    public ApiTokenResponse(GameToken token)
-    {
-        Id = token.Id;
-        CreationDate = token.CreationDate;
-        ExpiryDate = token.ExpiryDate;
+        return new ApiTokenResponse
+        {
+            Id = old.Id,
+            CreationDate = old.CreationDate,
+            ExpiryDate = old.ExpiryDate
+        };
     }
 
-    public string Id { get; set; }
-    public DateTimeOffset CreationDate { get; set; }
-    public DateTimeOffset ExpiryDate { get; set; }
+    public static IEnumerable<ApiTokenResponse> FromOldList(IEnumerable<GameToken> oldList)
+    {
+        return oldList.Select(FromOld);
+    }
 }

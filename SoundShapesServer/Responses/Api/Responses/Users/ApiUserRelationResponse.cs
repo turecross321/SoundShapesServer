@@ -4,6 +4,6 @@ namespace SoundShapesServer.Responses.Api.Responses.Users;
 
 public class ApiUserRelationResponse : IApiResponse
 {
-    public bool Following { get; set; } 
-    public bool Followed { get; set; }
+    public required bool Following { get; set; }
+    public required bool Followed { get; set; }
 }

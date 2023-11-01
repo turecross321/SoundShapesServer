@@ -2,24 +2,25 @@ using Bunkum.Core.Responses;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace SoundShapesServer.Responses;
+namespace SoundShapesServer.Serializers;
 
 public class CustomJsonSerializer : IBunkumSerializer
 {
-    private static readonly JsonSerializer JsonSerializer = new JsonSerializer()
+    private static readonly JsonSerializer JsonSerializer = new()
     {
         ContractResolver = new CamelCasePropertyNamesContractResolver()
     };
 
-    public string[] ContentTypes { get; } = {
+    public string[] ContentTypes { get; } =
+    {
         "application/json"
     };
 
     public byte[] Serialize(object data)
     {
-        using (MemoryStream memoryStream = new MemoryStream())
+        using (MemoryStream memoryStream = new())
         {
-            using (StreamWriter streamWriter = new StreamWriter(memoryStream))
+            using (StreamWriter streamWriter = new(memoryStream))
             {
                 using (JsonWriter jsonWriter = new JsonTextWriter(streamWriter))
                 {

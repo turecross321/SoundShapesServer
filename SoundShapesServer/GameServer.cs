@@ -14,6 +14,7 @@ using SoundShapesServer.Helpers;
 using SoundShapesServer.Middlewares;
 using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses;
+using SoundShapesServer.Serializers;
 using SoundShapesServer.Services;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Authentication;

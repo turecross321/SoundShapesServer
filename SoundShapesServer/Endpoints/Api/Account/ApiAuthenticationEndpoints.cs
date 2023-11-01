@@ -6,7 +6,6 @@ using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Extensions;
-using SoundShapesServer.Extensions.RequestContextExtensions;
 using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Requests.Api.Account;
 using SoundShapesServer.Responses.Api.Framework;
@@ -20,41 +19,48 @@ namespace SoundShapesServer.Endpoints.Api.Account;
 
 public class ApiAuthenticationEndpoints : EndpointGroup
 {
-    [ApiEndpoint("account/logIn", HttpMethods.Post), Authentication(false)]
+    [ApiEndpoint("account/logIn", HttpMethods.Post)]
+    [Authentication(false)]
     [RateLimitSettings(300, 10, 300, "authentication")]
     [DocSummary("Returns an access token used to access endpoints that require authentication.")]
     [DocError(typeof(ApiForbiddenError), ApiForbiddenError.EmailOrPasswordIsWrongWhen)]
-    public ApiResponse<ApiLoginResponse> Login(RequestContext context, GameDatabaseContext database, ApiLoginRequest body)
+    public ApiResponse<ApiLoginResponse> Login(RequestContext context, GameDatabaseContext database,
+        ApiLoginRequest body)
     {
         GameUser? user = database.GetUserWithEmail(body.Email);
-        if (user == null) 
+        if (user == null)
             return ApiForbiddenError.EmailOrPasswordIsWrong;
 
         if (!database.ValidatePassword(user, body.PasswordSha512))
             return ApiForbiddenError.EmailOrPasswordIsWrong;
 
-        GameToken refreshToken = database.CreateToken(user, TokenType.ApiRefresh, TokenAuthenticationType.Credentials, Globals.OneMonthInSeconds);
-        GameToken accessToken = database.CreateToken(user, TokenType.ApiAccess, TokenAuthenticationType.Credentials, refreshToken:refreshToken);
+        GameToken refreshToken = database.CreateToken(user, TokenType.ApiRefresh, TokenAuthenticationType.Credentials,
+            Globals.OneMonthInSeconds);
+        GameToken accessToken = database.CreateToken(user, TokenType.ApiAccess, TokenAuthenticationType.Credentials,
+            refreshToken: refreshToken);
 
-        return new ApiLoginResponse(user, accessToken, refreshToken);
+        return ApiLoginResponse.FromOld(accessToken);
     }
-    
-    [ApiEndpoint("account/refreshToken", HttpMethods.Post), Authentication(false)]
+
+    [ApiEndpoint("account/refreshToken", HttpMethods.Post)]
+    [Authentication(false)]
     [RateLimitSettings(300, 10, 300, "authentication")]
     [DocSummary("Generates a new access token with a refresh token serving as authentication.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.RefreshTokenDoesNotExistWhen)]
-    public ApiResponse<ApiLoginResponse> RefreshToken(RequestContext context, GameDatabaseContext database, ApiRefreshTokenRequest body)
+    public ApiResponse<ApiLoginResponse> RefreshToken(RequestContext context, GameDatabaseContext database,
+        ApiRefreshTokenRequest body)
     {
         GameToken? refreshToken = database.GetTokenWithId(body.RefreshTokenId, TokenType.ApiRefresh);
         if (refreshToken == null || DateTimeOffset.UtcNow > refreshToken.ExpiryDate)
             return ApiNotFoundError.RefreshTokenDoesNotExist;
-        
+
         database.RefreshToken(refreshToken, Globals.OneMonthInSeconds);
-        GameToken accessToken = database.CreateToken(refreshToken.User, TokenType.ApiAccess, TokenAuthenticationType.PreExistingToken, refreshToken:refreshToken);
-        
-        return new ApiLoginResponse(accessToken.User, accessToken, refreshToken);
+        GameToken accessToken = database.CreateToken(refreshToken.User, TokenType.ApiAccess,
+            TokenAuthenticationType.PreExistingToken, refreshToken: refreshToken);
+
+        return ApiLoginResponse.FromOld(accessToken);
     }
-    
+
     [ApiEndpoint("account/logOut", HttpMethods.Post)]
     [DocSummary("Revokes the access token (and the associated refresh token if it exists) used to make this request.")]
     public ApiOkResponse Logout(RequestContext context, GameDatabaseContext database, GameToken token)
@@ -69,15 +75,16 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         {
             database.RemoveToken(token);
         }
-        
+
         return new ApiOkResponse();
     }
-    
+
     // Game Authentication
-    
+
     [ApiEndpoint("gameAuth/settings", HttpMethods.Post)]
     [DocSummary("Sets user's game authentication settings.")]
-    public ApiOkResponse SetGameAuthenticationSettings(RequestContext context, GameDatabaseContext database, GameUser user, ApiSetGameAuthenticationSettingsRequest body)
+    public ApiOkResponse SetGameAuthenticationSettings(RequestContext context, GameDatabaseContext database,
+        GameUser user, ApiSetGameAuthenticationSettingsRequest body)
     {
         database.SetUserGameAuthenticationSettings(user, body);
         return new ApiOkResponse();
@@ -85,12 +92,16 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 
     [ApiEndpoint("gameAuth/settings")]
     [DocSummary("Lists user's game authentication settings.")]
-    public ApiResponse<ApiGameAuthenticationSettingsResponse> GetGameAuthenticationSettings(RequestContext context, GameUser user) 
-        => new ApiGameAuthenticationSettingsResponse(user);
-    
+    public ApiResponse<ApiGameAuthenticationSettingsResponse> GetGameAuthenticationSettings(RequestContext context,
+        GameUser user)
+    {
+        return ApiGameAuthenticationSettingsResponse.FromOld(user);
+    }
+
     [ApiEndpoint("gameAuth/ip/authorize", HttpMethods.Post)]
     [DocSummary("Authorizes specified IP address.")]
-    public ApiOkResponse AuthorizeIpAddress(RequestContext context, GameDatabaseContext database, ApiAuthenticateIpRequest body, GameUser user)
+    public ApiOkResponse AuthorizeIpAddress(RequestContext context, GameDatabaseContext database,
+        ApiAuthenticateIpRequest body, GameUser user)
     {
         GameIp? gameIp = database.GetIpWithAddress(user, body.IpAddress);
         gameIp ??= database.CreateGameIp(user, body.IpAddress);
@@ -98,10 +109,13 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 
         return new ApiOkResponse();
     }
+
     [ApiEndpoint("gameAuth/ip/address/{address}", HttpMethods.Delete)]
     [DocSummary("Deletes specified IP address.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.IpDoesNotExistWhen)]
-    public ApiOkResponse RemoveIpAddress(RequestContext context, GameDatabaseContext database, string address, GameUser user)
+    [DocRouteParam("address", "IP address to remove.")]
+    public ApiOkResponse RemoveIpAddress(RequestContext context, GameDatabaseContext database, string address,
+        GameUser user)
     {
         GameIp? gameIp = database.GetIpWithAddress(user, address);
         if (gameIp == null)
@@ -115,15 +129,14 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     [DocUsesPageData]
     [DocSummary("List IP addresses that have attempted to connect with the user's username.")]
     [DocQueryParam("authorized", "Filters authorized/unauthorized IP addresses from result.")]
-    public ApiListResponse<ApiIpResponse> GetAddresses(RequestContext context, GameDatabaseContext database, GameUser user)
+    public ApiListResponse<ApiIpResponse> GetAddresses(RequestContext context, GameDatabaseContext database,
+        GameUser user)
     {
         (int from, int count, bool _) = context.GetPageData();
 
         bool? authorized = context.QueryString["authorized"].ToBool();
-        
-        (GameIp[] addresses, int totalAddresses) =
-            database.GetPaginatedIps(user, authorized, from, count);
 
-        return new ApiListResponse<ApiIpResponse>(addresses.Select(a=>new ApiIpResponse(a)), totalAddresses);
+        PaginatedList<GameIp> ips = database.GetPaginatedIps(user, authorized, from, count);
+        return PaginatedList<ApiIpResponse>.FromOldList<ApiIpResponse, GameIp>(ips);
     }
 }

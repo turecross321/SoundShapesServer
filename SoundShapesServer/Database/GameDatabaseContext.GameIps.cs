@@ -80,9 +80,9 @@ public partial class GameDatabaseContext
         });
     }
 
-    public (GameIp[], int) GetPaginatedIps(GameUser user, bool? authorized, int from, int count)
+    public PaginatedList<GameIp> GetPaginatedIps(GameUser user, bool? authorized, int from, int count)
     {
-        return GetIps(user, authorized).Paginate(from, count);
+        return new PaginatedList<GameIp>(GetIps(user, authorized), from, count);
     }
 
     private IQueryable<GameIp> GetIps(GameUser user, bool? authorized)

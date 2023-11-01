@@ -4,22 +4,30 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Responses.Api.Responses.Levels;
 
-public class ApiDailyLevelResponse : IApiResponse
+public class ApiDailyLevelResponse : IApiResponse, IDataConvertableFrom<ApiDailyLevelResponse, DailyLevel>
 {
-    public ApiDailyLevelResponse(DailyLevel dailyLevel)
+    public required string Id { get; set; }
+    public required ApiLevelBriefResponse Level { get; set; }
+    public required DateTimeOffset Date { get; set; }
+    public required DateTimeOffset CreationDate { get; set; }
+    public required DateTimeOffset ModificationDate { get; set; }
+    public required ApiUserBriefResponse Author { get; set; }
+
+    public static ApiDailyLevelResponse FromOld(DailyLevel old)
     {
-        Id = dailyLevel.Id.ToString()!;
-        Level = new ApiLevelBriefResponse(dailyLevel.Level);
-        Date = dailyLevel.Date;
-        CreationDate = dailyLevel.CreationDate;
-        ModificationDate = dailyLevel.ModificationDate;
-        Author = new ApiUserBriefResponse(dailyLevel.Author);
+        return new ApiDailyLevelResponse
+        {
+            Id = old.Id.ToString()!,
+            Level = ApiLevelBriefResponse.FromOld(old.Level),
+            Date = old.Date,
+            CreationDate = old.CreationDate,
+            ModificationDate = old.ModificationDate,
+            Author = ApiUserBriefResponse.FromOld(old.Author)
+        };
     }
 
-    public string Id { get; }
-    public ApiLevelBriefResponse Level { get; }
-    public DateTimeOffset Date { get; }
-    public DateTimeOffset CreationDate { get; }
-    public DateTimeOffset ModificationDate { get; }
-    public ApiUserBriefResponse Author { get; set; }
+    public static IEnumerable<ApiDailyLevelResponse> FromOldList(IEnumerable<DailyLevel> oldList)
+    {
+        return oldList.Select(FromOld);
+    }
 }

@@ -22,11 +22,12 @@ public class ApiLevelManagementEndpoints : EndpointGroup
     [ApiEndpoint("levels/create", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Creates level.")]
-    public ApiResponse<ApiLevelFullResponse> CreateLevel(RequestContext context, GameDatabaseContext database, GameUser user, ApiCreateLevelRequest body, ProfanityService profanity)
+    public ApiResponse<ApiLevelFullResponse> CreateLevel(RequestContext context, GameDatabaseContext database,
+        GameUser user, ApiCreateLevelRequest body, ProfanityService profanity)
     {
         body.Name = profanity.CensorSentence(body.Name); // Censor any potential profanity
         GameLevel publishedLevel = database.CreateLevel(user, new PublishLevelRequest(body), PlatformType.Unknown);
-        return new ApiLevelFullResponse(publishedLevel);
+        return ApiLevelFullResponse.FromOld(publishedLevel);
     }
 
     [ApiEndpoint("levels/id/{id}/setLevel", HttpMethods.Post)]
@@ -34,35 +35,44 @@ public class ApiLevelManagementEndpoints : EndpointGroup
     [DocSummary("Sets the level file of level.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     [DocError(typeof(ApiBadRequestError), ApiBadRequestError.CorruptLevelWhen)]
+    [DocRouteParam("id", "Level ID.")]
     public ApiOkResponse UploadLevelFile
     (RequestContext context, GameDatabaseContext database, IDataStore dataStore, byte[] body,
         string id)
-        => UploadLevelResource(database, dataStore, body, id, FileType.Level);
-    
+    {
+        return UploadLevelResource(database, dataStore, body, id, FileType.Level);
+    }
+
     [ApiEndpoint("levels/id/{id}/setSound", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets the sound file of level.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
+    [DocRouteParam("id", "Level ID.")]
     public ApiOkResponse UploadSoundFile
     (RequestContext context, GameDatabaseContext database, IDataStore dataStore, byte[] body,
         string id)
-        => UploadLevelResource(database, dataStore, body, id, FileType.Sound);
-    
+    {
+        return UploadLevelResource(database, dataStore, body, id, FileType.Sound);
+    }
+
     [ApiEndpoint("levels/id/{id}/setThumbnail", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets the thumbnail of level.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     [DocError(typeof(ApiBadRequestError), ApiBadRequestError.FileIsNotPngWhen)]
+    [DocRouteParam("id", "Level ID.")]
     public ApiOkResponse UploadThumbnail
     (RequestContext context, GameDatabaseContext database, IDataStore dataStore, byte[] body,
         string id)
-        => UploadLevelResource(database, dataStore, body, id, FileType.Image);
+    {
+        return UploadLevelResource(database, dataStore, body, id, FileType.Image);
+    }
 
-    private ApiOkResponse UploadLevelResource(GameDatabaseContext database, IDataStore dataStore, 
+    private ApiOkResponse UploadLevelResource(GameDatabaseContext database, IDataStore dataStore,
         byte[] body, string id, FileType fileType)
     {
         GameLevel? level = database.GetLevelWithId(id);
-        if (level == null) 
+        if (level == null)
             return ApiNotFoundError.LevelNotFound;
 
         return database.UploadLevelResource(dataStore, level, body, fileType);
@@ -72,39 +82,39 @@ public class ApiLevelManagementEndpoints : EndpointGroup
     [DocSummary("Edits level with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.NoEditPermissionWhen)]
-    public ApiResponse<ApiLevelFullResponse> EditLevel(RequestContext context, GameDatabaseContext database, ProfanityService profanity, GameUser user,
+    [DocRouteParam("id", "Level ID.")]
+    public ApiResponse<ApiLevelFullResponse> EditLevel(RequestContext context, GameDatabaseContext database,
+        ProfanityService profanity, GameUser user,
         ApiEditLevelRequest body, string id)
-    {
-        GameLevel? level = database.GetLevelWithId(id);
-        if (level == null) 
-            return ApiNotFoundError.LevelNotFound;
-
-        if (level.Author.Id != user.Id)
-        {
-            if (user.PermissionsType < PermissionsType.Moderator)
-                return ApiUnauthorizedError.NoEditPermission;
-        }
-
-        body.Name = profanity.CensorSentence(body.Name); // Censor any potential profanity
-        GameLevel publishedLevel = database.EditLevel(new PublishLevelRequest(body), level);
-        return new ApiLevelFullResponse(publishedLevel);
-    }
-    
-    [ApiEndpoint("levels/id/{id}", HttpMethods.Delete)]
-    [DocSummary("Deletes level with specified ID.")]
-    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
-    [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.NoDeletionPermissionWhen)]
-    public ApiOkResponse RemoveLevel(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);
         if (level == null)
             return ApiNotFoundError.LevelNotFound;
 
         if (level.Author.Id != user.Id)
-        {
+            if (user.PermissionsType < PermissionsType.Moderator)
+                return ApiUnauthorizedError.NoEditPermission;
+
+        body.Name = profanity.CensorSentence(body.Name); // Censor any potential profanity
+        GameLevel publishedLevel = database.EditLevel(new PublishLevelRequest(body), level);
+        return ApiLevelFullResponse.FromOld(publishedLevel);
+    }
+
+    [ApiEndpoint("levels/id/{id}", HttpMethods.Delete)]
+    [DocSummary("Deletes level with specified ID.")]
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
+    [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.NoDeletionPermissionWhen)]
+    [DocRouteParam("id", "Level ID.")]
+    public ApiOkResponse RemoveLevel(RequestContext context, GameDatabaseContext database, IDataStore dataStore,
+        GameUser user, string id)
+    {
+        GameLevel? level = database.GetLevelWithId(id);
+        if (level == null)
+            return ApiNotFoundError.LevelNotFound;
+
+        if (level.Author.Id != user.Id)
             if (user.PermissionsType < PermissionsType.Moderator)
                 return ApiUnauthorizedError.NoDeletionPermission;
-        }
 
         database.RemoveLevel(level, dataStore);
         return new ApiOkResponse();

@@ -4,36 +4,40 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Responses.Api.Responses.Levels;
 
-public class ApiLevelBriefResponse : IApiResponse
+public class ApiLevelBriefResponse : IApiResponse, IDataConvertableFrom<ApiLevelBriefResponse, GameLevel>
 {
-    public ApiLevelBriefResponse(GameLevel level)
-    {
-        Id = level.Id;
-        Name = level.Name;
-        Author = new ApiUserBriefResponse(level.Author);
-        CreationDate = level.CreationDate;
-        ModificationDate = level.ModificationDate;
-        TotalPlays = level.PlaysCount;
-        UniquePlays = level.UniquePlaysCount;
-        Likes = level.Likes.Count();
-        Queues = level.Queues.Count();
-        Difficulty = level.Difficulty;
-        Visibility = level.Visibility;
-    }
-    
-#pragma warning disable CS8618
-    public ApiLevelBriefResponse() {}
-#pragma warning restore CS8618
+    public required string Id { get; set; }
+    public required string Name { get; set; }
+    public required ApiUserBriefResponse Author { get; set; }
+    public required DateTimeOffset CreationDate { get; set; }
+    public required DateTimeOffset ModificationDate { get; set; }
+    public required int TotalPlays { get; set; }
+    public required int UniquePlays { get; set; }
+    public required int Likes { get; set; }
+    public required int Queues { get; set; }
+    public required float Difficulty { get; set; }
+    public required LevelVisibility Visibility { get; set; }
 
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public ApiUserBriefResponse Author { get; set; }
-    public DateTimeOffset CreationDate { get; set; }
-    public DateTimeOffset ModificationDate { get; set; }
-    public int TotalPlays { get; set; }
-    public int UniquePlays { get; set; }
-    public int Likes { get; set; }
-    public int Queues { get; set; }
-    public float Difficulty { get; set; }
-    public LevelVisibility Visibility { get; set; }
+    public static ApiLevelBriefResponse FromOld(GameLevel old)
+    {
+        return new ApiLevelBriefResponse
+        {
+            Id = old.Id,
+            Name = old.Name,
+            Author = ApiUserBriefResponse.FromOld(old.Author),
+            CreationDate = old.CreationDate,
+            ModificationDate = old.ModificationDate,
+            TotalPlays = old.PlaysCount,
+            UniquePlays = old.UniquePlaysCount,
+            Likes = old.Likes.Count(),
+            Queues = old.Queues.Count(),
+            Difficulty = old.Difficulty,
+            Visibility = old.Visibility
+        };
+    }
+
+    public static IEnumerable<ApiLevelBriefResponse> FromOldList(IEnumerable<GameLevel> oldList)
+    {
+        return oldList.Select(FromOld);
+    }
 }

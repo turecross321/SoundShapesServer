@@ -5,33 +5,38 @@ using SoundShapesServer.Types.Punishments;
 namespace SoundShapesServer.Responses.Api.Responses.Moderation;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class ApiPunishmentResponse : IApiResponse
+public class ApiPunishmentResponse : IApiResponse, IDataConvertableFrom<ApiPunishmentResponse, Punishment>
 {
-    [Obsolete("Empty constructor for deserialization.", true)]
-    public ApiPunishmentResponse() {}
-    
-    public ApiPunishmentResponse(Punishment punishment)
+    public required string Id { get; set; }
+    public required ApiUserBriefResponse Recipient { get; set; }
+    public required PunishmentType PunishmentType { get; set; }
+    public required string Reason { get; set; }
+    public required bool Revoked { get; set; }
+    public required ApiUserBriefResponse Author { get; set; }
+    public required DateTimeOffset CreationDate { get; set; }
+    public required DateTimeOffset ModificationDate { get; set; }
+    public required DateTimeOffset ExpiryDate { get; set; }
+    public required DateTimeOffset? RevokeDate { get; set; }
+
+    public static ApiPunishmentResponse FromOld(Punishment old)
     {
-        Id = punishment.Id.ToString()!;
-        Recipient = new ApiUserBriefResponse(punishment.Recipient);
-        PunishmentType = punishment.PunishmentType;
-        Reason = punishment.Reason;
-        Revoked = punishment.Revoked;
-        Author = new ApiUserBriefResponse(punishment.Author);
-        CreationDate = punishment.CreationDate;
-        ModificationDate = punishment.ModificationDate;
-        ExpiryDate = punishment.ExpiryDate;
-        RevokeDate = punishment.RevokeDate;
+        return new ApiPunishmentResponse
+        {
+            Id = old.Id.ToString()!,
+            Recipient = ApiUserBriefResponse.FromOld(old.Recipient),
+            PunishmentType = old.PunishmentType,
+            Reason = old.Reason,
+            Revoked = old.Revoked,
+            Author = ApiUserBriefResponse.FromOld(old.Author),
+            CreationDate = old.CreationDate,
+            ModificationDate = old.ModificationDate,
+            ExpiryDate = old.ExpiryDate,
+            RevokeDate = old.RevokeDate
+        };
     }
 
-    public string Id { get; }
-    public ApiUserBriefResponse Recipient { get; set; }
-    public PunishmentType PunishmentType { get; set; }
-    public string Reason { get; set; }
-    public bool Revoked { get; set; }
-    public ApiUserBriefResponse Author { get; set; }
-    public DateTimeOffset CreationDate { get; }
-    public DateTimeOffset ModificationDate { get; }
-    public DateTimeOffset ExpiryDate { get; set; }
-    public DateTimeOffset? RevokeDate { get; set; }
+    public static IEnumerable<ApiPunishmentResponse> FromOldList(IEnumerable<Punishment> oldList)
+    {
+        return oldList.Select(FromOld);
+    }
 }

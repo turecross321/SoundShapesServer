@@ -74,9 +74,9 @@ public partial class GameDatabaseContext
         return _realm.All<GameEvent>().FirstOrDefault(e => e.Id == objectId);
     }
     
-    public (GameEvent[], int) GetPaginatedEvents(EventOrderType order, bool descending,  EventFilters filters, int from, int count, GameUser? accessor)
+    public PaginatedList<GameEvent> GetPaginatedEvents(EventOrderType order, bool descending,  EventFilters filters, int from, int count, GameUser? accessor)
     {
-        return _realm.All<GameEvent>().FilterEvents(this, filters, accessor)
-            .OrderEvents(order, descending).Paginate(from, count);
+        return new PaginatedList<GameEvent>(_realm.All<GameEvent>().FilterEvents(this, filters, accessor)
+            .OrderEvents(order, descending), from, count);
     }
 }

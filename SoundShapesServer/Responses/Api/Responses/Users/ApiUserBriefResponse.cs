@@ -3,24 +3,30 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Api.Responses.Users;
 
-public class ApiUserBriefResponse : IApiResponse
+public class ApiUserBriefResponse : IApiResponse, IDataConvertableFrom<ApiUserBriefResponse, GameUser>
 {
-    [Obsolete("Empty constructor for deserialization.", true)]
-    public ApiUserBriefResponse() {}
-    public ApiUserBriefResponse(GameUser user)
+    public required string Id { get; set; }
+    public required string Username { get; set; }
+    public required int PermissionsType { get; set; }
+    public required int FollowersCount { get; set; }
+    public required int FollowingCount { get; set; }
+    public required int PublishedLevelsCount { get; set; }
+
+    public static ApiUserBriefResponse FromOld(GameUser old)
     {
-        Id = user.Id;
-        Username = user.Username;
-        PermissionsType = (int)user.PermissionsType;
-        FollowersCount = user.FollowersRelations.Count();
-        FollowingCount = user.FollowingRelations.Count();
-        PublishedLevelsCount = user.Levels.Count();
+        return new ApiUserBriefResponse
+        {
+            Id = old.Id,
+            Username = old.Username,
+            PermissionsType = (int)old.PermissionsType,
+            FollowersCount = old.FollowersRelations.Count(),
+            FollowingCount = old.FollowingRelations.Count(),
+            PublishedLevelsCount = old.Levels.Count()
+        };
     }
 
-    public string Id { get; set; }
-    public string Username { get; set; }
-    public int PermissionsType { get; set; }
-    public int FollowersCount { get; set; }
-    public int FollowingCount { get; set; }
-    public int PublishedLevelsCount { get; set; }
+    public static IEnumerable<ApiUserBriefResponse> FromOldList(IEnumerable<GameUser> oldList)
+    {
+        return oldList.Select(FromOld);
+    }
 }

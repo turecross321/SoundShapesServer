@@ -20,6 +20,7 @@ public class ApiUserManagementEndpoints : EndpointGroup
     [DocSummary("Deletes user with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
     [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.NoDeletionPermissionWhen)]
+    [DocRouteParam("id", "User ID.")]
     public ApiOkResponse RemoveUser(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)
     {
         GameUser? userToRemove = database.GetUserWithId(id);
@@ -38,6 +39,7 @@ public class ApiUserManagementEndpoints : EndpointGroup
     [DocSummary("Sets the permissions of user with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
     [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.NoPermissionWhen)]
+    [DocRouteParam("id", "User ID.")]
     public ApiOkResponse SetUserPermissions(RequestContext context, GameDatabaseContext database, GameUser user, string id, ApiSetUserPermissionsRequest body)
     {
         GameUser? userToSetPermissionsOf = database.GetUserWithId(id);

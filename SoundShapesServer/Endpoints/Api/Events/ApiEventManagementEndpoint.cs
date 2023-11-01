@@ -18,6 +18,7 @@ public class ApiEventManagementEndpoint : EndpointGroup
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Deletes event with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.EventNotFoundWhen)]
+    [DocRouteParam("id", "Event ID.")]
     public ApiOkResponse RemoveEvent(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameEvent? eventObject = database.GetEventWithId(id);

@@ -20,6 +20,7 @@ public class ApiResourceEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.FileDoesNotExistWhen)]
     [DocError(typeof(ApiGoneError), ApiGoneError.MissingFileWhen)]
+    [DocRouteParam("id", "Level ID.")]
     public Response GetLevelThumbnail(RequestContext context, IDataStore dataStore, GameDatabaseContext database, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);
@@ -41,6 +42,7 @@ public class ApiResourceEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.FileDoesNotExistWhen)]
     [DocError(typeof(ApiGoneError), ApiGoneError.MissingFileWhen)]
+    [DocRouteParam("id", "Level ID.")]
     public Response GetLevelFile(RequestContext context, IDataStore dataStore, GameDatabaseContext database, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);
@@ -62,6 +64,7 @@ public class ApiResourceEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.AlbumNotFoundWhen)]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.FileDoesNotExistWhen)]
     [DocError(typeof(ApiGoneError), ApiGoneError.MissingFileWhen)]
+    [DocRouteParam("id", "Album ID.")]
     public Response GetAlbumThumbnail(IDataStore dataStore, GameDatabaseContext database, string id,
         AlbumResourceType resourceType)
         => GetAlbumResource(dataStore, database, id, AlbumResourceType.Thumbnail);
@@ -71,6 +74,7 @@ public class ApiResourceEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.AlbumNotFoundWhen)]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.FileDoesNotExistWhen)]
     [DocError(typeof(ApiGoneError), ApiGoneError.MissingFileWhen)]
+    [DocRouteParam("id", "Album ID.")]
     public Response GetAlbumSidePanel(IDataStore dataStore, GameDatabaseContext database, string id,
         AlbumResourceType resourceType)
         => GetAlbumResource(dataStore, database, id, AlbumResourceType.Thumbnail);
@@ -102,6 +106,7 @@ public class ApiResourceEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.NewsEntryNotFoundWhen)]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.FileDoesNotExistWhen)]
     [DocError(typeof(ApiGoneError), ApiGoneError.MissingFileWhen)]
+    [DocRouteParam("id", "News entry ID.")]
     public Response NewsThumbnail(RequestContext context, IDataStore dataStore, GameDatabaseContext database, string id)
     {
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
@@ -123,6 +128,7 @@ public class ApiResourceEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.CommunityTabNotFoundWhen)]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.FileDoesNotExistWhen)]
     [DocError(typeof(ApiGoneError), ApiGoneError.MissingFileWhen)]
+    [DocRouteParam("id", "Community tab ID.")]
     public Response GetCommunityTabThumbnail(RequestContext context, IDataStore dataStore, GameDatabaseContext database, string id)
     {
         CommunityTab? communityTab = database.GetCommunityTabWithId(id);

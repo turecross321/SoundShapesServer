@@ -18,6 +18,7 @@ public class ApiLeaderboardManagementEndpoints : EndpointGroup
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Deletes leaderboard entry with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LeaderboardEntryNotFoundWhen)]
+    [DocRouteParam("id", "Leaderboard entry ID.")]
     public ApiOkResponse RemoveEntry(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         LeaderboardEntry? entry = database.GetLeaderboardEntry(id);

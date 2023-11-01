@@ -123,8 +123,8 @@ public partial class GameDatabaseContext
         return _realm.All<GameAlbum>().FirstOrDefault(a => a.Id == objectId);
     }
     
-    public (GameAlbum[], int) GetPaginatedAlbums(AlbumOrderType order, bool descending, int from, int count)
+    public PaginatedList<GameAlbum> GetPaginatedAlbums(AlbumOrderType order, bool descending, int from, int count)
     {
-        return _realm.All<GameAlbum>().OrderAlbums(order, descending).Paginate(from, count);
+        return new PaginatedList<GameAlbum>(_realm.All<GameAlbum>().OrderAlbums(order, descending), from, count);
     }
 }

@@ -8,9 +8,10 @@ namespace SoundShapesServer.Endpoints.Api;
 
 public class ApiEulaEndpoints : EndpointGroup
 {
-    [ApiEndpoint("eula"), Authentication(false)]
+    [ApiEndpoint("eula")]
+    [Authentication(false)]
     public ApiResponse<ApiEulaResponse> GetEula(RequestContext context, GameServerConfig config)
     {
-        return new ApiEulaResponse(config.EulaText, config.SourceCodeUrl);
+        return ApiEulaResponse.FromOld(config.EulaText, config.SourceCodeUrl);
     }
 }

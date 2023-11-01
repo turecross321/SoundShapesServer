@@ -60,9 +60,9 @@ public partial class GameDatabaseContext
         return _realm.All<DailyLevel>().FirstOrDefault(d => d.Id == objectId);
     }
     
-    public (DailyLevel[], int) GetPaginatedDailyLevels(DailyLevelOrderType order, bool descending, DailyLevelFilters filters, int from, int count)
+    public PaginatedList<DailyLevel> GetPaginatedDailyLevels(DailyLevelOrderType order, bool descending, DailyLevelFilters filters, int from, int count)
     {
-        return GetDailyLevels(order, descending, filters).Paginate(from, count);
+        return new PaginatedList<DailyLevel>(GetDailyLevels(order, descending, filters), from, count);
     }
 
     public IQueryable<DailyLevel> GetDailyLevels(DailyLevelOrderType order, bool descending, DailyLevelFilters filters)

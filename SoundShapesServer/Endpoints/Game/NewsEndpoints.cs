@@ -14,14 +14,14 @@ public class NewsEndpoints : EndpointGroup
     [GameEndpoint("global/news/{language}/~metadata:*.get")]
     public NewsResponse GetNews(RequestContext context, GameDatabaseContext database, string? language, GameToken token)
     {
-        NewsFilters filters = new NewsFilters
+        NewsFilters filters = new()
         {
             Language = language
         };
 
         // Game only gets the last news entry
-        (NewsEntry[] entries, int _) = database.GetPaginatedNews(NewsOrderType.CreationDate, true, filters, 0, 1);
-        NewsEntry? entry = entries.LastOrDefault();
+        PaginatedList<NewsEntry> entries = database.GetPaginatedNews(NewsOrderType.CreationDate, true, filters, 0, 1);
+        NewsEntry? entry = entries.Items.LastOrDefault();
 
         // News images make the vita version crash, so this is a workaround that only lets non-vita view them
         bool isUserOnVita = token.PlatformType == PlatformType.PsVita;

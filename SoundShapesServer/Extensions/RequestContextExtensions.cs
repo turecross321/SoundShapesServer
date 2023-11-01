@@ -7,7 +7,7 @@ using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
 using SoundShapesServer.Types.Users;
 
-namespace SoundShapesServer.Extensions.RequestContextExtensions;
+namespace SoundShapesServer.Extensions;
 
 public static class RequestContextExtensions
 {
@@ -38,21 +38,48 @@ public static class RequestContextExtensions
                 
                 // typeof can't be used in switch statements :/
                 if (property.PropertyType == typeof(GameUser))
-                    value = strValue.ToUser(database);
+                    value = database.GetUserWithId(strValue);
                 else if (property.PropertyType == typeof(GameAlbum))
-                    value = strValue.ToAlbum(database);
+                    value = database.GetAlbumWithId(strValue);
                 else if (property.PropertyType == typeof(Boolean?))
                     value = strValue.ToBool();
                 else if (property.PropertyType == typeof(String))
                     value = strValue;
                 else if (property.PropertyType == typeof(DateTimeOffset?))
-                    value = strValue.ToDate();
+                {
+                    if (DateTimeOffset.TryParse(strValue, out DateTimeOffset result))
+                    {
+                        value = result;
+                    }
+                }
                 else if (property.PropertyType == typeof(Int32?))
                     value = strValue.ToInt();
                 else if (property.PropertyType == typeof(Int32[]))
-                    value = Convert.ChangeType(strValue.ToInts().ToArray(), property.PropertyType);
+                {
+                    List<int> list = new ();
+                    // ReSharper disable once LoopCanBeConvertedToQuery
+                    foreach (string numberStr in strValue.Split(","))
+                    {
+                        int? number = numberStr.ToInt();
+                        if (number != null)
+                        {
+                            list.Add((int)number);
+                        }
+                    }
+
+                    value = Convert.ChangeType(list.ToArray(), property.PropertyType);
+                }
                 else if (property.PropertyType == typeof(GameUser[]))
-                    value = strValue.ToUsers(database);
+                { 
+                    List<GameUser> list = new ();
+                    foreach (string id in strValue.Split(","))
+                    {
+                        GameUser? user = database.GetUserWithId(id);
+                        if (user != null)
+                            list.Add(user);
+                    }
+                    value = list.ToArray();
+                }
                 else
                 {
                     throw new ArgumentOutOfRangeException(property.PropertyType.Name + " filter is not supported");

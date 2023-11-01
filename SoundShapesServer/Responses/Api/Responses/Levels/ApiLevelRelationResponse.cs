@@ -4,7 +4,7 @@ namespace SoundShapesServer.Responses.Api.Responses.Levels;
 
 public class ApiLevelRelationResponse : IApiResponse
 {
-    public bool Completed { get; set; }
-    public bool Liked { get; init; }
-    public bool Queued { get; init; }
+    public required bool Completed { get; set; }
+    public required bool Liked { get; init; }
+    public required bool Queued { get; init; }
 }

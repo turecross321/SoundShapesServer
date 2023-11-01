@@ -8,50 +8,58 @@ using SoundShapesServer.Types.Levels;
 
 namespace SoundShapesServer.Responses.Api.Responses.Levels;
 
-public class ApiLevelFullResponse : IApiResponse
+public class ApiLevelFullResponse : IApiResponse, IDataConvertableFrom<ApiLevelFullResponse, GameLevel>
 {
-    public ApiLevelFullResponse(GameLevel level)
+    public required string Id { get; set; }
+    public required string Name { get; set; }
+    public required ApiUserBriefResponse Author { get; set; }
+    public required DateTimeOffset CreationDate { get; set; }
+    public required DateTimeOffset ModificationDate { get; set; }
+    public required int Language { get; set; }
+    public required LevelVisibility Visibility { get; set; }
+    public required PlatformType UploadPlatform { get; set; }
+    public required ApiLevelAnalysisResponse Analysis { get; set; }
+    public required int TotalPlays { get; set; }
+    public required int UniquePlays { get; set; }
+    public required int TotalCompletions { get; set; }
+    public required int UniqueCompletions { get; set; }
+    public required int Likes { get; set; }
+    public required int Queues { get; set; }
+    public required int TotalDeaths { get; set; }
+    public required long TotalPlayTime { get; set; }
+    public required float Difficulty { get; set; }
+    public required IEnumerable<ApiAlbumResponse> Albums { get; set; }
+    public required IEnumerable<ApiDailyLevelResponse> DailyLevels { get; set; }
+
+    public static ApiLevelFullResponse FromOld(GameLevel old)
     {
-        Id = level.Id;
-        Name = level.Name;
-        Author = new ApiUserBriefResponse(level.Author);
-        CreationDate = level.CreationDate;
-        ModificationDate = level.ModificationDate;
-        Language = level.Language;
-        Visibility = level.Visibility;
-        UploadPlatform = level.UploadPlatform;
-        Analysis = new ApiLevelAnalysisResponse(level);
-        TotalPlays = level.PlaysCount;
-        UniquePlays = level.UniquePlaysCount;
-        TotalCompletions = level.CompletionCount;
-        UniqueCompletions = level.UniqueCompletions.Count;
-        Likes = level.Likes.Count();
-        Queues = level.Queues.Count();
-        TotalDeaths = level.TotalDeaths;
-        TotalPlayTime = level.TotalPlayTime;
-        Difficulty = level.Difficulty;
-        Albums = level.Albums.AsEnumerable().Select(a => new ApiAlbumResponse(a)).ToArray();
-        DailyLevels = level.DailyLevels.AsEnumerable().Select(a => new ApiDailyLevelResponse(a)).ToArray();
+        return new ApiLevelFullResponse
+        {
+            Id = old.Id,
+            Name = old.Name,
+            Author = ApiUserBriefResponse.FromOld(old.Author),
+            CreationDate = old.CreationDate,
+            ModificationDate = old.ModificationDate,
+            Language = old.Language,
+            Visibility = old.Visibility,
+            UploadPlatform = old.UploadPlatform,
+            Analysis = ApiLevelAnalysisResponse.FromOld(old),
+            TotalPlays = old.PlaysCount,
+            UniquePlays = old.UniquePlaysCount,
+            TotalCompletions = old.CompletionCount,
+            UniqueCompletions = old.UniqueCompletions.Count,
+            Likes = old.Likes.Count(),
+            Queues = old.Queues.Count(),
+            TotalDeaths = old.TotalDeaths,
+            TotalPlayTime = old.TotalPlayTime,
+            Difficulty = old.Difficulty,
+            Albums = ApiAlbumResponse.FromOldList(old.Albums),
+            DailyLevels = ApiDailyLevelResponse.FromOldList(old.DailyLevels)
+        };
     }
 
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public ApiUserBriefResponse Author { get; set; }
-    public DateTimeOffset CreationDate { get; set; }
-    public DateTimeOffset ModificationDate { get; set; }
-    public int Language { get; set; }
-    public LevelVisibility Visibility { get; set; }
-    public PlatformType UploadPlatform { get; set; }
-    public ApiLevelAnalysisResponse Analysis { get; set; }
-    public int TotalPlays { get; set; }
-    public int UniquePlays { get; set; }
-    public int TotalCompletions { get; set; }
-    public int UniqueCompletions { get; set; }
-    public int Likes { get; set; }
-    public int Queues { get; set; }
-    public int TotalDeaths { get; set; }
-    public long TotalPlayTime { get; set; }
-    public float Difficulty { get; set; }
-    public ApiAlbumResponse[] Albums { get; set; }
-    public ApiDailyLevelResponse[] DailyLevels { get; set; }
+    public static IEnumerable<ApiLevelFullResponse> FromOldList(IEnumerable<GameLevel> oldList)
+    {
+        return oldList.Select(FromOld);
+    }
 }

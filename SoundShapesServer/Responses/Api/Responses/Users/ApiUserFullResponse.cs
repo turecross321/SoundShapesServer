@@ -6,40 +6,48 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Api.Responses.Users;
 
-public class ApiUserFullResponse : IApiResponse
+public class ApiUserFullResponse : IApiResponse, IDataConvertableFrom<ApiUserFullResponse, GameUser>
 {
-    public ApiUserFullResponse(GameUser user)
+    public required string Id { get; set; }
+    public required string Username { get; set; }
+    public required PermissionsType PermissionsType { get; set; }
+    public required DateTimeOffset CreationDate { get; set; }
+    public required DateTimeOffset LastGameLogin { get; set; }
+    public required DateTimeOffset LastEventDate { get; set; }
+    public required int FollowersCount { get; set; }
+    public required int FollowingCount { get; set; }
+    public required int LikedLevelsCount { get; set; }
+    public required int QueuedLevelsCount { get; set; }
+    public required int PublishedLevelsCount { get; set; }
+    public required int PlayedLevelsCount { get; set; }
+    public required int EventsCount { get; set; }
+    public required int TotalDeaths { get; set; }
+    public required long TotalPlayTime { get; set; }
+
+    public static ApiUserFullResponse FromOld(GameUser old)
     {
-        Id = user.Id;
-        Username = user.Username;
-        PermissionsType = user.PermissionsType;
-        CreationDate = user.CreationDate;
-        LastGameLogin = user.LastGameLogin;
-        LastEventDate = user.Events.Last().CreationDate;
-        FollowersCount = user.FollowersRelations.Count();
-        FollowingCount = user.FollowingRelations.Count();
-        LikedLevelsCount = user.LikedLevelRelations.Count();
-        QueuedLevelsCount = user.QueuedLevelRelations.Count();
-        PublishedLevelsCount = user.Levels.Count();
-        EventsCount = user.Events.Count();
-        PlayedLevelsCount = user.PlayedLevelRelations.Count();
-        TotalDeaths = user.Deaths;
-        TotalPlayTime = user.TotalPlayTime;
+        return new ApiUserFullResponse
+        {
+            Id = old.Id,
+            Username = old.Username,
+            PermissionsType = old.PermissionsType,
+            CreationDate = old.CreationDate,
+            LastGameLogin = old.LastGameLogin,
+            LastEventDate = old.Events.Last().CreationDate,
+            FollowersCount = old.FollowersRelations.Count(),
+            FollowingCount = old.FollowingRelations.Count(),
+            LikedLevelsCount = old.LikedLevelRelations.Count(),
+            QueuedLevelsCount = old.QueuedLevelRelations.Count(),
+            PublishedLevelsCount = old.Levels.Count(),
+            EventsCount = old.Events.Count(),
+            PlayedLevelsCount = old.PlayedLevelRelations.Count(),
+            TotalDeaths = old.Deaths,
+            TotalPlayTime = old.TotalPlayTime
+        };
     }
 
-    public string Id { get; set; }
-    public string Username { get; set; }
-    public PermissionsType PermissionsType { get; set; }
-    public DateTimeOffset CreationDate { get; set; }
-    public DateTimeOffset LastGameLogin { get; set; }
-    public DateTimeOffset LastEventDate { get; set; }
-    public int FollowersCount { get; set; }
-    public int FollowingCount { get; set; }
-    public int LikedLevelsCount { get; set; }
-    public int QueuedLevelsCount { get; set; }
-    public int PublishedLevelsCount { get; set; }
-    public int PlayedLevelsCount { get; set; }
-    public int EventsCount { get; set; }
-    public int TotalDeaths { get; set; }
-    public long TotalPlayTime { get; set; }
+    public static IEnumerable<ApiUserFullResponse> FromOldList(IEnumerable<GameUser> oldList)
+    {
+        return oldList.Select(FromOld);
+    }
 }

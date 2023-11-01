@@ -5,7 +5,7 @@ using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
-using SoundShapesServer.Extensions.RequestContextExtensions;
+using SoundShapesServer.Extensions;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Responses.Api.Responses.Moderation;
@@ -21,12 +21,13 @@ public class ApiReportManagementEndpoints : EndpointGroup
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Deletes report with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.ReportNotFoundWhen)]
+    [DocRouteParam("id", "Report ID.")]
     public ApiOkResponse RemoveReport(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         Report? report = database.GetReportWithId(id);
-        if (report == null) 
+        if (report == null)
             return ApiNotFoundError.ReportNotFound;
-        
+
         database.RemoveReport(report);
         return new ApiOkResponse();
     }
@@ -35,13 +36,15 @@ public class ApiReportManagementEndpoints : EndpointGroup
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Retrieves report with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.ReportNotFoundWhen)]
-    public ApiResponse<ApiReportResponse> GetReport(RequestContext context, GameDatabaseContext database, GameUser user, string id)
+    [DocRouteParam("id", "Report ID.")]
+    public ApiResponse<ApiReportResponse> GetReport(RequestContext context, GameDatabaseContext database, GameUser user,
+        string id)
     {
         Report? report = database.GetReportWithId(id);
         if (report == null)
             return ApiNotFoundError.ReportNotFound;
 
-        return new ApiReportResponse(report);
+        return ApiReportResponse.FromOld(report);
     }
 
     [ApiEndpoint("reports")]
@@ -49,14 +52,15 @@ public class ApiReportManagementEndpoints : EndpointGroup
     [DocUsesFiltration<ReportFilters>]
     [MinimumPermissions(PermissionsType.Moderator)]
     [DocSummary("Lists reports.")]
-    public ApiListResponse<ApiReportResponse> GetReports(RequestContext context, GameDatabaseContext database, GameUser user, string id)
+    public ApiListResponse<ApiReportResponse> GetReports(RequestContext context, GameDatabaseContext database,
+        GameUser user, string id)
     {
         (int from, int count, bool descending) = context.GetPageData();
 
         ReportFilters filters = context.GetFilters<ReportFilters>(database);
         ReportOrderType order = context.GetOrderType<ReportOrderType>() ?? ReportOrderType.CreationDate;
 
-        (Report[] reports, int totalReports) = database.GetPaginatedReports(order, descending, filters, from, count);
-        return new ApiListResponse<ApiReportResponse>(reports.Select(r=>new ApiReportResponse(r)), totalReports);
+        PaginatedList<Report> reports = database.GetPaginatedReports(order, descending, filters, from, count);
+        return PaginatedList<ApiReportResponse>.FromOldList<ApiReportResponse, Report>(reports);
     }
 }

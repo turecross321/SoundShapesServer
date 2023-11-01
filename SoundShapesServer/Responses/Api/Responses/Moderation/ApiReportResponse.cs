@@ -7,41 +7,60 @@ using SoundShapesServer.Types.Reports;
 
 namespace SoundShapesServer.Responses.Api.Responses.Moderation;
 
-public class ApiReportResponse : IApiResponse
+public class ApiReportResponse : IApiResponse, IDataConvertableFrom<ApiReportResponse, Report>
 {
-    public ApiReportResponse(Report report)
+    public required string Id { get; set; }
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public ApiUserBriefResponse? ContentUser { get; set; }
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public ApiLevelBriefResponse? ContentLevel { get; set; }
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public ApiLeaderboardEntryResponse? ContentLeaderboardEntry { get; set; }
+
+    public required ReportContentType ContentType { get; set; }
+    public required ReportReasonType ReasonType { get; set; }
+    public required DateTimeOffset CreationDate { get; set; }
+    public required ApiUserBriefResponse Author { get; set; }
+
+    public static ApiReportResponse FromOld(Report old)
     {
-        Id = report.Id.ToString()!;
-        if (report.ContentUser != null)
-            ContentUser = new ApiUserBriefResponse(report.ContentUser);
-        if (report.ContentLevel != null)
-            ContentLevel = new ApiLevelBriefResponse(report.ContentLevel);
-        if (report.ContentLeaderboardEntry != null)
+        ApiUserBriefResponse? contentUser = null;
+        if (old.ContentUser != null)
+            contentUser = ApiUserBriefResponse.FromOld(old.ContentUser);
+
+        ApiLevelBriefResponse? contentLevel = null;
+        if (old.ContentLevel != null)
+            contentLevel = ApiLevelBriefResponse.FromOld(old.ContentLevel);
+
+        LeaderboardFilters filters = new()
         {
-            LeaderboardFilters filters = 
-                new LeaderboardFilters 
-                {
-                    Completed = report.ContentLeaderboardEntry.Completed, 
-                    Obsolete = report.ContentLeaderboardEntry.Obsolete()
-                };
-            
-            LeaderboardOrderType order = LeaderboardOrderType.Notes;
-            ContentLeaderboardEntry = new ApiLeaderboardEntryResponse(report.ContentLeaderboardEntry, order, filters);
-        }
-        
-        ContentType = report.ContentType;
-        ReasonType = report.ReasonType;
-        CreationDate = report.CreationDate;
-        Author = new ApiUserBriefResponse(report.Author);
+            Completed = old.ContentLeaderboardEntry?.Completed,
+            Obsolete = old.ContentLeaderboardEntry?.Obsolete()
+        };
+
+        ApiLeaderboardEntryResponse? contentLeaderboardEntry = null;
+        if (old.ContentLeaderboardEntry != null)
+            contentLeaderboardEntry =
+                ApiLeaderboardEntryResponse.FromOld(old.ContentLeaderboardEntry, LeaderboardOrderType.Score, filters);
+
+        return new ApiReportResponse
+        {
+            Id = old.Id.ToString()!,
+            ContentUser = contentUser,
+            ContentLevel = contentLevel,
+            ContentLeaderboardEntry = contentLeaderboardEntry,
+            ContentType = old.ContentType,
+            ReasonType = old.ReasonType,
+            CreationDate = old.CreationDate,
+            Author = ApiUserBriefResponse.FromOld(old.Author)
+        };
     }
 
-    public string Id { get; set; }
-    
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiUserBriefResponse? ContentUser { get; set; }
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLevelBriefResponse? ContentLevel { get; set; }
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public ApiLeaderboardEntryResponse? ContentLeaderboardEntry { get; set; }
-    public ReportContentType ContentType { get; set; }
-    public ReportReasonType ReasonType { get; set; }
-    public DateTimeOffset CreationDate { get; set; }
-    public ApiUserBriefResponse Author { get; set; }
+    public static IEnumerable<ApiReportResponse> FromOldList(IEnumerable<Report> oldList)
+    {
+        return oldList.Select(FromOld);
+    }
 }

@@ -6,24 +6,32 @@ using SoundShapesServer.Types.Albums;
 
 namespace SoundShapesServer.Responses.Api.Responses.Albums;
 
-public class ApiAlbumResponse : IApiResponse
+public class ApiAlbumResponse : IApiResponse, IDataConvertableFrom<ApiAlbumResponse, GameAlbum>
 {
-    public ApiAlbumResponse(GameAlbum album)
+    public required string Id { get; set; }
+    public required ApiUserBriefResponse Author { get; set; }
+    public required string Name { get; set; }
+    public required string LinerNotes { get; set; }
+    public required int TotalLevels { get; set; }
+    public required DateTimeOffset CreationDate { get; set; }
+    public required DateTimeOffset ModificationDate { get; set; }
+
+    public static ApiAlbumResponse FromOld(GameAlbum old)
     {
-        Id = album.Id.ToString()!;
-        Author = new ApiUserBriefResponse(album.Author);
-        Name = album.Name;
-        LinerNotes = album.LinerNotes;
-        TotalLevels = album.Levels.Count;
-        CreationDate = album.CreationDate;
-        ModificationDate = album.ModificationDate;
+        return new ApiAlbumResponse
+        {
+            Id = old.Id.ToString()!,
+            Author = ApiUserBriefResponse.FromOld(old.Author),
+            Name = old.Name,
+            LinerNotes = old.LinerNotes,
+            TotalLevels = old.Levels.Count,
+            CreationDate = old.CreationDate,
+            ModificationDate = old.ModificationDate
+        };
     }
 
-    public string Id { get; set; }
-    public ApiUserBriefResponse Author { get; set; }
-    public string Name { get; set; }
-    public string LinerNotes { get; set; }
-    public int TotalLevels { get; set; }
-    public DateTimeOffset CreationDate { get; set; }
-    public DateTimeOffset ModificationDate { get; set; }
+    public static IEnumerable<ApiAlbumResponse> FromOldList(IEnumerable<GameAlbum> oldList)
+    {
+        return oldList.Select(FromOld);
+    }
 }

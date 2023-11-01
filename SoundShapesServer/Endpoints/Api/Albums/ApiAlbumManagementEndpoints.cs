@@ -20,24 +20,27 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     [ApiEndpoint("albums/create", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Creates an album.")]
-    public ApiResponse<ApiAlbumResponse> CreateAlbum(RequestContext context, GameDatabaseContext database, GameUser user, ApiCreateAlbumRequest body)
+    public ApiResponse<ApiAlbumResponse> CreateAlbum(RequestContext context, GameDatabaseContext database,
+        GameUser user, ApiCreateAlbumRequest body)
     {
         GameAlbum album = database.CreateAlbum(body, user);
-        return new ApiAlbumResponse(album);
+        return ApiAlbumResponse.FromOld(album);
     }
 
     [ApiEndpoint("albums/id/{id}/edit", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Edits album with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.AlbumNotFoundWhen)]
-    public ApiResponse<ApiAlbumResponse> EditAlbum(RequestContext context, GameDatabaseContext database, GameUser user, ApiCreateAlbumRequest body, string id)
+    [DocRouteParam("id", "Album ID.")]
+    public ApiResponse<ApiAlbumResponse> EditAlbum(RequestContext context, GameDatabaseContext database, GameUser user,
+        ApiCreateAlbumRequest body, string id)
     {
         GameAlbum? album = database.GetAlbumWithId(id);
-        if (album == null) 
+        if (album == null)
             return ApiNotFoundError.AlbumNotFound;
-        
+
         GameAlbum editedAlbum = database.EditAlbum(album, body, user);
-        return new ApiAlbumResponse(editedAlbum);
+        return ApiAlbumResponse.FromOld(editedAlbum);
     }
 
     [ApiEndpoint("albums/id/{id}/setThumbnail", HttpMethods.Post)]
@@ -45,37 +48,44 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     [DocSummary("Sets thumbnail of album.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.AlbumNotFoundWhen)]
     [DocError(typeof(ApiBadRequestError), ApiBadRequestError.FileIsNotPngWhen)]
+    [DocRouteParam("id", "Album ID.")]
     public ApiOkResponse SetAlbumThumbnail(RequestContext context, GameDatabaseContext database, IDataStore dataStore,
-        GameUser user, byte[] body, string id) 
-        => SetAlbumAssets(
+        GameUser user, byte[] body, string id)
+    {
+        return SetAlbumAssets(
             database,
             dataStore,
             user,
-            body, 
+            body,
             id,
             AlbumResourceType.Thumbnail
-    );
-    
+        );
+    }
+
     [ApiEndpoint("albums/id/{id}/setSidePanel", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets side panel of album.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.AlbumNotFoundWhen)]
     [DocError(typeof(ApiBadRequestError), ApiBadRequestError.FileIsNotPngWhen)]
+    [DocRouteParam("id", "Album ID.")]
     public ApiOkResponse SetAlbumSidePanel(RequestContext context, GameDatabaseContext database, IDataStore dataStore,
-        GameUser user, byte[] body, string id) 
-        => SetAlbumAssets(
+        GameUser user, byte[] body, string id)
+    {
+        return SetAlbumAssets(
             database,
             dataStore,
             user,
-            body, 
+            body,
             id,
             AlbumResourceType.SidePanel
         );
-    
-    private ApiOkResponse SetAlbumAssets(GameDatabaseContext database, IDataStore dataStore, GameUser user, byte[] body, string id, AlbumResourceType resourceType)
+    }
+
+    private ApiOkResponse SetAlbumAssets(GameDatabaseContext database, IDataStore dataStore, GameUser user, byte[] body,
+        string id, AlbumResourceType resourceType)
     {
         GameAlbum? album = database.GetAlbumWithId(id);
-        if (album == null) 
+        if (album == null)
             return ApiNotFoundError.AlbumNotFound;
 
         return database.UploadAlbumResource(dataStore, album, body, resourceType);
@@ -85,12 +95,14 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Deletes album with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.AlbumNotFoundWhen)]
-    public ApiOkResponse RemoveAlbum(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)
+    [DocRouteParam("id", "Album ID.")]
+    public ApiOkResponse RemoveAlbum(RequestContext context, GameDatabaseContext database, IDataStore dataStore,
+        GameUser user, string id)
     {
         GameAlbum? albumToRemove = database.GetAlbumWithId(id);
         if (albumToRemove == null)
             return ApiNotFoundError.AlbumNotFound;
-        
+
         database.RemoveAlbum(dataStore, albumToRemove);
         return new ApiOkResponse();
     }

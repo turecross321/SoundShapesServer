@@ -1,5 +1,6 @@
 using MongoDB.Bson;
 using SoundShapesServer.Extensions.Queryable;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Leaderboard;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Reports;
@@ -67,8 +68,8 @@ public partial class GameDatabaseContext
         return _realm.All<Report>().FirstOrDefault(r => r.Id == objectId);
     }
     
-    public (Report[], int) GetPaginatedReports(ReportOrderType order, bool descending, ReportFilters filters, int from, int count)
+    public PaginatedList<Report> GetPaginatedReports(ReportOrderType order, bool descending, ReportFilters filters, int from, int count)
     {
-        return _realm.All<Report>().FilterReports(filters).OrderReports(order, descending).Paginate(from, count);
+        return new PaginatedList<Report>(_realm.All<Report>().FilterReports(filters).OrderReports(order, descending), from, count);
     }
 }

@@ -20,37 +20,42 @@ public class ApiNewsManagementEndpoints : EndpointGroup
     [ApiEndpoint("news/create", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Creates news entry.")]
-    public ApiResponse<ApiNewsEntryResponse> CreateNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
+    public ApiResponse<ApiNewsEntryResponse> CreateNewsEntry(RequestContext context, GameDatabaseContext database,
+        IDataStore dataStore,
         GameUser user, ApiCreateNewsEntryRequest body)
     {
         NewsEntry createdNewsEntry = database.CreateNewsEntry(body, user);
-        return new ApiNewsEntryResponse(createdNewsEntry);
+        return ApiNewsEntryResponse.FromOld(createdNewsEntry);
     }
 
     [ApiEndpoint("news/id/{id}/edit", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Edits news entry with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.NewsEntryNotFoundWhen)]
-    public ApiResponse<ApiNewsEntryResponse> EditNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
+    [DocRouteParam("id", "News entry ID.")]
+    public ApiResponse<ApiNewsEntryResponse> EditNewsEntry(RequestContext context, GameDatabaseContext database,
+        IDataStore dataStore,
         GameUser user, ApiCreateNewsEntryRequest body, string id)
     {
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
-        if (newsEntry == null) 
+        if (newsEntry == null)
             return ApiNotFoundError.NewsEntryNotFound;
 
         NewsEntry editedNewsEntry = database.EditNewsEntry(newsEntry, body, user);
-        return new ApiNewsEntryResponse(editedNewsEntry);
+        return ApiNewsEntryResponse.FromOld(editedNewsEntry);
     }
-    
+
     [ApiEndpoint("news/id/{id}/setThumbnail", HttpMethods.Post)]
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Sets thumbnail of news entry with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.NewsEntryNotFoundWhen)]
     [DocError(typeof(ApiBadRequestError), ApiBadRequestError.FileIsNotPngWhen)]
-    public ApiOkResponse SetNewsAssets(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id, byte[] body)
+    [DocRouteParam("id", "News entry ID.")]
+    public ApiOkResponse SetNewsAssets(RequestContext context, GameDatabaseContext database, IDataStore dataStore,
+        GameUser user, string id, byte[] body)
     {
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
-        if (newsEntry == null) 
+        if (newsEntry == null)
             return ApiNotFoundError.NewsEntryNotFound;
 
         return database.UploadNewsResource(dataStore, newsEntry, body);
@@ -60,12 +65,14 @@ public class ApiNewsManagementEndpoints : EndpointGroup
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Deletes news entry with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.NewsEntryNotFoundWhen)]
-    public ApiOkResponse DeleteNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore, GameUser user, string id)
+    [DocRouteParam("id", "News entry ID.")]
+    public ApiOkResponse DeleteNewsEntry(RequestContext context, GameDatabaseContext database, IDataStore dataStore,
+        GameUser user, string id)
     {
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
-        if (newsEntry == null) 
+        if (newsEntry == null)
             return ApiNotFoundError.NewsEntryNotFound;
-        
+
         database.RemoveNewsEntry(dataStore, newsEntry);
         return new ApiOkResponse();
     }

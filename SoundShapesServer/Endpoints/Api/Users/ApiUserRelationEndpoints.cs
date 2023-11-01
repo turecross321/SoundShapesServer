@@ -16,6 +16,8 @@ public class ApiUserRelationEndpoints : EndpointGroup
     [ApiEndpoint("users/id/{recipientId}/relationWith/id/{actorId}"), Authentication(false)]
     [DocSummary("Retrieves relation between two users.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
+    [DocRouteParam("recipientId", "Recipient user ID.")]
+    //todo: [DocRouteParam("actorId", "Actor user ID.")]
     public ApiResponse<ApiUserRelationResponse> CheckIfFollowingUser(RequestContext context, GameDatabaseContext database, string recipientId, string actorId)
     {
         GameUser? recipient = database.GetUserWithId(recipientId);
@@ -38,6 +40,7 @@ public class ApiUserRelationEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
     [DocError(typeof(ApiForbiddenError), ApiForbiddenError.FollowYourselfWhen)]
     [DocError(typeof(ApiConflictError), ApiConflictError.AlreadyFollowingWhen)]
+    [DocRouteParam("id", "User ID.")]
     public ApiOkResponse FollowUser(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameUser? recipient = database.GetUserWithId(id);
@@ -57,6 +60,7 @@ public class ApiUserRelationEndpoints : EndpointGroup
     [DocSummary("Unfollows user with specified ID.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
     [DocError(typeof(ApiForbiddenError), ApiNotFoundError.NotFollowingWhen)]
+    [DocRouteParam("id", "User ID.")]
     public ApiOkResponse UnFollowUser(RequestContext context, GameDatabaseContext database, GameUser user, string id)
     {
         GameUser? recipient = database.GetUserWithId(id);

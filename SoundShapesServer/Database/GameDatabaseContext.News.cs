@@ -93,8 +93,8 @@ public partial class GameDatabaseContext
         return _realm.All<NewsEntry>().FirstOrDefault(e => e.Id == objectId);
     }
     
-    public (NewsEntry[], int) GetPaginatedNews(NewsOrderType order, bool descending, NewsFilters filters, int from, int count)
+    public PaginatedList<NewsEntry> GetPaginatedNews(NewsOrderType order, bool descending, NewsFilters filters, int from, int count)
     {
-        return _realm.All<NewsEntry>().FilterNews(filters).OrderNews(order, descending).Paginate(from, count);
+        return new PaginatedList<NewsEntry>(_realm.All<NewsEntry>().FilterNews(filters).OrderNews(order, descending), from, count);
     }
 }

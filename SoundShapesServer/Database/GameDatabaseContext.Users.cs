@@ -205,8 +205,8 @@ public partial class GameDatabaseContext
         return _realm.All<GameUser>().FirstOrDefault(u => (!u.Deleted || u.Deleted == includeDeleted) && u.Id == id);
     }
 
-    public (GameUser[], int) GetPaginatedUsers(UserOrderType order, bool descending, UserFilters filters, int from, int count)
+    public PaginatedList<GameUser> GetPaginatedUsers(UserOrderType order, bool descending, UserFilters filters, int from, int count)
     {
-        return _realm.All<GameUser>().FilterUsers(filters).OrderUsers(order, descending).Paginate(from, count);
+        return new PaginatedList<GameUser>(_realm.All<GameUser>().FilterUsers(filters).OrderUsers(order, descending), from, count);
     }
 }

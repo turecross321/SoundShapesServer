@@ -1,17 +1,27 @@
-﻿using SoundShapesServer.Types.Users;
+﻿using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Responses.Api.Responses;
 
-public class ApiGameAuthenticationSettingsResponse
+public class ApiGameAuthenticationSettingsResponse : IApiResponse,
+    IDataConvertableFrom<ApiGameAuthenticationSettingsResponse, GameUser>
 {
-    public ApiGameAuthenticationSettingsResponse(GameUser user)
+    public required bool AllowPsnAuthentication { get; set; }
+    public required bool AllowRpcnAuthentication { get; set; }
+    public required bool AllowIpAuthentication { get; set; }
+
+    public static ApiGameAuthenticationSettingsResponse FromOld(GameUser old)
     {
-        AllowPsnAuthentication = user.AllowPsnAuthentication;
-        AllowRpcnAuthentication = user.AllowRpcnAuthentication;
-        AllowIpAuthentication = user.AllowIpAuthentication;
+        return new ApiGameAuthenticationSettingsResponse
+        {
+            AllowPsnAuthentication = old.AllowPsnAuthentication,
+            AllowRpcnAuthentication = old.AllowRpcnAuthentication,
+            AllowIpAuthentication = old.AllowIpAuthentication
+        };
     }
-    
-    public bool AllowPsnAuthentication { get; set; }
-    public bool AllowRpcnAuthentication { get; set; }
-    public bool AllowIpAuthentication { get; set; }
+
+    public static IEnumerable<ApiGameAuthenticationSettingsResponse> FromOldList(IEnumerable<GameUser> oldList)
+    {
+        return oldList.Select(FromOld);
+    }
 }

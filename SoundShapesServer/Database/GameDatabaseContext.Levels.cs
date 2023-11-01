@@ -221,9 +221,9 @@ public partial class GameDatabaseContext
         return levels.AsQueryable();
     }
 
-    public (GameLevel[], int) GetPaginatedLevels(LevelOrderType order, bool descending, LevelFilters filters, int from, int count, GameUser? accessor)
+    public PaginatedList<GameLevel> GetPaginatedLevels(LevelOrderType order, bool descending, LevelFilters filters, int from, int count, GameUser? accessor)
     {
-        return GetLevels(order, descending, filters, accessor).Paginate(from, count);
+        return new PaginatedList<GameLevel>(GetLevels(order, descending, filters, accessor), from, count);
     }
 
     public IQueryable<GameLevel> GetLevels(LevelOrderType order, bool descending, LevelFilters filters, GameUser? accessor)
