@@ -22,7 +22,6 @@ public class ApiEventResponse : IApiResponse
     public required ApiUserBriefResponse Actor { get; set; }
     public required DateTimeOffset CreationDate { get; set; }
     public required PlatformType PlatformType { get; set; }
-    public required EventDataType DataType { get; set; }
     public required ApiLevelBriefResponse? DataLevel { get; set; }
     public required ApiLeaderboardEntryResponse? DataLeaderboardEntry { get; set; }
     public required ApiUserBriefResponse? DataUser { get; set; }
@@ -57,6 +56,7 @@ public class ApiEventResponse : IApiResponse
                 };
                 dataLeaderboardEntry =
                     ApiLeaderboardEntryResponse.FromOld(entry, LeaderboardOrderType.Score, filters);
+                dataLevel = ApiLevelBriefResponse.FromOld(entry.Level);
                 break;
             case EventDataType.User:
                 dataUser = ApiUserBriefResponse.FromOld((GameUser)old.Data(database));
@@ -76,7 +76,6 @@ public class ApiEventResponse : IApiResponse
             Id = old.Id.ToString()!,
             EventType = old.EventType,
             Actor = ApiUserBriefResponse.FromOld(old.Actor),
-            DataType = old.DataType,
             CreationDate = old.CreationDate,
             PlatformType = old.PlatformType,
             DataLevel = dataLevel,
