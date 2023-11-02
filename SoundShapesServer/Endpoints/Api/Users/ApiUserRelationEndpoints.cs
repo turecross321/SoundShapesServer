@@ -17,7 +17,7 @@ public class ApiUserRelationEndpoints : EndpointGroup
     [DocSummary("Retrieves relation between two users.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
     [DocRouteParam("recipientId", "Recipient user ID.")]
-    //todo: [DocRouteParam("actorId", "Actor user ID.")]
+    [DocRouteParam("actorId", "Actor user ID.")]
     public ApiResponse<ApiUserRelationResponse> CheckIfFollowingUser(RequestContext context, GameDatabaseContext database, string recipientId, string actorId)
     {
         GameUser? recipient = database.GetUserWithId(recipientId);

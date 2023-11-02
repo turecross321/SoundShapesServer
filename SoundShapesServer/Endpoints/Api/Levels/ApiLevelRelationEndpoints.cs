@@ -20,7 +20,7 @@ public class ApiLevelRelationEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
     [DocRouteParam("levelId", "Level ID.")]
-    //todo: [DocRouteParam("userId", "User ID.")]
+    [DocRouteParam("userId", "User ID.")]
     public ApiResponse<ApiLevelRelationResponse> GetLevelRelation(RequestContext context, GameDatabaseContext database, string levelId, string userId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);

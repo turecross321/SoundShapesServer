@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AttribDoc" Version="1.2.0"/>
+        <PackageReference Include="AttribDoc" Version="1.2.1" />
         <PackageReference Include="BCrypt.Net-Next" Version="4.0.3"/>
         <PackageReference Include="Bunkum" Version="4.3.3"/>
         <PackageReference Include="Bunkum.AutoDiscover" Version="4.3.3"/>

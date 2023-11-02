@@ -48,7 +48,7 @@ public class ApiAlbumEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.AlbumNotFoundWhen)]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.UserNotFoundWhen)]
     [DocRouteParam("albumId", "Album ID.")]
-    // todo: [DocRouteParam("userId", "User ID.")]
+    [DocRouteParam("userId", "User ID.")]
     public ApiResponse<ApiAlbumCompletionResponse> GetAlbumCompletion(RequestContext context,
         GameDatabaseContext database, string albumId, string userId)
     {
