@@ -40,7 +40,7 @@ public class ApiAlbumEndpoints : EndpointGroup
         AlbumOrderType order = context.GetOrderType<AlbumOrderType>() ?? AlbumOrderType.CreationDate;
 
         PaginatedList<GameAlbum> albums = database.GetPaginatedAlbums(order, descending, from, count);
-        return PaginatedList<GameAlbum>.FromOldList<ApiAlbumResponse, GameAlbum>(albums);
+        return PaginatedList<GameAlbum>.SwapItems<ApiAlbumResponse, GameAlbum>(albums);
     }
 
     [ApiEndpoint("albums/id/{albumId}/relationWith/id/{userId}")]

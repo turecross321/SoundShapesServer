@@ -15,8 +15,10 @@ public class PaginatedList<TObject> where TObject : class
 
     public PaginatedList(IEnumerable<TObject> items, int from, int count)
     {
-        Items = items.Skip(from).Take(Math.Min(count, MaxItems)).ToArray();
-        TotalItems = items.Count();
+        IEnumerable<TObject> enumerable = items as TObject[] ?? items.ToArray();
+
+        Items = enumerable.Skip(from).Take(Math.Min(count, MaxItems)).ToArray();
+        TotalItems = enumerable.Count();
         From = from;
     }
 
@@ -30,7 +32,20 @@ public class PaginatedList<TObject> where TObject : class
     public int TotalItems { get; set; }
     public int From { get; set; }
 
-    public static PaginatedList<TNewObject> FromOldList<TNewObject, TOldObject>(PaginatedList<TOldObject> oldList)
+    public static PaginatedList<TNewObject> SwapItems<TNewObject, TOldObject>(PaginatedList<TOldObject> oldList,
+        IEnumerable<TNewObject> newItems)
+        where TNewObject : class
+        where TOldObject : class
+    {
+        return new PaginatedList<TNewObject>
+        {
+            Items = newItems,
+            TotalItems = oldList.TotalItems,
+            From = oldList.From
+        };
+    }
+
+    public static PaginatedList<TNewObject> SwapItems<TNewObject, TOldObject>(PaginatedList<TOldObject> oldList)
         where TNewObject : class, IDataConvertableFrom<TNewObject, TOldObject>
         where TOldObject : class
     {

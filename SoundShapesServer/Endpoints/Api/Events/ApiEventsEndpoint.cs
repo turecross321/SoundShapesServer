@@ -4,6 +4,7 @@ using Bunkum.Core.Endpoints;
 using SoundShapesServer.Database;
 using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Extensions;
+using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Responses.Events;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Events;
@@ -19,7 +20,7 @@ public class ApiEventsEndpoint : EndpointGroup
     [DocUsesFiltration<EventFilters>]
     [DocUsesOrder<UserOrderType>]
     [DocSummary("Lists events.")]
-    public ApiEventsWrapperResponse GetEvents(RequestContext context, GameDatabaseContext database,
+    public ApiListResponse<ApiEventResponse> GetEvents(RequestContext context, GameDatabaseContext database,
         GameUser? user)
     {
         (int from, int count, bool descending) = context.GetPageData();
@@ -29,6 +30,10 @@ public class ApiEventsEndpoint : EndpointGroup
 
         PaginatedList<GameEvent>
             events = database.GetPaginatedEvents(orderType, descending, filters, from, count, user);
-        return new ApiEventsWrapperResponse(database, events);
+        IEnumerable<ApiEventResponse> responses =
+            ApiEventResponse.FromOldList(database, events.Items);
+
+
+        return PaginatedList<ApiEventResponse>.SwapItems(events, responses);
     }
 }

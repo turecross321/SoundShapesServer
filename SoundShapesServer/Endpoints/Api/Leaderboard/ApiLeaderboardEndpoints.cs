@@ -41,6 +41,6 @@ public class ApiLeaderboardEndpoints : EndpointGroup
         IEnumerable<ApiLeaderboardEntryResponse> responses =
             ApiLeaderboardEntryResponse.FromOldList(entries.Items, order, filters);
 
-        return new PaginatedList<ApiLeaderboardEntryResponse>(responses.AsQueryable(), from, count);
+        return PaginatedList<ApiLeaderboardEntryResponse>.SwapItems(entries, responses);
     }
 }

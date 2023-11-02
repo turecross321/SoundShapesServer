@@ -28,6 +28,6 @@ public class ApiDailyLevelEndpoint : EndpointGroup
         DailyLevelOrderType order = context.GetOrderType<DailyLevelOrderType>() ?? DailyLevelOrderType.Date;
 
         PaginatedList<DailyLevel> daily = database.GetPaginatedDailyLevels(order, descending, filters, from, count);
-        return PaginatedList<ApiDailyLevelResponse>.FromOldList<ApiDailyLevelResponse, DailyLevel>(daily);
+        return PaginatedList<ApiDailyLevelResponse>.SwapItems<ApiDailyLevelResponse, DailyLevel>(daily);
     }
 }

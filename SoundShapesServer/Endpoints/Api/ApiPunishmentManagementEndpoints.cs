@@ -95,6 +95,6 @@ public class ApiPunishmentManagementEndpoints : EndpointGroup
 
         PaginatedList<Punishment> punishments =
             database.GetPaginatedPunishments(order, descending, filters, from, count);
-        return PaginatedList<ApiPunishmentResponse>.FromOldList<ApiPunishmentResponse, Punishment>(punishments);
+        return PaginatedList<ApiPunishmentResponse>.SwapItems<ApiPunishmentResponse, Punishment>(punishments);
     }
 }

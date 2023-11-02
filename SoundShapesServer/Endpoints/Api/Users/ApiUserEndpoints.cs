@@ -58,6 +58,6 @@ public class ApiUserEndpoints : EndpointGroup
         UserOrderType order = context.GetOrderType<UserOrderType>() ?? UserOrderType.CreationDate;
 
         PaginatedList<GameUser> users = database.GetPaginatedUsers(order, descending, filters, from, count);
-        return PaginatedList<ApiUserBriefResponse>.FromOldList<ApiUserBriefResponse, GameUser>(users);
+        return PaginatedList<ApiUserBriefResponse>.SwapItems<ApiUserBriefResponse, GameUser>(users);
     }
 }
