@@ -45,7 +45,7 @@ public class PaginatedList<TObject> where TObject : class
         };
     }
 
-    public static PaginatedList<TNewObject> SwapItems<TNewObject, TOldObject>(PaginatedList<TOldObject> oldList)
+    public static PaginatedList<TNewObject> ToResponses<TNewObject, TOldObject>(PaginatedList<TOldObject> oldList)
         where TNewObject : class, IDataConvertableFrom<TNewObject, TOldObject>
         where TOldObject : class
     {

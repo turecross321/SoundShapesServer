@@ -61,6 +61,6 @@ public class ApiReportManagementEndpoints : EndpointGroup
         ReportOrderType order = context.GetOrderType<ReportOrderType>() ?? ReportOrderType.CreationDate;
 
         PaginatedList<Report> reports = database.GetPaginatedReports(order, descending, filters, from, count);
-        return PaginatedList<ApiReportResponse>.SwapItems<ApiReportResponse, Report>(reports);
+        return PaginatedList<ApiReportResponse>.ToResponses<ApiReportResponse, Report>(reports);
     }
 }

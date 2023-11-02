@@ -30,7 +30,7 @@ public class ApiLevelEndpoints : EndpointGroup
         LevelOrderType order = context.GetOrderType<LevelOrderType>() ?? LevelOrderType.CreationDate;
 
         PaginatedList<GameLevel> levels = database.GetPaginatedLevels(order, descending, filters, from, count, user);
-        return PaginatedList<ApiLevelBriefResponse>.SwapItems<ApiLevelBriefResponse, GameLevel>(levels);
+        return PaginatedList<ApiLevelBriefResponse>.ToResponses<ApiLevelBriefResponse, GameLevel>(levels);
     }
 
     [ApiEndpoint("levels/id/{id}")]

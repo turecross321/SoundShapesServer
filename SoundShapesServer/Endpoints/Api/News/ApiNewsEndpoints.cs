@@ -43,6 +43,6 @@ public class ApiNewsEndpoints : EndpointGroup
         NewsFilters filters = context.GetFilters<NewsFilters>(database);
 
         PaginatedList<NewsEntry> entries = database.GetPaginatedNews(order, descending, filters, from, count);
-        return PaginatedList<ApiNewsEntryResponse>.SwapItems<ApiNewsEntryResponse, NewsEntry>(entries);
+        return PaginatedList<ApiNewsEntryResponse>.ToResponses<ApiNewsEntryResponse, NewsEntry>(entries);
     }
 }

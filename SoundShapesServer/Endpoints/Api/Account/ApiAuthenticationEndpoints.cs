@@ -137,6 +137,6 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         bool? authorized = context.QueryString["authorized"].ToBool();
 
         PaginatedList<GameIp> ips = database.GetPaginatedIps(user, authorized, from, count);
-        return PaginatedList<ApiIpResponse>.SwapItems<ApiIpResponse, GameIp>(ips);
+        return PaginatedList<ApiIpResponse>.ToResponses<ApiIpResponse, GameIp>(ips);
     }
 }
