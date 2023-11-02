@@ -18,7 +18,7 @@ public class ApiEventsEndpoint : EndpointGroup
     [Authentication(false)]
     [DocUsesPageData]
     [DocUsesFiltration<EventFilters>]
-    [DocUsesOrder<UserOrderType>]
+    [DocUsesOrder<EventOrderType>]
     [DocSummary("Lists events.")]
     public ApiListResponse<ApiEventResponse> GetEvents(RequestContext context, GameDatabaseContext database,
         GameUser? user)
