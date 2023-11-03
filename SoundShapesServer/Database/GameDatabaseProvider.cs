@@ -20,7 +20,8 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    protected override ulong SchemaVersion => 82;
+    private readonly string DataStorePath = Path.Combine(BunkumFileSystem.DataDirectory, "dataStore");
+    protected override ulong SchemaVersion => 83;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -44,8 +45,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
     };
 
     protected override string Filename => "database.realm";
-    private readonly string DataStorePath = Path.Combine(BunkumFileSystem.DataDirectory, "dataStore");
-    
+
     public override void Warmup()
     {
         using GameDatabaseContext context = GetContext();
@@ -55,7 +55,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
     protected override void Migrate(Migration migration, ulong oldVersion)
     {
         GameUser adminUser = migration.NewRealm.All<GameUser>().First(u => u.Id == GameDatabaseContext.AdminId);
-        
+
         IQueryable<dynamic> oldUsers = migration.OldRealm.DynamicApi.All("GameUser");
         IQueryable<GameUser> newUsers = migration.NewRealm.All<GameUser>();
         for (int i = 0; i < newUsers.Count(); i++)
@@ -63,122 +63,96 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             dynamic oldUser = oldUsers.ElementAt(i);
             GameUser newUser = newUsers.ElementAt(i);
 
-            if (oldVersion < 34)
-            {
-                newUser._PermissionsType = (int)oldUser.PermissionsType;
-            }
+            if (oldVersion < 34) newUser._PermissionsType = (int)oldUser.PermissionsType;
 
-            if (oldVersion < 42)
-            {
-                newUser.EventsCount = newUser.Events.Count();
-            }
+            if (oldVersion < 42) newUser.EventsCount = newUser.Events.Count();
 
-            if (oldVersion < 46)
-            {
-                newUser.Email = newUser.Email?.ToLower();
-            }
+            if (oldVersion < 46) newUser.Email = newUser.Email?.ToLower();
         }
-        
+
         foreach (string offlineLevelId in LevelHelper.OfflineLevelIds)
         {
             GameLevel level = migration.NewRealm.All<GameLevel>().First(l => l.Id == offlineLevelId);
             if (oldVersion < 56)
-            {
                 // Change the Visibility of offline levels to Unlisted instead of Private
                 level.Visibility = LevelVisibility.Unlisted;
-            }
         }
-        
+
         IQueryable<dynamic> oldLevels = migration.OldRealm.DynamicApi.All("GameLevel");
         IQueryable<GameLevel> newLevels = migration.NewRealm.All<GameLevel>();
-        if (oldVersion < 78)
-        {
+        if (oldVersion < 83)
             for (int i = 0; i < newLevels.Count(); i++)
             {
-                Console.WriteLine($"Getting hasUfo & hasFirefly data from levels... ({i}/{newLevels.Count()})");
+                dynamic oldLevel = oldLevels.ElementAt(i);
                 GameLevel newLevel = newLevels.ElementAt(i);
 
-                if (!File.Exists(newLevel.LevelFilePath))
-                    continue;
-                byte[] levelFile = File.ReadAllBytes(newLevel.LevelFilePath);
-                
-                SSLevel? ssLevel = SSLevel.FromLevelFile(levelFile);
-                if (ssLevel == null)
-                    continue;
-                newLevel.HasUfo = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_UFOCheckpoint");
-                newLevel.HasFirefly = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_FireflyCheckpoint");
-            }
-        }
+                Console.WriteLine($"Performing level migration. This might take a while... ({i}/{newLevels.Count()})");
 
-        if (oldVersion < 82)
-        {
-            for (int i = 0; i < newLevels.Count(); i++)
-            {
-                Console.WriteLine($"Setting level upload platform to unknown... ({i}/{newLevels.Count()})");
-                GameLevel newLevel = newLevels.ElementAt(i);
-                newLevel.UploadPlatform = PlatformType.Unknown;
+
+                if (oldVersion < 78)
+                {
+                    if (!File.Exists(newLevel.LevelFilePath))
+                        continue;
+                    byte[] levelFile = File.ReadAllBytes(newLevel.LevelFilePath);
+
+                    SSLevel? ssLevel = SSLevel.FromLevelFile(levelFile);
+                    if (ssLevel == null)
+                        continue;
+                    newLevel.HasUfo = ssLevel.EntitiesB.Any(e =>
+                        e.EntityType == "Platformer_EntityPacks_GameStuff_UFOCheckpoint");
+                    newLevel.HasFirefly = ssLevel.EntitiesB.Any(e =>
+                        e.EntityType == "Platformer_EntityPacks_GameStuff_FireflyCheckpoint");
+                }
+
+                if (oldVersion < 82)
+                    newLevel.UploadPlatform = PlatformType.Unknown;
+
+                if (oldVersion < 83) newLevel._Scale = (int)oldLevel.ScaleIndex;
             }
-        }
-        
+
         IQueryable<dynamic> oldAlbums = migration.OldRealm.DynamicApi.All("GameAlbum");
         IQueryable<GameAlbum> newAlbums = migration.NewRealm.All<GameAlbum>();
         for (int i = 0; i < newAlbums.Count(); i++)
         {
             GameAlbum newAlbum = newAlbums.ElementAt(i);
-            
+
             if (oldVersion < 44)
-            {
                 // just make it empty because i cant be bothered making a html to xml thing just for a migration
                 newAlbum.LinerNotes = "<linerNotes></linerNotes>";
-            }
 
             if (oldVersion < 75)
-            {
                 newAlbum.Author = migration.NewRealm.All<GameUser>().First(u => u.Id == GameDatabaseContext.AdminId);
-            }
-            
-            if (oldVersion < 81)
-            {
-                newAlbum.Id = ObjectId.GenerateNewId();
-            }
+
+            if (oldVersion < 81) newAlbum.Id = ObjectId.GenerateNewId();
         }
-        
+
         IQueryable<dynamic> oldCommunityTabs = migration.OldRealm.DynamicApi.All("CommunityTab");
         IQueryable<CommunityTab> newCommunityTabs = migration.NewRealm.All<CommunityTab>();
         for (int i = 0; i < newCommunityTabs.Count(); i++)
         {
             CommunityTab newTab = newCommunityTabs.ElementAt(i);
-            
-            if (oldVersion < 81)
-            {
-                newTab.Id = ObjectId.GenerateNewId();
-            }
+
+            if (oldVersion < 81) newTab.Id = ObjectId.GenerateNewId();
         }
-        
+
         IQueryable<dynamic> oldNewsEntries = migration.OldRealm.DynamicApi.All("NewsEntry");
         IQueryable<NewsEntry> newNewsEntries = migration.NewRealm.All<NewsEntry>();
         for (int i = 0; i < newNewsEntries.Count(); i++)
         {
             dynamic oldEntry = oldNewsEntries.ElementAt(i);
             NewsEntry newEntry = newNewsEntries.ElementAt(i);
-            
-            if (oldVersion < 79)
-            {
-                newEntry.Id = ObjectId.GenerateNewId();
-            }
+
+            if (oldVersion < 79) newEntry.Id = ObjectId.GenerateNewId();
         }
-        
+
         IQueryable<GameToken> newTokens = migration.NewRealm.All<GameToken>();
         for (int i = 0; i < newTokens.Count(); i++)
         {
             GameToken newToken = newTokens.ElementAt(i);
 
-            if (oldVersion < 77)
-            {
-                migration.NewRealm.Remove(newToken);
-            }
+            if (oldVersion < 77) migration.NewRealm.Remove(newToken);
         }
-        
+
         IQueryable<dynamic> oldLikeRelations = migration.OldRealm.DynamicApi.All("LevelLikeRelation");
         IQueryable<LevelLikeRelation> newLikeRelations = migration.NewRealm.All<LevelLikeRelation>();
         for (int i = 0; i < newLikeRelations.Count(); i++)
@@ -186,12 +160,9 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             dynamic oldRelation = oldLikeRelations.ElementAt(i);
             LevelLikeRelation newRelation = newLikeRelations.ElementAt(i);
 
-            if (oldVersion < 25)
-            {
-                newRelation.User = (GameUser)oldRelation.Liker;
-            }
+            if (oldVersion < 25) newRelation.User = (GameUser)oldRelation.Liker;
         }
-        
+
         IQueryable<dynamic> oldQueueRelations = migration.OldRealm.DynamicApi.All("LevelQueueRelation");
         IQueryable<LevelQueueRelation> newQueueRelations = migration.NewRealm.All<LevelQueueRelation>();
         for (int i = 0; i < newQueueRelations.Count(); i++)
@@ -201,18 +172,18 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         }
 
         IQueryable<dynamic> oldFollowRelations;
-        if (oldVersion < 72) 
+        if (oldVersion < 72)
             oldFollowRelations = migration.OldRealm.DynamicApi.All("FollowRelation");
-        else 
+        else
             oldFollowRelations = migration.OldRealm.DynamicApi.All("UserFollowRelation");
-        
+
         IQueryable<UserFollowRelation> newFollowRelations = migration.NewRealm.All<UserFollowRelation>();
         for (int i = 0; i < newFollowRelations.Count(); i++)
         {
             dynamic oldRelation = oldFollowRelations.ElementAt(i);
             UserFollowRelation newRelation = newFollowRelations.ElementAt(i);
         }
-        
+
         IQueryable<dynamic> oldLeaderboardEntries = migration.OldRealm.DynamicApi.All("LeaderboardEntry");
         IQueryable<LeaderboardEntry> newLeaderboardEntries = migration.NewRealm.All<LeaderboardEntry>();
         for (int i = 0; i < newLeaderboardEntries.Count(); i++)
@@ -221,16 +192,12 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             LeaderboardEntry newEntry = newLeaderboardEntries.ElementAt(i);
 
             if (oldVersion < 29)
-            {
                 // Renamed Tokens to Notes
                 newEntry.Notes = (int)oldEntry.Tokens;
-            }
 
             if (oldVersion < 47)
-            {
                 // Renamed Date to CreationDate
                 newEntry.CreationDate = (DateTimeOffset)oldEntry.Date;
-            }
 
             if (oldVersion < 52)
             {
@@ -254,16 +221,11 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             }
 
             if (oldVersion < 69)
-            {
                 // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
                 if (newEntry.User == null)
                     migration.NewRealm.Remove(newEntry);
-            }
 
-            if (oldVersion < 72)
-            {
-                newEntry.Id = IdHelper.TrimToObjectId((string)oldEntry.Id);
-            }
+            if (oldVersion < 72) newEntry.Id = IdHelper.TrimToObjectId((string)oldEntry.Id);
         }
 
         IQueryable<dynamic> oldPunishments = migration.OldRealm.DynamicApi.All("Punishment");
@@ -273,11 +235,8 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             dynamic oldPunishment = oldPunishments.ElementAt(i);
             Punishment newPunishment = newPunishments.ElementAt(i);
 
-            if (oldVersion < 37)
-            {
-                newPunishment._PunishmentType = (int)oldPunishment.PunishmentType;
-            }
-            
+            if (oldVersion < 37) newPunishment._PunishmentType = (int)oldPunishment.PunishmentType;
+
             if (oldVersion < 40)
             {
                 newPunishment.CreationDate = (DateTimeOffset)oldPunishment.IssuedAt;
@@ -286,17 +245,12 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             }
 
             if (oldVersion < 50)
-            {
                 // Added ModificationDate
                 newPunishment.ModificationDate = newPunishment.CreationDate;
-            }
-            
-            if (oldVersion < 79)
-            {
-                newPunishment.Id = ObjectId.GenerateNewId();
-            }
+
+            if (oldVersion < 79) newPunishment.Id = ObjectId.GenerateNewId();
         }
-        
+
         IQueryable<dynamic> oldReports = migration.OldRealm.DynamicApi.All("Report");
         IQueryable<Report> newReports = migration.NewRealm.All<Report>();
         for (int i = 0; i < newReports.Count(); i++)
@@ -316,14 +270,11 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                 newReport.Author = migration.NewRealm.All<GameUser>().First(u => u.Id == authorId);
                 newReport.CreationDate = (DateTimeOffset)oldReport.Date;
             }
-            
-            if (oldVersion < 79)
-            {
-                newReport.Id = ObjectId.GenerateNewId();
-            }
+
+            if (oldVersion < 79) newReport.Id = ObjectId.GenerateNewId();
         }
-        
-        
+
+
         IQueryable<dynamic> oldDailyLevels = migration.OldRealm.DynamicApi.All("DailyLevel");
         IQueryable<DailyLevel> newDailyLevels = migration.NewRealm.All<DailyLevel>();
         for (int i = 0; i < newDailyLevels.Count(); i++)
@@ -336,24 +287,18 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                 newDaily.CreationDate = newDaily.Date;
                 newDaily.ModificationDate = newDaily.Date;
             }
-            
-            if (oldVersion < 79)
-            {
-                newDaily.Id = ObjectId.GenerateNewId();
-            }
+
+            if (oldVersion < 79) newDaily.Id = ObjectId.GenerateNewId();
         }
-        
+
         IQueryable<GameIp> newIps = migration.NewRealm.All<GameIp>();
         for (int i = 0; i < newIps.Count(); i++)
         {
             GameIp newIp = newIps.ElementAt(i);
 
-            if (oldVersion < 62)
-            {
-                migration.NewRealm.Remove(newIp);
-            }
+            if (oldVersion < 62) migration.NewRealm.Remove(newIp);
         }
-        
+
         IQueryable<dynamic> oldEvents = migration.OldRealm.DynamicApi.All("GameEvent");
         IQueryable<GameEvent> events = migration.NewRealm.All<GameEvent>();
 
@@ -361,27 +306,19 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
         {
             dynamic oldEvent = oldEvents.ElementAt(i);
             GameEvent newEvent = events.ElementAt(i);
-            
+
             if (oldVersion < 28)
-            {
                 // Added the Queue event type
                 if (newEvent.EventType >= EventType.LevelQueue)
-                {
                     newEvent.EventType += 1;
-                }
-            }
 
             if (oldVersion < 35)
-            {
                 // Renamed EventType to _EventType
                 newEvent._EventType = (int)oldEvent.EventType;
-            }
 
             if (oldVersion < 48)
-            {
                 // Renamed Date to CreationDate
                 newEvent.CreationDate = (DateTimeOffset)oldEvent.Date;
-            }
 
             if (oldVersion < 72)
             {
@@ -391,10 +328,10 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                     migration.NewRealm.Remove(newEvent);
                     continue;
                 }
-                
+
                 newEvent.Id = ObjectId.GenerateNewId();
                 dynamic oldUser = oldEvent.Actor;
-                
+
                 string? oldUserId = (string?)oldUser.Id;
                 if (oldUserId == null)
                 {
@@ -404,10 +341,10 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 
                 dynamic oldContentLevel = oldEvent.ContentLevel;
                 string? oldContentLevelId = (string?)oldContentLevel?.Id;
-                
+
                 dynamic oldContentUser = oldEvent.ContentUser;
                 string? oldContentUserId = (string?)oldContentUser?.Id;
-                
+
                 dynamic oldContentLeaderboardEntry = oldEvent.ContentLeaderboardEntry;
                 string? oldContentLeaderboardEntryId = (string?)oldContentLeaderboardEntry?.Id;
                 ObjectId newLeaderboardEntryId = ObjectId.Empty;
@@ -434,8 +371,10 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                         break;
                     case 4: // score submission
 
-                        if (oldContentLevelId == null || newLevels.FirstOrDefault(l => l.Id == oldContentLevelId) == null || 
-                            oldContentLeaderboardEntryId == null || newLeaderboardEntries.FirstOrDefault(e => e.Id == newLeaderboardEntryId) == null)
+                        if (oldContentLevelId == null ||
+                            newLevels.FirstOrDefault(l => l.Id == oldContentLevelId) == null ||
+                            oldContentLeaderboardEntryId == null ||
+                            newLeaderboardEntries.FirstOrDefault(e => e.Id == newLeaderboardEntryId) == null)
                             remove = true;
                         break;
                 }
@@ -445,7 +384,7 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                     migration.NewRealm.Remove(newEvent);
                     continue;
                 }
-                
+
                 switch ((int)oldEvent._EventType)
                 {
                     case 0: // publishing

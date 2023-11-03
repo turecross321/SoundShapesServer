@@ -17,10 +17,11 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public GameLevel CreateLevel(GameUser user, PublishLevelRequest request, PlatformType uploadPlatform, bool createEvent = true, string? levelId = null)
+    public GameLevel CreateLevel(GameUser user, PublishLevelRequest request, PlatformType uploadPlatform,
+        bool createEvent = true, string? levelId = null)
     {
         levelId ??= GenerateLevelId();
-        GameLevel level = new GameLevel()
+        GameLevel level = new()
         {
             Id = levelId,
             Author = user,
@@ -30,7 +31,7 @@ public partial class GameDatabaseContext
             ModificationDate = request.CreationDate,
             FileSize = request.FileSize,
             Visibility = LevelVisibility.Public,
-            UploadPlatform = uploadPlatform,
+            UploadPlatform = uploadPlatform
         };
 
         _realm.Write(() =>
@@ -39,9 +40,9 @@ public partial class GameDatabaseContext
             user.LevelsCount = user.Levels.Count();
         });
 
-        if (createEvent) 
+        if (createEvent)
             CreateEvent(user, EventType.LevelPublish, uploadPlatform, EventDataType.Level, level.Id);
-        
+
         return level;
     }
 
@@ -61,10 +62,7 @@ public partial class GameDatabaseContext
     {
         long totalPlayTime = level.LeaderboardEntries.AsEnumerable().Sum(e => e.PlayTime);
 
-        _realm.Write(() =>
-        {
-            level.TotalPlayTime = totalPlayTime;
-        });
+        _realm.Write(() => { level.TotalPlayTime = totalPlayTime; });
     }
 
     public void UploadLevelResources(IDataStore dataStore, GameLevel level, byte[] levelFile, byte[] thumbnailFile,
@@ -74,7 +72,7 @@ public partial class GameDatabaseContext
         UploadLevelResource(dataStore, level, thumbnailFile, FileType.Image);
         UploadLevelResource(dataStore, level, soundFile, FileType.Sound);
     }
-    
+
     public bool AnalyzeLevel(GameLevel level, byte[] levelFile)
     {
         SSLevel? ssLevel = SSLevel.FromLevelFile(levelFile);
@@ -86,19 +84,20 @@ public partial class GameDatabaseContext
             level.FileSize = levelFile.Length;
             level.Bpm = ssLevel.Bpm;
             level.TransposeValue = ssLevel.TransposeValue;
-            level.ScaleIndex = ssLevel.ScaleIndex;
+            level._Scale = ssLevel.ScaleIndex;
             level.TotalScreens = ssLevel.ScreenData.Count();
             level.TotalEntities = ssLevel.Entities.Count() + ssLevel.EntitiesB.Count();
             level.HasCar = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_CarCheckpoint");
-            level.HasExplodingCar = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_ExplodingCarCheckpoint");
+            level.HasExplodingCar = ssLevel.EntitiesB.Any(e =>
+                e.EntityType == "Platformer_EntityPacks_GameStuff_ExplodingCarCheckpoint");
             level.HasUfo = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_UFOCheckpoint");
-            level.HasFirefly = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_FireflyCheckpoint");
-
+            level.HasFirefly =
+                ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_FireflyCheckpoint");
         });
 
         return true;
     }
-    
+
     public ApiOkResponse UploadLevelResource(IDataStore dataStore, GameLevel level,
         byte[] file, FileType fileType)
     {
@@ -106,14 +105,12 @@ public partial class GameDatabaseContext
             return ApiBadRequestError.FileIsNotPng;
 
         if (fileType == FileType.Level)
-        {
             if (!AnalyzeLevel(level, file))
                 return ApiBadRequestError.CorruptLevel;
-        }
-        
+
         string key = GetLevelResourceKey(level, fileType);
         dataStore.WriteToStore(key, file);
-        
+
         SetLevelFilePath(level, fileType, key);
         return new ApiOkResponse();
     }
@@ -147,34 +144,28 @@ public partial class GameDatabaseContext
         if (level.ThumbnailFilePath != null) dataStore.RemoveFromStore(level.ThumbnailFilePath);
         if (level.SoundFilePath != null) dataStore.RemoveFromStore(level.SoundFilePath);
     }
-    
+
     public void RemoveLevel(GameLevel level, IDataStore dataStore)
     {
         RemoveLevelResources(level, dataStore);
         RemoveAllReportsWithContentLevel(level);
         RemoveEventsOnLevel(level);
-        
+
         _realm.Write(() =>
         {
-            foreach (GameAlbum album in level.Albums)
-            {
-                album.Levels.Remove(level);
-            }
+            foreach (GameAlbum album in level.Albums) album.Levels.Remove(level);
             _realm.RemoveRange(level.DailyLevels);
             _realm.RemoveRange(level.Likes);
             _realm.RemoveRange(level.LeaderboardEntries);
             _realm.Remove(level);
         });
     }
-    
+
     public void AddCompletionToLevel(GameUser user, GameLevel level)
     {
         if (!level.UniqueCompletions.Contains(user)) AddUniqueCompletion(user, level);
-        
-        _realm.Write(() =>
-        {
-            level.CompletionCount++;
-        });
+
+        _realm.Write(() => { level.CompletionCount++; });
     }
 
     private void AddUniqueCompletion(GameUser user, GameLevel level)
@@ -186,16 +177,14 @@ public partial class GameDatabaseContext
             user.CompletedLevelsCount = user.CompletedLevels.Count();
         });
     }
-    
+
     public void SetLevelDifficulty(GameLevel level)
     {
         _realm.Refresh();
 
-        _realm.Write(() =>
-        {
-            level.Difficulty = CalculateLevelDifficulty(level);
-        });
+        _realm.Write(() => { level.Difficulty = CalculateLevelDifficulty(level); });
     }
+
     public void AddDeathsToLevel(GameUser user, GameLevel level, int deaths)
     {
         _realm.Write(() =>
@@ -204,15 +193,18 @@ public partial class GameDatabaseContext
             user.Deaths += deaths;
         });
     }
-    
-    public GameLevel? GetLevelWithId(string id) => _realm.All<GameLevel>().FirstOrDefault(l => l.Id == id);
+
+    public GameLevel? GetLevelWithId(string id)
+    {
+        return _realm.All<GameLevel>().FirstOrDefault(l => l.Id == id);
+    }
 
     private IQueryable<GameLevel> GetLevelsWithIds(IEnumerable<string> ids)
     {
         List<GameLevel> levels = new();
-        
+
         // ReSharper disable once LoopCanBeConvertedToQuery
-        foreach (string levelId in ids) 
+        foreach (string levelId in ids)
         {
             GameLevel? level = GetLevelWithId(levelId);
             if (level != null) levels.Add(level);
@@ -221,12 +213,14 @@ public partial class GameDatabaseContext
         return levels.AsQueryable();
     }
 
-    public PaginatedList<GameLevel> GetPaginatedLevels(LevelOrderType order, bool descending, LevelFilters filters, int from, int count, GameUser? accessor)
+    public PaginatedList<GameLevel> GetPaginatedLevels(LevelOrderType order, bool descending, LevelFilters filters,
+        int from, int count, GameUser? accessor)
     {
         return new PaginatedList<GameLevel>(GetLevels(order, descending, filters, accessor), from, count);
     }
 
-    public IQueryable<GameLevel> GetLevels(LevelOrderType order, bool descending, LevelFilters filters, GameUser? accessor)
+    public IQueryable<GameLevel> GetLevels(LevelOrderType order, bool descending, LevelFilters filters,
+        GameUser? accessor)
     {
         return _realm.All<GameLevel>().FilterLevels(this, filters, accessor).OrderLevels(order, descending);
     }

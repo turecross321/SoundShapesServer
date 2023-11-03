@@ -29,7 +29,7 @@ public class ApiLevelFullResponse : IApiResponse, IDataConvertableFrom<ApiLevelF
     public required long TotalPlayTime { get; set; }
     public required float Difficulty { get; set; }
     public required IEnumerable<ApiAlbumResponse> Albums { get; set; }
-    public required DateTimeOffset? DailyLevel { get; set; }
+    public required DateTimeOffset? DailyLevelDate { get; set; }
 
     public static ApiLevelFullResponse FromOld(GameLevel old)
     {
@@ -54,7 +54,7 @@ public class ApiLevelFullResponse : IApiResponse, IDataConvertableFrom<ApiLevelF
             TotalPlayTime = old.TotalPlayTime,
             Difficulty = old.Difficulty,
             Albums = ApiAlbumResponse.FromOldList(old.Albums),
-            DailyLevel = old.DailyLevels.FirstOrDefault()?.CreationDate
+            DailyLevelDate = old.DailyLevels.FirstOrDefault()?.CreationDate
         };
     }
 

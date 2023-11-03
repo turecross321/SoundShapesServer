@@ -8,7 +8,7 @@ public class ApiLevelAnalysisResponse : IApiResponse, IDataConvertableFrom<ApiLe
     public required long FileSize { get; set; }
     public required int Bpm { get; set; }
     public required int TransposeValue { get; set; }
-    public required int ScaleIndex { get; set; }
+    public required ScaleType Scale { get; set; }
     public required int TotalScreens { get; set; }
     public required int TotalEntities { get; set; }
     public required bool HasCar { get; set; }
@@ -23,7 +23,7 @@ public class ApiLevelAnalysisResponse : IApiResponse, IDataConvertableFrom<ApiLe
             FileSize = old.FileSize,
             Bpm = old.Bpm,
             TransposeValue = old.TransposeValue,
-            ScaleIndex = old.ScaleIndex,
+            Scale = old.Scale,
             TotalScreens = old.TotalScreens,
             TotalEntities = old.TotalEntities,
             HasCar = old.HasCar,
