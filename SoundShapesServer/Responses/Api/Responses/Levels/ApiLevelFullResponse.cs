@@ -1,3 +1,4 @@
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Responses.Albums;
 using SoundShapesServer.Responses.Api.Responses.Users;
@@ -17,6 +18,7 @@ public class ApiLevelFullResponse : IApiResponse, IDataConvertableFrom<ApiLevelF
     public required DateTimeOffset ModificationDate { get; set; }
     public required int Language { get; set; }
     public required LevelVisibility Visibility { get; set; }
+    public required bool CampaignLevel { get; set; }
     public required PlatformType UploadPlatform { get; set; }
     public required ApiLevelAnalysisResponse Analysis { get; set; }
     public required int TotalPlays { get; set; }
@@ -42,6 +44,7 @@ public class ApiLevelFullResponse : IApiResponse, IDataConvertableFrom<ApiLevelF
             ModificationDate = old.ModificationDate,
             Language = old.Language,
             Visibility = old.Visibility,
+            CampaignLevel = LevelHelper.OfflineLevelIds.Contains(old.Id),
             UploadPlatform = old.UploadPlatform,
             Analysis = ApiLevelAnalysisResponse.FromOld(old),
             TotalPlays = old.PlaysCount,

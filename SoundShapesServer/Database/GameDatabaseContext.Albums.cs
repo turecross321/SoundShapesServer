@@ -19,28 +19,22 @@ public partial class GameDatabaseContext
     public GameAlbum CreateAlbum(ApiCreateAlbumRequest request, GameUser user)
     {
         GameLevel[] levels = GetLevelsWithIds(request.LevelIds.AsEnumerable()).ToArray();
-        
+
         DateTimeOffset now = DateTimeOffset.UtcNow;
-        
-        GameAlbum album = new GameAlbum
+
+        GameAlbum album = new()
         {
             Name = request.Name,
             Author = user,
             CreationDate = now,
             ModificationDate = now,
-            LinerNotes = request.LinerNotes,
+            LinerNotes = request.LinerNotes
         };
 
-        foreach (GameLevel level in levels)
-        {
-            album.Levels.Add(level);
-        }
+        foreach (GameLevel level in levels) album.Levels.Add(level);
 
-        _realm.Write(() =>
-        {
-            _realm.Add(album);
-        });
-        
+        _realm.Write(() => { _realm.Add(album); });
+
         CreateEvent(user, EventType.AlbumCreation, PlatformType.Unknown, EventDataType.Album, album.Id.ToString()!);
 
         return album;
@@ -49,15 +43,14 @@ public partial class GameDatabaseContext
     public void RemoveAlbum(IDataStore dataStore, GameAlbum album)
     {
         RemoveAlbumResources(dataStore, album);
-        
-        _realm.Write(() =>
-        {
-            _realm.Remove(album);
-        });
+        RemoveEventsOnAlbum(album);
+
+        _realm.Write(() => { _realm.Remove(album); });
     }
 
     // These aren't database related, but idk where to put them otherwise
-    public ApiOkResponse UploadAlbumResource(IDataStore dataStore, GameAlbum album, byte[] file, AlbumResourceType resourceType)
+    public ApiOkResponse UploadAlbumResource(IDataStore dataStore, GameAlbum album, byte[] file,
+        AlbumResourceType resourceType)
     {
         // Album Files should always be Images
         if (!file.IsPng())
@@ -65,7 +58,7 @@ public partial class GameDatabaseContext
 
         string key = ResourceHelper.GetAlbumResourceKey(album.Id.ToString()!, resourceType);
         dataStore.WriteToStore(key, file);
-        
+
         SetAlbumFilePath(album, resourceType, key);
 
         return new ApiOkResponse();
@@ -88,12 +81,13 @@ public partial class GameDatabaseContext
             }
         });
     }
+
     private void RemoveAlbumResources(IDataStore dataStore, GameAlbum album)
     {
         if (album.ThumbnailFilePath != null) dataStore.RemoveFromStore(album.ThumbnailFilePath);
         if (album.SidePanelFilePath != null) dataStore.RemoveFromStore(album.SidePanelFilePath);
     }
-    
+
     public GameAlbum EditAlbum(GameAlbum album, ApiCreateAlbumRequest request, GameUser user)
     {
         _realm.Write(() =>
@@ -102,27 +96,24 @@ public partial class GameDatabaseContext
             album.Author = user;
             album.ModificationDate = DateTimeOffset.UtcNow;
             album.LinerNotes = request.LinerNotes;
-            
+
             GameLevel[] levels = GetLevelsWithIds(request.LevelIds.AsEnumerable()).ToArray();
             album.Levels.Clear();
-            foreach (GameLevel level in levels)
-            {
-                album.Levels.Add(level);
-            }
+            foreach (GameLevel level in levels) album.Levels.Add(level);
         });
 
         return album;
     }
-    
+
     public GameAlbum? GetAlbumWithId(string id)
     {
         ObjectId? objectId = ObjectId.Parse(id);
         if (objectId == null)
             return null;
-        
+
         return _realm.All<GameAlbum>().FirstOrDefault(a => a.Id == objectId);
     }
-    
+
     public PaginatedList<GameAlbum> GetPaginatedAlbums(AlbumOrderType order, bool descending, int from, int count)
     {
         return new PaginatedList<GameAlbum>(_realm.All<GameAlbum>().OrderAlbums(order, descending), from, count);
