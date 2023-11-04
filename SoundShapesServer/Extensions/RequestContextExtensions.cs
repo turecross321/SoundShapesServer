@@ -28,70 +28,70 @@ public static class RequestContextExtensions
         foreach (PropertyInfo property in typeof(T).GetProperties())
         {
             FilterPropertyAttribute? attribute = property.GetCustomAttribute<FilterPropertyAttribute>();
-            if (attribute != null)
+            if (attribute == null) 
+                continue;
+            
+            string? strValue = context.QueryString[attribute.ParameterName];
+            if (strValue == null)
+                continue;
+
+            object? value = null;
+
+            // typeof can't be used in switch statements :/
+            if (property.PropertyType == typeof(GameUser))
             {
-                string? strValue = context.QueryString[attribute.ParameterName];
-                if (strValue == null)
-                    continue;
-
-                object? value = null;
-
-                // typeof can't be used in switch statements :/
-                if (property.PropertyType == typeof(GameUser))
-                {
-                    value = database.GetUserWithId(strValue);
-                }
-                else if (property.PropertyType == typeof(GameAlbum))
-                {
-                    value = database.GetAlbumWithId(strValue);
-                }
-                else if (property.PropertyType == typeof(bool?))
-                {
-                    value = strValue.ToBool();
-                }
-                else if (property.PropertyType == typeof(string))
-                {
-                    value = strValue;
-                }
-                else if (property.PropertyType == typeof(DateTimeOffset?))
-                {
-                    if (DateTimeOffset.TryParse(strValue, out DateTimeOffset result)) value = result;
-                }
-                else if (property.PropertyType == typeof(int?))
-                {
-                    value = strValue.ToInt();
-                }
-                else if (property.PropertyType == typeof(int[]))
-                {
-                    List<int> list = new();
-                    // ReSharper disable once LoopCanBeConvertedToQuery
-                    foreach (string numberStr in strValue.Split(","))
-                    {
-                        int? number = numberStr.ToInt();
-                        if (number != null) list.Add((int)number);
-                    }
-
-                    value = Convert.ChangeType(list.ToArray(), property.PropertyType);
-                }
-                else if (property.PropertyType == typeof(GameUser[]))
-                {
-                    List<GameUser> list = new();
-                    foreach (string id in strValue.Split(","))
-                    {
-                        GameUser? user = database.GetUserWithId(id);
-                        if (user != null)
-                            list.Add(user);
-                    }
-
-                    value = list.ToArray();
-                }
-                else
-                {
-                    throw new ArgumentOutOfRangeException(property.PropertyType.Name + " filter is not supported");
-                }
-
-                property.SetValue(instance, value);
+                value = database.GetUserWithId(strValue);
             }
+            else if (property.PropertyType == typeof(GameAlbum))
+            {
+                value = database.GetAlbumWithId(strValue);
+            }
+            else if (property.PropertyType == typeof(bool?))
+            {
+                value = strValue.ToBool();
+            }
+            else if (property.PropertyType == typeof(string))
+            {
+                value = strValue;
+            }
+            else if (property.PropertyType == typeof(DateTimeOffset?))
+            {
+                if (DateTimeOffset.TryParse(strValue, out DateTimeOffset result)) value = result;
+            }
+            else if (property.PropertyType == typeof(int?))
+            {
+                value = strValue.ToInt();
+            }
+            else if (property.PropertyType == typeof(int[]))
+            {
+                List<int> list = new();
+                // ReSharper disable once LoopCanBeConvertedToQuery
+                foreach (string numberStr in strValue.Split(","))
+                {
+                    int? number = numberStr.ToInt();
+                    if (number != null) list.Add((int)number);
+                }
+
+                value = Convert.ChangeType(list.ToArray(), property.PropertyType);
+            }
+            else if (property.PropertyType == typeof(GameUser[]))
+            {
+                List<GameUser> list = new();
+                foreach (string id in strValue.Split(","))
+                {
+                    GameUser? user = database.GetUserWithId(id);
+                    if (user != null)
+                        list.Add(user);
+                }
+
+                value = list.ToArray();
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException(property.PropertyType.Name + " filter is not supported");
+            }
+
+            property.SetValue(instance, value);
         }
 
         return instance;
