@@ -17,14 +17,14 @@ public static class RequestContextExtensions
         int count = int.Parse(context.QueryString["count"] ?? "9");
 
         bool descending = context.QueryString["descending"].ToBool() ?? descendingIfNull;
-        
+
         return (from, count, descending);
     }
 
-    public static T GetFilters<T>(this RequestContext context, GameDatabaseContext database) where T : new()
+    public static T GetFilters<T>(this RequestContext context, GameDatabaseContext database) where T : IFilters, new()
     {
-        T instance = new T();
-        
+        T instance = new();
+
         foreach (PropertyInfo property in typeof(T).GetProperties())
         {
             FilterPropertyAttribute? attribute = property.GetCustomAttribute<FilterPropertyAttribute>();
@@ -33,66 +33,71 @@ public static class RequestContextExtensions
                 string? strValue = context.QueryString[attribute.ParameterName];
                 if (strValue == null)
                     continue;
-                
+
                 object? value = null;
-                
+
                 // typeof can't be used in switch statements :/
                 if (property.PropertyType == typeof(GameUser))
+                {
                     value = database.GetUserWithId(strValue);
+                }
                 else if (property.PropertyType == typeof(GameAlbum))
+                {
                     value = database.GetAlbumWithId(strValue);
-                else if (property.PropertyType == typeof(Boolean?))
+                }
+                else if (property.PropertyType == typeof(bool?))
+                {
                     value = strValue.ToBool();
-                else if (property.PropertyType == typeof(String))
+                }
+                else if (property.PropertyType == typeof(string))
+                {
                     value = strValue;
+                }
                 else if (property.PropertyType == typeof(DateTimeOffset?))
                 {
-                    if (DateTimeOffset.TryParse(strValue, out DateTimeOffset result))
-                    {
-                        value = result;
-                    }
+                    if (DateTimeOffset.TryParse(strValue, out DateTimeOffset result)) value = result;
                 }
-                else if (property.PropertyType == typeof(Int32?))
-                    value = strValue.ToInt();
-                else if (property.PropertyType == typeof(Int32[]))
+                else if (property.PropertyType == typeof(int?))
                 {
-                    List<int> list = new ();
+                    value = strValue.ToInt();
+                }
+                else if (property.PropertyType == typeof(int[]))
+                {
+                    List<int> list = new();
                     // ReSharper disable once LoopCanBeConvertedToQuery
                     foreach (string numberStr in strValue.Split(","))
                     {
                         int? number = numberStr.ToInt();
-                        if (number != null)
-                        {
-                            list.Add((int)number);
-                        }
+                        if (number != null) list.Add((int)number);
                     }
 
                     value = Convert.ChangeType(list.ToArray(), property.PropertyType);
                 }
                 else if (property.PropertyType == typeof(GameUser[]))
-                { 
-                    List<GameUser> list = new ();
+                {
+                    List<GameUser> list = new();
                     foreach (string id in strValue.Split(","))
                     {
                         GameUser? user = database.GetUserWithId(id);
                         if (user != null)
                             list.Add(user);
                     }
+
                     value = list.ToArray();
                 }
                 else
                 {
                     throw new ArgumentOutOfRangeException(property.PropertyType.Name + " filter is not supported");
                 }
-                
+
                 property.SetValue(instance, value);
             }
         }
 
         return instance;
     }
-    
-    public static TEnum? GetOrderType<TEnum>(this RequestContext context) where TEnum: struct, Enum
+
+    public static TEnum? GetOrderType<TEnum>(this RequestContext context) where TEnum : struct, Enum
     {
         Type enumType = typeof(TEnum);
 
@@ -101,14 +106,12 @@ public static class RequestContextExtensions
             FieldInfo? fieldInfo = enumType.GetField(value.ToString());
             if (fieldInfo == null)
                 continue;
-            
-            // Check if the enum value has an OrderType attribute
-            OrderTypeAttribute? orderTypeAttribute = (OrderTypeAttribute?)fieldInfo.GetCustomAttribute(typeof(OrderTypeAttribute), false);
 
-            if (orderTypeAttribute != null && orderTypeAttribute.Value == context.QueryString["orderBy"])
-            {
-                return value;
-            }
+            // Check if the enum value has an OrderType attribute
+            OrderTypeAttribute? orderTypeAttribute =
+                (OrderTypeAttribute?)fieldInfo.GetCustomAttribute(typeof(OrderTypeAttribute), false);
+
+            if (orderTypeAttribute != null && orderTypeAttribute.Value == context.QueryString["orderBy"]) return value;
         }
 
         return null;
@@ -116,8 +119,10 @@ public static class RequestContextExtensions
 
     public static string GetIpAddress(this RequestContext context)
     {
-        return ((IPEndPoint)context.RemoteEndpoint).Address.ToString();;
+        return ((IPEndPoint)context.RemoteEndpoint).Address.ToString();
+        ;
     }
+
     public static GameIp? GetGameIp(this RequestContext context, GameDatabaseContext database, GameUser user)
     {
         string ipAddress = GetIpAddress(context);

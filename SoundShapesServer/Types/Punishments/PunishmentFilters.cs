@@ -3,7 +3,7 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Types.Punishments;
 
-public class PunishmentFilters
+public class PunishmentFilters: IFilters
 {
     [FilterProperty("author", "Filter out punishments that were not authored by user with specified ID.")]
     public GameUser? Author { get; init; }
