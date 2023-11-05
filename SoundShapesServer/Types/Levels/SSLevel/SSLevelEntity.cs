@@ -14,22 +14,25 @@ public class SSLevelEntity
     public int MaxScreenY { get; set; }
     public float PosX { get; set; }
     public float PosY { get; set; }
+
     /// <summary>
-    /// Rotation value for "entities" entities
+    ///     Rotation value for "entities" entities
     /// </summary>
-    public int EditRotateValue { get; set; }
+    public float EditRotateValue { get; set; }
 
     public string? NoteText { get; set; }
     public int? Z { get; set; }
     public float? EditStretchValue { get; set; }
     [JsonProperty("colourName")] public string? ColorName { get; set; }
-    
-    
+
+
     // Specific from entitiesB
     /// <summary>
-    /// Rotation value for "entitiesB" entities
+    ///     Rotation value for "entitiesB" entities
     /// </summary>
-    [JsonProperty("rx")] public int? RotationX { get; set; }
+    [JsonProperty("rx")]
+    public float? RotationX { get; set; }
+
     [JsonProperty("w")] public float? Width { get; set; }
     [JsonProperty("h")] public float? Height { get; set; }
     public bool? IsNote { get; set; }

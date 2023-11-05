@@ -1,4 +1,3 @@
-using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Responses.Users;
 using SoundShapesServer.Types.Levels;
@@ -35,7 +34,7 @@ public class ApiLevelBriefResponse : IApiResponse, IDataConvertableFrom<ApiLevel
             Queues = old.Queues.Count(),
             Difficulty = old.Difficulty,
             Visibility = old.Visibility,
-            CampaignLevel = LevelHelper.OfflineLevelIds.Contains(old.Id)
+            CampaignLevel = old.CampaignLevel
         };
     }
 

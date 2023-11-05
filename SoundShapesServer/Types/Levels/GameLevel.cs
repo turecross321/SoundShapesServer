@@ -41,6 +41,7 @@ public class GameLevel : RealmObject
     public string? SoundFilePath { get; set; }
     public DateTimeOffset CreationDate { get; init; }
     public DateTimeOffset ModificationDate { get; set; }
+    public bool CampaignLevel { get; set; }
     public long FileSize { get; set; }
     public float Difficulty { get; set; }
     public int Bpm { get; set; }

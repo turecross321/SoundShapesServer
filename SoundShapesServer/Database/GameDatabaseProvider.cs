@@ -21,7 +21,7 @@ namespace SoundShapesServer.Database;
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
     private readonly string DataStorePath = Path.Combine(BunkumFileSystem.DataDirectory, "dataStore");
-    protected override ulong SchemaVersion => 83;
+    protected override ulong SchemaVersion => 84;
 
     protected override List<Type> SchemaTypes => new()
     {
@@ -68,14 +68,6 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
             if (oldVersion < 42) newUser.EventsCount = newUser.Events.Count();
 
             if (oldVersion < 46) newUser.Email = newUser.Email?.ToLower();
-        }
-
-        foreach (string offlineLevelId in LevelHelper.OfflineLevelIds)
-        {
-            GameLevel level = migration.NewRealm.All<GameLevel>().First(l => l.Id == offlineLevelId);
-            if (oldVersion < 56)
-                // Change the Visibility of offline levels to Unlisted instead of Private
-                level.Visibility = LevelVisibility.Unlisted;
         }
 
         IQueryable<dynamic> oldLevels = migration.OldRealm.DynamicApi.All("GameLevel");

@@ -51,31 +51,4 @@ public static class LevelHelper
     {
         return name[..Math.Min(name.Length, LevelNameCharacterLimit)];
     }
-
-    public static readonly List<string> OfflineLevelIds = new()
-    {
-        "vic1_ver2",
-        "vic2",
-        "vic3",
-        "vic4_master",
-        "craig1",
-        "craig2",
-        "craig3",
-        "craig4",
-        "colinIce",
-        "colinDesert",
-        "colinFactory",
-        "colinUnderwater",
-        "colinUFO",
-        "pixeljam1",
-        "pixeljam2",
-        "pixeljam3",
-        "pixeljam4",
-        "beckCities",
-        "beckThePeople",
-        "beckSpiralStaircase",
-        "carTutorial",
-        "carDLC",
-        "carDLC_metal"
-    };
 }

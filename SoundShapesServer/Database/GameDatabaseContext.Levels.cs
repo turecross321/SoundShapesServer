@@ -18,7 +18,7 @@ namespace SoundShapesServer.Database;
 public partial class GameDatabaseContext
 {
     public GameLevel CreateLevel(GameUser user, PublishLevelRequest request, PlatformType uploadPlatform,
-        bool createEvent = true, string? levelId = null)
+        bool createEvent = true, string? levelId = null, bool campaignLevel = false)
     {
         levelId ??= GenerateLevelId();
         GameLevel level = new()
@@ -86,13 +86,16 @@ public partial class GameDatabaseContext
             level.TransposeValue = ssLevel.TransposeValue;
             level._Scale = ssLevel.ScaleIndex;
             level.TotalScreens = ssLevel.ScreenData.Count();
-            level.TotalEntities = ssLevel.Entities.Count() + ssLevel.EntitiesB.Count();
-            level.HasCar = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_CarCheckpoint");
-            level.HasExplodingCar = ssLevel.EntitiesB.Any(e =>
-                e.EntityType == "Platformer_EntityPacks_GameStuff_ExplodingCarCheckpoint");
-            level.HasUfo = ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_UFOCheckpoint");
+            level.TotalEntities = ssLevel.Entities.Count() + ssLevel.EntitiesB?.Count() ?? 0;
+            level.HasCar =
+                ssLevel.EntitiesB?.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_CarCheckpoint") ?? false;
+            level.HasExplodingCar = ssLevel.EntitiesB?.Any(e =>
+                e.EntityType == "Platformer_EntityPacks_GameStuff_ExplodingCarCheckpoint") ?? false;
+            level.HasUfo =
+                ssLevel.EntitiesB?.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_UFOCheckpoint") ?? false;
             level.HasFirefly =
-                ssLevel.EntitiesB.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_FireflyCheckpoint");
+                ssLevel.EntitiesB?.Any(e => e.EntityType == "Platformer_EntityPacks_GameStuff_FireflyCheckpoint") ??
+                false;
         });
 
         return true;
