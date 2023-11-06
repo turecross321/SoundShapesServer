@@ -12,5 +12,5 @@ public class ApiPunishRequest
     public string UserId { get; set; }
     public PunishmentType PunishmentType { get; set; }
     public string Reason { get; set; }
-    public long ExpiryDate { get; set; }
+    public DateTimeOffset ExpiryDate { get; set; }
 }

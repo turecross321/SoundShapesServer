@@ -40,8 +40,8 @@ public class LeaderboardEndpoints : EndpointGroup
 
         LeaderboardSubmissionRequest deSerializedRequest = LeaderboardSubmissionRequest.DeSerializeSubmission(body);
 
-
-        if (deSerializedRequest.Completed) database.AddCompletionToLevel(user, level);
+        if (deSerializedRequest.Completed)
+            database.AddCompletionToLevel(user, level);
         database.CreatePlay(user, level);
         database.AddDeathsToLevel(user, level, deSerializedRequest.Deaths);
         database.SetLevelDifficulty(level);

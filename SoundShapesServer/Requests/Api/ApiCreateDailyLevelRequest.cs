@@ -5,5 +5,5 @@ namespace SoundShapesServer.Requests.Api;
 public class ApiCreateDailyLevelRequest
 {
     public string LevelId { get; set; }
-    public long Date { get; set; }
+    public DateTimeOffset Date { get; set; }
 }

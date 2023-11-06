@@ -28,9 +28,9 @@ public class PaginatedList<TObject> where TObject : class
     {
     }
 
-    public IEnumerable<TObject> Items { get; set; }
-    public int TotalItems { get; set; }
-    public int From { get; set; }
+    public IEnumerable<TObject> Items { get; init; }
+    public int TotalItems { get; init; }
+    public int From { get; init; }
 
     public static PaginatedList<TNewObject> SwapItems<TNewObject, TOldObject>(PaginatedList<TOldObject> oldList,
         IEnumerable<TNewObject> newItems)

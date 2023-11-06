@@ -13,14 +13,14 @@ public class GameLevel : RealmObject
     [PrimaryKey] [Required] public required string Id { get; init; }
     public required GameUser Author { get; init; }
     public required string Name { get; set; }
-    public int Language { get; init; }
+    public int Language { get; set; }
 
     // Realm can't store enums, use recommended workaround
     // ReSharper disable once InconsistentNaming (can't fix due to conflict with PunishmentType)
     // ReSharper disable once MemberCanBePrivate.Global
     internal int _Visibility { get; set; }
 
-    public LevelVisibility Visibility
+    public required LevelVisibility Visibility
     {
         get => (LevelVisibility)_Visibility;
         set => _Visibility = (int)value;
@@ -30,7 +30,7 @@ public class GameLevel : RealmObject
     // ReSharper disable once MemberCanBePrivate.Global
     internal int _UploadPlatform { get; set; }
 
-    public PlatformType UploadPlatform
+    public required PlatformType UploadPlatform
     {
         get => (PlatformType)_UploadPlatform;
         set => _UploadPlatform = (int)value;
@@ -39,8 +39,8 @@ public class GameLevel : RealmObject
     public string? LevelFilePath { get; set; }
     public string? ThumbnailFilePath { get; set; }
     public string? SoundFilePath { get; set; }
-    public DateTimeOffset CreationDate { get; init; }
-    public DateTimeOffset ModificationDate { get; set; }
+    public required DateTimeOffset CreationDate { get; set; }
+    public required DateTimeOffset ModificationDate { get; set; }
     public bool CampaignLevel { get; set; }
     public long FileSize { get; set; }
     public float Difficulty { get; set; }

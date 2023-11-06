@@ -8,8 +8,8 @@ namespace SoundShapesServer.Responses.Api.Responses;
 
 public class ApiLoginResponse : IApiResponse, IDataConvertableFrom<ApiLoginResponse, GameToken>
 {
-    public required ApiTokenResponse AccessToken { get; set; }
-    public required ApiTokenResponse? RefreshToken { get; set; }
+    public required ApiTokenResponse AccessToken { get; init; }
+    public required ApiTokenResponse? RefreshToken { get; init; }
     public required ApiUserBriefResponse User { get; set; }
     public required IEnumerable<ApiPunishmentResponse> ActivePunishments { get; set; }
 

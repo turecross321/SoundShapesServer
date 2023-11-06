@@ -8,10 +8,10 @@ public class SSLevelEntity
 {
     [JsonProperty("entType")] public string EntityType { get; set; } = null!;
     public int Uid { get; set; }
-    public int MinScreenX { get; set; }
-    public int MinScreenY { get; set; }
-    public int MaxScreenX { get; set; }
-    public int MaxScreenY { get; set; }
+    public double MinScreenX { get; set; }
+    public double MinScreenY { get; set; }
+    public double MaxScreenX { get; set; }
+    public double MaxScreenY { get; set; }
     public float PosX { get; set; }
     public float PosY { get; set; }
 

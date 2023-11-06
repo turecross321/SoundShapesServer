@@ -28,7 +28,7 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
             return ApiNotFoundError.LevelNotFound;
 
         DailyLevel createdDailyLevel =
-            database.CreateDailyLevel(user, level, DateTimeOffset.FromUnixTimeSeconds(body.Date));
+            database.CreateDailyLevel(user, level, body.Date);
         return ApiDailyLevelResponse.FromOld(createdDailyLevel);
     }
 
@@ -49,7 +49,7 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
         if (level == null) return ApiNotFoundError.LevelNotFound;
 
         DailyLevel createdDailyLevel =
-            database.EditDailyLevel(dailyLevel, user, level, DateTimeOffset.FromUnixTimeSeconds(body.Date));
+            database.EditDailyLevel(dailyLevel, user, level, body.Date);
         return ApiDailyLevelResponse.FromOld(createdDailyLevel);
     }
 

@@ -6,8 +6,8 @@ using Bunkum.ProfanityFilter;
 using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Requests.Api;
-using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Responses.Api.Responses.Levels;
@@ -25,9 +25,21 @@ public class ApiLevelManagementEndpoints : EndpointGroup
     public ApiResponse<ApiLevelFullResponse> CreateLevel(RequestContext context, GameDatabaseContext database,
         GameUser user, ApiCreateLevelRequest body, ProfanityService profanity)
     {
-        body.Name = profanity.CensorSentence(body.Name); // Censor any potential profanity
-        GameLevel publishedLevel = database.CreateLevel(user, new PublishLevelRequest(body), PlatformType.Unknown);
-        return ApiLevelFullResponse.FromOld(publishedLevel);
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        GameLevel level = new()
+        {
+            Id = IdHelper.GenerateLevelId(),
+            Name = profanity.CensorSentence(body.Name),
+            Language = body.Language,
+            CreationDate = body.CreationDate ?? now,
+            ModificationDate = body.CreationDate ?? now,
+            Author = user,
+            Visibility = body.Visibility,
+            UploadPlatform = PlatformType.Unknown
+        };
+
+        database.AddLevel(level, true);
+        return ApiLevelFullResponse.FromOld(level);
     }
 
     [ApiEndpoint("levels/id/{id}/setLevel", HttpMethods.Post)]
@@ -95,9 +107,9 @@ public class ApiLevelManagementEndpoints : EndpointGroup
             if (user.PermissionsType < PermissionsType.Moderator)
                 return ApiUnauthorizedError.NoEditPermission;
 
-        body.Name = profanity.CensorSentence(body.Name); // Censor any potential profanity
-        GameLevel publishedLevel = database.EditLevel(new PublishLevelRequest(body), level);
-        return ApiLevelFullResponse.FromOld(publishedLevel);
+
+        level = database.EditLevel(level, profanity.CensorSentence(body.Name), body.Language, body.Visibility);
+        return ApiLevelFullResponse.FromOld(level);
     }
 
     [ApiEndpoint("levels/id/{id}", HttpMethods.Delete)]

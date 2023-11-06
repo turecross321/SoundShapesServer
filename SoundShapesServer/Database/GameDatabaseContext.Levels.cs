@@ -1,7 +1,6 @@
 using Bunkum.Core.Storage;
 using SoundShapesServer.Extensions;
 using SoundShapesServer.Extensions.Queryable;
-using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Types;
@@ -17,42 +16,30 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public GameLevel CreateLevel(GameUser user, PublishLevelRequest request, PlatformType uploadPlatform,
-        bool createEvent = true, string? levelId = null, bool campaignLevel = false)
+    public void AddLevel(GameLevel level, bool createEvent)
     {
-        levelId ??= GenerateLevelId();
-        GameLevel level = new()
-        {
-            Id = levelId,
-            Author = user,
-            Name = request.Name,
-            Language = request.Language,
-            CreationDate = request.CreationDate,
-            ModificationDate = request.CreationDate,
-            FileSize = request.FileSize,
-            Visibility = LevelVisibility.Public,
-            UploadPlatform = uploadPlatform
-        };
+        GameUser author = level.Author;
 
         _realm.Write(() =>
         {
             _realm.Add(level);
-            user.LevelsCount = user.Levels.Count();
+            author.LevelsCount = author.Levels.Count();
         });
 
         if (createEvent)
-            CreateEvent(user, EventType.LevelPublish, uploadPlatform, EventDataType.Level, level.Id);
-
-        return level;
+            CreateEvent(author, EventType.LevelPublish, level.UploadPlatform, EventDataType.Level, level.Id);
     }
 
-    public GameLevel EditLevel(PublishLevelRequest updatedPublishLevel, GameLevel level)
+    public GameLevel EditLevel(GameLevel level, string name, int? language = null, LevelVisibility? visibility = null,
+        DateTimeOffset? creationDate = null)
     {
         _realm.Write(() =>
         {
-            level.Name = AdhereToLevelNameCharacterLimit(updatedPublishLevel.Name);
-            level.Visibility = updatedPublishLevel.Visibility;
-            level.ModificationDate = DateTimeOffset.UtcNow;
+            level.Name = AdhereToLevelNameCharacterLimit(name);
+            level.Language = language ?? level.Language;
+            level.Visibility = visibility ?? level.Visibility;
+            level.CreationDate = creationDate ?? level.CreationDate;
+            level.ModificationDate = creationDate ?? DateTimeOffset.UtcNow;
         });
 
         return level;
@@ -63,14 +50,6 @@ public partial class GameDatabaseContext
         long totalPlayTime = level.LeaderboardEntries.AsEnumerable().Sum(e => e.PlayTime);
 
         _realm.Write(() => { level.TotalPlayTime = totalPlayTime; });
-    }
-
-    public void UploadLevelResources(IDataStore dataStore, GameLevel level, byte[] levelFile, byte[] thumbnailFile,
-        byte[] soundFile)
-    {
-        UploadLevelResource(dataStore, level, levelFile, FileType.Level);
-        UploadLevelResource(dataStore, level, thumbnailFile, FileType.Image);
-        UploadLevelResource(dataStore, level, soundFile, FileType.Sound);
     }
 
     public bool AnalyzeLevel(GameLevel level, byte[] levelFile)

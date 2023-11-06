@@ -4,20 +4,7 @@ namespace SoundShapesServer.Helpers;
 
 public static class LevelHelper
 {
-    private const string LevelIdCharacters = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private const int LevelIdLength = 8;
-    
-    public static string GenerateLevelId()
-    {
-        Random r = new();
-        string levelId = "";
-        for (int i = 0; i < LevelIdLength; i++)
-        {
-            levelId += LevelIdCharacters[r.Next(LevelIdCharacters.Length - 1)];
-        }
-
-        return levelId;
-    }
+    private const int LevelNameCharacterLimit = 26;
 
     public static float CalculateLevelDifficulty(GameLevel level)
     {
@@ -25,9 +12,9 @@ public static class LevelHelper
         // which is used for sorting levels by difficulty.
 
         if (level.TotalDeaths == 0 || level.CompletionCount == 0) return 0;
-        
+
         float averageAmountOfDeaths = (float)level.TotalDeaths / level.CompletionCount;
-        
+
         switch (averageAmountOfDeaths)
         {
             case >= 30:
@@ -38,15 +25,11 @@ public static class LevelHelper
                 return averageAmountOfDeaths / 3.3f;
         }
 
-        if (averageAmountOfDeaths >= 2.5)
-        {
-            return averageAmountOfDeaths / 2.5f;
-        }
+        if (averageAmountOfDeaths >= 2.5) return averageAmountOfDeaths / 2.5f;
 
         return 0;
     }
 
-    private const int LevelNameCharacterLimit = 26;
     public static string AdhereToLevelNameCharacterLimit(string name)
     {
         return name[..Math.Min(name.Length, LevelNameCharacterLimit)];

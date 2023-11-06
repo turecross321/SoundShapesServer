@@ -9,7 +9,7 @@ using HttpMultipartParser;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
 using SoundShapesServer.Extensions;
-using SoundShapesServer.Requests.Game;
+using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Levels;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Authentication;
@@ -22,52 +22,68 @@ namespace SoundShapesServer.Endpoints.Game.Levels;
 public class LevelManagementEndpoints : EndpointGroup
 {
     // Gets called by Endpoints.cs
-    public static Response CreateLevel(RequestContext context, GameServerConfig config, IDataStore dataStore, ProfanityService profanity, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user, GameToken token)
+    public static Response CreateLevel(RequestContext context, GameServerConfig config, IDataStore dataStore,
+        ProfanityService profanity, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user,
+        GameToken token)
     {
-        if (user.Levels.Count() >= config.LevelPublishLimit) return HttpStatusCode.Forbidden;
+        if (user.Levels.Count() >= config.LevelPublishLimit)
+            return HttpStatusCode.Forbidden;
 
-        PublishLevelRequest publishLevelRequest = new (
-            parser.GetParameterValue("title"), 
-            int.Parse(parser.GetParameterValue("sce_np_language")));
-        
-        publishLevelRequest.Name = profanity.CensorSentence(publishLevelRequest.Name); // Censor any potential profanity
-        GameLevel publishedLevel = database.CreateLevel(user, publishLevelRequest, token.PlatformType);
-        
-        Response uploadedResources = UploadLevelResources(context, database, dataStore, parser, publishedLevel, user);
-        if (uploadedResources.StatusCode != HttpStatusCode.Created) return uploadedResources;
-        
-        return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
+        string name = parser.GetParameterValue("title");
+        int language = int.Parse(parser.GetParameterValue("sce_np_language"));
+
+        DateTimeOffset now = DateTimeOffset.UtcNow;
+        GameLevel level = new()
+        {
+            Id = IdHelper.GenerateLevelId(),
+            Author = user,
+            Name = profanity.CensorSentence(name),
+            Language = language,
+            Visibility = LevelVisibility.Public,
+            UploadPlatform = token.PlatformType,
+            CreationDate = now,
+            ModificationDate = now
+        };
+
+        database.AddLevel(level, true);
+
+        Response uploadedResources = UploadLevelResources(context, database, dataStore, parser, level, user);
+        if (uploadedResources.StatusCode != HttpStatusCode.Created)
+            return uploadedResources;
+
+        return new Response(new LevelPublishResponse(level), ContentType.Json, HttpStatusCode.Created);
     }
-    
+
     // Gets called by Endpoints.cs
-    public static Response UpdateLevel(RequestContext context, IDataStore dataStore, ProfanityService profanity, MultipartFormDataParser parser, GameDatabaseContext database, GameUser user, string levelId)
+    public static Response UpdateLevel(RequestContext context, IDataStore dataStore, ProfanityService profanity,
+        MultipartFormDataParser parser, GameDatabaseContext database, GameUser user, string levelId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);
 
         if (level == null) return HttpStatusCode.NotFound;
         if (level.Author.Id != user.Id) return HttpStatusCode.Forbidden;
 
-        PublishLevelRequest publishLevelRequest = new (
-            parser.GetParameterValue("title"), 
-            int.Parse(parser.GetParameterValue("sce_np_language")));
+        string name = parser.GetParameterValue("title");
+        int language = int.Parse(parser.GetParameterValue("sce_np_language"));
+
+        level = database.EditLevel(level, name, language);
         
-        publishLevelRequest.Name = profanity.CensorSentence(publishLevelRequest.Name); // Censor any potential profanity
-        GameLevel publishedLevel = database.EditLevel(publishLevelRequest, level);
-        
-        Response uploadedResources = UploadLevelResources(context, database, dataStore, parser, publishedLevel, user);
-        if (uploadedResources.StatusCode != HttpStatusCode.Created) return uploadedResources;
-        
-        return new Response(new LevelPublishResponse(publishedLevel), ContentType.Json, HttpStatusCode.Created);
+        Response uploadedResources = UploadLevelResources(context, database, dataStore, parser, level, user);
+        if (uploadedResources.StatusCode != HttpStatusCode.Created)
+            return uploadedResources;
+
+        return new Response(new LevelPublishResponse(level), ContentType.Json, HttpStatusCode.Created);
     }
 
 
-    private static Response UploadLevelResources(RequestContext context, GameDatabaseContext database, IDataStore dataStore, 
+    private static Response UploadLevelResources(RequestContext context, GameDatabaseContext database,
+        IDataStore dataStore,
         IMultipartFormDataParser parser, GameLevel level, GameUser user)
     {
         byte[]? levelFile = null;
         byte[]? thumbnailFile = null;
         byte[]? soundFile = null;
-        
+
         foreach (FilePart? file in parser.Files)
         {
             byte[] bytes = file.ToByteArray();
@@ -86,7 +102,8 @@ public class LevelManagementEndpoints : EndpointGroup
                     break;
                 case FileType.Unknown:
                 default:
-                    context.Logger.LogInfo(BunkumCategory.Filter, user.Username + " attempted to upload an illegal file: " + file.ContentType);
+                    context.Logger.LogInfo(BunkumCategory.Filter,
+                        user.Username + " attempted to upload an illegal file: " + file.ContentType);
                     return HttpStatusCode.BadRequest;
             }
         }
@@ -96,17 +113,21 @@ public class LevelManagementEndpoints : EndpointGroup
             context.Logger.LogInfo(BunkumCategory.Filter, user.Username + " did not upload all the required files.");
             return HttpStatusCode.BadRequest;
         }
-
-        database.UploadLevelResources(dataStore, level, levelFile, thumbnailFile, soundFile);
+        
+        
+        database.UploadLevelResource(dataStore, level, levelFile, FileType.Level);
+        database.UploadLevelResource(dataStore, level, thumbnailFile, FileType.Image);
+        database.UploadLevelResource(dataStore, level, soundFile, FileType.Sound);
 
         return HttpStatusCode.Created;
     }
-    
+
     // Gets called by Endpoints.cs
-    public static Response RemoveLevel(IDataStore dataStore, GameDatabaseContext database, GameUser user, GameLevel level)
+    public static Response RemoveLevel(IDataStore dataStore, GameDatabaseContext database, GameUser user,
+        GameLevel level)
     {
         if (level.Author.Id != user.Id) return new Response(HttpStatusCode.Forbidden);
-        
+
         database.RemoveLevel(level, dataStore);
 
         return HttpStatusCode.OK;

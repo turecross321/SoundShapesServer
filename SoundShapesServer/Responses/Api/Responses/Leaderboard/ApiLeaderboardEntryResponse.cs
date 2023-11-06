@@ -3,7 +3,7 @@ using SoundShapesServer.Responses.Api.Responses.Users;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Leaderboard;
 
-namespace SoundShapesServer.Responses.Api.Responses;
+namespace SoundShapesServer.Responses.Api.Responses.Leaderboard;
 
 public class ApiLeaderboardEntryResponse : IApiResponse
 {

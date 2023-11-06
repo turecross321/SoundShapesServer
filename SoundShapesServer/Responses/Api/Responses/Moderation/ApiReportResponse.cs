@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using SoundShapesServer.Responses.Api.Framework;
+using SoundShapesServer.Responses.Api.Responses.Leaderboard;
 using SoundShapesServer.Responses.Api.Responses.Levels;
 using SoundShapesServer.Responses.Api.Responses.Users;
 using SoundShapesServer.Types.Leaderboard;

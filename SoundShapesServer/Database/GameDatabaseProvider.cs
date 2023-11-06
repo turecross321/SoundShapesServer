@@ -204,7 +204,10 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                         Author = adminUser,
                         Id = levelId,
                         Name = levelId,
-                        Visibility = LevelVisibility.Private
+                        Visibility = LevelVisibility.Private,
+                        UploadPlatform = PlatformType.Unknown,
+                        CreationDate = default,
+                        ModificationDate = default
                     };
                     migration.NewRealm.Add(level);
                 }

@@ -12,27 +12,25 @@ public partial class GameDatabaseContext
     public Punishment CreatePunishment(GameUser author, GameUser recipient, ApiPunishRequest request)
     {
         DateTimeOffset now = DateTimeOffset.UtcNow;
-        
+
         Punishment newPunishment = new()
         {
             PunishmentType = request.PunishmentType,
             Recipient = recipient,
             Reason = request.Reason,
-            ExpiryDate = DateTimeOffset.FromUnixTimeSeconds(request.ExpiryDate),
+            ExpiryDate = request.ExpiryDate,
             CreationDate = now,
             ModificationDate = now,
             Author = author
         };
-        
-        _realm.Write(() =>
-        {
-            _realm.Add(newPunishment);
-        });
+
+        _realm.Write(() => { _realm.Add(newPunishment); });
 
         return newPunishment;
     }
 
-    public Punishment EditPunishment(GameUser author, Punishment punishment, GameUser recipient, ApiPunishRequest request)
+    public Punishment EditPunishment(GameUser author, Punishment punishment, GameUser recipient,
+        ApiPunishRequest request)
     {
         _realm.Write(() =>
         {
@@ -40,7 +38,7 @@ public partial class GameDatabaseContext
             punishment.Recipient = recipient;
             punishment.PunishmentType = request.PunishmentType;
             punishment.Reason = request.Reason;
-            punishment.ExpiryDate = DateTimeOffset.FromUnixTimeSeconds(request.ExpiryDate);
+            punishment.ExpiryDate = request.ExpiryDate;
             punishment.ModificationDate = DateTimeOffset.UtcNow;
         });
 
@@ -55,17 +53,19 @@ public partial class GameDatabaseContext
             punishment.RevokeDate = DateTimeOffset.UtcNow;
         });
     }
-    
+
     public Punishment? GetPunishmentWithId(string id)
     {
-        if (!ObjectId.TryParse(id, out ObjectId objectId)) 
+        if (!ObjectId.TryParse(id, out ObjectId objectId))
             return null;
-        
+
         return _realm.All<Punishment>().FirstOrDefault(p => p.Id == objectId);
     }
-    
-    public PaginatedList<Punishment> GetPaginatedPunishments(PunishmentOrderType order, bool descending, PunishmentFilters filters, int from, int count)
+
+    public PaginatedList<Punishment> GetPaginatedPunishments(PunishmentOrderType order, bool descending,
+        PunishmentFilters filters, int from, int count)
     {
-        return new PaginatedList<Punishment>(_realm.All<Punishment>().FilterPunishments(filters).OrderPunishments(order, descending), from, count);
+        return new PaginatedList<Punishment>(
+            _realm.All<Punishment>().FilterPunishments(filters).OrderPunishments(order, descending), from, count);
     }
 }

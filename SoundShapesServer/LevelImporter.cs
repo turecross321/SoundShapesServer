@@ -2,10 +2,9 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Bunkum.Core.Storage;
 using SoundShapesServer.Database;
-using SoundShapesServer.Requests.Game;
 using SoundShapesServer.Types;
-using SoundShapesServer.Types.LevelImporting;
 using SoundShapesServer.Types.Levels;
+using SoundShapesServer.Types.Levels.Importing;
 using SoundShapesServer.Types.Users;
 using static SoundShapesServer.Helpers.ResourceHelper;
 
@@ -34,7 +33,7 @@ public static class LevelImporter
 
         foreach (ImportLevelInformation info in informationList)
         {
-            ImportLevelData? data = LoadImportData(info);
+            ImportLevelData? data = LoadLevelDependencies(info);
             if (data == null)
                 continue;
 
@@ -67,9 +66,10 @@ public static class LevelImporter
         GameUser adminUser = database.GetAdminUser();
 
         List<ImportLevelInformation> informationList = GetCommunityLevelsInDirectory(path);
-        foreach (ImportLevelInformation info in informationList)
+        for (int i = 0; i < informationList.Count; i++)
         {
-            ImportLevelData? data = LoadImportData(info);
+            ImportLevelInformation info = informationList[i];
+            ImportLevelData? data = LoadLevelDependencies(info);
             if (data == null)
                 continue;
 
@@ -89,124 +89,48 @@ public static class LevelImporter
         Console.WriteLine($"Finished importing community levels. ({stopwatch.Elapsed})");
     }
 
-    private static ImportLevelData? LoadImportData(ImportLevelInformation info)
+    private static ImportLevelData? LoadLevelDependencies(ImportLevelInformation info)
     {
         bool missingRequiredPath =
             string.IsNullOrEmpty(info.LevelFilePath) || string.IsNullOrEmpty(info.ThumbnailFilePath);
 
-        if (missingRequiredPath || !File.Exists(info.LevelFilePath) || !File.Exists(info.ThumbnailFilePath))
+        if (!info.UploadIfMissingFiles && (missingRequiredPath || !File.Exists(info.LevelFilePath) ||
+                                           !File.Exists(info.ThumbnailFilePath)))
         {
             Console.WriteLine(
                 $"{info.Name ?? "Level"} doesn't have all required files. It must have a level file and an image / thumbnail file. Skipping...");
             return null;
         }
 
-        byte[] levelBytes = File.ReadAllBytes(info.LevelFilePath);
+        byte[]? levelBytes = null;
+        DateTimeOffset lastWriteDate = default;
+        if (File.Exists(info.LevelFilePath))
+        {
+            levelBytes = File.ReadAllBytes(info.LevelFilePath);
+            File.GetLastWriteTimeUtc(info.LevelFilePath);
+        }
 
-        if (levelBytes.Length < 300)
+        if (levelBytes is { Length: < 300 })
         {
             Console.WriteLine(info.LevelFilePath + " is less than 300 bytes. Skipping...");
             return null;
         }
 
+        byte[]? thumbnailBytes = null;
+        if (File.Exists(info.ThumbnailFilePath))
+            thumbnailBytes = File.ReadAllBytes(info.ThumbnailFilePath);
+
+        byte[]? soundBytes = null;
         ImportLevelData level = new()
         {
-            CreationDate = File.GetLastWriteTimeUtc(info.LevelFilePath),
-            Thumbnail = File.ReadAllBytes(info.ThumbnailFilePath),
-            LevelFile = levelBytes
+            LevelWriteDate = lastWriteDate,
+            LevelFile = levelBytes,
+            Thumbnail = thumbnailBytes,
+            SoundFile = soundBytes
         };
-
-        if (info.SoundFilePath != null && File.Exists(info.SoundFilePath))
-            level.SoundFile = File.ReadAllBytes(info.SoundFilePath);
 
         return level;
     }
-
-    private static bool UploadLevel(ImportLevelInformation info, ImportLevelData data, GameDatabaseContext database,
-        IDataStore dataStore,
-        GameUser adminUser, bool overwrite)
-    {
-        PublishLevelRequest request = new(info.Name ?? $"Imported Level ({info.Id})", 0);
-
-        request.CreationDate = !info.CampaignLevel ? data.CreationDate : new DateTimeOffset();
-
-        GameLevel? levelWithSameId = database.GetLevelWithId(info.Id);
-        if (levelWithSameId != null)
-        {
-            if (!overwrite)
-            {
-                Console.WriteLine($"There is already a level with the id: {info.Id}. Skipping...");
-                return false;
-            }
-
-            Console.WriteLine($"{info.Id} has already been imported. Overwriting...");
-            // TODO: NO NO.... NOT GOOD.
-            // TODO: ALSO. DATES STILL FUCKED
-            database.RemoveLevel(levelWithSameId, dataStore);
-        }
-
-        GameLevel publishedLevel =
-            database.CreateLevel(adminUser, request, PlatformType.Unknown, false, info.Id, info.CampaignLevel);
-        database.UploadLevelResources(dataStore, publishedLevel, data.LevelFile, data.Thumbnail, data.SoundFile);
-        Console.WriteLine($"Successfully imported {publishedLevel.Id}.");
-        return true;
-    }
-
-    #region Campaign Levels
-
-    private static List<ImportLevelInformation> GetLevelsFromRecordList(string recordListPath, string resourcesPath)
-    {
-        List<ImportLevelInformation> levels = new();
-
-        string recordListScript = File.ReadAllText(recordListPath);
-
-        string recordListGlobalName = "campaignList = {";
-        int startIndex = recordListScript.IndexOf(recordListGlobalName, StringComparison.Ordinal);
-
-        if (startIndex == -1)
-            throw new Exception($"campaignList could not be found in {recordListPath}");
-
-        string recordList = recordListScript.Substring(startIndex + recordListGlobalName.Length).Split("};").First();
-        // Use regex to remove all comments.
-        recordList = Regex.Replace(recordList, @"/\*(.|\n)*?\*/", string.Empty);
-
-        List<string> records = recordList.Split("recordName").ToList();
-        // First element won't be a record, but rather stuff before it, so remove it.
-        records.RemoveAt(0);
-
-        foreach (string record in records)
-        {
-            // ReSharper disable once CommentTypo
-            // Remove "bsides" levels (aka. trophy levels).
-            // These don't have any server interaction, so there's no reason to import them
-            string filtered = record.Split("bsides").First();
-
-            List<string> tracks = filtered.Split("trackName").ToList();
-            // First element won't be a track, but rather stuff before the first it, so remove it.
-            tracks.RemoveAt(0);
-            foreach (string track in tracks)
-            {
-                string[] rows = ("trackName" + track).Split("\n");
-                string? name = rows.FirstOrDefault(r => r.Contains("trackName ="))?.Split("\"")[1];
-                string? baseFileName = rows.FirstOrDefault(r => r.Contains("baseFilename ="))?.Split("\"")[1];
-
-                if (name == null || baseFileName == null)
-                    continue;
-
-                levels.Add(new ImportLevelInformation
-                {
-                    Name = name,
-                    Id = baseFileName,
-                    LevelFilePath = Path.Combine(resourcesPath, baseFileName + ".json.z"),
-                    ThumbnailFilePath = Path.Combine(resourcesPath, baseFileName + ".png")
-                });
-            }
-        }
-
-        return levels;
-    }
-
-    #endregion
 
     #region Community Levels
 
@@ -214,6 +138,7 @@ public static class LevelImporter
     {
         List<ImportLevelInformation> list = new();
 
+        Console.WriteLine("Beginning to scan community import directory...");
         string[] files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
         foreach (string filePath in files)
         {
@@ -236,7 +161,12 @@ public static class LevelImporter
             ImportLevelInformation? info = list.FirstOrDefault(i => i.Id == identifier);
             if (info == null)
             {
-                list.Add(new ImportLevelInformation());
+                list.Add(new ImportLevelInformation
+                {
+                    Id = identifier,
+                    CampaignLevel = false,
+                    UploadIfMissingFiles = false
+                });
                 info = list.First(e => e.Id == identifier);
             }
 
@@ -253,6 +183,8 @@ public static class LevelImporter
                     info.SoundFilePath = filePath;
                     break;
             }
+
+            Console.WriteLine($"Added {filePath} to import queue");
         }
 
         return list;
@@ -274,4 +206,154 @@ public static class LevelImporter
         Directory.Delete(directoryPath, false);
         Console.WriteLine("Deleted empty directory: {0}", directoryPath);
     }
+
+    #region Campaign Levels
+
+    private static bool UploadLevel(ImportLevelInformation info, ImportLevelData data, GameDatabaseContext database,
+        IDataStore dataStore,
+        GameUser adminUser, bool overwrite)
+    {
+        string name = info.Name ?? $"Imported Level ({info.Id})";
+        DateTimeOffset date = !info.CampaignLevel ? data.LevelWriteDate : new DateTimeOffset();
+        LevelVisibility visibility = LevelVisibility.Public;
+
+        GameLevel? level = database.GetLevelWithId(info.Id);
+        if (level != null)
+        {
+            if (!overwrite)
+            {
+                Console.WriteLine($"There is already a level with the id: {info.Id}. Skipping...");
+                return false;
+            }
+
+            Console.WriteLine($"{info.Id} has already been imported. Editing metadata...");
+            database.EditLevel(level, name, 0, visibility, date);
+        }
+        else
+        {
+            level = new GameLevel
+            {
+                Id = info.Id,
+                Author = adminUser,
+                Name = name,
+                Visibility = visibility,
+                UploadPlatform = PlatformType.Unknown,
+                CreationDate = date,
+                ModificationDate = date
+            };
+
+            database.AddLevel(level, false);
+        }
+
+        if (data.LevelFile != null)
+            database.UploadLevelResource(dataStore, level, data.LevelFile, FileType.Level);
+        if (data.Thumbnail != null)
+            database.UploadLevelResource(dataStore, level, data.Thumbnail, FileType.Image);
+        if (data.SoundFile != null)
+            database.UploadLevelResource(dataStore, level, data.SoundFile, FileType.Sound);
+
+        Console.WriteLine($"Successfully imported {level.Id}.");
+        return true;
+    }
+
+    private static List<ImportLevelInformation> GetLevelsFromRecordList(string recordListPath, string resourcesPath)
+    {
+        Console.WriteLine("Beginning to scan campaign import directory...");
+
+        List<ImportLevelInformation> levels = new();
+
+        string recordListScript = File.ReadAllText(recordListPath);
+
+        const string recordListGlobalName = "campaignList = ";
+        int startIndex = recordListScript.IndexOf(recordListGlobalName, StringComparison.Ordinal);
+
+        if (startIndex == -1)
+            throw new Exception($"campaignList could not be found in {recordListPath}");
+
+        string recordList = recordListScript[(startIndex + recordListGlobalName.Length)..].Split("};").First();
+        // Remove all /* */ comments
+        recordList = Regex.Replace(recordList, @"/\*(.|\n)*?\*/", string.Empty);
+        // Remove all single line comments
+        recordList =
+            Regex.Replace(recordList, @"//.*$", string.Empty,
+                RegexOptions.Multiline); // Remove "//" and everything after it
+
+        List<string> records = GetChildrenElements(recordList);
+
+        foreach (string record in records)
+        {
+            // ReSharper disable once CommentTypo
+            // Remove "bsides" levels (aka. trophy levels).
+            // These don't have any server interaction, so there's no reason to import them
+            string filtered = record.Split("bsides").First();
+            List<string> elements = GetChildrenElements(filtered);
+            List<string> tracks = GetChildrenElements(elements.First());
+
+
+            foreach (string track in tracks)
+            {
+                string[] rows = ("trackName" + track).Split("\n");
+                string? name = rows.FirstOrDefault(r => r.Contains("trackName ="))?.Split("\"")[1];
+                string? baseFileName = rows.FirstOrDefault(r => r.Contains("baseFilename ="))?.Split("\"")[1];
+
+                if (name == null || baseFileName == null)
+                    continue;
+
+                levels.Add(new ImportLevelInformation
+                {
+                    Name = name,
+                    Id = baseFileName,
+                    LevelFilePath = Path.Combine(resourcesPath,
+                        baseFileName + ".json.z"),
+                    ThumbnailFilePath = Path.Combine(resourcesPath,
+                        baseFileName + ".png"),
+                    CampaignLevel = true,
+                    SoundFilePath = null,
+                    UploadIfMissingFiles = true
+                });
+
+                Console.WriteLine($"Added {name} to import queue)");
+            }
+        }
+
+        return levels;
+    }
+
+    private static List<string> GetChildrenElements(string input)
+    {
+        // Remove root {
+        int firstOpeningBracketIndex = input.IndexOf("{", StringComparison.Ordinal);
+        input = input.Substring(firstOpeningBracketIndex + 1);
+
+        List<int> openedBracketPositions = new();
+        List<string> elements = new();
+        for (int i = 0; i < input.Length; i++)
+        {
+            char character = input[i];
+            switch (character)
+            {
+                case '{':
+                    openedBracketPositions.Add(i);
+                    break;
+                case '}':
+                    if (openedBracketPositions.Count == 1)
+                    {
+                        int openingPosition = openedBracketPositions.First();
+                        int length = i - openingPosition + 1;
+                        elements.Add(input.Substring(openingPosition, length));
+                        openedBracketPositions.Remove(openedBracketPositions.First());
+                    }
+                    else if (openedBracketPositions.Any())
+                    {
+                        openedBracketPositions.RemoveAt(openedBracketPositions.Count - 1);
+                    }
+
+                    break;
+            }
+        }
+
+        return elements;
+    }
+
+    #endregion
 }

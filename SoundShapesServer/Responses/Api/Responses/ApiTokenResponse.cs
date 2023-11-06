@@ -5,7 +5,7 @@ namespace SoundShapesServer.Responses.Api.Responses;
 
 public class ApiTokenResponse : IApiResponse, IDataConvertableFrom<ApiTokenResponse, GameToken>
 {
-    public required string Id { get; set; }
+    public required string Id { get; init; }
     public required DateTimeOffset CreationDate { get; set; }
     public required DateTimeOffset ExpiryDate { get; set; }
 
