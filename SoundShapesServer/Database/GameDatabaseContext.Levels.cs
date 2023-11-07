@@ -31,7 +31,7 @@ public partial class GameDatabaseContext
     }
 
     public GameLevel EditLevel(GameLevel level, string name, int? language = null, LevelVisibility? visibility = null,
-        DateTimeOffset? creationDate = null)
+        DateTimeOffset? creationDate = null, bool? campaignLevel = null)
     {
         _realm.Write(() =>
         {
@@ -40,6 +40,7 @@ public partial class GameDatabaseContext
             level.Visibility = visibility ?? level.Visibility;
             level.CreationDate = creationDate ?? level.CreationDate;
             level.ModificationDate = creationDate ?? DateTimeOffset.UtcNow;
+            level.CampaignLevel = campaignLevel ?? level.CampaignLevel;
         });
 
         return level;

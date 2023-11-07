@@ -34,10 +34,10 @@ internal class CommandLineManager
         public string? CommunityLevelsImportPath { get; set; }
 
         [Option('I', "import_campaign_levels", Required = false,
-            HelpText = "Specify path to extracted psarc folder to import campaign levels from")]
+            HelpText = "Specify path to extracted PSARC folder to import campaign levels from")]
         public string? CampaignLevelImportPath { get; set; }
 
-        [Option('o', "import_overwrite", Required = false,
+        [Option('o', "overwrite", Required = false,
             HelpText = "Decide if already imported levels should be overwritten during import")]
         public bool? ImportOverwrite { get; set; }
     }

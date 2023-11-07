@@ -121,6 +121,9 @@ public static class LevelImporter
             thumbnailBytes = File.ReadAllBytes(info.ThumbnailFilePath);
 
         byte[]? soundBytes = null;
+        if (File.Exists(info.SoundFilePath))
+            soundBytes = File.ReadAllBytes(info.SoundFilePath);
+        
         ImportLevelData level = new()
         {
             LevelWriteDate = lastWriteDate,
@@ -227,7 +230,7 @@ public static class LevelImporter
             }
 
             Console.WriteLine($"{info.Id} has already been imported. Editing metadata...");
-            database.EditLevel(level, name, 0, visibility, date);
+            database.EditLevel(level, name, 0, visibility, date, info.CampaignLevel);
         }
         else
         {
@@ -239,7 +242,8 @@ public static class LevelImporter
                 Visibility = visibility,
                 UploadPlatform = PlatformType.Unknown,
                 CreationDate = date,
-                ModificationDate = date
+                ModificationDate = date,
+                CampaignLevel = info.CampaignLevel
             };
 
             database.AddLevel(level, false);
