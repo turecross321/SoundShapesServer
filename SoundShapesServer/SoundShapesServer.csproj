@@ -19,7 +19,7 @@
         <PackageReference Include="HtmlAgilityPack" Version="1.11.54"/>
         <PackageReference Include="HttpMultipartParser" Version="8.2.0"/>
         <PackageReference Include="NPTicket" Version="3.1.0"/>
-        <PackageReference Include="Realm" Version="11.5.0"/>
+        <PackageReference Include="Realm" Version="11.6.0"/>
         <PackageReference Include="SharpZipLib" Version="1.4.2"/>
     </ItemGroup>
 
