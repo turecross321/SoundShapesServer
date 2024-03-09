@@ -28,6 +28,9 @@ jobs:
       
     - name: Publish for Linux x64
       run: dotnet publish -c Release -r linux-x64 --self-contained SoundShapesServer
+
+    - name: Publish for Linux ARM64
+      run: dotnet publish -c Release -r linux-arm64 --self-contained SoundShapesServer
       
     - name: Publish for Windows x64
       run: dotnet publish -c Release -r win-x64 --self-contained SoundShapesServer
@@ -43,6 +46,9 @@ jobs:
         #repo: turecross321/soundshapes-web
         #if_no_artifact_found: fail
         #path: "SoundShapesServer/bin/Release/net7.0/linux-x64/publish/website"
+
+    #- name: Copy artifact to ARM64 directory
+      #run: cp -r "SoundShapesServer/bin/Release/net7.0/linux-x64/publish/website" "SoundShapesServer/bin/Release/net7.0/linux-arm64/publish/"
       
     #- name: Copy artifact to windows build directory
       #run: cp -r "SoundShapesServer/bin/Release/net7.0/linux-x64/publish/website" "SoundShapesServer/bin/Release/net7.0/win-x64/publish/"
@@ -52,6 +58,14 @@ jobs:
       with:
           name: "Sound Shapes Server for Linux x64"
           path: "SoundShapesServer/bin/Release/net7.0/linux-x64/publish/"
+          if-no-files-found: error
+          retention-days: 30
+
+    - name: Upload Linux ARM64 build
+      uses: actions/upload-artifact@v3.1.1
+      with:
+          name: "Sound Shapes Server for Linux ARM64"
+          path: "SoundShapesServer/bin/Release/net7.0/linux-arm64/publish/"
           if-no-files-found: error
           retention-days: 30
           
