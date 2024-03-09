@@ -95,6 +95,9 @@ public class LeaderboardEndpoints : EndpointGroup
 
         PaginatedList<LeaderboardEntry> entries =
             database.GetPaginatedLeaderboardEntries(level, order, descending, filters, 0, 1, user);
+
+        filters.ByUser = null; // set to null so that the entry position is properly calculated 
+        
         return entries.Items.Select(e => new LeaderboardEntryResponse(e, order, filters)).ToArray();
     }
 }
