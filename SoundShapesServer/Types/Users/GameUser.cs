@@ -45,7 +45,7 @@ public class GameUser : RealmObject, IRateLimitUser
     public bool AllowIpAuthentication { get; set; }
     public bool Deleted { get; init; }
     public DateTimeOffset CreationDate { get; init; }
-    public DateTimeOffset LastGameLogin { get; set; }
+    public DateTimeOffset? LastGameLogin { get; set; }
     public string? SaveFilePath { get; set; }
     
     // ReSharper disable all UnassignedGetOnlyAutoProperty

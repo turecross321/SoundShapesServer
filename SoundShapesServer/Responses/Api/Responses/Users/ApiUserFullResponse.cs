@@ -12,8 +12,8 @@ public class ApiUserFullResponse : IApiResponse, IDataConvertableFrom<ApiUserFul
     public required string Username { get; set; }
     public required PermissionsType PermissionsType { get; set; }
     public required DateTimeOffset CreationDate { get; set; }
-    public required DateTimeOffset LastGameLogin { get; set; }
-    public required DateTimeOffset LastEventDate { get; set; }
+    public required DateTimeOffset? LastGameLogin { get; set; }
+    public required DateTimeOffset? LastEventDate { get; set; }
     public required int FollowersCount { get; set; }
     public required int FollowingCount { get; set; }
     public required int LikedLevelsCount { get; set; }
@@ -33,7 +33,7 @@ public class ApiUserFullResponse : IApiResponse, IDataConvertableFrom<ApiUserFul
             PermissionsType = old.PermissionsType,
             CreationDate = old.CreationDate,
             LastGameLogin = old.LastGameLogin,
-            LastEventDate = old.Events.Last().CreationDate,
+            LastEventDate = old.Events.LastOrDefault()?.CreationDate,
             FollowersCount = old.FollowersRelations.Count(),
             FollowingCount = old.FollowingRelations.Count(),
             LikedLevelsCount = old.LikedLevelRelations.Count(),

@@ -21,7 +21,7 @@ namespace SoundShapesServer.Database;
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
     private readonly string DataStorePath = Path.Combine(BunkumFileSystem.DataDirectory, "dataStore");
-    protected override ulong SchemaVersion => 84;
+    protected override ulong SchemaVersion => 85;
 
     protected override List<Type> SchemaTypes => new()
     {
