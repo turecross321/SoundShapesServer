@@ -5,6 +5,7 @@ using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Albums;
+using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Extensions;
@@ -42,6 +43,10 @@ public static class RequestContextExtensions
             {
                 value = database.GetUserWithId(strValue);
             }
+            else if (property.PropertyType == typeof(GameLevel))
+            {
+                value = database.GetLevelWithId(strValue);
+            }
             else if (property.PropertyType == typeof(GameAlbum))
             {
                 value = database.GetAlbumWithId(strValue);
@@ -64,7 +69,7 @@ public static class RequestContextExtensions
             }
             else if (property.PropertyType == typeof(int[]))
             {
-                List<int> list = new();
+                List<int> list = [];
                 // ReSharper disable once LoopCanBeConvertedToQuery
                 foreach (string numberStr in strValue.Split(","))
                 {
@@ -76,15 +81,12 @@ public static class RequestContextExtensions
             }
             else if (property.PropertyType == typeof(GameUser[]))
             {
-                List<GameUser> list = new();
-                foreach (string id in strValue.Split(","))
-                {
-                    GameUser? user = database.GetUserWithId(id);
-                    if (user != null)
-                        list.Add(user);
-                }
-
-                value = list.ToArray();
+                value = strValue.Split(",").Select(id => database.GetUserWithId(id)).OfType<GameUser>().ToArray();
+            }
+            else if (property.PropertyType == typeof(GameLevel[]))
+            {
+                string[] ids = strValue.Split(",");
+                value = ids.Select(database.GetLevelWithId).OfType<GameLevel>().ToArray();
             }
             else
             {
