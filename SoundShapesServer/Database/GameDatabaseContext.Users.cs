@@ -6,6 +6,7 @@ using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Events;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
+using static BCrypt.Net.BCrypt;
 
 namespace SoundShapesServer.Database;
 
@@ -99,19 +100,30 @@ public partial class GameDatabaseContext
         return user;
     }
 
-    private const int WorkFactor = 10;
-    public bool ValidatePassword(GameUser user, string hash)
+    private const int WorkFactor = 14;
+    /// <summary>
+    /// A randomly generated password.
+    /// Used to prevent against timing attacks.
+    /// </summary>
+    private static readonly string FakePassword = HashPassword(Random.Shared.Next().ToString(), WorkFactor);
+    public bool ValidatePassword(GameUser? user, string hash)
     {
-        if (BCrypt.Net.BCrypt.PasswordNeedsRehash(user.PasswordBcrypt, WorkFactor))
+        if (user == null) // Validate fake password to avoid timing attacks
         {
-            SetUserPassword(user, BCrypt.Net.BCrypt.HashPassword(hash.ToLower(), WorkFactor));
+            _ = Verify(FakePassword, hash);
+            return false;
+        }
+        
+        if (PasswordNeedsRehash(user.PasswordBcrypt, WorkFactor))
+        {
+            SetUserPassword(user, HashPassword(hash.ToLower(), WorkFactor));
         }
 
-        return BCrypt.Net.BCrypt.Verify(hash.ToLower(), user.PasswordBcrypt);
+        return Verify(hash.ToLower(), user.PasswordBcrypt);
     }
     public void SetUserPassword(GameUser user, string hash)
     {
-        string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(hash.ToLower(), WorkFactor);
+        string passwordBcrypt = HashPassword(hash.ToLower(), WorkFactor);
         
         _realm.Write(() =>
         {

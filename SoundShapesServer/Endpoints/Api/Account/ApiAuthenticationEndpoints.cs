@@ -28,15 +28,13 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         ApiLoginRequest body)
     {
         GameUser? user = database.GetUserWithEmail(body.Email);
-        if (user == null)
-            return ApiForbiddenError.EmailOrPasswordIsWrong;
 
         if (!database.ValidatePassword(user, body.PasswordSha512))
             return ApiForbiddenError.EmailOrPasswordIsWrong;
 
-        GameToken refreshToken = database.CreateToken(user, TokenType.ApiRefresh, TokenAuthenticationType.Credentials,
+        GameToken refreshToken = database.CreateToken(user!, TokenType.ApiRefresh, TokenAuthenticationType.Credentials,
             Globals.OneMonthInSeconds);
-        GameToken accessToken = database.CreateToken(user, TokenType.ApiAccess, TokenAuthenticationType.Credentials,
+        GameToken accessToken = database.CreateToken(user!, TokenType.ApiAccess, TokenAuthenticationType.Credentials,
             refreshToken: refreshToken);
 
         return ApiLoginResponse.FromOld(accessToken);
