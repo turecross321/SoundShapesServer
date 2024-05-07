@@ -83,9 +83,9 @@ public class LevelTests: ServerTest
         Assert.That(response.IsSuccessStatusCode, "Like level");
         
         // Check if Level was Liked
-        /*relationResponse = 
+        relationResponse = 
             await client.GetFromJsonAsync<ApiResponse<ApiLevelRelationResponse>>(relationPayload);
-        Assert.That(relationResponse?.Data is { Liked: true, Queued:false }, "Get like status of level");*/
+        Assert.That(relationResponse?.Data is { Liked: true, Queued:false }, "Get like status of level");
         
         // Unlike Level
         payload = $"/api/v1/levels/id/{level.Id}/unLike";
@@ -93,9 +93,9 @@ public class LevelTests: ServerTest
         Assert.That(response.IsSuccessStatusCode, "Remove like from level");
         
         // Check if Like was removed
-        /*relationResponse = 
+        relationResponse = 
             await client.GetFromJsonAsync<ApiResponse<ApiLevelRelationResponse>>(relationPayload);
-        Assert.That(relationResponse?.Data is { Liked: false, Queued:false }, "Check if like was removed from level");*/
+        Assert.That(relationResponse?.Data is { Liked: false, Queued:false }, "Check if like was removed from level");
         
         // Queueing
         payload = $"/api/v1/levels/id/{level.Id}/queue";
@@ -103,18 +103,18 @@ public class LevelTests: ServerTest
         Assert.That(response.IsSuccessStatusCode, "Queue level");
         
         // Check if Level got Queued
-        /*relationResponse = 
+        relationResponse = 
             await client.GetFromJsonAsync<ApiResponse<ApiLevelRelationResponse>>(relationPayload);
-        Assert.That(relationResponse?.Data is { Liked: false, Queued:true }, "Check if level was queued");*/
+        Assert.That(relationResponse?.Data is { Liked: false, Queued:true }, "Check if level was queued");
         
         payload = $"/api/v1/levels/id/{level.Id}/unQueue";
         response = await client.PostAsync(payload, null);
         Assert.That(response.IsSuccessStatusCode, "Remove queue from level");
         
         // Check if Level was Un-queued
-        /*relationResponse = 
+        relationResponse = 
             await client.GetFromJsonAsync<ApiResponse<ApiLevelRelationResponse>>(relationPayload);
-        Assert.That(relationResponse?.Data is { Liked: false, Queued:false }, "Check if queue was removed from level");*/
+        Assert.That(relationResponse?.Data is { Liked: false, Queued:false }, "Check if queue was removed from level");
     }
     
     [Test]
@@ -198,5 +198,5 @@ public class LevelTests: ServerTest
         payload = $"/api/v1/levels/id/{secondLevel.Id}";
         response = await client.DeleteAsync(payload);
         Assert.That(!response.IsSuccessStatusCode, "Remove other user's level");
-    } 
+    }
 }
