@@ -122,7 +122,6 @@ public static class RequestContextExtensions
     public static string GetIpAddress(this RequestContext context)
     {
         return ((IPEndPoint)context.RemoteEndpoint).Address.ToString();
-        ;
     }
 
     public static GameIp? GetGameIp(this RequestContext context, GameDatabaseContext database, GameUser user)

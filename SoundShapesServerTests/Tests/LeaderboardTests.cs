@@ -13,7 +13,7 @@ namespace SoundShapesServerTests.Tests;
 public class LeaderboardTests: ServerTest
 {
     [Test]
-    public async Task ApiLeaderboardFetchingWorks()
+    public Task ApiLeaderboardFetchingWorks()
     {
         const int usersOnFirstLevel = 10;
         const int usersOnSecondLevel = 20;
@@ -51,6 +51,7 @@ public class LeaderboardTests: ServerTest
         entries = context.Database.GetLeaderboardEntries(secondLevel, LeaderboardOrderType.Score,
             true, new LeaderboardFilters{Obsolete = null});
         Assert.That(entries.First().Score, Is.GreaterThan(entries.Last().Score));
+        return Task.CompletedTask;
     }
     
     [Test]

@@ -66,7 +66,7 @@ public class LeaderboardEndpoints : EndpointGroup
         if (!level.HasUserAccess(user))
             return null;
 
-        LeaderboardOrderType order = LeaderboardOrderType.Score;
+        const LeaderboardOrderType order = LeaderboardOrderType.Score;
         const bool descending = false;
         LeaderboardFilters filters = new() { Completed = true, Obsolete = false };
 

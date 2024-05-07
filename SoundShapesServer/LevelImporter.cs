@@ -218,7 +218,7 @@ public static class LevelImporter
     {
         string name = info.Name ?? $"Imported Level ({info.Id})";
         DateTimeOffset date = !info.CampaignLevel ? data.LevelWriteDate : new DateTimeOffset();
-        LevelVisibility visibility = LevelVisibility.Public;
+        const LevelVisibility visibility = LevelVisibility.Public;
 
         GameLevel? level = database.GetLevelWithId(info.Id);
         if (level != null)

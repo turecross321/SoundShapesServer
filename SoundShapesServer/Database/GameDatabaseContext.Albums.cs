@@ -108,8 +108,6 @@ public partial class GameDatabaseContext
     public GameAlbum? GetAlbumWithId(string id)
     {
         ObjectId? objectId = ObjectId.Parse(id);
-        if (objectId == null)
-            return null;
 
         return _realm.All<GameAlbum>().FirstOrDefault(a => a.Id == objectId);
     }

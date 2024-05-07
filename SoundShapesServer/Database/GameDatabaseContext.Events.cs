@@ -35,8 +35,6 @@ public partial class GameDatabaseContext
             _realm.Add(gameEvent);
             actor.EventsCount = actor.Events.Count();
         });
-
-        CreateNotification(gameEvent);
     }
 
     public void RemoveEvent(GameEvent eventObject)

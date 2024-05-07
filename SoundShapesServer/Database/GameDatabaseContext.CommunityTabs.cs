@@ -15,9 +15,7 @@ public partial class GameDatabaseContext
     public CommunityTab? GetCommunityTabWithId(string id)
     {
         ObjectId? objectId = ObjectId.Parse(id);
-        if (objectId == null)
-            return null;
-        
+
         return _realm.All<CommunityTab>().FirstOrDefault(t => t.Id == objectId);
     }
 

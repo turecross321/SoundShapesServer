@@ -18,9 +18,9 @@ public class ApiParameterResponse : IApiResponse
         {
             Name = old.Name,
             Summary = old.Summary,
-            Type = old.Type,
+            Type = old.Type
         };
     }
 
-    public static IEnumerable<ApiParameterResponse> FromParameterList(IEnumerable<Parameter> oldList) => oldList.Select(FromParameter)!;
+    public static IEnumerable<ApiParameterResponse> FromParameterList(IEnumerable<Parameter> oldList) => oldList.Select(FromParameter);
 }

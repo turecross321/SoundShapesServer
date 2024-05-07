@@ -50,10 +50,7 @@ public static class UserQueryableExtensions
             users = users.Where(u => u.Username.Contains(filters.Search, StringComparison.OrdinalIgnoreCase));
         }
 
-        if (filters.Deleted != null)
-        {
-            users = users.Where(u => u.Deleted == filters.Deleted);
-        }
+        users = users.Where(u => u.Deleted == filters.Deleted);
 
         return users;
     }

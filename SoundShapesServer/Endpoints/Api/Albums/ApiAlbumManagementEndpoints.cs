@@ -55,7 +55,6 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
         return SetAlbumAssets(
             database,
             dataStore,
-            user,
             body,
             id,
             AlbumResourceType.Thumbnail
@@ -74,14 +73,13 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
         return SetAlbumAssets(
             database,
             dataStore,
-            user,
             body,
             id,
             AlbumResourceType.SidePanel
         );
     }
 
-    private ApiOkResponse SetAlbumAssets(GameDatabaseContext database, IDataStore dataStore, GameUser user, byte[] body,
+    private ApiOkResponse SetAlbumAssets(GameDatabaseContext database, IDataStore dataStore, byte[] body,
         string id, AlbumResourceType resourceType)
     {
         GameAlbum? album = database.GetAlbumWithId(id);

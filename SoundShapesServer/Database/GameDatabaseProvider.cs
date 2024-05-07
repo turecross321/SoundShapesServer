@@ -1,4 +1,3 @@
-using Bunkum.Core;
 using Bunkum.RealmDatabase;
 using MongoDB.Bson;
 using Realms;
@@ -20,7 +19,6 @@ namespace SoundShapesServer.Database;
 
 public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
 {
-    private readonly string DataStorePath = Path.Combine(BunkumFileSystem.DataDirectory, "dataStore");
     protected override ulong SchemaVersion => 85;
 
     protected override List<Type> SchemaTypes => new()
@@ -90,16 +88,16 @@ public class GameDatabaseProvider : RealmDatabaseProvider<GameDatabaseContext>
                     SSLevel? ssLevel = SSLevel.FromLevelFile(levelFile);
                     if (ssLevel == null)
                         continue;
-                    newLevel.HasUfo = ssLevel.EntitiesB.Any(e =>
-                        e.EntityType == "Platformer_EntityPacks_GameStuff_UFOCheckpoint");
-                    newLevel.HasFirefly = ssLevel.EntitiesB.Any(e =>
-                        e.EntityType == "Platformer_EntityPacks_GameStuff_FireflyCheckpoint");
+                    newLevel.HasUfo = ssLevel.EntitiesB?.Any(e =>
+                        e.EntityType == "Platformer_EntityPacks_GameStuff_UFOCheckpoint") ?? false;
+                    newLevel.HasFirefly = ssLevel.EntitiesB?.Any(e =>
+                        e.EntityType == "Platformer_EntityPacks_GameStuff_FireflyCheckpoint") ?? false;
                 }
 
                 if (oldVersion < 82)
                     newLevel.UploadPlatform = PlatformType.Unknown;
 
-                if (oldVersion < 83) newLevel._Scale = (int)oldLevel.ScaleIndex;
+                newLevel._Scale = (int)oldLevel.ScaleIndex;
             }
 
         IQueryable<dynamic> oldAlbums = migration.OldRealm.DynamicApi.All("GameAlbum");
