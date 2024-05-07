@@ -4,12 +4,12 @@ using Bunkum.Core.Endpoints;
 using Bunkum.Core.Responses;
 using Bunkum.Core.Storage;
 using Bunkum.Listener.Protocol;
-using Bunkum.ProfanityFilter;
 using Bunkum.Protocols.Http;
 using HttpMultipartParser;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
 using SoundShapesServer.Responses.Game.Levels;
+using SoundShapesServer.Services;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
@@ -53,6 +53,6 @@ public class Endpoints : EndpointGroup
         GameLevel? level = database.GetLevelWithId(levelId);
         if (level == null) return new Response(HttpStatusCode.NotFound);
 
-        return action == "update" ? LevelManagementEndpoints.UpdateLevel(context, dataStore, profanity, parser, database, user, level.Id) : new Response(HttpStatusCode.NotFound);
+        return action == "update" ? LevelManagementEndpoints.UpdateLevel(context, dataStore, parser, database, user, level.Id) : new Response(HttpStatusCode.NotFound);
     }
 }

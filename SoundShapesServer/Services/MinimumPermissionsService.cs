@@ -14,7 +14,7 @@ using SoundShapesServer.Types.Users;
 
 namespace SoundShapesServer.Services;
 
-public class MinimumPermissionsService : Service
+public class MinimumPermissionsService : EndpointService
 {
     private readonly IAuthenticationProvider<GameToken>? _authProvider;
     

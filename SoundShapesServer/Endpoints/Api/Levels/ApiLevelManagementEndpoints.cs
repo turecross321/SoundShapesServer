@@ -2,7 +2,6 @@ using AttribDoc.Attributes;
 using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using Bunkum.Core.Storage;
-using Bunkum.ProfanityFilter;
 using Bunkum.Protocols.Http;
 using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
@@ -11,6 +10,7 @@ using SoundShapesServer.Requests.Api;
 using SoundShapesServer.Responses.Api.Framework;
 using SoundShapesServer.Responses.Api.Framework.Errors;
 using SoundShapesServer.Responses.Api.Responses.Levels;
+using SoundShapesServer.Services;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Levels;
 using SoundShapesServer.Types.Users;
@@ -29,7 +29,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
         GameLevel level = new()
         {
             Id = IdHelper.GenerateLevelId(),
-            Name = profanity.CensorSentence(body.Name),
+            Name = profanity.CensorProfanity(body.Name),
             Language = body.Language,
             CreationDate = body.CreationDate ?? now,
             ModificationDate = body.CreationDate ?? now,
@@ -108,7 +108,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
                 return ApiUnauthorizedError.NoEditPermission;
 
 
-        level = database.EditLevel(level, profanity.CensorSentence(body.Name), body.Language, body.Visibility);
+        level = database.EditLevel(level, profanity.CensorProfanity(body.Name), body.Language, body.Visibility);
         return ApiLevelFullResponse.FromOld(level);
     }
 

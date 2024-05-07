@@ -4,13 +4,13 @@ using Bunkum.Core.Endpoints;
 using Bunkum.Core.Responses;
 using Bunkum.Core.Storage;
 using Bunkum.Listener.Protocol;
-using Bunkum.ProfanityFilter;
 using HttpMultipartParser;
 using SoundShapesServer.Configuration;
 using SoundShapesServer.Database;
 using SoundShapesServer.Extensions;
 using SoundShapesServer.Helpers;
 using SoundShapesServer.Responses.Game.Levels;
+using SoundShapesServer.Services;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Levels;
@@ -37,7 +37,7 @@ public class LevelManagementEndpoints : EndpointGroup
         {
             Id = IdHelper.GenerateLevelId(),
             Author = user,
-            Name = profanity.CensorSentence(name),
+            Name = profanity.CensorProfanity(name),
             Language = language,
             Visibility = LevelVisibility.Public,
             UploadPlatform = token.PlatformType,
@@ -55,7 +55,7 @@ public class LevelManagementEndpoints : EndpointGroup
     }
 
     // Gets called by Endpoints.cs
-    public static Response UpdateLevel(RequestContext context, IDataStore dataStore, ProfanityService profanity,
+    public static Response UpdateLevel(RequestContext context, IDataStore dataStore,
         MultipartFormDataParser parser, GameDatabaseContext database, GameUser user, string levelId)
     {
         GameLevel? level = database.GetLevelWithId(levelId);

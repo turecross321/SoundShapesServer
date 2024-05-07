@@ -5,7 +5,6 @@ using Bunkum.Core.RateLimit;
 using Bunkum.Core.Responses.Serialization;
 using Bunkum.Core.Storage;
 using Bunkum.Listener;
-using Bunkum.ProfanityFilter;
 using Bunkum.Protocols.Http;
 using SoundShapesServer.Authentication;
 using SoundShapesServer.Configuration;
@@ -17,6 +16,7 @@ using SoundShapesServer.Serializers;
 using SoundShapesServer.Services;
 using SoundShapesServer.Types.Authentication;
 using SoundShapesServer.Types.Users;
+using ProfanityService = SoundShapesServer.Services.ProfanityService;
 
 namespace SoundShapesServer;
 
@@ -40,7 +40,11 @@ public class GameServer
         DatabaseProvider = databaseProvider;
         _dataStore = dataStore;
         _authProvider = (AuthenticationProvider)authProvider;
-        ServerInstance = listener == null ? new BunkumHttpServer() : new BunkumHttpServer(listener);
+        
+        
+        ServerInstance = new BunkumHttpServer();
+        if (listener != null) 
+            ServerInstance.UseListener(listener);
 
         ServerInstance.UseDatabaseProvider(databaseProvider);
         ServerInstance.AddStorageService(dataStore);
@@ -71,23 +75,23 @@ public class GameServer
         ServerInstance.AddAutoDiscover("SoundShapesServer", GameEndpointAttribute.BaseRoute[..^1]);
     }
 
-    protected virtual void SetUpConfiguration()
+    private void SetUpConfiguration()
     {
         Config ??= Bunkum.Core.Configuration.Config.LoadFromJsonFile<GameServerConfig>("gameServer.json",
             ServerInstance.Logger);
         ServerInstance.AddConfig(Config);
     }
 
-    protected virtual void SetUpServices()
+    private void SetUpServices()
     {
         ServerInstance.AddRateLimitService(new RateLimitSettings(30, 400, 0, "global"));
         ServerInstance.AddService<DocumentationService>();
         ServerInstance.AddService<EmailService>();
-        ServerInstance.AddProfanityService();
+        ServerInstance.AddService<ProfanityService>();
         ServerInstance.AddService<MinimumPermissionsService>(_authProvider);
     }
 
-    protected virtual void SetUpMiddlewares()
+    private void SetUpMiddlewares()
     {
         ServerInstance.AddMiddleware<CrossOriginMiddleware>();
         ServerInstance.AddMiddleware<FileSizeMiddleware>();
