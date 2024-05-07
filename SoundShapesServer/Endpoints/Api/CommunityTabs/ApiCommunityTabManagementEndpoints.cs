@@ -21,7 +21,7 @@ public class ApiCommunityTabManagementEndpoints : EndpointGroup
     [DocError(typeof(ApiConflictError), ApiConflictError.TooManyCommunityTabsWhen)]
     public ApiResponse<ApiCommunityTabResponse> CreateCommunityTab(RequestContext context, GameDatabaseContext database,
         IDataStore dataStore,
-        GameUser user, ApiCreateCommunityTabRequest body)
+        GameUser user, ApiCommunityTabRequest body)
     {
         CommunityTab? createdCommunityTab = database.CreateCommunityTab(body, user);
         if (createdCommunityTab == null)
@@ -37,7 +37,7 @@ public class ApiCommunityTabManagementEndpoints : EndpointGroup
     [DocRouteParam("id", "Community tab ID.")]
     public ApiResponse<ApiCommunityTabResponse> EditCommunityTab(RequestContext context, GameDatabaseContext database,
         IDataStore dataStore,
-        GameUser user, ApiCreateCommunityTabRequest body, string id)
+        GameUser user, ApiCommunityTabRequest body, string id)
     {
         CommunityTab? communityTab = database.GetCommunityTabWithId(id);
         if (communityTab == null)

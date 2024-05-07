@@ -21,7 +21,7 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
     [DocSummary("Picks level as a daily level.")]
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     public ApiResponse<ApiDailyLevelResponse> AddDailyLevel(RequestContext context, GameDatabaseContext database,
-        GameUser user, ApiCreateDailyLevelRequest body)
+        GameUser user, ApiDailyLevelRequest body)
     {
         GameLevel? level = database.GetLevelWithId(body.LevelId);
         if (level == null)
@@ -39,7 +39,7 @@ public class ApiDailyLevelManagementEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.LevelNotFoundWhen)]
     [DocRouteParam("id", "Daily level object ID.")]
     public ApiResponse<ApiDailyLevelResponse> EditDailyLevel(RequestContext context, GameDatabaseContext database,
-        GameUser user, string id, ApiCreateDailyLevelRequest body)
+        GameUser user, string id, ApiDailyLevelRequest body)
     {
         DailyLevel? dailyLevel = database.GetDailyLevelWithId(id);
         if (dailyLevel == null)

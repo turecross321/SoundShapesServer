@@ -23,7 +23,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Creates level.")]
     public ApiResponse<ApiLevelFullResponse> CreateLevel(RequestContext context, GameDatabaseContext database,
-        GameUser user, ApiCreateLevelRequest body, ProfanityService profanity)
+        GameUser user, ApiLevelRequest body, ProfanityService profanity)
     {
         DateTimeOffset now = DateTimeOffset.UtcNow;
         GameLevel level = new()
@@ -97,7 +97,7 @@ public class ApiLevelManagementEndpoints : EndpointGroup
     [DocRouteParam("id", "Level ID.")]
     public ApiResponse<ApiLevelFullResponse> EditLevel(RequestContext context, GameDatabaseContext database,
         ProfanityService profanity, GameUser user,
-        ApiEditLevelRequest body, string id)
+        ApiLevelRequest body, string id)
     {
         GameLevel? level = database.GetLevelWithId(id);
         if (level == null)

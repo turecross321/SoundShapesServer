@@ -173,7 +173,7 @@ public class LevelTests: ServerTest
         
         // Updating Metadata
         string payload = $"/api/v1/levels/id/{firstLevel.Id}/edit";
-        ApiEditLevelRequest body = new()
+        ApiLevelRequest body = new()
         {
             Name = "Updated Level Name"
         };

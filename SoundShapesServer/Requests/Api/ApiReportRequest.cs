@@ -1,4 +1,5 @@
 using SoundShapesServer.Types.Reports;
+
 #pragma warning disable CS8618
 
 namespace SoundShapesServer.Requests.Api;

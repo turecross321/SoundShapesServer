@@ -21,7 +21,7 @@ public class PermissionTests : ServerTest
         // Administrator test
         context.Database.SetUserPermissions(user, PermissionsType.Default);
         context.Database.Refresh();
-        object payload = new ApiCreateLevelRequest
+        object payload = new ApiLevelRequest
         {
             Name = "Level"
         };
@@ -39,7 +39,7 @@ public class PermissionTests : ServerTest
         context.Database.SetUserPermissions(user, PermissionsType.Banned);
         context.Database.Refresh();
 
-        payload = new ApiEditLevelRequest
+        payload = new ApiLevelRequest
         {
             Name = "Level!"
         };

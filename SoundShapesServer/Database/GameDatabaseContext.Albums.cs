@@ -16,7 +16,7 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public GameAlbum CreateAlbum(ApiCreateAlbumRequest request, GameUser user)
+    public GameAlbum CreateAlbum(ApiAlbumRequest request, GameUser user)
     {
         GameLevel[] levels = GetLevelsWithIds(request.LevelIds.AsEnumerable()).ToArray();
 
@@ -88,7 +88,7 @@ public partial class GameDatabaseContext
         if (album.SidePanelFilePath != null) dataStore.RemoveFromStore(album.SidePanelFilePath);
     }
 
-    public GameAlbum EditAlbum(GameAlbum album, ApiCreateAlbumRequest request, GameUser user)
+    public GameAlbum EditAlbum(GameAlbum album, ApiAlbumRequest request, GameUser user)
     {
         _realm.Write(() =>
         {

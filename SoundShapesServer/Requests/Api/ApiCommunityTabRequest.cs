@@ -4,7 +4,7 @@ using SoundShapesServer.Types;
 namespace SoundShapesServer.Requests.Api;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class ApiCreateCommunityTabRequest
+public class ApiCommunityTabRequest
 {
     public GameContentType ContentType { get; set; }
     public string ButtonLabel { get; set; }

@@ -15,7 +15,7 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public NewsEntry CreateNewsEntry(ApiCreateNewsEntryRequest request, GameUser user)
+    public NewsEntry CreateNewsEntry(ApiNewsEntryRequest request, GameUser user)
     {
         DateTimeOffset now = DateTimeOffset.UtcNow;
         
@@ -42,7 +42,7 @@ public partial class GameDatabaseContext
         return entry;
     }
 
-    public NewsEntry EditNewsEntry(NewsEntry entry, ApiCreateNewsEntryRequest request, GameUser user)
+    public NewsEntry EditNewsEntry(NewsEntry entry, ApiNewsEntryRequest request, GameUser user)
     {
         _realm.Write(() =>
         {

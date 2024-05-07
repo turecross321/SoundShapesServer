@@ -19,7 +19,7 @@ public partial class GameDatabaseContext
         return _realm.All<CommunityTab>().FirstOrDefault(t => t.Id == objectId);
     }
 
-    public CommunityTab? CreateCommunityTab(ApiCreateCommunityTabRequest request, GameUser user)
+    public CommunityTab? CreateCommunityTab(ApiCommunityTabRequest request, GameUser user)
     {
         // More than 4 community tabs will cause performance issues
         if (_realm.All<CommunityTab>().Count() >= 4) return null;
@@ -46,7 +46,7 @@ public partial class GameDatabaseContext
         return communityTab;
     }
 
-    public CommunityTab EditCommunityTab(CommunityTab communityTab, ApiCreateCommunityTabRequest request, GameUser user)
+    public CommunityTab EditCommunityTab(CommunityTab communityTab, ApiCommunityTabRequest request, GameUser user)
     {
         _realm.Write(() =>
         {

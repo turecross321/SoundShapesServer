@@ -1,6 +1,6 @@
 namespace SoundShapesServer.Requests.Api;
 
-public class ApiCreateNewsEntryRequest
+public class ApiNewsEntryRequest
 {
     public string Language { get; set; } = null!;
     public string Title { get; set; } = null!;

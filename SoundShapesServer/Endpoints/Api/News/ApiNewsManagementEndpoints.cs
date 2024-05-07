@@ -22,7 +22,7 @@ public class ApiNewsManagementEndpoints : EndpointGroup
     [DocSummary("Creates news entry.")]
     public ApiResponse<ApiNewsEntryResponse> CreateNewsEntry(RequestContext context, GameDatabaseContext database,
         IDataStore dataStore,
-        GameUser user, ApiCreateNewsEntryRequest body)
+        GameUser user, ApiNewsEntryRequest body)
     {
         NewsEntry createdNewsEntry = database.CreateNewsEntry(body, user);
         return ApiNewsEntryResponse.FromOld(createdNewsEntry);
@@ -35,7 +35,7 @@ public class ApiNewsManagementEndpoints : EndpointGroup
     [DocRouteParam("id", "News entry ID.")]
     public ApiResponse<ApiNewsEntryResponse> EditNewsEntry(RequestContext context, GameDatabaseContext database,
         IDataStore dataStore,
-        GameUser user, ApiCreateNewsEntryRequest body, string id)
+        GameUser user, ApiNewsEntryRequest body, string id)
     {
         NewsEntry? newsEntry = database.GetNewsEntryWithId(id);
         if (newsEntry == null)

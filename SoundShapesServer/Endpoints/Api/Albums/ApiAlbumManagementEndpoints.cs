@@ -21,7 +21,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     [MinimumPermissions(PermissionsType.Administrator)]
     [DocSummary("Creates an album.")]
     public ApiResponse<ApiAlbumResponse> CreateAlbum(RequestContext context, GameDatabaseContext database,
-        GameUser user, ApiCreateAlbumRequest body)
+        GameUser user, ApiAlbumRequest body)
     {
         GameAlbum album = database.CreateAlbum(body, user);
         return ApiAlbumResponse.FromOld(album);
@@ -33,7 +33,7 @@ public class ApiAlbumManagementEndpoints : EndpointGroup
     [DocError(typeof(ApiNotFoundError), ApiNotFoundError.AlbumNotFoundWhen)]
     [DocRouteParam("id", "Album ID.")]
     public ApiResponse<ApiAlbumResponse> EditAlbum(RequestContext context, GameDatabaseContext database, GameUser user,
-        ApiCreateAlbumRequest body, string id)
+        ApiAlbumRequest body, string id)
     {
         GameAlbum? album = database.GetAlbumWithId(id);
         if (album == null)

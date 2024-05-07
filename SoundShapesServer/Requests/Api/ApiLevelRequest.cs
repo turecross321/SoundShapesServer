@@ -6,7 +6,7 @@ using SoundShapesServer.Types.Levels;
 namespace SoundShapesServer.Requests.Api;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class ApiCreateLevelRequest
+public class ApiLevelRequest
 {
     public string Name { get; init; }
     public int Language { get; }
