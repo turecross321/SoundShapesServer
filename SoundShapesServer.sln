@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundShapesServer", "SoundShapesServer\SoundShapesServer.csproj", "{2E80984E-08CA-4BF5-8391-105D8DDCE795}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundShapesServer.Common", "SoundShapesServer.Common\SoundShapesServer.Common.csproj", "{70E7A95D-E0A3-49CF-A309-9249A045EF94}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2E80984E-08CA-4BF5-8391-105D8DDCE795}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E80984E-08CA-4BF5-8391-105D8DDCE795}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E80984E-08CA-4BF5-8391-105D8DDCE795}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E80984E-08CA-4BF5-8391-105D8DDCE795}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70E7A95D-E0A3-49CF-A309-9249A045EF94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70E7A95D-E0A3-49CF-A309-9249A045EF94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70E7A95D-E0A3-49CF-A309-9249A045EF94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70E7A95D-E0A3-49CF-A309-9249A045EF94}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
