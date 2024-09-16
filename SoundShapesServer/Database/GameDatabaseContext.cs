@@ -17,7 +17,7 @@ public partial class GameDatabaseContext(ServerConfig config) : DbContext, IData
     public DateTimeOffset Now => DateTimeOffset.UtcNow;
     
     private DbSet<DbUser> Users { get; set; }
-    private DbSet<DbCodeToken> CodeTokens { get; set; }
+    private DbSet<DbCode> Codes { get; set; }
     private DbSet<DbToken> Tokens { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

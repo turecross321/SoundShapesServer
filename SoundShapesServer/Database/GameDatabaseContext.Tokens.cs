@@ -18,7 +18,7 @@ public partial class GameDatabaseContext
         int expiryHours = tokenType switch
         {
             TokenType.GameAccess => ExpiryTimes.GameTokenHours,
-            TokenType.GameEula => ExpiryTimes.CodeTokenHours,
+            TokenType.GameEula => ExpiryTimes.CodeHours,
             _ => throw new ArgumentOutOfRangeException(nameof(tokenType), tokenType, null)
         };
 

@@ -11,6 +11,8 @@ namespace SoundShapesServer.Endpoints.Game;
 
 public partial class EulaEndpoints : EndpointGroup
 {
+    // ReSharper disable once InconsistentNaming
+    // ReSharper disable once IdentifierTypo
     private const string AGPLNotice = """
                                       This program is free software: you can redistribute it and/or modify
                                       it under the terms of the GNU Affero General Public License as published
@@ -32,7 +34,7 @@ public partial class EulaEndpoints : EndpointGroup
     {
         string eula = "";
         
-        // this is included when we want to make sure that the eula is always shown (eg. when showing the registration code)
+        // this is included when we want to make sure that the eula is always shown (e.g. when showing the registration code)
         bool includeDate;
         
         switch (token.TokenType)
@@ -45,13 +47,12 @@ public partial class EulaEndpoints : EndpointGroup
                 includeDate = true;
                 if (!user.FinishedRegistration)
                 {
-                    context.Logger.LogInfo(BunkumCategory.Authentication, "Creating set email token for new user: " + user.Name);
-                    DbCodeToken codeToken = database.CreateCodeToken(user, CodeTokenType.SetEmail);
+                    context.Logger.LogInfo(BunkumCategory.Authentication, "Creating initialize registration code for new user: " + user.Name);
+                    DbCode code = database.CreateCode(user, CodeType.Registration);
                     
                     eula =
                         $"You currently do not have an account. To proceed, go to {bunkumConfig.ExternalUrl}/register and follow the instructions.\n" +
-                        $"Your registration code is \"{codeToken.Code}\".";
-                    break;
+                        $"Your registration code is \"{code.Code}\".";
                 }
                 
                 

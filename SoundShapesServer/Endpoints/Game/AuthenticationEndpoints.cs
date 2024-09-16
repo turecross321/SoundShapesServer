@@ -10,7 +10,7 @@ using SoundShapesServer.Extensions;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Config;
 using SoundShapesServer.Types.Database;
-using SoundShapesServer.Types.ServerResponses.Game;
+using SoundShapesServer.Types.Responses.Game;
 using static System.Net.HttpStatusCode;
 
 namespace SoundShapesServer.Endpoints.Game;

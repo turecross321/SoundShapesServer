@@ -10,9 +10,9 @@ using SoundShapesServer.Types;
 using SoundShapesServer.Types.Config;
 using SoundShapesServer.Types.Database;
 using SoundShapesServer.Types.Requests.Api;
-using SoundShapesServer.Types.ServerResponses.Api.ApiTypes;
-using SoundShapesServer.Types.ServerResponses.Api.ApiTypes.Errors;
-using SoundShapesServer.Types.ServerResponses.Api.DataTypes;
+using SoundShapesServer.Types.Responses.Api.ApiTypes;
+using SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
+using SoundShapesServer.Types.Responses.Api.DataTypes;
 
 namespace SoundShapesServer.Endpoints.Api;
 
@@ -30,19 +30,6 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
     /// </summary>
     private static readonly string FakePassword = BCrypt.Net.BCrypt.HashPassword(Random.Shared.Next().ToString(), WorkFactor);
     
-    [DocSummary("Retrieves the user that the specified set email token belongs to.")]
-    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.TokenDoesNotExistWhen)]
-    [ApiEndpoint("codeToken/{code}/owner")]
-    [Authentication(false)]
-    public ApiResponse<ApiMinimalUserResponse> GetCodeTokenOwner(RequestContext context, 
-        GameDatabaseContext database, string code)
-    {
-        DbCodeToken? token = database.GetCodeTokenWithCode(code);
-        if (token == null)
-            return ApiNotFoundError.TokenDoesNotExist;
-        return ApiMinimalUserResponse.FromDb(token.User);
-    }
-    
     [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidCodeWhen)]
     [DocError(typeof(ApiBadRequestError), ApiBadRequestError.InvalidEmailWhen)]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
@@ -54,7 +41,7 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
     public ApiOkResponse SetEmail(RequestContext context, GameDatabaseContext database, EmailService email, 
         ServerConfig config, ApiSetEmailRequest body)
     {
-        DbCodeToken? token = database.GetCodeTokenWithCode(body.Code, CodeTokenType.SetEmail);
+        DbCode? token = database.GetCode(body.Code, CodeType.SetEmail);
         if (token == null)
             return ApiUnauthorizedError.InvalidCode;
 
@@ -80,10 +67,10 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
         ";
 
 
-        DbCodeToken verifyEmailToken = database.CreateCodeToken(token.User, CodeTokenType.VerifyEmail);
+        DbCode verifyEmail = database.CreateCode(token.User, CodeType.VerifyEmail);
         
         bool success = email.SendEmail(body.NewEmail, $"[{config.InstanceSettings.InstanceName}] Verify your Email Address",
-            String.Format(emailTemplate, token.User.Name, verifyEmailToken.Code, config.InstanceSettings.InstanceName));
+            String.Format(emailTemplate, token.User.Name, verifyEmail.Code, config.InstanceSettings.InstanceName));
 
         if (!success)
         {
@@ -91,7 +78,7 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
         }
 
         database.SetUserEmail(token.User, body.NewEmail);
-        database.RemoveCodeToken(token);
+        database.RemoveCode(token);
         return new ApiOkResponse();
     }
 
@@ -103,7 +90,7 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
     [ApiEndpoint("verifyEmail", HttpMethods.Put)]
     public ApiOkResponse VerifyEmail(RequestContext context, GameDatabaseContext database, ApiCodeRequest body)
     {
-        DbCodeToken? token = database.GetCodeTokenWithCode(body.Code, CodeTokenType.VerifyEmail);
+        DbCode? token = database.GetCode(body.Code, CodeType.VerifyEmail);
         if (token == null)
             return ApiUnauthorizedError.InvalidCode;
         
@@ -131,7 +118,7 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
             return new ApiOkResponse();
         }
         
-        DbCodeToken codeToken = database.CreateCodeToken(user, CodeTokenType.SetPassword);
+        DbCode code = database.CreateCode(user, CodeType.SetPassword);
         
         string emailTemplate = @"
         <html>
@@ -152,7 +139,7 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
         ";
         
         bool success = email.SendEmail(user.EmailAddress!, $"[{config.InstanceSettings.InstanceName}] Reset your password",
-            String.Format(emailTemplate, codeToken.User.Name, codeToken.Code, config.InstanceSettings.InstanceName));
+            String.Format(emailTemplate, code.User.Name, code.Code, config.InstanceSettings.InstanceName));
 
         return success ? new ApiOkResponse() : ApiInternalServerError.CouldNotSendEmail;
     }
@@ -167,7 +154,7 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
     public ApiOkResponse SetPassword(RequestContext context, GameDatabaseContext database, 
         ApiSetPasswordRequest body)
     {
-        DbCodeToken? codeToken = database.GetCodeTokenWithCode(body.Code, CodeTokenType.SetPassword);
+        DbCode? codeToken = database.GetCode(body.Code, CodeType.SetPassword);
         if (codeToken == null)
             return ApiUnauthorizedError.InvalidCode;
 
@@ -178,13 +165,81 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
         if (passwordBcrypt == null) return ApiInternalServerError.CouldNotBcryptPassword;
 
         database.SetUserPassword(codeToken.User, passwordBcrypt);
-        database.RemoveCodeToken(codeToken);
+        database.RemoveCode(codeToken);
         
         context.Logger.LogInfo(BunkumCategory.Authentication, $"{codeToken.User} successfully set their password.");
 
         return new ApiOkResponse();
     }
     
-    
-    // TODO: FINISH REGISTRATION. SHOULD BE A COMBINATION OF SET PASSWORD AND VERIFY EMAIL! SHOULD CHANGE TOKENTYPE FROM GAMEEULA TO GAMEACCESS 
+    [DocSummary("Retrieves information about the the specified registration code.")]
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.TokenDoesNotExistWhen)]
+    [ApiEndpoint("register/code/{code}")]
+    [Authentication(false)]
+    public ApiResponse<ApiCodeResponse> GetRegistrationCode(RequestContext context, 
+        GameDatabaseContext database, string codeValue)
+    {
+        DbCode? code = database.GetCode(codeValue, CodeType.Registration);
+        if (code == null)
+            return ApiNotFoundError.TokenDoesNotExist;
+        return ApiCodeResponse.FromDb(code);
+    }
+
+    [DocSummary("Register an account. Assigns your e-mail and password and sends an e-mail verification mail.")]
+    [DocRequestBody(typeof(ApiRegisterRequest))]
+    [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidCodeWhen)]
+    [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.EulaNotAcceptedWhen)]
+    [DocError(typeof(ApiBadRequestError), ApiBadRequestError.InvalidEmailWhen)]
+    [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotBcryptPasswordWhen)]
+    [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
+    [ApiEndpoint("register")]
+    [Authentication(false)]
+    public ApiOkResponse Register(RequestContext context, GameDatabaseContext database, ServerConfig config, 
+        EmailService email, ApiRegisterRequest body)
+    {
+        DbCode? code = database.GetCode(body.Code, CodeType.Registration);
+        
+        if (code == null)
+            return ApiUnauthorizedError.InvalidCode;
+        if (!body.AcceptEula)
+            return ApiUnauthorizedError.EulaNotAccepted;
+        if (!CommonPatterns.EmailAddressRegex().IsMatch(body.Email))
+            return ApiBadRequestError.InvalidEmail;
+        
+        string? passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(body.PasswordSha512, WorkFactor);
+        if (passwordBcrypt == null) 
+            return ApiInternalServerError.CouldNotBcryptPassword;
+        
+        string emailTemplate = @"
+        <html>
+            Hello {0},
+            <br>
+
+            Please use the verification code below to verify your email address and finish the registration of your account.
+            <br>
+
+            <div style=""font-size: 36px; margin-top: 16px; margin-bottom: 16px;"">
+            {1}
+            </div>
+
+            If you didn't request this, please ignore this email.
+
+            Best regards, {2}.
+        </html>
+        ";
+        
+        DbCode verifyEmail = database.CreateCode(code.User, CodeType.VerifyEmail);
+        
+        bool success = email.SendEmail(body.Email, $"[{config.InstanceSettings.InstanceName}] Verify your Email Address",
+            String.Format(emailTemplate, code.User.Name, verifyEmail.Code, config.InstanceSettings.InstanceName));
+
+        if (!success)
+            return ApiInternalServerError.CouldNotSendEmail;
+
+        database.SetUserEmail(code.User, body.Email);
+        database.SetUserPassword(code.User, passwordBcrypt);
+        database.RemoveCode(code);
+
+        return new ApiOkResponse();
+    }
 }
