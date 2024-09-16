@@ -90,13 +90,16 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
     [ApiEndpoint("verifyEmail", HttpMethods.Put)]
     public ApiOkResponse VerifyEmail(RequestContext context, GameDatabaseContext database, ApiCodeRequest body)
     {
-        DbCode? token = database.GetCode(body.Code, CodeType.VerifyEmail);
-        if (token == null)
+        DbCode? code = database.GetCode(body.Code, CodeType.VerifyEmail);
+        if (code == null)
             return ApiUnauthorizedError.InvalidCode;
         
-        context.Logger.LogInfo(BunkumCategory.Authentication, $"{token.User} successfully verified their email.");
+        context.Logger.LogInfo(BunkumCategory.Authentication, $"{code.User} successfully verified their email.");
         
-        database.VerifyEmail(token.User);
+        database.VerifyEmail(code.User);
+        if (!code.User.FinishedRegistration)
+            database.FinishUserRegistration(code.User);
+        
         return new ApiOkResponse();
     }
 
@@ -173,15 +176,15 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
     }
     
     [DocSummary("Retrieves information about the the specified registration code.")]
-    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.TokenDoesNotExistWhen)]
-    [ApiEndpoint("register/code/{code}")]
+    [DocError(typeof(ApiNotFoundError), ApiUnauthorizedError.InvalidCodeWhen)]
+    [ApiEndpoint("register/code/{codeValue}")]
     [Authentication(false)]
     public ApiResponse<ApiCodeResponse> GetRegistrationCode(RequestContext context, 
         GameDatabaseContext database, string codeValue)
     {
         DbCode? code = database.GetCode(codeValue, CodeType.Registration);
         if (code == null)
-            return ApiNotFoundError.TokenDoesNotExist;
+            return ApiUnauthorizedError.InvalidCode;
         return ApiCodeResponse.FromDb(code);
     }
 
@@ -192,7 +195,7 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
     [DocError(typeof(ApiBadRequestError), ApiBadRequestError.InvalidEmailWhen)]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotBcryptPasswordWhen)]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
-    [ApiEndpoint("register")]
+    [ApiEndpoint("register", HttpMethods.Post)]
     [Authentication(false)]
     public ApiOkResponse Register(RequestContext context, GameDatabaseContext database, ServerConfig config, 
         EmailService email, ApiRegisterRequest body)

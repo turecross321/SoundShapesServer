@@ -50,4 +50,10 @@ public partial class GameDatabaseContext
         user.PasswordBcrypt = passwordBcrypt;
         SaveChanges();
     }
+
+    public void FinishUserRegistration(DbUser user)
+    {
+        user.FinishedRegistration = true;
+        SaveChanges();
+    }
 }
