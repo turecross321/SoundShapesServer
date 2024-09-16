@@ -9,10 +9,10 @@ public class AuthenticationTests: ServerTest
     [Test]
     public void LoginWorks()
     {
-        //using SSTestContext context = this.GetServer();
-        //context.CreateUser("bob1");
-        //Task<HttpResponseMessage> response = context.Http.PostAsJsonAsync<object>("/otg/identity/login/token/psn.post", null);
+        using SSTestContext context = this.GetServer();
+        context.CreateUser("bob1");
+        Task<HttpResponseMessage> response = context.Http.PostAsJsonAsync<object>("/otg/identity/login/token/psn.post", null);
 
-        //Assert.That(!response.Result.IsSuccessStatusCode);
+        Assert.That(!response.Result.IsSuccessStatusCode);
     }
 }

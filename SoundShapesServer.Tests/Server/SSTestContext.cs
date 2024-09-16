@@ -4,18 +4,35 @@ using SoundShapesServer.Common.Types;
 using SoundShapesServer.Common.Types.Database;
 using SoundShapesServer.Database;
 using SoundShapesServer.Tests.Database;
+using Testcontainers.PostgreSql;
 
 namespace SoundShapesServer.Tests.Server;
 
-public class SSTestContext(Lazy<TestSSServer> server, GameDatabaseContext database, HttpClient http, DirectHttpListener listener, MockDateTimeProvider time) : IDisposable
+public class SSTestContext : IDisposable
 {
-    public Lazy<TestSSServer> Server { get; } = server;
-    public GameDatabaseContext Database { get; } = database;
-    public HttpClient Http { get; } = http;
-    private DirectHttpListener Listener { get; } = listener;
-    public MockDateTimeProvider Time { get; } = time;
+    public Lazy<TestSSServer> Server { get; }
+    public GameDatabaseContext Database { get; }
+    public HttpClient Http { get; }
+    public PostgreSqlContainer DatabaseContainer { get; }
+    private DirectHttpListener Listener { get; }
+    public MockDateTimeProvider Time { get; }
     
     private int _users = 100; // start at 100 since usernames require 3 characters
+    private readonly PostgreSqlContainer _databaseContainer;
+
+    public SSTestContext(Lazy<TestSSServer> server, GameDatabaseContext database, HttpClient http, PostgreSqlContainer databaseContainer, DirectHttpListener listener, MockDateTimeProvider time)
+    {
+        _databaseContainer = databaseContainer;
+        Server = server;
+        Database = database;
+        Http = http;
+        DatabaseContainer = databaseContainer;
+        Listener = listener;
+        Time = time;
+
+        DatabaseContainer.StartAsync();
+    }
+
     private int UserIncrement => this._users++;
     
     public DbUser CreateUser(string? username = null)
@@ -50,6 +67,7 @@ public class SSTestContext(Lazy<TestSSServer> server, GameDatabaseContext databa
         this.Database.Dispose();
         this.Http.Dispose();
         this.Listener.Dispose();
+        this.DatabaseContainer.DisposeAsync().AsTask();
 
         if (this.Server.IsValueCreated)
             this.Server.Value.Stop();

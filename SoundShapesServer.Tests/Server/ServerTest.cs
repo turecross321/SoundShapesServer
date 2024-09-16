@@ -2,6 +2,7 @@
 using Bunkum.Protocols.Http.Direct;
 using NotEnoughLogs;
 using SoundShapesServer.Tests.Database;
+using Testcontainers.PostgreSql;
 
 namespace SoundShapesServer.Tests.Server;
 
@@ -20,8 +21,9 @@ public class ServerTest
         DirectHttpListener listener = new(Logger);
         HttpClient client = listener.GetClient();
         MockDateTimeProvider time = new();
+        PostgreSqlContainer databaseContainer = new PostgreSqlBuilder().Build();
         
-        TestDatabaseProvider provider = new(time);
+        TestDatabaseProvider provider = new(databaseContainer.GetConnectionString(), time);
 
         Lazy<TestSSServer> server = new(() =>
         {
@@ -34,6 +36,6 @@ public class ServerTest
         if (startServer) _ = server.Value;
         else provider.Initialize();
 
-        return new SSTestContext(server, provider.GetContext(), client, listener, time);
+        return new SSTestContext(server, provider.GetContext(), client, databaseContainer, listener, time);
     }
 }
