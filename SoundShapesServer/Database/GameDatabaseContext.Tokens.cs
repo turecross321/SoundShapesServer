@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoundShapesServer.Common.Constants;
-using SoundShapesServer.Types;
-using SoundShapesServer.Types.Database;
+using SoundShapesServer.Common.Types;
+using SoundShapesServer.Common.Types.Database;
 
 namespace SoundShapesServer.Database;
 
@@ -26,8 +26,8 @@ public partial class GameDatabaseContext
         {
             UserId = user.Id,
             TokenType = tokenType,
-            CreationDate = Now,
-            ExpiryDate = Now.AddHours(expiryHours),
+            CreationDate = _time.Now,
+            ExpiryDate = _time.Now.AddHours(expiryHours),
             Platform = platformType,
         });
 

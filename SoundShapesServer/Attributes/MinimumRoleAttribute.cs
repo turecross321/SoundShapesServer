@@ -1,4 +1,4 @@
-﻿using SoundShapesServer.Types;
+﻿using SoundShapesServer.Common.Types;
 
 namespace SoundShapesServer.Attributes;
 

@@ -3,16 +3,16 @@ using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using Bunkum.Core.RateLimit;
 using Bunkum.Protocols.Http;
+using SoundShapesServer.Common.Types;
+using SoundShapesServer.Common.Types.Config;
+using SoundShapesServer.Common.Types.Database;
+using SoundShapesServer.Common.Types.Requests.Api;
+using SoundShapesServer.Common.Types.Responses.Api.ApiTypes;
+using SoundShapesServer.Common.Types.Responses.Api.ApiTypes.Errors;
+using SoundShapesServer.Common.Types.Responses.Api.DataTypes;
 using SoundShapesServer.Common.Verification;
 using SoundShapesServer.Database;
 using SoundShapesServer.Services;
-using SoundShapesServer.Types;
-using SoundShapesServer.Types.Config;
-using SoundShapesServer.Types.Database;
-using SoundShapesServer.Types.Requests.Api;
-using SoundShapesServer.Types.Responses.Api.ApiTypes;
-using SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
-using SoundShapesServer.Types.Responses.Api.DataTypes;
 
 namespace SoundShapesServer.Endpoints.Api;
 
@@ -176,6 +176,7 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
     }
     
     [DocSummary("Retrieves information about the the specified registration code.")]
+    [DocResponseBody(typeof(ApiCodeResponse))]    
     [DocError(typeof(ApiNotFoundError), ApiUnauthorizedError.InvalidCodeWhen)]
     [ApiEndpoint("register/code/{codeValue}")]
     [Authentication(false)]

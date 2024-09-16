@@ -1,5 +1,5 @@
 ﻿using NPTicket;
-using SoundShapesServer.Types;
+using SoundShapesServer.Common.Types;
 
 namespace SoundShapesServer.Extensions;
 

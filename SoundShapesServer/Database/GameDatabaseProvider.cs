@@ -1,12 +1,15 @@
-﻿using Bunkum.EntityFrameworkDatabase;
-using SoundShapesServer.Types.Config;
+﻿
+using Bunkum.EntityFrameworkDatabase;
+using SoundShapesServer.Common.Time;
 
 namespace SoundShapesServer.Database;
-
-public class GameDatabaseProvider(ServerConfig config)
+public class GameDatabaseProvider(IDateTimeProvider? timeProvider = null, string connectionString = "")
     : EntityFrameworkDatabaseProvider<GameDatabaseContext>
 {
-    protected override EntityFrameworkInitializationStyle InitializationStyle { get; } = EntityFrameworkInitializationStyle.Migrate;
+    protected override EntityFrameworkInitializationStyle InitializationStyle => EntityFrameworkInitializationStyle.Migrate;
 
-    public override GameDatabaseContext GetContext() => new(config);
+    public override GameDatabaseContext GetContext()
+    {
+        return new GameDatabaseContext(connectionString, timeProvider ?? new SystemDateTimeProvider());
+    }
 }

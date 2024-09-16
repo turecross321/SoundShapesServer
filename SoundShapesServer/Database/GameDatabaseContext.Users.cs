@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-using SoundShapesServer.Types;
-using SoundShapesServer.Types.Database;
+using SoundShapesServer.Common.Types;
+using SoundShapesServer.Common.Types.Database;
 
 namespace SoundShapesServer.Database;
 
@@ -21,7 +21,9 @@ public partial class GameDatabaseContext
         EntityEntry<DbUser> user = Users.Add(new DbUser
         {
             Name = name,
-            Role = UserRole.Default
+            Role = UserRole.Default,
+            FinishedRegistration = false,
+            VerifiedEmail = false
         });
 
         SaveChanges();

@@ -1,32 +1,32 @@
 ﻿using Bunkum.Core.Database;
 using Microsoft.EntityFrameworkCore;
-using SoundShapesServer.Types.Config;
-using SoundShapesServer.Types.Database;
+using SoundShapesServer.Common.Time;
+using SoundShapesServer.Common.Types.Database;
 
 namespace SoundShapesServer.Database;
 
-public partial class GameDatabaseContext(ServerConfig config) : DbContext, IDatabaseContext
+public partial class GameDatabaseContext: DbContext, IDatabaseContext
 {
-    
-    private readonly ServerConfig _config = config;
-
-    public GameDatabaseContext() : this(new ServerConfig())
+    public GameDatabaseContext()
     {
+        this._connectionString = "";
+        this._time = new SystemDateTimeProvider();
     }
-    
-    public DateTimeOffset Now => DateTimeOffset.UtcNow;
+    public GameDatabaseContext(string connection, IDateTimeProvider timeProvider)
+    {
+        this._connectionString = connection;
+        this._time = timeProvider;
+    }
+
+    private readonly IDateTimeProvider _time;
+
+    private readonly string? _connectionString;
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseNpgsql(this._connectionString);
     
     private DbSet<DbUser> Users { get; set; }
     private DbSet<DbCode> Codes { get; set; }
     private DbSet<DbToken> Tokens { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseNpgsql(config.PostgresSqlConnectionString);
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        
-    }
 
     public override void Dispose()
     {

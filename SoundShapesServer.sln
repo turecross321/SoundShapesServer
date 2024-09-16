@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundShapesServer", "SoundS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundShapesServer.Common", "SoundShapesServer.Common\SoundShapesServer.Common.csproj", "{70E7A95D-E0A3-49CF-A309-9249A045EF94}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundShapesServer.Tests", "SoundShapesServer.Tests\SoundShapesServer.Tests.csproj", "{7CE97D00-5C32-4E79-821C-E9BCADAD801A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{70E7A95D-E0A3-49CF-A309-9249A045EF94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70E7A95D-E0A3-49CF-A309-9249A045EF94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70E7A95D-E0A3-49CF-A309-9249A045EF94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CE97D00-5C32-4E79-821C-E9BCADAD801A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CE97D00-5C32-4E79-821C-E9BCADAD801A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CE97D00-5C32-4E79-821C-E9BCADAD801A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CE97D00-5C32-4E79-821C-E9BCADAD801A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
