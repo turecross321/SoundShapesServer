@@ -8,7 +8,7 @@ using SoundShapesServer.Types.Responses.Api.DataTypes;
 
 namespace SoundShapesServer.Endpoints.Api;
 
-public class EulaEndpoints : EndpointGroup
+public class ApiEulaEndpoints : EndpointGroup
 {
     [DocSummary("Retrieves the server's terms and conditions.")]
     [DocResponseBody(typeof(ApiEulaResponse))]

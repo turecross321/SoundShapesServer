@@ -3,19 +3,19 @@ using SoundShapesServer.Types.Responses.Api.ApiTypes;
 
 namespace SoundShapesServer.Types.Responses.Api.DataTypes;
 
-public record ApiMinimalUserResponse : IApiDbResponse<DbUser, ApiMinimalUserResponse>
+public record ApiFullUserResponse : IApiDbResponse<DbUser, ApiFullUserResponse>
 {
     public required Guid Id { get; set; }
     public required string Name { get; set; }
     public required UserRole Role { get; set; }
-
-    public static ApiMinimalUserResponse FromDb(DbUser user)
+    
+    public static ApiFullUserResponse FromDb(DbUser value)
     {
-        return new ApiMinimalUserResponse
+        return new ApiFullUserResponse
         {
-            Id = user.Id,
-            Name = user.Name,
-            Role = user.Role
+            Id = value.Id,
+            Name = value.Name,
+            Role = value.Role
         };
     }
 }

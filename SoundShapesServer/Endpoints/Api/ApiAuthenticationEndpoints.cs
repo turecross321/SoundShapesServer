@@ -16,7 +16,7 @@ using SoundShapesServer.Types.Responses.Api.DataTypes;
 
 namespace SoundShapesServer.Endpoints.Api;
 
-public class ApiAccountCredentialEndpoints : EndpointGroup
+public class ApiAuthenticationEndpoints : EndpointGroup
 {
     /// <remarks>
     ///     If increased, passwords will automatically be rehashed at login time to use the new WorkFactor 
@@ -34,17 +34,12 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
     [DocError(typeof(ApiBadRequestError), ApiBadRequestError.InvalidEmailWhen)]
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
     [DocRequestBody(typeof(ApiSetEmailRequest))]
-    [DocSummary("Set / change your account's e-mail address.")]
+    [DocSummary("Set your account's e-mail address.")]
     [RateLimitSettings(300, 10, 300, "setEmail")]
-    [Authentication(false)]
-    [ApiEndpoint("setEmail", HttpMethods.Put)]
+    [ApiEndpoint("setEmail", HttpMethods.Post)]
     public ApiOkResponse SetEmail(RequestContext context, GameDatabaseContext database, EmailService email, 
-        ServerConfig config, ApiSetEmailRequest body)
+        ServerConfig config, DbUser user, ApiSetEmailRequest body)
     {
-        DbCode? token = database.GetCode(body.Code, CodeType.SetEmail);
-        if (token == null)
-            return ApiUnauthorizedError.InvalidCode;
-
         if (!CommonPatterns.EmailAddressRegex().IsMatch(body.NewEmail))
             return ApiBadRequestError.InvalidEmail;
 
@@ -67,18 +62,17 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
         ";
 
 
-        DbCode verifyEmail = database.CreateCode(token.User, CodeType.VerifyEmail);
+        DbCode verifyEmail = database.CreateCode(user, CodeType.VerifyEmail);
         
         bool success = email.SendEmail(body.NewEmail, $"[{config.InstanceSettings.InstanceName}] Verify your Email Address",
-            String.Format(emailTemplate, token.User.Name, verifyEmail.Code, config.InstanceSettings.InstanceName));
+            String.Format(emailTemplate, user.Name, verifyEmail.Code, config.InstanceSettings.InstanceName));
 
         if (!success)
         {
             return ApiInternalServerError.CouldNotSendEmail;
         }
 
-        database.SetUserEmail(token.User, body.NewEmail);
-        database.RemoveCode(token);
+        database.SetUserEmail(user, body.NewEmail);
         return new ApiOkResponse();
     }
 
@@ -87,7 +81,7 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
     [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidCodeWhen)]
     [RateLimitSettings(300, 10, 300, "setEmail")]
     [Authentication(false)]
-    [ApiEndpoint("verifyEmail", HttpMethods.Put)]
+    [ApiEndpoint("verifyEmail", HttpMethods.Post)]
     public ApiOkResponse VerifyEmail(RequestContext context, GameDatabaseContext database, ApiCodeRequest body)
     {
         DbCode? code = database.GetCode(body.Code, CodeType.VerifyEmail);
@@ -153,7 +147,7 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
     [DocSummary("Set a new password.")]
     [RateLimitSettings(300, 4, 300, "setPassword")]
     [Authentication(false)]
-    [ApiEndpoint("setPassword", HttpMethods.Put)]
+    [ApiEndpoint("setPassword", HttpMethods.Post)]
     public ApiOkResponse SetPassword(RequestContext context, GameDatabaseContext database, 
         ApiSetPasswordRequest body)
     {
@@ -246,4 +240,12 @@ public class ApiAccountCredentialEndpoints : EndpointGroup
 
         return new ApiOkResponse();
     }
+
+    [DocSummary("Retrieves the logged in user")]
+    [DocResponseBody(typeof(ApiFullUserResponse))]
+    [ApiEndpoint("me")]
+    public ApiFullUserResponse GetSelf(RequestContext context, DbUser user)
+    {
+        return ApiFullUserResponse.FromDb(user);
+    } 
 }

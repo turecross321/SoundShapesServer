@@ -48,6 +48,12 @@ public partial class GameDatabaseContext
     {
         return Codes.Include(t => t.User).FirstOrDefault(t => t.Code == code && t.CodeType == type);
     }
+    
+    public DbCode? GetCode(DbUser user, CodeType type)
+    {
+        return Codes.Include(t => t.User).FirstOrDefault(t => t.User == user && t.CodeType == type);
+    }
+
 
     public void RemoveCode(DbCode code)
     {

@@ -19,6 +19,7 @@ public partial class GameDatabaseContext
         {
             TokenType.GameAccess => ExpiryTimes.GameTokenHours,
             TokenType.GameEula => ExpiryTimes.CodeHours,
+            TokenType.ApiAccess => ExpiryTimes.ApiAccessHours,
             _ => throw new ArgumentOutOfRangeException(nameof(tokenType), tokenType, null)
         };
 
