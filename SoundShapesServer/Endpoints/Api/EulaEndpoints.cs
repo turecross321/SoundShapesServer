@@ -2,9 +2,9 @@
 using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using SoundShapesServer.Common.Constants;
-using SoundShapesServer.Common.Types.Config;
-using SoundShapesServer.Common.Types.Responses.Api.ApiTypes;
-using SoundShapesServer.Common.Types.Responses.Api.DataTypes;
+using SoundShapesServer.Types.Config;
+using SoundShapesServer.Types.Responses.Api.ApiTypes;
+using SoundShapesServer.Types.Responses.Api.DataTypes;
 
 namespace SoundShapesServer.Endpoints.Api;
 

@@ -1,11 +1,11 @@
 ﻿using Bunkum.Core.Authentication;
 using Bunkum.Core.Database;
 using Bunkum.Listener.Request;
-using SoundShapesServer.Common.Types;
-using SoundShapesServer.Common.Types.Database;
 using SoundShapesServer.Database;
 using SoundShapesServer.Endpoints;
 using SoundShapesServer.Endpoints.Game;
+using SoundShapesServer.Types;
+using SoundShapesServer.Types.Database;
 
 namespace SoundShapesServer;
 

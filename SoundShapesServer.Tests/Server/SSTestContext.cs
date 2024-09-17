@@ -1,9 +1,9 @@
 ﻿using Bunkum.Core.Storage;
 using Bunkum.Protocols.Http.Direct;
-using SoundShapesServer.Common.Types;
-using SoundShapesServer.Common.Types.Database;
 using SoundShapesServer.Database;
 using SoundShapesServer.Tests.Database;
+using SoundShapesServer.Types;
+using SoundShapesServer.Types.Database;
 using Testcontainers.PostgreSql;
 
 namespace SoundShapesServer.Tests.Server;

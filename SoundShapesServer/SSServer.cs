@@ -8,11 +8,11 @@ using Bunkum.EntityFrameworkDatabase;
 using Bunkum.Protocols.Http;
 using SoundShapesServer.Common;
 using SoundShapesServer.Common.Time;
-using SoundShapesServer.Common.Types.Config;
-using SoundShapesServer.Common.Types.Database;
 using SoundShapesServer.Database;
 using SoundShapesServer.Endpoints;
 using SoundShapesServer.Services;
+using SoundShapesServer.Types.Config;
+using SoundShapesServer.Types.Database;
 
 namespace SoundShapesServer;
 

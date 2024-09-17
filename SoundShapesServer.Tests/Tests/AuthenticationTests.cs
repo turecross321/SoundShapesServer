@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Json;
-using SoundShapesServer.Common.Types;
-using SoundShapesServer.Common.Types.Database;
 using SoundShapesServer.Tests.Server;
+using SoundShapesServer.Types;
 using TestContext = NUnit.Framework.TestContext;
 
 namespace SoundShapesServer.Tests.Tests;

@@ -3,7 +3,7 @@ using System.Net.Mail;
 using Bunkum.Core;
 using Bunkum.Core.Services;
 using NotEnoughLogs;
-using SoundShapesServer.Common.Types.Config;
+using SoundShapesServer.Types.Config;
 
 namespace SoundShapesServer.Services;
 

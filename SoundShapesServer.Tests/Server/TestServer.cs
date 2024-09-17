@@ -5,9 +5,9 @@ using NotEnoughLogs;
 using NotEnoughLogs.Behaviour;
 using NotEnoughLogs.Sinks;
 using SoundShapesServer.Common.Time;
-using SoundShapesServer.Common.Types.Config;
 using SoundShapesServer.Database;
 using SoundShapesServer.Tests.Database;
+using SoundShapesServer.Types.Config;
 
 namespace SoundShapesServer.Tests.Server;
 

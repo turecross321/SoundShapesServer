@@ -3,10 +3,10 @@ using Bunkum.Core;
 using Bunkum.Core.Configuration;
 using Bunkum.Core.Endpoints;
 using SoundShapesServer.Common.Constants;
-using SoundShapesServer.Common.Types;
-using SoundShapesServer.Common.Types.Config;
-using SoundShapesServer.Common.Types.Database;
 using SoundShapesServer.Database;
+using SoundShapesServer.Types;
+using SoundShapesServer.Types.Config;
+using SoundShapesServer.Types.Database;
 
 namespace SoundShapesServer.Endpoints.Game;
 

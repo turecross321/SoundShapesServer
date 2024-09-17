@@ -4,13 +4,13 @@ using Bunkum.Core.Responses;
 using Bunkum.Listener.Protocol;
 using Bunkum.Protocols.Http;
 using NPTicket;
-using SoundShapesServer.Common.Types;
-using SoundShapesServer.Common.Types.Config;
-using SoundShapesServer.Common.Types.Database;
-using SoundShapesServer.Common.Types.Responses.Game;
 using SoundShapesServer.Common.Verification;
 using SoundShapesServer.Database;
 using SoundShapesServer.Extensions;
+using SoundShapesServer.Types;
+using SoundShapesServer.Types.Config;
+using SoundShapesServer.Types.Database;
+using SoundShapesServer.Types.Responses.Game;
 using static System.Net.HttpStatusCode;
 
 namespace SoundShapesServer.Endpoints.Game;

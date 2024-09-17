@@ -1,7 +1,7 @@
 ﻿using Bunkum.Core.Database;
 using Microsoft.EntityFrameworkCore;
 using SoundShapesServer.Common.Time;
-using SoundShapesServer.Common.Types.Database;
+using SoundShapesServer.Types.Database;
 
 namespace SoundShapesServer.Database;
 

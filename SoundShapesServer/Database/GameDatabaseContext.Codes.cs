@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoundShapesServer.Common.Constants;
-using SoundShapesServer.Common.Types;
-using SoundShapesServer.Common.Types.Database;
 using SoundShapesServer.Common.Verification;
+using SoundShapesServer.Types;
+using SoundShapesServer.Types.Database;
 
 namespace SoundShapesServer.Database;
 
