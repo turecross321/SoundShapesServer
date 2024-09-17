@@ -29,8 +29,6 @@ public class SSTestContext : IDisposable
         DatabaseContainer = databaseContainer;
         Listener = listener;
         Time = time;
-
-        DatabaseContainer.StartAsync();
     }
 
     private int UserIncrement => this._users++;
@@ -41,12 +39,11 @@ public class SSTestContext : IDisposable
         return this.Database.CreateUser(username);
     }
     
-    public HttpClient GetAuthenticatedClient(TokenType type, PlatformType platform, out DbToken token,
-        DbUser? user = null)
+    public HttpClient GetAuthenticatedClient(TokenType type, PlatformType platform = PlatformType.PS3, DbUser? user = null)
     {
         user ??= this.CreateUser();
 
-        token = Database.CreateToken(user, type, platform);
+        DbToken token = Database.CreateToken(user, type, platform);
         
         HttpClient client = this.Listener.GetClient();
 

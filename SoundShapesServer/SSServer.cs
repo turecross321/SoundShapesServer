@@ -30,7 +30,7 @@ public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : 
         Func<TDatabaseProvider>? databaseProvider = null,
         IAuthenticationProvider<DbToken>? authProvider = null,
         IDataStore? dataStore = null,
-        ServerConfig? config = null)
+        ServerConfig? config = null) : base(listener)
     {
         _config ??= Config.LoadFromJsonFile<ServerConfig>("soundShapesConfig.json", this.Logger);
         

@@ -21,8 +21,9 @@ public class ServerTest
         DirectHttpListener listener = new(Logger);
         HttpClient client = listener.GetClient();
         MockDateTimeProvider time = new();
-        PostgreSqlContainer databaseContainer = new PostgreSqlBuilder().Build();
         
+        PostgreSqlContainer databaseContainer = new PostgreSqlBuilder().Build();
+        databaseContainer.StartAsync().GetAwaiter().GetResult();
         TestDatabaseProvider provider = new(databaseContainer.GetConnectionString(), time);
 
         Lazy<TestSSServer> server = new(() =>

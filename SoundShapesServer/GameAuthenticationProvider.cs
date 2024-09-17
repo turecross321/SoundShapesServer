@@ -30,7 +30,7 @@ public class GameAuthenticationProvider: IAuthenticationProvider<DbToken>
         DbToken? token = database.GetTokenWithId(parsedId);
         if (token == null) return null;
 
-        if (token.ExpiryDate < DateTimeOffset.UtcNow)
+        if (token.ExpiryDate < database.Time.Now)
         {
             database.RemoveToken(token);
             return null;

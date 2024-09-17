@@ -19,6 +19,7 @@ public partial class GameDatabaseContext: DbContext, IDatabaseContext
     }
 
     private readonly IDateTimeProvider _time;
+    public IDateTimeProvider Time => _time;
 
     private readonly string? _connectionString;
 

@@ -1,4 +1,6 @@
 ﻿using System.Net.Http.Json;
+using SoundShapesServer.Common.Types;
+using SoundShapesServer.Common.Types.Database;
 using SoundShapesServer.Tests.Server;
 using TestContext = NUnit.Framework.TestContext;
 
@@ -7,12 +9,16 @@ namespace SoundShapesServer.Tests.Tests;
 public class AuthenticationTests: ServerTest
 {
     [Test]
-    public void LoginWorks()
+    public void AuthenticationEnforcementWorks()
     {
         using SSTestContext context = this.GetServer();
-        context.CreateUser("bob1");
-        Task<HttpResponseMessage> response = context.Http.PostAsJsonAsync<object>("/otg/identity/login/token/psn.post", null);
 
-        Assert.That(!response.Result.IsSuccessStatusCode);
+        using HttpClient client = context.Http;
+        HttpResponseMessage result = client.GetAsync("/otg/ps3/SCEA/en/~eula.get").Result;
+        Assert.That(!result.IsSuccessStatusCode);
+
+        using HttpClient authClient = context.GetAuthenticatedClient(TokenType.GameEula);
+        result = authClient.GetAsync("/otg/ps3/SCEA/en/~eula.get").Result;
+        Assert.That(result.IsSuccessStatusCode);
     }
 }

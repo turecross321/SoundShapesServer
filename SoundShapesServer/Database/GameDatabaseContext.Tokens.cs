@@ -12,7 +12,7 @@ public partial class GameDatabaseContext
     {
         return Tokens.Include(t => t.User).FirstOrDefault(t => t.Id == guid);
     }
-
+    
     public DbToken CreateToken(DbUser user, TokenType tokenType, PlatformType? platformType)
     {
         int expiryHours = tokenType switch
