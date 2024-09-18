@@ -1,4 +1,5 @@
-﻿using Bunkum.Core;
+﻿using System.Net;
+using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using Bunkum.Core.Responses;
 using Bunkum.Listener.Protocol;
@@ -42,21 +43,56 @@ public class AuthenticationEndpoints : EndpointGroup
         if (platform == null)
         {
             context.Logger.LogWarning(BunkumCategory.Authentication, $"Unable to determine PlatformType ({ticket.Username}).");
+            // todo: notification about unable to determine platform type
             return BadRequest;
         }
         
         DbUser user = database.GetUserWithName(ticket.Username) ?? database.CreateUser(ticket.Username);
         DbToken token;
 
-        if (!user.FinishedRegistration)
+        // todo: check for bans
+
+        bool allowAuthentication = false;
+        DbIp? ip = null; // required for IP authentication
+
+        bool genuineTicket = ticket.IsGenuine((MemoryStream)body, database.Time.Now, platform);
+        
+        if (genuineTicket)
         {
-            context.Logger.LogInfo(BunkumCategory.Authentication, $"Creating eula token ({platform}) for  {user}.");
-            token = database.CreateToken(user, TokenType.GameEula, platform);
+            context.Logger.LogInfo(BunkumCategory.Authentication, $"{user} has a genuine ticket.");
+            if (platform is PlatformType.PS3 or PlatformType.PS4 or PlatformType.PSVita
+                && user.PsnAuthorization)
+                allowAuthentication = true;
+            if (user.RpcnAuthorization && platform is PlatformType.RPCS3)
+                allowAuthentication = true;
         }
         else
         {
+            context.Logger.LogInfo(BunkumCategory.Authentication, $"{user} doesn't have a genuine ticket.");
+        }
+
+        if (user.IpAuthorization)
+        {
+            context.Logger.LogInfo(BunkumCategory.Authentication, $"Tracking IP address for {user} as " +
+                                                                  $"they have enabled IP authentication.");
+            ip = database.GetOrCreateIp(user, ((IPEndPoint)context.RemoteEndpoint).Address.ToString());
+            
+            if (ip.Authorized)
+            {
+                allowAuthentication = true;
+                context.Logger.LogInfo(BunkumCategory.Authentication, $"{user} has an authorized IP address.");
+            }
+        }
+        
+        if (allowAuthentication)
+        {
             context.Logger.LogInfo(BunkumCategory.Authentication, $"Creating access token ({platform}) for {user}.");
-            token = database.CreateToken(user, TokenType.GameAccess, platform);
+            token = database.CreateToken(user, TokenType.GameAccess, platform, ip, null, genuineTicket);
+        }
+        else
+        {
+            context.Logger.LogInfo(BunkumCategory.Authentication, $"Creating eula token ({platform}) for  {user}.");
+            token = database.CreateToken(user, TokenType.GameEula, platform, ip, null, genuineTicket);
         }
         
         context.ResponseHeaders.Add("set-cookie", $"OTG-Identity-SessionId={token.Id};Version=1;Path=/");

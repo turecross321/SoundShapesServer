@@ -1,11 +1,9 @@
 ﻿using Bunkum.Core.Storage;
-using Bunkum.EntityFrameworkDatabase;
 using Bunkum.Protocols.Http;
 using NotEnoughLogs;
 using NotEnoughLogs.Behaviour;
 using NotEnoughLogs.Sinks;
 using SoundShapesServer.Common.Time;
-using SoundShapesServer.Database;
 using SoundShapesServer.Tests.Database;
 using SoundShapesServer.Types.Config;
 
@@ -36,15 +34,5 @@ public class TestSSServer(BunkumHttpListener listener, Func<TestDatabaseProvider
         };
         
         return (logConfig, sinks);
-    }
-    
-    protected override void SetupServices()
-    {
-        
-    }
-
-    protected override void SetupMiddlewares()
-    {
-        
     }
 }

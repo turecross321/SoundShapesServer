@@ -1,10 +1,40 @@
 ﻿using NPTicket;
+using NPTicket.Verification;
+using NPTicket.Verification.Keys;
+using SoundShapesServer.Common.Verification;
 using SoundShapesServer.Types;
 
 namespace SoundShapesServer.Extensions;
 
 public static class TicketExtensions
 {
+    public static bool IsGenuine(this Ticket ticket, MemoryStream body, DateTimeOffset now, PlatformType? platformType = null)
+    {
+        ITicketSigningKey signingKey;
+
+        platformType ??= ticket.GetPlatformType();
+        switch (platformType)
+        {
+            case PlatformType.RPCS3:
+                signingKey = RpcnSigningKey.Instance;
+                break;
+            case PlatformType.PSVita:
+            case PlatformType.PS3:
+            case PlatformType.PS4:
+                signingKey = SoundShapesSigningKey.Instance;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(platformType));
+        }
+
+        // Dont allow use of expired tickets
+        if (now > ticket.ExpiryDate)
+            return false;
+        
+        TicketVerifier verifier = new(body.ToArray(), ticket, signingKey);
+        return verifier.IsTicketValid();
+    }
+    
     public static PlatformType? GetPlatformType(this Ticket ticket)
     {
         if (ticket.SignatureIdentifier == "RPCN" || ticket.IssuerId == 0x33333333)

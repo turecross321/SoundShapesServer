@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SoundShapesServer.Database;
@@ -11,9 +12,11 @@ using SoundShapesServer.Database;
 namespace SoundShapesServer.Migrations
 {
     [DbContext(typeof(GameDatabaseContext))]
-    partial class GameDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240918164622_AddCreationDateToUsers")]
+    partial class AddCreationDateToUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,9 +126,6 @@ namespace SoundShapesServer.Migrations
                     b.Property<DateTimeOffset>("ExpiryDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool?>("GenuineNpTicket")
-                        .HasColumnType("boolean");
-
                     b.Property<int?>("IpId")
                         .HasColumnType("integer");
 
@@ -158,6 +158,15 @@ namespace SoundShapesServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("AllowIpAuthentication")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AllowPsnAuthentication")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AllowRpcnAuthentication")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTimeOffset>("CreationDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -166,9 +175,6 @@ namespace SoundShapesServer.Migrations
                         .HasColumnType("character varying(320)");
 
                     b.Property<bool>("FinishedRegistration")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IpAuthorization")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
@@ -180,14 +186,8 @@ namespace SoundShapesServer.Migrations
                         .HasMaxLength(60)
                         .HasColumnType("character varying(60)");
 
-                    b.Property<bool>("PsnAuthorization")
-                        .HasColumnType("boolean");
-
                     b.Property<int>("Role")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("RpcnAuthorization")
-                        .HasColumnType("boolean");
 
                     b.Property<bool>("VerifiedEmail")
                         .HasColumnType("boolean");
@@ -238,8 +238,7 @@ namespace SoundShapesServer.Migrations
 
                     b.HasOne("SoundShapesServer.Types.Database.DbRefreshToken", "RefreshToken")
                         .WithMany("Tokens")
-                        .HasForeignKey("RefreshTokenId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("RefreshTokenId");
 
                     b.HasOne("SoundShapesServer.Types.Database.DbUser", "User")
                         .WithMany()

@@ -1,7 +1,5 @@
-﻿using Bunkum.Core.Storage;
-using Bunkum.Protocols.Http.Direct;
+﻿using Bunkum.Protocols.Http.Direct;
 using SoundShapesServer.Database;
-using SoundShapesServer.Tests.Database;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Database;
 using Testcontainers.PostgreSql;
@@ -33,21 +31,27 @@ public class SSTestContext : IDisposable
 
     private int UserIncrement => this._users++;
     
-    public DbUser CreateUser(string? username = null)
+    public DbUser CreateUser(string? username = null, string email = "user@email.yep", UserRole role = UserRole.Default)
     {
         username ??= this.UserIncrement.ToString();
-        return this.Database.CreateUser(username);
+        DbUser user = this.Database.CreateRegisteredUser(username, email, role);
+        return user;
     }
-    
+
     public HttpClient GetAuthenticatedClient(TokenType type, PlatformType platform = PlatformType.PS3, DbUser? user = null)
     {
         user ??= this.CreateUser();
 
-        DbToken token = Database.CreateToken(user, type, platform);
-        
+        DbToken token = Database.CreateToken(user, type, platform, null, null, null);
+
+        return GetAuthenticatedClient(token);
+    }
+    
+    public HttpClient GetAuthenticatedClient(DbToken token)
+    {
         HttpClient client = this.Listener.GetClient();
 
-        if (type is TokenType.GameEula or TokenType.GameAccess)
+        if (token.TokenType is TokenType.GameEula or TokenType.GameAccess)
         {
             client.DefaultRequestHeaders.Add("X-OTG-Identity-SessionId", token.Id.ToString());
         }
@@ -58,7 +62,6 @@ public class SSTestContext : IDisposable
 
         return client;
     }
-    
     public void Dispose()
     {
         this.Database.Dispose();

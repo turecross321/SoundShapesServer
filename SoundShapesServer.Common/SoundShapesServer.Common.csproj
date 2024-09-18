@@ -18,6 +18,7 @@
       <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.8" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.8" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+      <PackageReference Include="NPTicket" Version="3.1.0" />
     </ItemGroup>
 
 </Project>

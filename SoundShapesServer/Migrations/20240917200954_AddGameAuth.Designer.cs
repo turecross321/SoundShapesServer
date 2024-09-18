@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SoundShapesServer.Database;
@@ -11,9 +12,11 @@ using SoundShapesServer.Database;
 namespace SoundShapesServer.Migrations
 {
     [DbContext(typeof(GameDatabaseContext))]
-    partial class GameDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240917200954_AddGameAuth")]
+    partial class AddGameAuth
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,63 +57,6 @@ namespace SoundShapesServer.Migrations
                     b.ToTable("Codes");
                 });
 
-            modelBuilder.Entity("SoundShapesServer.Types.Database.DbIp", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("Authorized")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset>("AuthorizedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset>("CreationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("IpAddress")
-                        .IsRequired()
-                        .HasMaxLength(39)
-                        .HasColumnType("character varying(39)");
-
-                    b.Property<bool>("OneTimeUse")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Ips");
-                });
-
-            modelBuilder.Entity("SoundShapesServer.Types.Database.DbRefreshToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset>("ExpiryDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RefreshTokens");
-                });
-
             modelBuilder.Entity("SoundShapesServer.Types.Database.DbToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -123,17 +69,8 @@ namespace SoundShapesServer.Migrations
                     b.Property<DateTimeOffset>("ExpiryDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool?>("GenuineNpTicket")
-                        .HasColumnType("boolean");
-
-                    b.Property<int?>("IpId")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("Platform")
                         .HasColumnType("integer");
-
-                    b.Property<Guid?>("RefreshTokenId")
-                        .HasColumnType("uuid");
 
                     b.Property<int>("TokenType")
                         .HasColumnType("integer");
@@ -142,10 +79,6 @@ namespace SoundShapesServer.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IpId");
-
-                    b.HasIndex("RefreshTokenId");
 
                     b.HasIndex("UserId");
 
@@ -158,17 +91,20 @@ namespace SoundShapesServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset>("CreationDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<bool>("AllowIpAuthentication")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AllowPsnAuthentication")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AllowRpcnAuthentication")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("EmailAddress")
                         .HasMaxLength(320)
                         .HasColumnType("character varying(320)");
 
                     b.Property<bool>("FinishedRegistration")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IpAuthorization")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
@@ -180,14 +116,8 @@ namespace SoundShapesServer.Migrations
                         .HasMaxLength(60)
                         .HasColumnType("character varying(60)");
 
-                    b.Property<bool>("PsnAuthorization")
-                        .HasColumnType("boolean");
-
                     b.Property<int>("Role")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("RpcnAuthorization")
-                        .HasColumnType("boolean");
 
                     b.Property<bool>("VerifiedEmail")
                         .HasColumnType("boolean");
@@ -208,60 +138,15 @@ namespace SoundShapesServer.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SoundShapesServer.Types.Database.DbIp", b =>
-                {
-                    b.HasOne("SoundShapesServer.Types.Database.DbUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("SoundShapesServer.Types.Database.DbRefreshToken", b =>
-                {
-                    b.HasOne("SoundShapesServer.Types.Database.DbUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("SoundShapesServer.Types.Database.DbToken", b =>
                 {
-                    b.HasOne("SoundShapesServer.Types.Database.DbIp", "Ip")
-                        .WithMany("Tokens")
-                        .HasForeignKey("IpId");
-
-                    b.HasOne("SoundShapesServer.Types.Database.DbRefreshToken", "RefreshToken")
-                        .WithMany("Tokens")
-                        .HasForeignKey("RefreshTokenId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("SoundShapesServer.Types.Database.DbUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Ip");
-
-                    b.Navigation("RefreshToken");
-
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("SoundShapesServer.Types.Database.DbIp", b =>
-                {
-                    b.Navigation("Tokens");
-                });
-
-            modelBuilder.Entity("SoundShapesServer.Types.Database.DbRefreshToken", b =>
-                {
-                    b.Navigation("Tokens");
                 });
 #pragma warning restore 612, 618
         }

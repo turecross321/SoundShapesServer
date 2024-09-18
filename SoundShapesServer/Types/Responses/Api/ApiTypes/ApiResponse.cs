@@ -6,6 +6,12 @@ namespace SoundShapesServer.Types.Responses.Api.ApiTypes;
 
 public class ApiResponse<T> : IHasResponseCode where T : class
 {
+    [Obsolete("Only used for deserialization")]
+    public ApiResponse()
+    {
+        
+    }
+    
     protected ApiResponse(T data)
     {
         Success = true;

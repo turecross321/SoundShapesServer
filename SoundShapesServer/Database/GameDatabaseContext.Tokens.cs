@@ -10,10 +10,14 @@ public partial class GameDatabaseContext
 {
     public DbToken? GetTokenWithId(Guid guid)
     {
-        return Tokens.Include(t => t.User).FirstOrDefault(t => t.Id == guid);
+        return Tokens
+            .Include(t => t.User)
+            .Include(t => t.RefreshToken)
+            .FirstOrDefault(t => t.Id == guid);
     }
     
-    public DbToken CreateToken(DbUser user, TokenType tokenType, PlatformType? platformType)
+    public DbToken CreateToken(DbUser user, TokenType tokenType, PlatformType? platformType, DbIp? ip, 
+        DbRefreshToken? refreshToken, bool? genuineNpTicket)
     {
         int expiryHours = tokenType switch
         {
@@ -23,13 +27,24 @@ public partial class GameDatabaseContext
             _ => throw new ArgumentOutOfRangeException(nameof(tokenType), tokenType, null)
         };
 
+        DateTimeOffset expiry = _time.Now.AddHours(expiryHours);
+
+        // If there is a refresh token and it expires before this would normally expire, use the refresh expiry date instead.
+        // This is to prevent a situation where the refresh token is expired but there are still tokens
+        // generated with it that are usable.
+        if (refreshToken != null && refreshToken.ExpiryDate < expiry)
+            expiry = refreshToken.ExpiryDate;
+        
         EntityEntry<DbToken> token = Tokens.Add(new DbToken
         {
             UserId = user.Id,
             TokenType = tokenType,
             CreationDate = _time.Now,
-            ExpiryDate = _time.Now.AddHours(expiryHours),
+            ExpiryDate = expiry,
             Platform = platformType,
+            IpId = ip?.Id,
+            RefreshTokenId = refreshToken?.Id,
+            GenuineNpTicket = genuineNpTicket,
         });
 
         SaveChanges();
@@ -42,7 +57,14 @@ public partial class GameDatabaseContext
 
     public void RemoveToken(DbToken token)
     {
+        if (token.RefreshToken != null)
+        {
+            RemoveRefreshToken(token.RefreshToken);
+            return;
+        }
+
         Tokens.Remove(token);
         SaveChanges();
+
     }
 }

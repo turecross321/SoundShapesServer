@@ -1,11 +1,14 @@
 ﻿using System.Net.Http.Json;
+using SoundShapesServer.Common;
+using SoundShapesServer.Endpoints.Api;
 using SoundShapesServer.Tests.Server;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Database;
 using SoundShapesServer.Types.Requests.Api;
-using TestContext = NUnit.Framework.TestContext;
+using SoundShapesServer.Types.Responses.Api.ApiTypes;
+using SoundShapesServer.Types.Responses.Api.DataTypes;
 
-namespace SoundShapesServer.Tests.Tests;
+namespace SoundShapesServer.Tests.Tests.Authentication;
 
 public class AuthenticationTests : ServerTest
 {
@@ -14,7 +17,7 @@ public class AuthenticationTests : ServerTest
     {
         using SSTestContext context = this.GetServer();
 
-        string apiEndpoint = "/api/v1/me";
+        string apiEndpoint = "/api/v1/users/me";
         string gameEulaEndpoint = "/otg/ps3/SCEA/en/~eula.get";
         //string gameEndpoint = ""; // Todo: add any authenticated endpoint to this when there is one implemented
 
@@ -35,6 +38,49 @@ public class AuthenticationTests : ServerTest
         }
     }
 
+    [Test]
+    public void ApiLoginAndRefreshTokenWork()
+    {
+        using SSTestContext context = this.GetServer();
+
+        string email = "bigBoss@mail.com";
+        string password = "password";
+
+        string passwordSha512 = HashHelper.ComputeSha512Hash(password);
+        string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(passwordSha512, ApiAuthenticationEndpoints.WorkFactor);
+        DbUser user = context.CreateUser(email: email);
+        user = context.Database.SetUserPassword(user, passwordBcrypt);
+
+        using HttpClient client = context.Http;
+
+        HttpResponseMessage response = client.GetAsync("/api/v1/users/me").Result;
+        Assert.That(!response.IsSuccessStatusCode);
+
+        response = client.PostAsJsonAsync("/api/v1/logIn", new ApiLogInRequest
+        {
+            Email = email,
+            PasswordSha512 = passwordSha512
+        }).Result;
+
+        Assert.That(response.IsSuccessStatusCode);
+
+        ApiLoginResponse? deSerialized =
+            response.Content.ReadFromJsonAsync<ApiResponse<ApiLoginResponse>>().Result!.Data;
+        Assert.That(deSerialized != null);
+
+        Assert.That(context.Database.GetTokenWithId(deSerialized!.AccessToken.Id) != null);
+
+        response = client.PostAsJsonAsync("/api/v1/refreshToken", new ApiRefreshTokenRequest
+        {
+            RefreshTokenId = deSerialized!.RefreshToken.Id
+        }).Result;
+
+        deSerialized = response.Content.ReadFromJsonAsync<ApiResponse<ApiLoginResponse>>().Result!.Data;
+        Assert.That(deSerialized != null);
+
+        Assert.That(context.Database.GetTokenWithId(deSerialized!.AccessToken.Id) != null);
+    }
+    
     // todo: fix the email service so that this test works
     /*
     [Test]

@@ -23,7 +23,28 @@ public partial class GameDatabaseContext
             Name = name,
             Role = UserRole.Default,
             FinishedRegistration = false,
-            VerifiedEmail = false
+            VerifiedEmail = false,
+            CreationDate = Time.Now
+        });
+
+        SaveChanges();
+        
+        // Reload to load the ID
+        user.Reload();
+
+        return user.Entity;
+    }
+    
+    public DbUser CreateRegisteredUser(string name, string email, UserRole role)
+    {
+        EntityEntry<DbUser> user = Users.Add(new DbUser
+        {
+            Name = name,
+            Role = role,
+            FinishedRegistration = true,
+            VerifiedEmail = true,
+            CreationDate = Time.Now,
+            EmailAddress = email
         });
 
         SaveChanges();
@@ -34,28 +55,32 @@ public partial class GameDatabaseContext
         return user.Entity;
     }
 
-    public void SetUserEmail(DbUser user, string email)
+    public DbUser SetUserEmail(DbUser user, string email)
     {
         user.EmailAddress = email;
         user.VerifiedEmail = false;
         SaveChanges();
+        return user;
     }
 
-    public void VerifyEmail(DbUser user)
+    public DbUser VerifyEmail(DbUser user)
     {
         user.VerifiedEmail = true;
         SaveChanges();
+        return user;
     }
 
-    public void SetUserPassword(DbUser user, string passwordBcrypt)
+    public DbUser SetUserPassword(DbUser user, string passwordBcrypt)
     {
         user.PasswordBcrypt = passwordBcrypt;
         SaveChanges();
+        return user;
     }
 
-    public void FinishUserRegistration(DbUser user)
+    public DbUser FinishUserRegistration(DbUser user)
     {
         user.FinishedRegistration = true;
         SaveChanges();
+        return user;
     }
 }

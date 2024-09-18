@@ -13,7 +13,9 @@ public class ApiUnauthorizedError : ApiError
     public const string EulaNotAcceptedWhen = "You have to accept the eula to register an account.";
     public static readonly ApiUnauthorizedError EulaNotAccepted = new(EulaNotAcceptedWhen);
     public const string InvalidCodeWhen = "Invalid code.";
-    public static readonly ApiUnauthorizedError InvalidCode = new(InvalidCodeWhen); 
+    public static readonly ApiUnauthorizedError InvalidCode = new(InvalidCodeWhen);
+    public const string InvalidEmailOrPasswordWhen = "Invalid e-mail or password.";
+    public static readonly ApiUnauthorizedError InvalidEmailOrPassword = new(InvalidEmailOrPasswordWhen);
 
     private ApiUnauthorizedError(string message) : base(message, HttpStatusCode.Unauthorized)
     {

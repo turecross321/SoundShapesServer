@@ -27,6 +27,12 @@ public class DbUser: IUser
     [MinLength(60)]
     public string? PasswordBcrypt { get; set; }
 
+    public bool RpcnAuthorization { get; set; } = false;
+    public bool PsnAuthorization { get; set; } = false;
+    public bool IpAuthorization { get; set; } = false;
+    
+    public required DateTimeOffset CreationDate { get; set; }
+
     public override string ToString()
     {
         string result = $"{this.Name} ({this.Role}";

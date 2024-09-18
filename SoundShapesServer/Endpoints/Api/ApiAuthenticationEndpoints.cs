@@ -13,6 +13,7 @@ using SoundShapesServer.Types.Requests.Api;
 using SoundShapesServer.Types.Responses.Api.ApiTypes;
 using SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
 using SoundShapesServer.Types.Responses.Api.DataTypes;
+using static BCrypt.Net.BCrypt;
 
 namespace SoundShapesServer.Endpoints.Api;
 
@@ -22,13 +23,13 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     ///     If increased, passwords will automatically be rehashed at login time to use the new WorkFactor 
     ///     If decreased, passwords will stay at higher WorkFactor until reset
     /// </remarks>
-    private const int WorkFactor = 14;
+    public const int WorkFactor = 14;
     
     /// <summary>
     /// A randomly generated password.
     /// Used to prevent against timing attacks.
     /// </summary>
-    private static readonly string FakePassword = BCrypt.Net.BCrypt.HashPassword(Random.Shared.Next().ToString(), WorkFactor);
+    private static readonly string FakePassword = HashPassword(Random.Shared.Next().ToString(), WorkFactor);
     
     [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidCodeWhen)]
     [DocError(typeof(ApiBadRequestError), ApiBadRequestError.InvalidEmailWhen)]
@@ -88,11 +89,14 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         if (code == null)
             return ApiUnauthorizedError.InvalidCode;
         
-        context.Logger.LogInfo(BunkumCategory.Authentication, $"{code.User} successfully verified their email.");
+        DbUser user = database.VerifyEmail(code.User);
+        if (!user.FinishedRegistration)
+        {
+            user = database.FinishUserRegistration(code.User);
+            context.Logger.LogInfo(BunkumCategory.Authentication, $"{user} successfully finish their registration.");
+        }
         
-        database.VerifyEmail(code.User);
-        if (!code.User.FinishedRegistration)
-            database.FinishUserRegistration(code.User);
+        context.Logger.LogInfo(BunkumCategory.Authentication, $"{user} successfully verified their email.");
         
         return new ApiOkResponse();
     }
@@ -147,8 +151,8 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     [DocSummary("Set a new password.")]
     [RateLimitSettings(300, 4, 300, "setPassword")]
     [Authentication(false)]
-    [ApiEndpoint("setPassword", HttpMethods.Post)]
-    public ApiOkResponse SetPassword(RequestContext context, GameDatabaseContext database, 
+    [ApiEndpoint("resetPassword", HttpMethods.Post)]
+    public ApiOkResponse ResetPassword(RequestContext context, GameDatabaseContext database, 
         ApiSetPasswordRequest body)
     {
         DbCode? codeToken = database.GetCode(body.Code, CodeType.SetPassword);
@@ -158,7 +162,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         if (body.PasswordSha512.Length != 128 || !CommonPatterns.Sha512Regex().IsMatch(body.PasswordSha512))
             return ApiBadRequestError.PasswordIsNotHashed;
 
-        string? passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(body.PasswordSha512, WorkFactor);
+        string? passwordBcrypt = HashPassword(body.PasswordSha512, WorkFactor);
         if (passwordBcrypt == null) return ApiInternalServerError.CouldNotBcryptPassword;
 
         database.SetUserPassword(codeToken.User, passwordBcrypt);
@@ -204,7 +208,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         if (!CommonPatterns.EmailAddressRegex().IsMatch(body.Email))
             return ApiBadRequestError.InvalidEmail;
         
-        string? passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(body.PasswordSha512, WorkFactor);
+        string? passwordBcrypt = HashPassword(body.PasswordSha512, WorkFactor);
         if (passwordBcrypt == null) 
             return ApiInternalServerError.CouldNotBcryptPassword;
         
@@ -240,12 +244,72 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 
         return new ApiOkResponse();
     }
-
-    [DocSummary("Retrieves the logged in user")]
-    [DocResponseBody(typeof(ApiFullUserResponse))]
-    [ApiEndpoint("me")]
-    public ApiFullUserResponse GetSelf(RequestContext context, DbUser user)
+    
+    [DocResponseBody(typeof(ApiLoginResponse))]
+    [DocRequestBody(typeof(ApiLogInRequest))]
+    [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidEmailOrPasswordWhen)]
+    [RateLimitSettings(300, 10, 300, "auth")]
+    [Authentication(false)]
+    [ApiEndpoint("logIn", HttpMethods.Post)]
+    public ApiResponse<ApiLoginResponse> LogIn(RequestContext context, GameDatabaseContext database, ApiLogInRequest body)
     {
-        return ApiFullUserResponse.FromDb(user);
-    } 
+        DbUser? user = database.GetUserWithEmail(body.Email);
+        if (user == null)
+        {
+            // Do the work of checking the password if there was no user found to avoid timing attacks.
+            _ = Verify(body.PasswordSha512, FakePassword);
+
+            return ApiUnauthorizedError.InvalidEmailOrPassword;
+        }
+
+        if (!Verify(body.PasswordSha512, user.PasswordBcrypt))
+            return ApiUnauthorizedError.InvalidEmailOrPassword;
+        
+        if (PasswordNeedsRehash(user.PasswordBcrypt, WorkFactor))
+            database.SetUserPassword(user, HashPassword(body.PasswordSha512, WorkFactor));
+
+        DbRefreshToken refreshToken = database.CreateRefreshToken(user);
+        DbToken token = database.CreateToken(user, TokenType.ApiAccess, null, null, refreshToken, null);
+
+        context.Logger.LogInfo(BunkumCategory.Authentication, $"{user} successfully logged in through the API");
+
+        return new ApiLoginResponse
+        {
+            User = ApiFullUserResponse.FromDb(user),
+            AccessToken = ApiTokenResponse.FromDb(token),
+            RefreshToken = ApiRefreshTokenResponse.FromDb(refreshToken)
+        };
+    }
+
+    [DocSummary("Log in with a refresh token.")]
+    [DocResponseBody(typeof(ApiLoginResponse))]
+    [DocRequestBody(typeof(ApiRefreshTokenRequest))]
+    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.RefreshTokenDoesNotExistWhen)]
+    [RateLimitSettings(300, 10, 300, "auth")]
+    [Authentication(false)]
+    [ApiEndpoint("refreshToken", HttpMethods.Post)]
+    public ApiResponse<ApiLoginResponse> LogInWithRefreshToken(RequestContext context, GameDatabaseContext database, 
+        ApiRefreshTokenRequest body)
+    {
+        DbRefreshToken? refreshToken = database.GetRefreshTokenWithId(body.RefreshTokenId);
+        if (refreshToken == null)
+            return ApiNotFoundError.RefreshTokenDoesNotExist;
+
+        DbToken token = database.CreateApiTokenWithRefreshToken(refreshToken);
+
+        return new ApiLoginResponse
+        {
+            User = ApiFullUserResponse.FromDb(refreshToken.User),
+            AccessToken = ApiTokenResponse.FromDb(token),
+            RefreshToken = ApiRefreshTokenResponse.FromDb(refreshToken)
+        };
+    }
+
+    [DocSummary("Revoke your access token and its associated refresh token with all its other tokens.")]
+    [ApiEndpoint("revokeToken", HttpMethods.Post)]
+    public ApiOkResponse LogOut(RequestContext context, GameDatabaseContext database, DbToken token)
+    {
+        database.RemoveToken(token);
+        return new ApiOkResponse();
+    }
 }
