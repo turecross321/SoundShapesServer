@@ -19,7 +19,7 @@ public partial class EulaEndpoints : EndpointGroup
         string eula;
         
         // this is included when we want to make sure that the eula is always shown (e.g. when showing the registration code)
-        bool includeDate = false;
+        bool includeDate = true;
 
         if (token.TokenType == TokenType.GameAccess)
         {
