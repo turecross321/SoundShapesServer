@@ -62,6 +62,14 @@ public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : 
         this.Server.AddStorageService(dataStore);
     }
     
+    
+    // ReSharper disable once RedundantOverriddenMember
+    protected override void Initialize()
+    {
+        base.Initialize();
+        //this.SetupWorkers();
+    }
+
     protected override void SetupServices()
     {
         Server.AddAutoDiscover(_config!.InstanceSettings.InstanceName, GameEndpointAttribute.RoutePrefix, false, 
@@ -72,7 +80,7 @@ public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : 
         Server.RemoveSerializer<BunkumJsonSerializer>();
         Server.AddSerializer<SoundShapesSerializer>();
         
-        this.Server.AddMiddleware<CrossOriginMiddleware>();
+        //this.Server.AddMiddleware<CrossOriginMiddleware>();
     }
 
     protected override void SetupMiddlewares()
