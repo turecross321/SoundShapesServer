@@ -23,8 +23,15 @@ public partial class EulaEndpoints : EndpointGroup
 
         if (token.TokenType == TokenType.GameAccess)
         {
-            includeDate = false;
-            eula = $"Welcome {user.Name}!";
+            if (!user.VerifiedEmail)
+            {
+                eula = $"You have not registered your email, please go to {config.WebsiteUrl}/verifyEmail and do so.";
+            }
+            else
+            {
+                includeDate = false;
+                eula = $"Welcome {user.Name}!";
+            }
         }
         else if (!user.FinishedRegistration)
         {
