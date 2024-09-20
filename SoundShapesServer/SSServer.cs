@@ -80,7 +80,7 @@ public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : 
         Server.RemoveSerializer<BunkumJsonSerializer>();
         Server.AddSerializer<SoundShapesSerializer>();
         
-        //this.Server.AddMiddleware<CrossOriginMiddleware>();
+        Server.AddMiddleware<CrossOriginMiddleware>();
     }
 
     protected override void SetupMiddlewares()
