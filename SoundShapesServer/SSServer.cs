@@ -10,6 +10,7 @@ using SoundShapesServer.Common;
 using SoundShapesServer.Common.Time;
 using SoundShapesServer.Database;
 using SoundShapesServer.Endpoints;
+using SoundShapesServer.Middlewares;
 using SoundShapesServer.Services;
 using SoundShapesServer.Types.Config;
 using SoundShapesServer.Types.Database;
@@ -22,8 +23,8 @@ namespace SoundShapesServer;
 /// </summary>
 public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : GameDatabaseProvider
 {
-    protected readonly EntityFrameworkDatabaseProvider<GameDatabaseContext> _databaseProvider;
-    protected readonly IDataStore _dataStore;
+    private readonly EntityFrameworkDatabaseProvider<GameDatabaseContext> _databaseProvider;
+    private readonly IDataStore _dataStore;
     protected ServerConfig? _config;
     
     public SSServer(BunkumHttpListener? listener = null,
@@ -32,7 +33,8 @@ public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : 
         IDataStore? dataStore = null,
         ServerConfig? config = null) : base(listener)
     {
-        _config ??= Config.LoadFromJsonFile<ServerConfig>("soundShapesConfig.json", this.Logger);
+        config ??= Config.LoadFromJsonFile<ServerConfig>("soundShapesConfig.json", this.Logger);
+        this._config = config;
         
         databaseProvider ??= () => (TDatabaseProvider)new GameDatabaseProvider(GetTimeProvider(), _config.PostgresSqlConnectionString);
         dataStore ??= new FileSystemDataStore();
@@ -60,12 +62,6 @@ public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : 
         this.Server.AddStorageService(dataStore);
     }
     
-    protected override void Initialize()
-    {
-        base.Initialize();
-        //this.SetupWorkers();
-    }
-    
     protected override void SetupServices()
     {
         Server.AddAutoDiscover(_config!.InstanceSettings.InstanceName, GameEndpointAttribute.RoutePrefix, false, 
@@ -75,6 +71,8 @@ public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : 
         
         Server.RemoveSerializer<BunkumJsonSerializer>();
         Server.AddSerializer<SoundShapesSerializer>();
+        
+        this.Server.AddMiddleware<CrossOriginMiddleware>();
     }
 
     protected override void SetupMiddlewares()

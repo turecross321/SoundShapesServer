@@ -2,7 +2,6 @@
 using Bunkum.Core.Endpoints;
 using Bunkum.Core.Responses;
 using Bunkum.Protocols.Http;
-using static System.Net.HttpStatusCode;
 
 namespace SoundShapesServer.Endpoints.Game;
 

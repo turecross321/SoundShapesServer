@@ -1,5 +1,3 @@
-using System.Net;
-
 namespace SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
 
 public class ApiInternalServerError : ApiError
@@ -10,7 +8,7 @@ public class ApiInternalServerError : ApiError
     public const string CouldNotSendEmailWhen = "Could not send email. Please try again.";
     public static readonly ApiInternalServerError CouldNotSendEmail = new(CouldNotSendEmailWhen);
 
-    private ApiInternalServerError(string message) : base(message, HttpStatusCode.InternalServerError)
+    private ApiInternalServerError(string message) : base(message, InternalServerError)
     {
     }
 }

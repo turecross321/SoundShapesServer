@@ -1,5 +1,3 @@
-using System.Net;
-
 namespace SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
 
 public class ApiConflictError : ApiError
@@ -17,7 +15,7 @@ public class ApiConflictError : ApiError
     public const string AlreadyFollowingWhen = "You are already following this user.";
     public static readonly ApiConflictError AlreadyFollowing = new(AlreadyFollowingWhen);
 
-    private ApiConflictError(string message) : base(message, HttpStatusCode.Conflict)
+    private ApiConflictError(string message) : base(message, Conflict)
     {
     }
 }

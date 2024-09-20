@@ -7,7 +7,7 @@ namespace SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
 
 public class ApiError
 {
-    public ApiError(string message, HttpStatusCode code = HttpStatusCode.BadRequest)
+    public ApiError(string message, HttpStatusCode code = BadRequest)
     {
         Name = GetType().Name;
         Message = message;
@@ -20,7 +20,10 @@ public class ApiError
     public static implicit operator Response(ApiError error) 
         => new(error, ContentType.Json, error.StatusCode);
     
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    // ReSharper disable once MemberCanBePrivate.Global
     public ApiError(){}
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     
     private ApiError FromError(Error error)
     {

@@ -11,12 +11,12 @@ public class NUnitSink : ILoggerSink
     {
         TextWriter stream = level switch
         {
-            LogLevel.Critical => NUnit.Framework.TestContext.Error,
-            LogLevel.Error => NUnit.Framework.TestContext.Error,
-            LogLevel.Warning => NUnit.Framework.TestContext.Progress,
-            LogLevel.Info => NUnit.Framework.TestContext.Progress,
-            LogLevel.Debug => NUnit.Framework.TestContext.Progress,
-            LogLevel.Trace => NUnit.Framework.TestContext.Progress,
+            LogLevel.Critical => TestContext.Error,
+            LogLevel.Error => TestContext.Error,
+            LogLevel.Warning => TestContext.Progress,
+            LogLevel.Info => TestContext.Progress,
+            LogLevel.Debug => TestContext.Progress,
+            LogLevel.Trace => TestContext.Progress,
             _ => throw new ArgumentOutOfRangeException(nameof(level), level, null),
         };
         

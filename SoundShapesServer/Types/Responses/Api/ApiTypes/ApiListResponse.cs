@@ -27,7 +27,7 @@ public class ApiListResponse<T> : ApiResponse<List<T>> where T : class, IApiResp
         {
             TotalItems = list.TotalItems,
             NextPageIndex = GetNextToken(list.TotalItems, list.From, list.Items.Count()),
-            PreviousPageIndex = GetPreviousToken(list.TotalItems, list.From, list.Items.Count()),
+            PreviousPageIndex = GetPreviousToken(list.TotalItems, list.From),
         });
     }
 
@@ -36,7 +36,7 @@ public class ApiListResponse<T> : ApiResponse<List<T>> where T : class, IApiResp
         return new ApiListResponse<T>(error);
     }
     
-    private static int? GetPreviousToken(int entryCount, int from, int count)
+    private static int? GetPreviousToken(int entryCount, int from)
     {
         int? previousToken;
         if (from > 0) previousToken = Math.Max(from - 1 * entryCount, 0);

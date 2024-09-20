@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace SoundShapesServer.Types.Responses.Game;
+﻿namespace SoundShapesServer.Types.Responses.Game;
 
 /// <summary>
 /// Special user response type only used in the authentication endpoint

@@ -6,7 +6,7 @@ public class ServerConfig: Bunkum.Core.Configuration.Config
     public override int Version { get; set; }
     
     public string PostgresSqlConnectionString { get; set; } = "Host=localhost;Username=username;Password=password;Database=soundshapes";
-    public bool RequireAuthentication { get; set; } = false;
+    public bool RequireAuthentication { get; set; }
     public string EulaText { get; set; } = "";
     public string RepositoryUrl { get; set; } = "https://github.com/turecross321/SoundShapesServer.git";
     public string WebsiteUrl { get; set; } = "https://sound.ture.fish";

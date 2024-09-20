@@ -1,5 +1,3 @@
-using System.Net;
-
 namespace SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
 
 public class ApiUnauthorizedError : ApiError
@@ -17,7 +15,7 @@ public class ApiUnauthorizedError : ApiError
     public const string InvalidEmailOrPasswordWhen = "Invalid e-mail or password.";
     public static readonly ApiUnauthorizedError InvalidEmailOrPassword = new(InvalidEmailOrPasswordWhen);
 
-    private ApiUnauthorizedError(string message) : base(message, HttpStatusCode.Unauthorized)
+    private ApiUnauthorizedError(string message) : base(message, Unauthorized)
     {
     }
 }

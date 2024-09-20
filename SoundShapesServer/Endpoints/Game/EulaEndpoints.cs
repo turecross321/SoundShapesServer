@@ -16,7 +16,7 @@ public partial class EulaEndpoints : EndpointGroup
     public string GetEula(RequestContext context, GameDatabaseContext database, BunkumConfig bunkumConfig, DbToken token,
         DbUser user, ServerConfig config, string platform, string publisher, string language)
     {
-        string eula = "";
+        string eula;
         
         // this is included when we want to make sure that the eula is always shown (e.g. when showing the registration code)
         bool includeDate = false;

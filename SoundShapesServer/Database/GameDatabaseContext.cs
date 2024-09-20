@@ -35,11 +35,11 @@ public partial class GameDatabaseContext: DbContext, IDatabaseContext
             .OnDelete(DeleteBehavior.Cascade);
     }
 
-    private DbSet<DbUser> Users { get; set; }
-    private DbSet<DbCode> Codes { get; set; }
-    private DbSet<DbToken> Tokens { get; set; }
-    private DbSet<DbRefreshToken> RefreshTokens { get; set; }
-    private DbSet<DbIp> Ips { get; set; }
+    private DbSet<DbUser> Users { get; set; } = null!;
+    private DbSet<DbCode> Codes { get; set; } = null!;
+    private DbSet<DbToken> Tokens { get; set; } = null!;
+    private DbSet<DbRefreshToken> RefreshTokens { get; set; } = null!;
+    private DbSet<DbIp> Ips { get; set; } = null!;
 
     public override void Dispose()
     {

@@ -1,6 +1,4 @@
 ﻿using Bunkum.Core.Responses;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace SoundShapesServer;
 

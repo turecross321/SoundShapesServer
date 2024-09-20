@@ -15,8 +15,8 @@ public class DbRefreshToken
     public required Guid UserId { get; init; }
 
     public DbUser User { get; init; } = null!;
-    
-    public ICollection<DbToken> Tokens { get; set; } 
+
+    public ICollection<DbToken> Tokens { get; init; } = null!;
     
     public required DateTimeOffset CreationDate { get; init; }
     public required DateTimeOffset ExpiryDate { get; init; }

@@ -1,5 +1,3 @@
-using System.Net;
-
 namespace SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
 
 public class ApiNotFoundError : ApiError
@@ -42,7 +40,7 @@ public class ApiNotFoundError : ApiError
     public const string NotFollowingWhen = "You are not following this user.";
     public static readonly ApiNotFoundError NotFollowing = new(NotFollowingWhen);
 
-    private ApiNotFoundError(string message) : base(message, HttpStatusCode.NotFound)
+    private ApiNotFoundError(string message) : base(message, NotFound)
     {
     }
 }

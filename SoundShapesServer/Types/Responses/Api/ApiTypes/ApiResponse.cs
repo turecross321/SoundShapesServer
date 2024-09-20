@@ -18,7 +18,7 @@ public class ApiResponse<T> : IHasResponseCode where T : class
         Data = data;
         Error = null;
 
-        StatusCode = HttpStatusCode.OK;
+        StatusCode = OK;
     }
 
     protected ApiResponse(ApiError error)

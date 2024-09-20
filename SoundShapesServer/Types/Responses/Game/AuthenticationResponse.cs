@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace SoundShapesServer.Types.Responses.Game;
+﻿namespace SoundShapesServer.Types.Responses.Game;
 
 public record AuthenticationResponse
 {

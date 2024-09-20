@@ -49,7 +49,7 @@ public class AuthenticationTests : ServerTest
         string passwordSha512 = HashHelper.ComputeSha512Hash(password);
         string passwordBcrypt = BCrypt.Net.BCrypt.HashPassword(passwordSha512, ApiAuthenticationEndpoints.WorkFactor);
         DbUser user = context.CreateUser(email: email);
-        user = context.Database.SetUserPassword(user, passwordBcrypt);
+        context.Database.SetUserPassword(user, passwordBcrypt);
 
         using HttpClient client = context.Http;
 
@@ -72,7 +72,7 @@ public class AuthenticationTests : ServerTest
 
         response = client.PostAsJsonAsync("/api/v1/refreshToken", new ApiRefreshTokenRequest
         {
-            RefreshTokenId = deSerialized!.RefreshToken.Id
+            RefreshTokenId = deSerialized.RefreshToken.Id
         }).Result;
 
         deSerialized = response.Content.ReadFromJsonAsync<ApiResponse<ApiLoginResponse>>().Result!.Data;
