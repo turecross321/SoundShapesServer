@@ -82,6 +82,11 @@ public class AuthenticationEndpoints : EndpointGroup
                 context.Logger.LogInfo(BunkumCategory.Authentication, $"{user} has an authorized IP address.");
             }
         }
+
+        if (!user.FinishedRegistration)
+        {
+            allowAuthentication = false;
+        }
         
         if (allowAuthentication)
         {
