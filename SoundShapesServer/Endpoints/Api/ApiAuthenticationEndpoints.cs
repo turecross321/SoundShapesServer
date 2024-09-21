@@ -250,12 +250,16 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     
     [DocResponseBody(typeof(ApiLoginResponse))]
     [DocRequestBody(typeof(ApiLogInRequest))]
+    [DocError(typeof(ApiBadRequestError), ApiBadRequestError.PasswordIsNotHashedWhen)]
     [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidEmailOrPasswordWhen)]
     [RateLimitSettings(300, 10, 300, "auth")]
     [Authentication(false)]
     [ApiEndpoint("logIn", HttpMethods.Post)]
     public ApiResponse<ApiLoginResponse> LogIn(RequestContext context, GameDatabaseContext database, ApiLogInRequest body)
     {
+        if (!CommonPatterns.Sha512Regex().IsMatch(body.PasswordSha512))
+            return ApiBadRequestError.PasswordIsNotHashed;
+        
         DbUser? user = database.GetUserWithEmail(body.Email);
         if (user == null)
         {
