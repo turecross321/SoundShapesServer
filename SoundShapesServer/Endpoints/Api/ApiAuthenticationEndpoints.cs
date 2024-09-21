@@ -1,7 +1,10 @@
 ﻿using AttribDoc.Attributes;
 using Bunkum.Core;
+using Bunkum.Core.Configuration;
 using Bunkum.Core.Endpoints;
 using Bunkum.Core.RateLimit;
+using Bunkum.Core.Responses;
+using Bunkum.Listener.Protocol;
 using Bunkum.Protocols.Http;
 using SoundShapesServer.Common.Verification;
 using SoundShapesServer.Database;
@@ -39,34 +42,52 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     [RateLimitSettings(300, 10, 300, "setEmail")]
     [ApiEndpoint("setEmail", HttpMethods.Post)]
     public ApiOkResponse SetEmail(RequestContext context, GameDatabaseContext database, EmailService email, 
-        ServerConfig config, DbUser user, ApiSetEmailRequest body)
+        ServerConfig config, BunkumConfig bunkumConfig, DbUser user, ApiSetEmailRequest body)
     {
         if (!CommonPatterns.EmailAddressRegex().IsMatch(body.NewEmail))
             return ApiBadRequestError.InvalidEmail;
 
-        string emailTemplate = @"
-        <html>
-            Hello {0},
-            <br>
-
-            Please use the verification code below to verify your email address.
-            <br>
-
-            <div style=""font-size: 36px; margin-top: 16px; margin-bottom: 16px;"">
-            {1}
-            </div>
-
-            If you didn't request this, please ignore this email.
-
-            Best regards, {2}.
-        </html>
-        ";
-
 
         DbCode verifyEmail = database.CreateCode(user, CodeType.VerifyEmail);
+        string verifyUrl = bunkumConfig.ExternalUrl + ApiEndpointAttribute.RoutePrefix + "/verifyEmail/code/" +
+                           verifyEmail.Code;
         
-        bool success = email.SendEmail(body.NewEmail, $"[{config.InstanceSettings.InstanceName}] Verify your Email Address",
-            String.Format(emailTemplate, user.Name, verifyEmail.Code, config.InstanceSettings.InstanceName));
+        string htmlBody = @"
+        <html style='background-color: #2F2A2A; margin: 0;' lang='en'>
+        <head>
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap');
+                html { font-family: Sora, Rubik, system-ui, sans-serif; }
+                p { margin: 0; }
+                body { margin: 0; padding-left: 32px; padding-right: 32px; font-size: medium; 
+                    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06)); }
+                main { max-width: 600px; margin: 2rem auto 0; background-color: #FFF0E4; padding: 32px; 
+                    border-radius: 1rem; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; }
+                #code { color: white; background-color: #F07167; padding: 1rem 2rem; border-radius: 1rem; font-size: x-large; 
+                    border: none; text-decoration: none; width: min-content; transition: background-color 150ms ease, box-shadow 150ms ease; }
+                #code:hover { background-color: rgb(216, 102, 93); filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06)); }
+            </style>
+            <title>Verification</title>
+        </head>
+        <body>
+            <main>
+                <div style='display: flex; flex-direction: column; gap: 0.5rem;'>
+                    <p style='font-size: x-large; font-weight: bold;'>Hello {USER},</p>
+                    <p>Please click the button below to verify your email address. Greetings, the {INSTANCE} team.</p>
+                    <a id='code' href='{CODE_URL}'>Verify</a>
+                </div>
+                <p>If you didn't request this, please ignore this email.</p>
+            </main>
+        </body>
+        </html>";
+
+        // Replace placeholders in the HTML template
+        htmlBody = htmlBody.Replace("{USER}", user.Name)
+            .Replace("{INSTANCE}", config.InstanceSettings.InstanceName)
+            .Replace("{CODE_URL}", verifyUrl);
+        
+        bool success = email.SendEmail(body.NewEmail,
+                $"[{config.InstanceSettings.InstanceName}] Verify your Email Address", htmlBody);
 
         if (!success)
         {
@@ -77,17 +98,16 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         return new ApiOkResponse();
     }
 
-    [DocSummary("Verify your account's email address.")]
-    [DocRequestBody(typeof(ApiSetEmailRequest))]
-    [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidCodeWhen)]
+    [DocSummary("Verify your account's email address.")] 
+    [DocError(typeof(string), ApiUnauthorizedError.InvalidCodeWhen)]
     [RateLimitSettings(300, 10, 300, "setEmail")]
     [Authentication(false)]
-    [ApiEndpoint("verifyEmail", HttpMethods.Post)]
-    public ApiOkResponse VerifyEmail(RequestContext context, GameDatabaseContext database, ApiCodeRequest body)
+    [ApiEndpoint("verifyEmail/code/{codeValue}")]
+    public Response VerifyEmail(RequestContext context, GameDatabaseContext database, ServerConfig config, string codeValue)
     {
-        DbCode? code = database.GetCode(body.Code, CodeType.VerifyEmail);
+        DbCode? code = database.GetCode(codeValue, CodeType.VerifyEmail);
         if (code == null)
-            return ApiUnauthorizedError.InvalidCode;
+            return new Response(ApiUnauthorizedError.InvalidCodeWhen, ContentType.Plaintext, Unauthorized);
         
         DbUser user = database.VerifyEmail(code.User);
         if (!user.FinishedRegistration)
@@ -97,8 +117,9 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         }
         
         context.Logger.LogInfo(BunkumCategory.Authentication, $"{user} successfully verified their email.");
+        context.ResponseHeaders.Add("Location", config.WebsiteUrl);
         
-        return new ApiOkResponse();
+        return new Response(SeeOther);
     }
 
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
@@ -121,26 +142,42 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         
         DbCode code = database.CreateCode(user, CodeType.SetPassword);
         
-        string emailTemplate = @"
-        <html>
-            Hello {0},
-            <br>
-
-            Please use the code below to reset your password.
-            <br>
-
-            <div style=""font-size: 36px; margin-top: 16px; margin-bottom: 16px;"">
-            {1}
-            </div>
-
-            If you didn't request this, please ignore this email.
-
-            Best regards, {2}.
+        string htmlBody = @"
+        <html style='background-color: #2F2A2A; margin: 0;' lang='en'>
+        <head>
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap');
+                html { font-family: Sora, Rubik, system-ui, sans-serif; }
+                p { margin: 0; }
+                body { margin: 0; padding-left: 32px; padding-right: 32px; font-size: medium;
+                    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06)); }
+                main { max-width: 600px; margin: 2rem auto 0; background-color: #FFF0E4; padding: 32px;
+                    border-radius: 1rem; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; }
+                #code { color: white; background-color: #F07167; padding: 1rem 2rem; border-radius: 1rem; font-size: x-large;
+                    border: none; text-decoration: none; width: min-content; transition: background-color 150ms ease, box-shadow 150ms ease; }
+            </style>
+            <title>Verification</title>
+        </head>
+        <body>
+            <main>
+                <div style='display: flex; flex-direction: column; gap: 0.5rem;'>
+                    <p style='font-size: x-large; font-weight: bold;'>Hello {USER},</p>
+                    <p>You may use the code below to reset your password. Greetings, the {INSTANCE} team.</p>
+                    <p id='code'>{CODE}</p>
+                </div>
+                <p>If you didn't request this, please ignore this email.</p>
+            </main>
+        </body>
         </html>
         ";
         
-        bool success = email.SendEmail(user.EmailAddress!, $"[{config.InstanceSettings.InstanceName}] Reset your password",
-            String.Format(emailTemplate, code.User.Name, code.Code, config.InstanceSettings.InstanceName));
+        // Replace placeholders in the HTML template
+        htmlBody = htmlBody.Replace("{USER}", user.Name)
+            .Replace("{INSTANCE}", config.InstanceSettings.InstanceName)
+            .Replace("{CODE}", code.Code);
+        
+        bool success = email.SendEmail(user.EmailAddress!,
+            $"[{config.InstanceSettings.InstanceName}] Reset your password", htmlBody);
 
         return success ? new ApiOkResponse() : ApiInternalServerError.CouldNotSendEmail;
     }
@@ -197,7 +234,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     [ApiEndpoint("register", HttpMethods.Post)]
     [Authentication(false)]
     public ApiOkResponse Register(RequestContext context, GameDatabaseContext database, ServerConfig config, 
-        EmailService email, ApiRegisterRequest body)
+        BunkumConfig bunkumConfig, EmailService email, ApiRegisterRequest body)
     {
         DbCode? code = database.GetCode(body.Code, CodeType.Registration);
         
@@ -212,28 +249,46 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         if (passwordBcrypt == null) 
             return ApiInternalServerError.CouldNotBcryptPassword;
         
-        string emailTemplate = @"
-        <html>
-            Hello {0},
-            <br>
-
-            Please use the verification code below to verify your email address and finish the registration of your account.
-            <br>
-
-            <div style=""font-size: 36px; margin-top: 16px; margin-bottom: 16px;"">
-            {1}
-            </div>
-
-            If you didn't request this, please ignore this email.
-
-            Best regards, {2}.
-        </html>
-        ";
-        
         DbCode verifyEmail = database.CreateCode(code.User, CodeType.VerifyEmail);
+        string verifyUrl = bunkumConfig.ExternalUrl + ApiEndpointAttribute.RoutePrefix + "/verifyEmail/code/" +
+                           verifyEmail.Code;
         
-        bool success = email.SendEmail(body.Email, $"[{config.InstanceSettings.InstanceName}] Verify your Email Address",
-            String.Format(emailTemplate, code.User.Name, verifyEmail.Code, config.InstanceSettings.InstanceName));
+        string htmlBody = @"
+        <html style='background-color: #2F2A2A; margin: 0;' lang='en'>
+        <head>
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap');
+                html { font-family: Sora, Rubik, system-ui, sans-serif; }
+                p { margin: 0; }
+                body { margin: 0; padding-left: 32px; padding-right: 32px; font-size: medium;
+                    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06)); }
+                main { max-width: 600px; margin: 2rem auto 0; background-color: #FFF0E4; padding: 32px;
+                    border-radius: 1rem; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; }
+                #code { color: white; background-color: #F07167; padding: 1rem 2rem; border-radius: 1rem; font-size: x-large;
+                    border: none; text-decoration: none; width: min-content; transition: background-color 150ms ease, box-shadow 150ms ease; }
+                #code:hover { background-color: rgb(216, 102, 93); filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06)); }
+            </style>
+            <title>Verification</title>
+        </head>
+        <body>
+            <main>
+                <div style='display: flex; flex-direction: column; gap: 0.5rem;'>
+                    <p style='font-size: x-large; font-weight: bold;'>Hello {USER},</p>
+                    <p>Please click the button below to verify your email address and finish the registration of your account. Greetings, the {INSTANCE} team.</p>
+                    <a id='code' href='{CODE_URL}'>Verify</a>
+                </div>
+                <p>If you didn't request this, please ignore this email.</p>
+            </main>
+        </body>
+        </html>";
+
+        // Replace placeholders in the HTML template
+        htmlBody = htmlBody.Replace("{USER}", code.User.Name)
+            .Replace("{INSTANCE}", config.InstanceSettings.InstanceName)
+            .Replace("{CODE_URL}", verifyUrl);
+        
+        bool success = email.SendEmail(body.Email,
+            $"[{config.InstanceSettings.InstanceName}] Verify your Email Address", htmlBody);
 
         if (!success)
             return ApiInternalServerError.CouldNotSendEmail;
