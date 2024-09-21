@@ -165,7 +165,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         if (body.PasswordSha512.Length != 128 || !CommonPatterns.Sha512Regex().IsMatch(body.PasswordSha512))
             return ApiBadRequestError.PasswordIsNotHashed;
 
-        string? passwordBcrypt = HashPassword(body.PasswordSha512, WorkFactor);
+        string? passwordBcrypt = HashPassword(body.PasswordSha512.ToLower(), WorkFactor);
         if (passwordBcrypt == null) return ApiInternalServerError.CouldNotBcryptPassword;
 
         database.SetUserPassword(codeToken.User, passwordBcrypt);
@@ -211,7 +211,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         if (!CommonPatterns.EmailAddressRegex().IsMatch(body.Email))
             return ApiBadRequestError.InvalidEmail;
         
-        string? passwordBcrypt = HashPassword(body.PasswordSha512, WorkFactor);
+        string? passwordBcrypt = HashPassword(body.PasswordSha512.ToLower(), WorkFactor);
         if (passwordBcrypt == null) 
             return ApiInternalServerError.CouldNotBcryptPassword;
         
@@ -265,7 +265,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
             return ApiUnauthorizedError.InvalidEmailOrPassword;
         }
 
-        if (!Verify(body.PasswordSha512, user.PasswordBcrypt))
+        if (!Verify(body.PasswordSha512.ToLower(), user.PasswordBcrypt))
             return ApiUnauthorizedError.InvalidEmailOrPassword;
         
         if (PasswordNeedsRehash(user.PasswordBcrypt, WorkFactor))
