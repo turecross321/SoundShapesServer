@@ -49,7 +49,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 
 
         DbCode verifyEmail = database.CreateCode(user, CodeType.VerifyEmail);
-        string verifyUrl = $"{config.WebsiteUrl}/verifyEmail/{verifyEmail.Code}";
+        string verifyUrl = $"{config.WebsiteUrl}/verifyEmail?code={verifyEmail.Code}";
         
         string htmlBody = """
                           <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
@@ -123,7 +123,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         }
         
         DbCode code = database.CreateCode(user, CodeType.SetPassword);
-        string verifyUrl = $"{config.WebsiteUrl}/resetPassword/{code.Code}";
+        string passwordUrl = $"{config.WebsiteUrl}/resetPassword?code={code.Code}";
         
         string htmlBody = """
                           <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
@@ -140,7 +140,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         // Replace placeholders in the HTML template
         htmlBody = htmlBody.Replace("{USER}", code.User.Name)
             .Replace("{INSTANCE}", config.InstanceSettings.InstanceName)
-            .Replace("{CODE_URL}", verifyUrl);
+            .Replace("{CODE_URL}", passwordUrl);
         
         bool success = email.SendEmail(user.EmailAddress!,
             $"[{config.InstanceSettings.InstanceName}] Reset your password", htmlBody);
@@ -216,7 +216,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
             return ApiInternalServerError.CouldNotBcryptPassword;
         
         DbCode verifyEmail = database.CreateCode(code.User, CodeType.VerifyEmail);
-        string verifyUrl = $"{config.WebsiteUrl}/verifyEmail/{verifyEmail.Code}";
+        string verifyUrl = $"{config.WebsiteUrl}/verifyEmail?code={verifyEmail.Code}";
         
         string htmlBody = """
                           <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">

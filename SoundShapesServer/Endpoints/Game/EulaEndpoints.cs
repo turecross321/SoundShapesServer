@@ -37,10 +37,25 @@ public partial class EulaEndpoints : EndpointGroup
         {
             context.Logger.LogInfo(BunkumCategory.Authentication, "Creating initialize registration code for new user: " + user.Name);
             DbCode code = database.CreateCode(user, CodeType.Registration);
-                    
-            eula =
-                $"You currently do not have an account. To proceed, go to {config.WebsiteUrl}/register and follow the instructions.\n" +
-                $"Your registration code is \"{code.Code}\".";
+            
+            if (database.GetCode(user, CodeType.VerifyEmail) != null)
+            {
+                eula =
+                    "You have not finished your registration yet. Please check your email for a verification link and " +
+                    "click on it to complete the process. If you don't see the email, make sure to check your spam or " +
+                    "junk folder.\n\n\n";
+                
+                eula += $"If you wish to restart the registration process from the beginning, you can go to {config.WebsiteUrl}/register and follow the instructions. " +
+                        $"Your registration code is \"{code.Code}\".";
+            }
+            else
+            {
+                eula =
+                    $"You currently do not have an account. To proceed, go to {config.WebsiteUrl}/register and follow the instructions.\n" +
+                    $"Your registration code is \"{code.Code}\".";
+            }
+            
+
         }
         else
         {
