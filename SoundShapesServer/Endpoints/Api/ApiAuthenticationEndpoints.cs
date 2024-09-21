@@ -49,37 +49,19 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 
 
         DbCode verifyEmail = database.CreateCode(user, CodeType.VerifyEmail);
-        string verifyUrl = bunkumConfig.ExternalUrl + ApiEndpointAttribute.RoutePrefix + "/verifyEmail/code/" +
-                           verifyEmail.Code;
+        string verifyUrl = $"{config.WebsiteUrl}/verifyEmail/{verifyEmail.Code}";
         
-        string htmlBody = @"
-        <html style='background-color: #2F2A2A; margin: 0;' lang='en'>
-        <head>
-            <style>
-                @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap');
-                html { font-family: Sora, Rubik, system-ui, sans-serif; }
-                p { margin: 0; }
-                body { margin: 0; padding-left: 32px; padding-right: 32px; font-size: medium; 
-                    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06)); }
-                main { max-width: 600px; margin: 2rem auto 0; background-color: #FFF0E4; padding: 32px; 
-                    border-radius: 1rem; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; }
-                #code { color: white; background-color: #F07167; padding: 1rem 2rem; border-radius: 1rem; font-size: x-large; 
-                    border: none; text-decoration: none; width: min-content; transition: background-color 150ms ease, box-shadow 150ms ease; }
-                #code:hover { background-color: rgb(216, 102, 93); filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06)); }
-            </style>
-            <title>Verification</title>
-        </head>
-        <body>
-            <main>
-                <div style='display: flex; flex-direction: column; gap: 0.5rem;'>
-                    <p style='font-size: x-large; font-weight: bold;'>Hello {USER},</p>
-                    <p>Please click the button below to verify your email address. Greetings, the {INSTANCE} team.</p>
-                    <a id='code' href='{CODE_URL}'>Verify</a>
-                </div>
-                <p>If you didn't request this, please ignore this email.</p>
-            </main>
-        </body>
-        </html>";
+        string htmlBody = """
+                          <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
+                            <body>
+                          <h1>Hello, {USER}</h1>
+                          <p>Please click the button below to verify your email address and finish the registration of your account.</p>
+                          <a href="{CODE_URL}" style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 1rem; font-size: x-large; text-decoration: none; display: inline-block;">Verify</a>
+                          <p>If you didn't request this, please ignore this email.</p>
+                          <p>Greetings, the {INSTANCE} team.</p>
+                            </body>
+                          </html>
+                          """;
 
         // Replace placeholders in the HTML template
         htmlBody = htmlBody.Replace("{USER}", user.Name)
@@ -99,15 +81,16 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     }
 
     [DocSummary("Verify your account's email address.")] 
-    [DocError(typeof(string), ApiUnauthorizedError.InvalidCodeWhen)]
+    [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidCodeWhen)]
+    [DocRequestBody(typeof(ApiCodeRequest))]
     [RateLimitSettings(300, 10, 300, "setEmail")]
     [Authentication(false)]
-    [ApiEndpoint("verifyEmail/code/{codeValue}")]
-    public Response VerifyEmail(RequestContext context, GameDatabaseContext database, ServerConfig config, string codeValue)
+    [ApiEndpoint("verifyEmail")]
+    public ApiOkResponse VerifyEmail(RequestContext context, GameDatabaseContext database, ServerConfig config, ApiCodeRequest body)
     {
-        DbCode? code = database.GetCode(codeValue, CodeType.VerifyEmail);
+        DbCode? code = database.GetCode(body.Code, CodeType.VerifyEmail);
         if (code == null)
-            return new Response(ApiUnauthorizedError.InvalidCodeWhen, ContentType.Plaintext, Unauthorized);
+            return ApiUnauthorizedError.InvalidCode;
         
         DbUser user = database.VerifyEmail(code.User);
         if (!user.FinishedRegistration)
@@ -117,9 +100,8 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         }
         
         context.Logger.LogInfo(BunkumCategory.Authentication, $"{user} successfully verified their email.");
-        context.ResponseHeaders.Add("Location", config.WebsiteUrl);
-        
-        return new Response(SeeOther);
+
+        return new ApiOkResponse();
     }
 
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
@@ -141,40 +123,24 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         }
         
         DbCode code = database.CreateCode(user, CodeType.SetPassword);
+        string verifyUrl = $"{config.WebsiteUrl}/resetPassword/{code.Code}";
         
-        string htmlBody = @"
-        <html style='background-color: #2F2A2A; margin: 0;' lang='en'>
-        <head>
-            <style>
-                @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap');
-                html { font-family: Sora, Rubik, system-ui, sans-serif; }
-                p { margin: 0; }
-                body { margin: 0; padding-left: 32px; padding-right: 32px; font-size: medium;
-                    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06)); }
-                main { max-width: 600px; margin: 2rem auto 0; background-color: #FFF0E4; padding: 32px;
-                    border-radius: 1rem; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; }
-                #code { color: white; background-color: #F07167; padding: 1rem 2rem; border-radius: 1rem; font-size: x-large;
-                    border: none; text-decoration: none; width: min-content; transition: background-color 150ms ease, box-shadow 150ms ease; }
-            </style>
-            <title>Verification</title>
-        </head>
-        <body>
-            <main>
-                <div style='display: flex; flex-direction: column; gap: 0.5rem;'>
-                    <p style='font-size: x-large; font-weight: bold;'>Hello {USER},</p>
-                    <p>You may use the code below to reset your password. Greetings, the {INSTANCE} team.</p>
-                    <p id='code'>{CODE}</p>
-                </div>
-                <p>If you didn't request this, please ignore this email.</p>
-            </main>
-        </body>
-        </html>
-        ";
-        
+        string htmlBody = """
+                          <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
+                            <body>
+                          <h1>Hello, {USER}</h1>
+                          <p>You may click the button below to reset your password.</p>
+                          <a href="{CODE_URL}" style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 1rem; font-size: x-large; text-decoration: none; display: inline-block;">Reset Password</a>
+                          <p>If you didn't request this, please ignore this email.</p>
+                          <p>Greetings, the {INSTANCE} team.</p>
+                            </body>
+                          </html>
+                          """;
+
         // Replace placeholders in the HTML template
-        htmlBody = htmlBody.Replace("{USER}", user.Name)
+        htmlBody = htmlBody.Replace("{USER}", code.User.Name)
             .Replace("{INSTANCE}", config.InstanceSettings.InstanceName)
-            .Replace("{CODE}", code.Code);
+            .Replace("{CODE_URL}", verifyUrl);
         
         bool success = email.SendEmail(user.EmailAddress!,
             $"[{config.InstanceSettings.InstanceName}] Reset your password", htmlBody);
@@ -250,37 +216,19 @@ public class ApiAuthenticationEndpoints : EndpointGroup
             return ApiInternalServerError.CouldNotBcryptPassword;
         
         DbCode verifyEmail = database.CreateCode(code.User, CodeType.VerifyEmail);
-        string verifyUrl = bunkumConfig.ExternalUrl + ApiEndpointAttribute.RoutePrefix + "/verifyEmail/code/" +
-                           verifyEmail.Code;
+        string verifyUrl = $"{config.WebsiteUrl}/verifyEmail/{verifyEmail.Code}";
         
-        string htmlBody = @"
-        <html style='background-color: #2F2A2A; margin: 0;' lang='en'>
-        <head>
-            <style>
-                @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap');
-                html { font-family: Sora, Rubik, system-ui, sans-serif; }
-                p { margin: 0; }
-                body { margin: 0; padding-left: 32px; padding-right: 32px; font-size: medium;
-                    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06)); }
-                main { max-width: 600px; margin: 2rem auto 0; background-color: #FFF0E4; padding: 32px;
-                    border-radius: 1rem; min-height: 480px; display: flex; flex-direction: column; justify-content: space-between; }
-                #code { color: white; background-color: #F07167; padding: 1rem 2rem; border-radius: 1rem; font-size: x-large;
-                    border: none; text-decoration: none; width: min-content; transition: background-color 150ms ease, box-shadow 150ms ease; }
-                #code:hover { background-color: rgb(216, 102, 93); filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06)); }
-            </style>
-            <title>Verification</title>
-        </head>
-        <body>
-            <main>
-                <div style='display: flex; flex-direction: column; gap: 0.5rem;'>
-                    <p style='font-size: x-large; font-weight: bold;'>Hello {USER},</p>
-                    <p>Please click the button below to verify your email address and finish the registration of your account. Greetings, the {INSTANCE} team.</p>
-                    <a id='code' href='{CODE_URL}'>Verify</a>
-                </div>
-                <p>If you didn't request this, please ignore this email.</p>
-            </main>
-        </body>
-        </html>";
+        string htmlBody = """
+                          <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
+                            <body>
+                          <h1>Hello, {USER}</h1>
+                          <p>Please click the button below to verify your email address and finish the registration of your account.</p>
+                          <a href="{CODE_URL}" style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 1rem; font-size: x-large; text-decoration: none; display: inline-block;">Verify</a>
+                          <p>If you didn't request this, please ignore this email.</p>
+                          <p>Greetings, the {INSTANCE} team.</p>
+                            </body>
+                          </html>
+                          """;
 
         // Replace placeholders in the HTML template
         htmlBody = htmlBody.Replace("{USER}", code.User.Name)
