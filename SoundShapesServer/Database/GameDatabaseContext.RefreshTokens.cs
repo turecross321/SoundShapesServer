@@ -10,7 +10,12 @@ public partial class GameDatabaseContext
 {
     public DbToken CreateApiTokenWithRefreshToken(DbRefreshToken refresh)
     {
-        return CreateToken(refresh.User, TokenType.ApiAccess, null, null, refresh, null);
+        DbToken token = CreateToken(refresh.User, TokenType.ApiAccess, null, null, refresh, null);
+        // update the refresh expiry date
+        refresh.ExpiryDate = _time.Now.AddHours(ExpiryTimes.RefreshTokenHours);
+        SaveChanges();
+
+        return token;
     }
 
     public DbRefreshToken? GetRefreshTokenWithId(Guid guid)

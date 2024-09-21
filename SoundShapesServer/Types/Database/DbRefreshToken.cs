@@ -19,5 +19,5 @@ public class DbRefreshToken
     public ICollection<DbToken> Tokens { get; init; } = null!;
     
     public required DateTimeOffset CreationDate { get; init; }
-    public required DateTimeOffset ExpiryDate { get; init; }
+    public required DateTimeOffset ExpiryDate { get; set; }
 }
