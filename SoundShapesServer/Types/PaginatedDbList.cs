@@ -59,7 +59,7 @@ public class PaginatedDbList<TDb, TDbId> where TDb: IDbItem<TDbId>
         int? previousToken;
         if (Skip > 0)
         {
-            previousToken = Math.Max(Skip - Take, 0);
+            previousToken = Math.Max(Math.Min(Skip, TotalItems) - Take, 0);
         }
         else
         {
