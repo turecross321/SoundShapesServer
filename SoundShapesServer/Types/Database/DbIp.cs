@@ -8,7 +8,7 @@ namespace SoundShapesServer.Types.Database;
 /// Used for IP authentication
 /// </summary>
 [PrimaryKey(nameof(Id))]
-public class DbIp
+public class DbIp : IDbItem<int>
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -19,8 +19,8 @@ public class DbIp
     [MaxLength(39)]
     public required string IpAddress { get; init; }
     public required DateTimeOffset CreationDate { get; init; }
-    public DateTimeOffset AuthorizedDate { get; set; }
+    public DateTimeOffset? AuthorizedDate { get; set; } = null;
     public bool Authorized { get; init; }
-    public bool OneTimeUse { get; set; }
+    public bool? OneTimeUse { get; set; }
     public ICollection<DbToken> Tokens { get; set; } = null!;
 }

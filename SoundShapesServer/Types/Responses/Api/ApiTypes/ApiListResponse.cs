@@ -1,56 +1,47 @@
+using SoundShapesServer.Types.Database;
 using SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
+using SoundShapesServer.Types.Responses.Api.DataTypes;
 
 namespace SoundShapesServer.Types.Responses.Api.ApiTypes;
 
-public class ApiListResponse<T> : ApiResponse<List<T>> where T : class, IApiResponse
+public class ApiListResponse<TResponse> : ApiResponse<List<TResponse>> where TResponse : IApiResponse
 {
-    public ApiListResponse(IEnumerable<T> data, ApiListInformation info) : base(data.ToList())
+    public static ApiListResponse<TDbResponse> FromPaginatedList<TDb, TDbId, TDbResponse>(PaginatedDbList<TDb, TDbId> paginatedList) 
+        where TDb : IDbItem<TDbId>
+        where TDbResponse : IApiDbResponse<TDb, TDbResponse>
     {
-        ListInformation = info;
+        return new ApiListResponse<TDbResponse>(paginatedList.Items.Select(TDbResponse.FromDb).ToList())
+        {
+            ListInformation = new ApiListInformation
+            {
+                TotalItems = paginatedList.TotalItems,
+                NextPageItemId = paginatedList.NextPageItemId,
+                NextPageIndex = paginatedList.NextPageIndex(),
+                PreviousPageIndex = paginatedList.PreviousPageIndex(),
+                PreviousPageItemId = paginatedList.PreviousPageItemId
+            }
+        };
     }
-
-    public ApiListResponse(IEnumerable<T> data) : base(data.ToList())
-    {
-        ListInformation = null;
-    }
-
+    
+    
     public ApiListResponse(ApiError error) : base(error)
     {
-        ListInformation = null;
+        
     }
 
-    public ApiListInformation? ListInformation { get; set; }
-
-    public static implicit operator ApiListResponse<T>(PaginatedList<T> list)
+    public ApiListResponse(List<TResponse> items) : base(items)
     {
-        return new ApiListResponse<T>(list.Items, new ApiListInformation
+        
+    }
+
+    public required ApiListInformation? ListInformation { get; set; }
+    
+    public static implicit operator ApiListResponse<TResponse>(ApiError error)
+    {
+        return new ApiListResponse<TResponse>(error)
         {
-            TotalItems = list.TotalItems,
-            NextPageIndex = GetNextToken(list.TotalItems, list.From, list.Items.Count()),
-            PreviousPageIndex = GetPreviousToken(list.TotalItems, list.From),
-        });
+            ListInformation = null
+        };
     }
 
-    public static implicit operator ApiListResponse<T>(ApiError error)
-    {
-        return new ApiListResponse<T>(error);
-    }
-    
-    private static int? GetPreviousToken(int entryCount, int from)
-    {
-        int? previousToken;
-        if (from > 0) previousToken = Math.Max(from - 1 * entryCount, 0);
-        else previousToken = null;
-        
-        return previousToken;
-    }
-    
-    private static int? GetNextToken(int entryCount, int from, int count)
-    {
-        int? nextToken;
-        if (entryCount <= count + from) nextToken = null;
-        else nextToken = count + from;
-        
-        return nextToken;
-    }
 }

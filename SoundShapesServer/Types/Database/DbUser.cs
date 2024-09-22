@@ -2,12 +2,11 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Bunkum.Core.Authentication;
 using Microsoft.EntityFrameworkCore;
-using SoundShapesServer.Types.Responses.Api.DataTypes;
 
 namespace SoundShapesServer.Types.Database;
 
 [PrimaryKey(nameof(Id))]
-public class DbUser: IUser
+public class DbUser: IUser, IDbItem<Guid>
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -32,7 +31,7 @@ public class DbUser: IUser
     public bool PsnAuthorization { get; set; } = false;
     public bool IpAuthorization { get; set; } = false;
     
-    public required DateTimeOffset CreationDate { get; set; }
+    public required DateTimeOffset CreationDate { get; init; }
 
     public override string ToString()
     {

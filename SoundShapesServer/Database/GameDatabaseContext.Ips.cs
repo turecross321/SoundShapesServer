@@ -25,4 +25,9 @@ public partial class GameDatabaseContext
 
         return ip.Entity;
     }
+
+    public IQueryable<DbIp> GetIpsWithUser(DbUser user)
+    {
+        return Ips.Where(i => i.UserId == user.Id);
+    }
 }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace SoundShapesServer.Types.Database;
 
 [PrimaryKey(nameof(Id))]
-public class DbRefreshToken
+public class DbRefreshToken : IDbItem<Guid>
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

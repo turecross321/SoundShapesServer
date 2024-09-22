@@ -9,7 +9,7 @@ namespace SoundShapesServer.Types.Database;
 /// Don't last as long as normal tokens, and should be included in the request body as opposed to as a header.
 /// </summary>
 [PrimaryKey(nameof(Id))]
-public class DbCode
+public class DbCode : IDbItem<int>
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

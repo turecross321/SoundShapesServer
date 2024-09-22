@@ -3,14 +3,17 @@ using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
+using SoundShapesServer.Extensions;
+using SoundShapesServer.Types;
 using SoundShapesServer.Types.Database;
 using SoundShapesServer.Types.Requests.Api;
 using SoundShapesServer.Types.Responses.Api.ApiTypes;
+using SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
 using SoundShapesServer.Types.Responses.Api.DataTypes;
 
 namespace SoundShapesServer.Endpoints.Api;
 
-public class ApiGameAuthorizationEndpoints : EndpointGroup
+public class ApiAuthorizationSettingEndpoints : EndpointGroup
 {
     [DocSummary("Retrieve your game authorization settings.")]
     [DocResponseBody(typeof(ApiAuthorizationSettingsResponse))]
@@ -39,5 +42,20 @@ public class ApiGameAuthorizationEndpoints : EndpointGroup
             PsnAuthorization = user.PsnAuthorization,
             IpAuthorization = user.IpAuthorization
         };
+    }
+
+    [DocError(typeof(ApiPreconditionFailedError), ApiPreconditionFailedError.IpAuthorizationDisabledWhen)]
+    [ApiEndpoint("gameAuth/ip")]
+    public ApiListResponse<ApiIpResponse> GetIps(RequestContext context, GameDatabaseContext database, DbUser user)
+    {
+        if (!user.IpAuthorization)
+        {
+            return ApiPreconditionFailedError.IpAuthorizationDisabled;
+        }
+
+        IQueryable<DbIp> ips = database.GetIpsWithUser(user);
+        PaginatedDbList<DbIp, int> paginated = ips.PaginateWithIntId(context.GetPageData());
+
+        return ApiListResponse<ApiIpResponse>.FromPaginatedList<DbIp, int, ApiIpResponse>(paginated);
     }
 }
