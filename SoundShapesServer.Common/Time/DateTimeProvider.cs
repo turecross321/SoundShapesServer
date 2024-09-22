@@ -2,5 +2,5 @@
 
 public class SystemDateTimeProvider : IDateTimeProvider
 {
-    public DateTimeOffset Now => DateTimeOffset.UtcNow;
+    public DateTime Now => DateTime.UtcNow;
 }

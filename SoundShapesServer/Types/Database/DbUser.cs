@@ -31,7 +31,7 @@ public class DbUser: IUser, IDbItem<Guid>
     public bool PsnAuthorization { get; set; } = false;
     public bool IpAuthorization { get; set; } = false;
     
-    public required DateTimeOffset CreationDate { get; init; }
+    public required DateTime CreationDate { get; init; }
 
     public override string ToString()
     {

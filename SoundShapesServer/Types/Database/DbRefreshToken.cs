@@ -18,6 +18,6 @@ public class DbRefreshToken : IDbItem<Guid>
 
     public ICollection<DbToken> Tokens { get; init; } = null!;
     
-    public required DateTimeOffset CreationDate { get; init; }
+    public required DateTime CreationDate { get; init; }
     public required DateTimeOffset ExpiryDate { get; set; }
 }

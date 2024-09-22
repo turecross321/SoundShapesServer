@@ -27,6 +27,6 @@ public class DbCode : IDbItem<int>
     
     public required CodeType CodeType { get; init; }
     
-    public required DateTimeOffset CreationDate { get; init; }
-    public required DateTimeOffset ExpiryDate { get; init; }
+    public required DateTime CreationDate { get; init; }
+    public required DateTime ExpiryDate { get; init; }
 }

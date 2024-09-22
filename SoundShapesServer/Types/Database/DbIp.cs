@@ -18,8 +18,8 @@ public class DbIp : IDbItem<int>
 
     [MaxLength(39)]
     public required string IpAddress { get; init; }
-    public required DateTimeOffset CreationDate { get; init; }
-    public DateTimeOffset? AuthorizedDate { get; set; } = null;
+    public required DateTime CreationDate { get; init; }
+    public DateTime? AuthorizedDate { get; set; } = null;
     public bool Authorized { get; init; }
     public bool? OneTimeUse { get; set; }
     public ICollection<DbToken> Tokens { get; set; } = null!;

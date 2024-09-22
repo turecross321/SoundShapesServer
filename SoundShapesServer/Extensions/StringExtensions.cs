@@ -28,14 +28,14 @@ public static class StringExtensions
         return null;
     }
 
-    public static DateTimeOffset? ToDate(this string? input)
+    public static DateTime? ToDate(this string? input)
     {
         if (input == null)
             return null;
         
-        if (DateTimeOffset.TryParse(input, out DateTimeOffset result))
+        if (DateTime.TryParse(input, out DateTime result))
         {
-            return result;
+            return DateTime.SpecifyKind(result, DateTimeKind.Utc);
         }
 
         return null;

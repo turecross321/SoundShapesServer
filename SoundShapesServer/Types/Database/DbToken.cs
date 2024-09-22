@@ -17,7 +17,7 @@ public class DbToken : IToken<DbUser>, IDbItem<Guid>
 
     public DbUser User { get; init; } = null!;
     
-    public required DateTimeOffset CreationDate { get; init; }
+    public required DateTime CreationDate { get; init; }
     public required DateTimeOffset ExpiryDate { get; init; }
     
     public required TokenType TokenType { get; set; }
