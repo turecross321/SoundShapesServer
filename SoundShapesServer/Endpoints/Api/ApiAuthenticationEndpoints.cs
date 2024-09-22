@@ -50,11 +50,11 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         string verifyUrl = $"{config.WebsiteUrl}/verifyEmail?code={verifyEmail.Code}";
         
         string htmlBody = """
-                          <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
-                            <body>
+                          <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif; color: #000;">
+                            <body style="color:#181515;>
                           <h1>Hello, {USER}</h1>
                           <p>Please click the button below to verify your email address and finish the registration of your account.</p>
-                          <a href="{CODE_URL}" style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 1rem; font-size: x-large; text-decoration: none; display: inline-block;">Verify</a>
+                          <a href="{CODE_URL}" style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: x-large; text-decoration: none; display: inline-block;">Verify</a>
                           <p>If you didn't request this, please ignore this email.</p>
                           <p>Greetings, the {INSTANCE} team.</p>
                             </body>
@@ -124,11 +124,11 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         string passwordUrl = $"{config.WebsiteUrl}/resetPassword?code={code.Code}";
         
         string htmlBody = """
-                          <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
-                            <body>
+                          <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif; color: #000;">
+                            <body style="color:#181515;>
                           <h1>Hello, {USER}</h1>
                           <p>You may click the button below to reset your password.</p>
-                          <a href="{CODE_URL}" style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 1rem; font-size: x-large; text-decoration: none; display: inline-block;">Reset Password</a>
+                          <a href="{CODE_URL}" style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: x-large; text-decoration: none; display: inline-block;">Reset Password</a>
                           <p>If you didn't request this, please ignore this email.</p>
                           <p>Greetings, the {INSTANCE} team.</p>
                             </body>
@@ -218,10 +218,10 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         
         string htmlBody = """
                           <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
-                            <body>
+                            <body style="color:#181515;">
                           <h1>Hello, {USER}</h1>
                           <p>Please click the button below to verify your email address and finish the registration of your account.</p>
-                          <a href="{CODE_URL}" style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 1rem; font-size: x-large; text-decoration: none; display: inline-block;">Verify</a>
+                          <a href="{CODE_URL}" style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: x-large; text-decoration: none; display: inline-block;">Verify</a>
                           <p>If you didn't request this, please ignore this email.</p>
                           <p>Greetings, the {INSTANCE} team.</p>
                             </body>
