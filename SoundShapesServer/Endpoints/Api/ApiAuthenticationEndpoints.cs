@@ -314,7 +314,15 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     [ApiEndpoint("revokeToken", HttpMethods.Post)]
     public ApiOkResponse LogOut(RequestContext context, GameDatabaseContext database, DbToken token)
     {
-        database.RemoveToken(token);
+        if (token.RefreshToken != null)
+        {
+            database.RemoveRefreshToken(token.RefreshToken);
+        }
+        else
+        {
+            database.RemoveToken(token);
+        }
+        
         return new ApiOkResponse();
     }
 }

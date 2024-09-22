@@ -33,7 +33,7 @@ public partial class GameDatabaseContext
         return token;
     }
 
-    private void RemoveRefreshToken(DbRefreshToken token)
+    public void RemoveRefreshToken(DbRefreshToken token)
     {
         RefreshTokens.Remove(token);
 

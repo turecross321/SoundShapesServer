@@ -57,12 +57,6 @@ public partial class GameDatabaseContext
 
     public void RemoveToken(DbToken token)
     {
-        if (token.RefreshToken != null)
-        {
-            RemoveRefreshToken(token.RefreshToken);
-            return;
-        }
-
         Tokens.Remove(token);
         SaveChanges();
 
