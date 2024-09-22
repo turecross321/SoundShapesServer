@@ -10,10 +10,10 @@ public class PaginatedDbList<TDb, TDbId> where TDb: IDbItem<TDbId>
             items = items.Where(i => i.CreationDate >= pageData.MinimumCreationDate);
 
         if (pageData.MaximumCreationDate != null)
-            items = items.Where(i => i.CreationDate < pageData.MaximumCreationDate);
+            items = items.Where(i => i.CreationDate <= pageData.MaximumCreationDate);
 
         // Filter out items that have excluded ids
-        items = pageData.ExcludeIds.Select(id => ParseId<TDbId>(id))
+        items = pageData.ExcludeIds.Select(ParseId<TDbId>)
             .Aggregate(items, (current, parsedId) => 
                 current.Where(i => !i.Id!.Equals((TDbId)parsedId)));
 
@@ -48,7 +48,7 @@ public class PaginatedDbList<TDb, TDbId> where TDb: IDbItem<TDbId>
         throw new ArgumentOutOfRangeException(nameof(id), "Tried to parse unsupported id!");
     }
 
-    private const int MaxItems = 100;
+    public const int MaxItems = 100;
     
     public required IEnumerable<TDb> Items { get; init; }
     public required int TotalItems { get; init; }

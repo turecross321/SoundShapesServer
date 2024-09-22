@@ -93,4 +93,9 @@ public partial class GameDatabaseContext
         SaveChanges();
         return user;
     }
+
+    public IQueryable<DbUser> GetUsers()
+    {
+        return Users;
+    }
 }
