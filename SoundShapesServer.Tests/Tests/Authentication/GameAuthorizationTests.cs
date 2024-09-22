@@ -35,7 +35,7 @@ public class GameAuthorizationTests : ServerTest
         Assert.Multiple(() =>
         {
             Assert.That(response, Is.Not.EqualTo(null));
-            // Check that they are their default settings
+            // Check that they changed
             Assert.That(response!.RpcnAuthorization, Is.EqualTo(true));
             Assert.That(response.PsnAuthorization, Is.EqualTo(true));
             Assert.That(response.IpAuthorization, Is.EqualTo(true));
