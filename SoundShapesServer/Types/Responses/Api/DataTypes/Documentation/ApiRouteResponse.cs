@@ -13,26 +13,24 @@ public record ApiRouteResponse : IApiResponse
     public required IEnumerable<ApiParameterResponse> Parameters { get; set; }
     public required IEnumerable<ApiDocumentationErrorResponse> PotentialErrors { get; set; }
 
-    private static ApiRouteResponse FromRoute(Route old)
+    public static ApiRouteResponse FromRoute(Route route)
     {
         const string minPermsKey = "MinimumRole";
         UserRole? minRole = null;
-        if (old.ExtraProperties.TryGetValue(minPermsKey, out object? property))
+        if (route.ExtraProperties.TryGetValue(minPermsKey, out object? property))
         {
-            minRole = (UserRole?)property;
+            minRole = (UserRole?)property; // todo: implement a MinimumRole attribute and use this
         }
 
         return new ApiRouteResponse
         {
-            Method = old.Method,
-            RouteUri = old.RouteUri,
-            Summary = old.Summary,
-            AuthenticationRequired = old.AuthenticationRequired,
+            Method = route.Method,
+            RouteUri = route.RouteUri,
+            Summary = route.Summary,
+            AuthenticationRequired = route.AuthenticationRequired,
             MinimumRole = minRole,
-            Parameters = ApiParameterResponse.FromParameterList(old.Parameters),
-            PotentialErrors = ApiDocumentationErrorResponse.FromErrorList(old.PotentialErrors),
+            Parameters = ApiParameterResponse.FromParameterList(route.Parameters),
+            PotentialErrors = ApiDocumentationErrorResponse.FromErrorList(route.PotentialErrors),
         };
     }
-
-    public static IEnumerable<ApiRouteResponse> FromRouteList(IEnumerable<Route> oldList) => oldList.Select(FromRoute);
 }

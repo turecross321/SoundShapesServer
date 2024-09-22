@@ -76,10 +76,11 @@ public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : 
             _config.InstanceSettings.Description, _config!.InstanceSettings.BannerUrl);
         Server.AddService<EmailService>();
         Server.AddRateLimitService(new RateLimitSettings(60, 400, 30, "global"));
-        
+        Server.AddService<ApiDocumentationService>();
+
         Server.RemoveSerializer<BunkumJsonSerializer>();
         Server.AddSerializer<SoundShapesSerializer>();
-        
+
         Server.AddMiddleware<CrossOriginMiddleware>();
     }
 

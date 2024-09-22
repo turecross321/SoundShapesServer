@@ -3,6 +3,7 @@ using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
+using SoundShapesServer.Documentation.Attributes;
 using SoundShapesServer.Extensions;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Database;
@@ -15,7 +16,7 @@ namespace SoundShapesServer.Endpoints.Api;
 
 public class ApiAuthorizationSettingsEndpoints : EndpointGroup
 {
-    [DocSummary("Retrieve your game authorization settings.")]
+    [DocSummary("Retrieves your game authorization settings")]
     [DocResponseBody(typeof(ApiAuthorizationSettingsResponse))]
     [ApiEndpoint("gameAuth")]
     public ApiResponse<ApiAuthorizationSettingsResponse> GetAuthorizationSettings(RequestContext context, DbUser user)
@@ -28,7 +29,7 @@ public class ApiAuthorizationSettingsEndpoints : EndpointGroup
         };
     }
     
-    [DocSummary("Set what forms of game authorization that shall be used.")]
+    [DocSummary("Sets your game authorization settings.")]
     [DocRequestBody(typeof(ApiAuthorizationSettingsRequest))]
     [DocResponseBody(typeof(ApiAuthorizationSettingsResponse))]
     [ApiEndpoint("gameAuth", HttpMethods.Put)]
@@ -44,6 +45,8 @@ public class ApiAuthorizationSettingsEndpoints : EndpointGroup
         };
     }
 
+    [DocSummary("Retrieves IP addresses that have been used to log in to your account with.")]
+    [DocUsesPageData]
     [DocError(typeof(ApiPreconditionFailedError), ApiPreconditionFailedError.IpAuthorizationDisabledWhen)]
     [ApiEndpoint("gameAuth/ip")]
     public ApiListResponse<ApiIpResponse> GetIps(RequestContext context, GameDatabaseContext database, DbUser user)
