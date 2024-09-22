@@ -3,8 +3,6 @@ using Bunkum.Core;
 using Bunkum.Core.Configuration;
 using Bunkum.Core.Endpoints;
 using Bunkum.Core.RateLimit;
-using Bunkum.Core.Responses;
-using Bunkum.Listener.Protocol;
 using Bunkum.Protocols.Http;
 using SoundShapesServer.Common.Verification;
 using SoundShapesServer.Database;

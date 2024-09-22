@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Database;
+using SoundShapesServer.Types.Requests.Api;
 
 namespace SoundShapesServer.Database;
 
@@ -80,6 +81,15 @@ public partial class GameDatabaseContext
     public DbUser FinishUserRegistration(DbUser user)
     {
         user.FinishedRegistration = true;
+        SaveChanges();
+        return user;
+    }
+    
+    public DbUser SetUserAuthorizationSettings(DbUser user, ApiAuthorizationSettingsRequest body)
+    {
+        user.RpcnAuthorization = body.RpcnAuthorization;
+        user.PsnAuthorization = body.PsnAuthorization;
+        user.IpAuthorization = body.IpAuthorization;
         SaveChanges();
         return user;
     }

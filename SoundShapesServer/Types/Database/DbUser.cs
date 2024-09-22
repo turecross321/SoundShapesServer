@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Bunkum.Core.Authentication;
 using Microsoft.EntityFrameworkCore;
+using SoundShapesServer.Types.Responses.Api.DataTypes;
 
 namespace SoundShapesServer.Types.Database;
 
