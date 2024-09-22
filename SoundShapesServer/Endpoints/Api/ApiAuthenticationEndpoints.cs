@@ -50,7 +50,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         string verifyUrl = $"{config.WebsiteUrl}/verifyEmail?code={verifyEmail.Code}";
         
         string htmlBody = """
-                          <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif; color: #000;">
+                          <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
                             <body style="color:#181515;>
                           <h1>Hello, {USER}</h1>
                           <p>Please click the button below to verify your email address and finish the registration of your account.</p>
@@ -124,7 +124,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         string passwordUrl = $"{config.WebsiteUrl}/resetPassword?code={code.Code}";
         
         string htmlBody = """
-                          <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif; color: #000;">
+                          <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
                             <body style="color:#181515;>
                           <h1>Hello, {USER}</h1>
                           <p>You may click the button below to reset your password.</p>
