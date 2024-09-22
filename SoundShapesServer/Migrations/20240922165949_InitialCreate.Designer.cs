@@ -12,8 +12,8 @@ using SoundShapesServer.Database;
 namespace SoundShapesServer.Migrations
 {
     [DbContext(typeof(GameDatabaseContext))]
-    [Migration("20240922155019_SwitchToDateTime")]
-    partial class SwitchToDateTime
+    [Migration("20240922165949_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,11 +59,9 @@ namespace SoundShapesServer.Migrations
 
             modelBuilder.Entity("SoundShapesServer.Types.Database.DbIp", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("Authorized")
                         .HasColumnType("boolean");
@@ -129,8 +127,8 @@ namespace SoundShapesServer.Migrations
                     b.Property<bool?>("GenuineNpTicket")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("IpId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("IpId")
+                        .HasColumnType("uuid");
 
                     b.Property<int?>("Platform")
                         .HasColumnType("integer");
