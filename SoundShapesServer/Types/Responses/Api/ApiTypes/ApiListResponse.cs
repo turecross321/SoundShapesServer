@@ -1,6 +1,5 @@
 using SoundShapesServer.Types.Database;
 using SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
-using SoundShapesServer.Types.Responses.Api.DataTypes;
 
 namespace SoundShapesServer.Types.Responses.Api.ApiTypes;
 
@@ -15,10 +14,8 @@ public class ApiListResponse<TResponse> : ApiResponse<List<TResponse>> where TRe
             ListInformation = new ApiListInformation
             {
                 TotalItems = paginatedList.TotalItems,
-                NextPageItemId = paginatedList.NextPageItemId,
                 NextPageIndex = paginatedList.NextPageIndex(),
                 PreviousPageIndex = paginatedList.PreviousPageIndex(),
-                PreviousPageItemId = paginatedList.PreviousPageItemId
             }
         };
     }

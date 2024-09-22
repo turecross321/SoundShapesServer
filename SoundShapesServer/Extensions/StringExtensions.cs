@@ -27,6 +27,19 @@ public static class StringExtensions
 
         return null;
     }
+    
+    public static uint? ToUInt(this string? input)
+    {
+        if (input == null)
+            return null;
+
+        if (uint.TryParse(input, out uint result))
+        {
+            return result;
+        }
+
+        return null;
+    }
 
     public static DateTime? ToDate(this string? input)
     {
