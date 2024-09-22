@@ -5,6 +5,7 @@ using Bunkum.Protocols.Http;
 using SoundShapesServer.Database;
 using SoundShapesServer.Types.Database;
 using SoundShapesServer.Types.Requests.Api;
+using SoundShapesServer.Types.Responses.Api.ApiTypes;
 using SoundShapesServer.Types.Responses.Api.DataTypes;
 
 namespace SoundShapesServer.Endpoints.Api;
@@ -14,7 +15,7 @@ public class ApiGameAuthorizationEndpoints : EndpointGroup
     [DocSummary("Retrieve your game authorization settings.")]
     [DocResponseBody(typeof(ApiAuthorizationSettingsResponse))]
     [ApiEndpoint("gameAuth")]
-    public ApiAuthorizationSettingsResponse GetAuthorizationSettings(RequestContext context, DbUser user)
+    public ApiResponse<ApiAuthorizationSettingsResponse> GetAuthorizationSettings(RequestContext context, DbUser user)
     {
         return new ApiAuthorizationSettingsResponse
         {
@@ -28,7 +29,7 @@ public class ApiGameAuthorizationEndpoints : EndpointGroup
     [DocRequestBody(typeof(ApiAuthorizationSettingsRequest))]
     [DocResponseBody(typeof(ApiAuthorizationSettingsResponse))]
     [ApiEndpoint("gameAuth", HttpMethods.Put)]
-    public ApiAuthorizationSettingsResponse SetAuthorizationSettings(RequestContext context, GameDatabaseContext database, 
+    public ApiResponse<ApiAuthorizationSettingsResponse> SetAuthorizationSettings(RequestContext context, GameDatabaseContext database, 
         DbUser user, ApiAuthorizationSettingsRequest body)
     {
         user = database.SetUserAuthorizationSettings(user, body);

@@ -2,6 +2,7 @@
 using SoundShapesServer.Tests.Server;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Requests.Api;
+using SoundShapesServer.Types.Responses.Api.ApiTypes;
 using SoundShapesServer.Types.Responses.Api.DataTypes;
 
 namespace SoundShapesServer.Tests.Tests.Authentication;
@@ -15,7 +16,7 @@ public class GameAuthorizationTests : ServerTest
         using HttpClient http = context.GetAuthenticatedClient(TokenType.ApiAccess);
 
         ApiAuthorizationSettingsResponse? response = 
-            http.GetFromJsonAsync<ApiAuthorizationSettingsResponse>("/api/v1/gameAuth").Result;
+            http.GetFromJsonAsync<ApiResponse<ApiAuthorizationSettingsResponse>>("/api/v1/gameAuth").Result?.Data;
         Assert.Multiple(() =>
         {
             Assert.That(response, Is.Not.EqualTo(null));
@@ -30,7 +31,7 @@ public class GameAuthorizationTests : ServerTest
             RpcnAuthorization = true,
             PsnAuthorization = true,
             IpAuthorization = true
-        }).Result.Content.ReadFromJsonAsync<ApiAuthorizationSettingsResponse>().Result;
+        }).Result.Content.ReadFromJsonAsync<ApiResponse<ApiAuthorizationSettingsResponse>>().Result?.Data;
         
         Assert.Multiple(() =>
         {
