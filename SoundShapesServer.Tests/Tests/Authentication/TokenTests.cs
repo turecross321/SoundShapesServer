@@ -76,7 +76,7 @@ public class TokenTests : ServerTest
         DbToken? accessToken = context.Database.GetTokenWithId(deSerialized!.AccessToken.Id);
         Assert.That(accessToken != null);
         
-        // get right after refresh token expires
+        // get right after the initial expiry date
         context.Time.Now = context.Time.Now.AddMinutes(2);
         
         response = client.PostAsJsonAsync("/api/v1/refreshToken", new ApiRefreshTokenRequest
@@ -84,7 +84,16 @@ public class TokenTests : ServerTest
             RefreshTokenId = refreshToken.Id
         }).Result;
 
-        // check that the refresh token no longer works after the expiry date
+        // check that the refresh token still works since the expiry date should have been updated
+        Assert.That(response.IsSuccessStatusCode);
+        
+        // go to after expiry date
+        context.Time.Now = context.Time.Now.AddHours(ExpiryTimes.RefreshTokenHours).AddMinutes(1);
+        response = client.PostAsJsonAsync("/api/v1/refreshToken", new ApiRefreshTokenRequest
+        {
+            RefreshTokenId = refreshToken.Id
+        }).Result;
+
         Assert.That(!response.IsSuccessStatusCode);
         
         // check that the access token was generated with the refresh token has been revoked 
