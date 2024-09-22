@@ -13,7 +13,7 @@ public static class RequestContextExtensions
             Take = context.QueryString["take"].ToUInt() ?? 9,
             MinimumCreationDate = context.QueryString["minimumCreationDate"].ToDate(),
             MaximumCreationDate = context.QueryString["maximumCreationDate"].ToDate(),
-            ExcludeIds = context.QueryString.GetValues("exclude") ?? []
+            ExcludeIds = context.QueryString.GetValues("excludeId") ?? []
         };
 
     }

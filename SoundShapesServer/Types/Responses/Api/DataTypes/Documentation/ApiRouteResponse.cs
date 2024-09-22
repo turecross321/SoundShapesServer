@@ -22,6 +22,10 @@ public record ApiRouteResponse : IApiResponse
             minRole = (UserRole?)property; // todo: implement a MinimumRole attribute and use this
         }
 
+        // todo: request body
+        // todo: response body
+        // todo: enum explanation
+        
         return new ApiRouteResponse
         {
             Method = route.Method,
