@@ -13,7 +13,7 @@ using SoundShapesServer.Types.Responses.Api.DataTypes;
 
 namespace SoundShapesServer.Endpoints.Api;
 
-public class ApiAuthorizationSettingEndpoints : EndpointGroup
+public class ApiAuthorizationSettingsEndpoints : EndpointGroup
 {
     [DocSummary("Retrieve your game authorization settings.")]
     [DocResponseBody(typeof(ApiAuthorizationSettingsResponse))]
@@ -54,8 +54,8 @@ public class ApiAuthorizationSettingEndpoints : EndpointGroup
         }
 
         IQueryable<DbIp> ips = database.GetIpsWithUser(user);
-        PaginatedDbList<DbIp, int> paginated = ips.PaginateWithIntId(context.GetPageData());
+        PaginatedDbList<DbIp, Guid> paginated = ips.PaginateWithGuidId(context.GetPageData());
 
-        return ApiListResponse<ApiIpResponse>.FromPaginatedList<DbIp, int, ApiIpResponse>(paginated);
+        return ApiListResponse<ApiIpResponse>.FromPaginatedList<DbIp, Guid, ApiIpResponse>(paginated);
     }
 }

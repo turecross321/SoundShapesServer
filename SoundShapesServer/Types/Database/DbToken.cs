@@ -24,7 +24,7 @@ public class DbToken : IToken<DbUser>, IDbItem<Guid>
     public required PlatformType? Platform { get; set; }
     public required bool? GenuineNpTicket { get; set; }
     
-    public required int? IpId { get; set; }
+    public required Guid? IpId { get; set; }
     public DbIp? Ip { get; set; }
     
     [ForeignKey(nameof(RefreshToken))]

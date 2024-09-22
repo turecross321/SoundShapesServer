@@ -8,11 +8,11 @@ namespace SoundShapesServer.Types.Database;
 /// Used for IP authentication
 /// </summary>
 [PrimaryKey(nameof(Id))]
-public class DbIp : IDbItem<int>
+public class DbIp : IDbItem<Guid>
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; init; }
+    public Guid Id { get; init; }
     public required Guid UserId { get; init; }
     public DbUser User { get; init; } = null!;
 
