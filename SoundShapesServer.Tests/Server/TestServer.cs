@@ -25,13 +25,10 @@ public class TestSSServer(BunkumHttpListener listener, Func<TestDatabaseProvider
         LoggerConfiguration logConfig = new()
         {
             Behaviour = new DirectLoggingBehaviour(),
-            MaxLevel = LogLevel.Trace,
+            MaxLevel = LogLevel.Trace
         };
 
-        List<ILoggerSink> sinks = new(1)
-        {
-            new NUnitSink(),
-        };
+        List<ILoggerSink> sinks = [new NUnitSink()];
         
         return (logConfig, sinks);
     }

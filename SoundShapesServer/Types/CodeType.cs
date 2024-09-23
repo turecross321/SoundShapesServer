@@ -7,5 +7,5 @@ public enum CodeType
     /// </summary>
     Registration = 0,
     VerifyEmail = 1,
-    SetPassword = 2
+    SetPassword = 2,
 }

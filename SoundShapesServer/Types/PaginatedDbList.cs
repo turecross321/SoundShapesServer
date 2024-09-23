@@ -57,9 +57,9 @@ public class PaginatedDbList<TDb, TDbId> where TDb: IDbItem<TDbId>
     public int? PreviousPageIndex()
     {
         int? previousToken;
-        if (Skip > 0)
+        if (this.Skip > 0)
         {
-            previousToken = Math.Max(Math.Min(Skip, TotalItems) - Take, 0);
+            previousToken = Math.Max(Math.Min(this.Skip, this.TotalItems) - this.Take, 0);
         }
         else
         {
@@ -72,11 +72,11 @@ public class PaginatedDbList<TDb, TDbId> where TDb: IDbItem<TDbId>
     public int? NextPageIndex()
     {
         int? nextToken;
-        if (TotalItems <= Skip + Take)
+        if (this.TotalItems <= this.Skip + this.Take)
         {
             nextToken = null;
         }
-        else nextToken = Skip + Take;
+        else nextToken = this.Skip + this.Take;
         
         return nextToken;
     }

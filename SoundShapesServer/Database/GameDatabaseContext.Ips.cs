@@ -8,26 +8,26 @@ public partial class GameDatabaseContext
 {
     public DbIp GetOrCreateIp(DbUser user, string ipAddress)
     {
-        DbIp? existingIp = Ips.Include(i => i.User)
+        DbIp? existingIp = this.Ips.Include(i => i.User)
             .FirstOrDefault(i => i.UserId == user.Id && i.IpAddress == ipAddress);
 
         if (existingIp != null)
             return existingIp;
 
-        EntityEntry<DbIp> ip = Ips.Add(new DbIp
+        EntityEntry<DbIp> ip = this.Ips.Add(new DbIp
         {
             IpAddress = ipAddress,
-            CreationDate = Time.Now,
+            CreationDate = this.Time.Now,
             UserId = user.Id
         });
-
-        SaveChanges();
+        
+        this.SaveChanges();
 
         return ip.Entity;
     }
 
     public IQueryable<DbIp> GetIpsWithUser(DbUser user)
     {
-        return Ips.Where(i => i.UserId == user.Id);
+        return this.Ips.Where(i => i.UserId == user.Id);
     }
 }

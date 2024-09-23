@@ -262,7 +262,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         {
             User = ApiFullUserResponse.FromDb(user),
             AccessToken = ApiTokenResponse.FromDb(token),
-            RefreshToken = ApiRefreshTokenResponse.FromDb(refreshToken)
+            RefreshToken = ApiRefreshTokenResponse.FromDb(refreshToken),
         };
     }
 
@@ -286,7 +286,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         {
             User = ApiFullUserResponse.FromDb(refreshToken.User),
             AccessToken = ApiTokenResponse.FromDb(token),
-            RefreshToken = ApiRefreshTokenResponse.FromDb(refreshToken)
+            RefreshToken = ApiRefreshTokenResponse.FromDb(refreshToken),
         };
     }
 

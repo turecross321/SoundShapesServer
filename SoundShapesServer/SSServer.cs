@@ -39,13 +39,13 @@ public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : 
         config ??= Config.LoadFromJsonFile<ServerConfig>("soundShapesConfig.json", this.Logger);
         this._config = config;
         
-        databaseProvider ??= () => (TDatabaseProvider)new GameDatabaseProvider(GetTimeProvider(), _config.PostgresSqlConnectionString);
+        databaseProvider ??= () => (TDatabaseProvider)new GameDatabaseProvider(this.GetTimeProvider(), this._config.PostgresSqlConnectionString);
         dataStore ??= new FileSystemDataStore();
 
         this._databaseProvider = databaseProvider.Invoke();
         this._databaseProvider.Initialize();
         this._dataStore = dataStore;
-        this.Server.AddConfig(_config);
+        this.Server.AddConfig(this._config);
 
         
         this.SetupInitializer(() =>
@@ -74,29 +74,28 @@ public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : 
     protected override void Initialize()
     {
         base.Initialize();
-        SetupWorkers();
+        this.SetupWorkers();
     }
 
     protected override void SetupServices()
     {
-        Server.AddAutoDiscover(_config!.InstanceSettings.InstanceName, GameEndpointAttribute.RoutePrefix, false, 
-            _config.InstanceSettings.Description, _config!.InstanceSettings.BannerUrl);
-        Server.AddService<EmailService>();
-        Server.AddRateLimitService(new RateLimitSettings(60, 400, 30, "global"));
-        Server.AddService<ApiDocumentationService>();
-
-        Server.RemoveSerializer<BunkumJsonSerializer>();
-        Server.AddSerializer<SoundShapesSerializer>();
+        this.Server.AddAutoDiscover(this._config!.InstanceSettings.InstanceName, GameEndpointAttribute.RoutePrefix, false, this._config.InstanceSettings.Description, this._config!.InstanceSettings.BannerUrl);
+        this.Server.AddService<EmailService>();
+        this.Server.AddRateLimitService(new RateLimitSettings(60, 400, 30, "global"));
+        this.Server.AddService<ApiDocumentationService>();
+        
+        this.Server.RemoveSerializer<BunkumJsonSerializer>();
+        this.Server.AddSerializer<SoundShapesSerializer>();
     }
 
     protected override void SetupMiddlewares()
     {
-        Server.AddMiddleware<CrossOriginMiddleware>();
+        this.Server.AddMiddleware<CrossOriginMiddleware>();
     }
     
     protected virtual void SetupWorkers()
     {
-        WorkerManager = new WorkerManager(this.Logger, this._dataStore, this._databaseProvider);
+        this.WorkerManager = new WorkerManager(this.Logger, this._dataStore, this._databaseProvider);
         this.WorkerManager.AddWorker<ExpiredObjectWorker>();
     }
     

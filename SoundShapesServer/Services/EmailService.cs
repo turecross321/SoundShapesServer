@@ -13,18 +13,18 @@ public class EmailService : EndpointService
     
     internal EmailService(Logger logger, ServerConfig config) : base(logger)
     {
-        _config = config;
+        this._config = config;
     }
 
     public bool SendEmail(string recipient, string subject, string html)
     {
-        using SmtpClient smtpClient = new SmtpClient(_config.EmailSettings.Host);
-        smtpClient.Port = _config.EmailSettings.HostPort;
-        smtpClient.Credentials = new NetworkCredential(_config.EmailSettings.Address, _config.EmailSettings.Password);
-        smtpClient.EnableSsl = _config.EmailSettings.UseSsl;
+        using SmtpClient smtpClient = new SmtpClient(this._config.EmailSettings.Host);
+        smtpClient.Port = this._config.EmailSettings.HostPort;
+        smtpClient.Credentials = new NetworkCredential(this._config.EmailSettings.Address, this._config.EmailSettings.Password);
+        smtpClient.EnableSsl = this._config.EmailSettings.UseSsl;
 
         MailMessage message = new();
-        message.From = new MailAddress(_config.EmailSettings.Address);
+        message.From = new MailAddress(this._config.EmailSettings.Address);
         message.To.Add(recipient);
         message.Subject = subject;
         message.Body = html;
@@ -36,7 +36,7 @@ public class EmailService : EndpointService
         }
         catch (Exception e)
         {
-            Logger.LogWarning(BunkumCategory.Service, $"Failed to send '{subject}' to '{recipient}':\n{e}");
+            this.Logger.LogWarning(BunkumCategory.Service, $"Failed to send '{subject}' to '{recipient}':\n{e}");
             return false;
         }
 

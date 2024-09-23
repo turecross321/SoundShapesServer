@@ -12,7 +12,7 @@ public class ServerTest
 {
     protected static readonly Logger Logger = new(new []
     {
-        new NUnitSink(),
+        new NUnitSink()
     });
     
     // ReSharper disable once MemberCanBeMadeStatic.Global

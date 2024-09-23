@@ -3,5 +3,5 @@
 public enum SSSContext
 {
     Startup,
-    Worker
+    Worker,
 }

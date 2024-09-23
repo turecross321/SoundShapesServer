@@ -49,7 +49,7 @@ public static class TicketExtensions
     
     // Courtesy of https://www.serialstation.com/titles/?name=sound%20shapes&so=tn&systems=e80a9d68-aef2-4e23-8768-27ac0e5d9f25
     private static readonly string[] Ps3Ids =
-    {
+    [
         "NPJA00081",
         "NPEA00289",
         "NPUA70251",
@@ -57,12 +57,12 @@ public static class TicketExtensions
         "NPHA80211",
         "NPUA80543",
         "NPEA90119",
-        "NPJA90248"
-    };
+        "NPJA90248",
+    ];
 
     // Courtesy of https://www.serialstation.com/titles/?name=sound%20shapes&so=tn&systems=d8f282b9-916f-491d-9ca3-61e76a74fef0
     private static readonly string[] PsvIds =
-    {
+    [
         "PCSA00003",
         "PCSC00024",
         "PCSD00027",
@@ -72,17 +72,17 @@ public static class TicketExtensions
         "PCSA00094",
         "PCSA00104",
         "PCSF00158",
-        "PCSC90026"
-    };
+        "PCSC90026",
+    ];
     
     // Courtesy of https://www.serialstation.com/titles/?name=sound%20shapes&so=tn&systems=97ec53a2-f676-4c89-8172-e653dce5eed1
     private static readonly string[] Ps4Ids =
-    {
+    [
         "CUSA00040",
         "CUSA00073",
         "CUSA00090",
         "CUSA00154",
         "CUSA00175",
-        "CUSA00800"
-    };
+        "CUSA00800",
+    ];
 }

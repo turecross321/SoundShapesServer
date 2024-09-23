@@ -9,7 +9,7 @@ public record ApiIpResponse : IApiDbResponse<DbIp, ApiIpResponse>
     public required ApiMinimalUserResponse User { get; init; }
     public required string IpAddress { get; init; }
     public required DateTimeOffset CreationDate { get; init; }
-    public required DateTimeOffset? AuthorizedDate { get; set; } = null;
+    public required DateTimeOffset? AuthorizedDate { get; set; }
     public required bool Authorized { get; init; }
     public required bool? OneTimeUse { get; set; }
     

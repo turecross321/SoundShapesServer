@@ -13,12 +13,12 @@ public class ApiDocumentationService : EndpointService
 
     public override void Initialize()
     {
-        AttribDoc.Documentation documentation = _generator.Document(Assembly.GetExecutingAssembly());
-        _docs.AddRange(documentation.Routes.OrderBy(r => r.RouteUri));
+        AttribDoc.Documentation documentation = this._generator.Document(Assembly.GetExecutingAssembly());
+        this._docs.AddRange(documentation.Routes.OrderBy(r => r.RouteUri));
     }
 
     private readonly ApiDocumentationGenerator _generator = new();
     
     private readonly List<Route> _docs = new();
-    public IEnumerable<Route> Routes => _docs.AsReadOnly();
+    public IEnumerable<Route> Routes => this._docs.AsReadOnly();
 }

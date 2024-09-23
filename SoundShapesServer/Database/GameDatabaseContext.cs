@@ -19,7 +19,7 @@ public partial class GameDatabaseContext: DbContext, IDatabaseContext
     }
 
     private readonly IDateTimeProvider _time;
-    public IDateTimeProvider Time => _time;
+    public IDateTimeProvider Time => this._time;
 
     private readonly string? _connectionString;
 
@@ -43,7 +43,7 @@ public partial class GameDatabaseContext: DbContext, IDatabaseContext
 
     public override void Dispose()
     {
-        SaveChanges();
+        this.SaveChanges();
         base.Dispose();
     }
 }

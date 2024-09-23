@@ -9,9 +9,9 @@ public class ApiError
 {
     public ApiError(string message, HttpStatusCode code = BadRequest)
     {
-        Name = GetType().Name;
-        Message = message;
-        StatusCode = code;
+        this.Name = this.GetType().Name;
+        this.Message = message;
+        this.StatusCode = code;
     }
     public string Name { get; set; }
     public string Message { get; set; }
@@ -35,6 +35,6 @@ public class ApiError
     }
     public List<ApiError> FromErrorList(IEnumerable<Error> errors)
     {
-        return errors.Select(FromError).ToList();
+        return errors.Select(this.FromError).ToList();
     }
 }

@@ -41,9 +41,9 @@ public class DbUser: IUser, IDbItem<Guid>
     {
         string result = $"{this.Name} ({this.Role}";
 
-        if (!FinishedRegistration)
+        if (!this.FinishedRegistration)
             result += ", Unregistered";
-        if (!VerifiedEmail)
+        if (!this.VerifiedEmail)
             result += ", Unverified email";
 
         result += ")";

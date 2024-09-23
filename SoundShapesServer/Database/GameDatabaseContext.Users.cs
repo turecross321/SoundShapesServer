@@ -10,27 +10,27 @@ public partial class GameDatabaseContext
 {
     public DbUser? GetUserWithName(string name)
     {
-        return Users.FirstOrDefault(u => u.Name == name);
+        return this.Users.FirstOrDefault(u => u.Name == name);
     }
     
     public DbUser? GetUserWithEmail(string name)
     {
-        return Users.FirstOrDefault(u => u.EmailAddress == name);
+        return this.Users.FirstOrDefault(u => u.EmailAddress == name);
     }
 
     public DbUser CreateUser(string name)
     {
-        EntityEntry<DbUser> user = Users.Add(new DbUser
+        EntityEntry<DbUser> user = this.Users.Add(new DbUser
         {
             Name = name,
             Role = UserRole.Default,
             FinishedRegistration = false,
             VerifiedEmail = false,
-            CreationDate = Time.Now,
-            RegistrationExpiryDate = Time.Now.AddHours(ExpiryTimes.UserRegistrationHours)
+            CreationDate = this.Time.Now,
+            RegistrationExpiryDate = this.Time.Now.AddHours(ExpiryTimes.UserRegistrationHours),
         });
-
-        SaveChanges();
+        
+        this.SaveChanges();
         
         // Reload to load the ID
         user.Reload();
@@ -40,17 +40,17 @@ public partial class GameDatabaseContext
     
     public DbUser CreateRegisteredUser(string name, string email, UserRole role)
     {
-        EntityEntry<DbUser> user = Users.Add(new DbUser
+        EntityEntry<DbUser> user = this.Users.Add(new DbUser
         {
             Name = name,
             Role = role,
             FinishedRegistration = true,
             VerifiedEmail = true,
-            CreationDate = Time.Now,
-            EmailAddress = email
+            CreationDate = this.Time.Now,
+            EmailAddress = email,
         });
-
-        SaveChanges();
+        
+        this.SaveChanges();
         
         // Reload to load the ID
         user.Reload();
@@ -62,21 +62,21 @@ public partial class GameDatabaseContext
     {
         user.EmailAddress = email;
         user.VerifiedEmail = false;
-        SaveChanges();
+        this.SaveChanges();
         return user;
     }
 
     public DbUser VerifyEmail(DbUser user)
     {
         user.VerifiedEmail = true;
-        SaveChanges();
+        this.SaveChanges();
         return user;
     }
 
     public DbUser SetUserPassword(DbUser user, string passwordBcrypt)
     {
         user.PasswordBcrypt = passwordBcrypt;
-        SaveChanges();
+        this.SaveChanges();
         return user;
     }
 
@@ -84,7 +84,7 @@ public partial class GameDatabaseContext
     {
         user.FinishedRegistration = true;
         user.RegistrationExpiryDate = null;
-        SaveChanges();
+        this.SaveChanges();
         return user;
     }
     
@@ -100,17 +100,17 @@ public partial class GameDatabaseContext
         user.RpcnAuthorization = body.RpcnAuthorization;
         user.PsnAuthorization = body.PsnAuthorization;
         user.IpAuthorization = body.IpAuthorization;
-        SaveChanges();
+        this.SaveChanges();
         return user;
     }
 
     public IQueryable<DbUser> GetUsers()
     {
-        return Users;
+        return this.Users;
     }
     public void RemoveUser(DbUser user)
     {
-        Users.Remove(user);
-        SaveChanges();
+        this.Users.Remove(user);
+        this.SaveChanges();
     }
 }

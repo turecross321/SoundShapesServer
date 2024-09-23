@@ -14,20 +14,20 @@ public class ApiResponse<T> : IHasResponseCode where T : class
     
     protected ApiResponse(T data)
     {
-        Success = true;
-        Data = data;
-        Error = null;
-
-        StatusCode = OK;
+        this.Success = true;
+        this.Data = data;
+        this.Error = null;
+        
+        this.StatusCode = OK;
     }
 
     protected ApiResponse(ApiError error)
     {
-        Success = false;
-        Data = null;
-        Error = error;
-
-        StatusCode = error.StatusCode;
+        this.Success = false;
+        this.Data = null;
+        this.Error = error;
+        
+        this.StatusCode = error.StatusCode;
     }
 
     public static implicit operator ApiResponse<T>(T data)

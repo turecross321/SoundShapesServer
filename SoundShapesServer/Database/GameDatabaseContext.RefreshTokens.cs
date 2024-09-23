@@ -10,23 +10,23 @@ public partial class GameDatabaseContext
 {
     public DbToken CreateApiTokenWithRefreshToken(DbRefreshToken refresh)
     {
-        DbToken token = CreateToken(refresh.User, TokenType.ApiAccess, null, null, refresh, null);
+        DbToken token = this.CreateToken(refresh.User, TokenType.ApiAccess, null, null, refresh, null);
         // update the refresh expiry date
-        refresh.ExpiryDate = _time.Now.AddHours(ExpiryTimes.RefreshTokenHours);
-        SaveChanges();
+        refresh.ExpiryDate = this._time.Now.AddHours(ExpiryTimes.RefreshTokenHours);
+        this.SaveChanges();
 
         return token;
     }
 
     public DbRefreshToken? GetRefreshTokenWithId(Guid guid)
     {
-        DbRefreshToken? token = RefreshTokens
+        DbRefreshToken? token = this.RefreshTokens
             .Include(t => t.User)
             .FirstOrDefault(t => t.Id == guid);
 
-        if (_time.Now >= token?.ExpiryDate)
+        if (this._time.Now >= token?.ExpiryDate)
         {
-            RemoveRefreshToken(token);
+            this.RemoveRefreshToken(token);
             return null;
         }
 
@@ -35,20 +35,20 @@ public partial class GameDatabaseContext
     
     public void RemoveRefreshToken(DbRefreshToken token)
     {
-        RefreshTokens.Remove(token);
-        SaveChanges();
+        this.RefreshTokens.Remove(token);
+        this.SaveChanges();
     }
 
     public DbRefreshToken CreateRefreshToken(DbUser user)
     {
-        EntityEntry<DbRefreshToken> token = RefreshTokens.Add(new DbRefreshToken
+        EntityEntry<DbRefreshToken> token = this.RefreshTokens.Add(new DbRefreshToken
         {
             UserId = user.Id,
-            CreationDate = _time.Now,
-            ExpiryDate = _time.Now.AddHours(ExpiryTimes.RefreshTokenHours)
+            CreationDate = this._time.Now,
+            ExpiryDate = this._time.Now.AddHours(ExpiryTimes.RefreshTokenHours),
         });
-
-        SaveChanges();
+        
+        this.SaveChanges();
 
         // Reload to load the ID
         token.Reload();
@@ -56,5 +56,5 @@ public partial class GameDatabaseContext
         return token.Entity;
     }
     
-    public IQueryable<DbRefreshToken> GetRefreshTokens() => RefreshTokens;
+    public IQueryable<DbRefreshToken> GetRefreshTokens() => this.RefreshTokens;
 }

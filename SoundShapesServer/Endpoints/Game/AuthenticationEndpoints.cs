@@ -109,9 +109,9 @@ public class AuthenticationEndpoints : EndpointGroup
                 User = new SessionUserResponse
                 {
                     Id = token.UserId,
-                    UserName = ticket.Username
-                }
-            }
+                    UserName = ticket.Username,
+                },
+            },
         };
 
         return new Response(response, ContentType.Json, Created);

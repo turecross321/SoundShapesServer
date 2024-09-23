@@ -25,7 +25,7 @@ public class ApiAuthorizationSettingsEndpoints : EndpointGroup
         {
             RpcnAuthorization = user.RpcnAuthorization,
             PsnAuthorization = user.PsnAuthorization,
-            IpAuthorization = user.IpAuthorization
+            IpAuthorization = user.IpAuthorization,
         };
     }
     
@@ -41,7 +41,7 @@ public class ApiAuthorizationSettingsEndpoints : EndpointGroup
         {
             RpcnAuthorization = user.RpcnAuthorization,
             PsnAuthorization = user.PsnAuthorization,
-            IpAuthorization = user.IpAuthorization
+            IpAuthorization = user.IpAuthorization,
         };
     }
 

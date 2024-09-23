@@ -11,8 +11,8 @@ public class WorkerManager(Logger logger, IDataStore dataStore, EntityFrameworkD
 {
     private readonly IDataStore _dataStore = dataStore;
 
-    private Thread? _thread = null;
-    private bool _threadShouldRun = false;
+    private Thread? _thread;
+    private bool _threadShouldRun;
 
     private readonly List<IWorker> _workers = [];
     private readonly Dictionary<IWorker, long> _lastWorkTimestamps = new();

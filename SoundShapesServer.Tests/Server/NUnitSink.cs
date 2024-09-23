@@ -17,7 +17,7 @@ public class NUnitSink : ILoggerSink
             LogLevel.Info => TestContext.Progress,
             LogLevel.Debug => TestContext.Progress,
             LogLevel.Trace => TestContext.Progress,
-            _ => throw new ArgumentOutOfRangeException(nameof(level), level, null),
+            _ => throw new ArgumentOutOfRangeException(nameof(level), level, null)
         };
         
         StringBuilder iHateMicrosoftApis = new();

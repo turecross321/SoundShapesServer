@@ -10,9 +10,9 @@ public class SoundShapesSerializer : IBunkumSerializer
     };
 
     public string[] ContentTypes { get; } =
-    {
-        "application/json"
-    };
+    [
+        "application/json",
+    ];
 
     public byte[] Serialize(object data)
     {

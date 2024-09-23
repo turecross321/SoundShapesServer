@@ -10,7 +10,7 @@ public partial class GameDatabaseContext
 {
     public DbToken? GetTokenWithId(Guid guid)
     {
-        return Tokens
+        return this.Tokens
             .Include(t => t.User)
             .Include(t => t.RefreshToken)
             .FirstOrDefault(t => t.Id == guid);
@@ -24,10 +24,10 @@ public partial class GameDatabaseContext
             TokenType.GameAccess => ExpiryTimes.GameTokenHours,
             TokenType.GameEula => ExpiryTimes.CodeHours,
             TokenType.ApiAccess => ExpiryTimes.ApiAccessHours,
-            _ => throw new ArgumentOutOfRangeException(nameof(tokenType), tokenType, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(tokenType), tokenType, null),
         };
 
-        DateTimeOffset expiry = _time.Now.AddHours(expiryHours);
+        DateTimeOffset expiry = this._time.Now.AddHours(expiryHours);
 
         // If there is a refresh token and it expires before this would normally expire, use the refresh expiry date instead.
         // This is to prevent a situation where the refresh token is expired but there are still tokens
@@ -35,19 +35,19 @@ public partial class GameDatabaseContext
         if (refreshToken != null && refreshToken.ExpiryDate < expiry)
             expiry = refreshToken.ExpiryDate;
         
-        EntityEntry<DbToken> token = Tokens.Add(new DbToken
+        EntityEntry<DbToken> token = this.Tokens.Add(new DbToken
         {
             UserId = user.Id,
             TokenType = tokenType,
-            CreationDate = _time.Now,
+            CreationDate = this._time.Now,
             ExpiryDate = expiry,
             Platform = platformType,
             IpId = ip?.Id,
             RefreshTokenId = refreshToken?.Id,
             GenuineNpTicket = genuineNpTicket,
         });
-
-        SaveChanges();
+        
+        this.SaveChanges();
         
         // Reload to load the ID
         token.Reload();
@@ -55,11 +55,11 @@ public partial class GameDatabaseContext
         return token.Entity;
     }
     
-    public IQueryable<DbToken> GetTokens() => Tokens;
+    public IQueryable<DbToken> GetTokens() => this.Tokens;
     
     public void RemoveToken(DbToken token)
     {
-        Tokens.Remove(token);
-        SaveChanges();
+        this.Tokens.Remove(token);
+        this.SaveChanges();
     }
 }

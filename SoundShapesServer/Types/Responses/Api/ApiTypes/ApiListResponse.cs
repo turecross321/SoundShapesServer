@@ -16,7 +16,7 @@ public class ApiListResponse<TResponse> : ApiResponse<IEnumerable<TResponse>>
                 TotalItems = paginatedList.TotalItems,
                 NextPageIndex = paginatedList.NextPageIndex(),
                 PreviousPageIndex = paginatedList.PreviousPageIndex(),
-            }
+            },
         };
     }
     
@@ -39,7 +39,7 @@ public class ApiListResponse<TResponse> : ApiResponse<IEnumerable<TResponse>>
     {
         return new ApiListResponse<TResponse>(error)
         {
-            ListInformation = null
+            ListInformation = null,
         };
     }
     
@@ -47,7 +47,7 @@ public class ApiListResponse<TResponse> : ApiResponse<IEnumerable<TResponse>>
     {
         return new ApiListResponse<TResponse>(list)
         {
-            ListInformation = null
+            ListInformation = null,
         };
     }
 }
