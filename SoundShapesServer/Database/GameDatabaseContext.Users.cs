@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SoundShapesServer.Common.Constants;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Database;
 using SoundShapesServer.Types.Requests.Api;
@@ -25,7 +26,8 @@ public partial class GameDatabaseContext
             Role = UserRole.Default,
             FinishedRegistration = false,
             VerifiedEmail = false,
-            CreationDate = Time.Now
+            CreationDate = Time.Now,
+            RegistrationExpiryDate = Time.Now.AddHours(ExpiryTimes.UserRegistrationHours)
         });
 
         SaveChanges();
@@ -81,6 +83,7 @@ public partial class GameDatabaseContext
     public DbUser FinishUserRegistration(DbUser user)
     {
         user.FinishedRegistration = true;
+        user.RegistrationExpiryDate = null;
         SaveChanges();
         return user;
     }

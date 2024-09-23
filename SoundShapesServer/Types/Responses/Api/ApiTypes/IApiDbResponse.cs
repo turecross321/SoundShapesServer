@@ -2,5 +2,5 @@
 
 public interface IApiDbResponse<in TDbEntity, out TSelf> : IApiResponse
 {
-    public static abstract TSelf FromDb(TDbEntity value);
+    public static abstract TSelf FromDb(TDbEntity item);
 }

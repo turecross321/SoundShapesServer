@@ -10,16 +10,20 @@ public record ApiFullUserResponse : IApiDbResponse<DbUser, ApiFullUserResponse>
     public required UserRole Role { get; set; }
     public required bool VerifiedEmail { get; set; }
     public required bool FinishedRegistration { get; set; }
+    public required DateTime CreationDate { get; set; }
+    public required DateTime? RegistrationExpiryDate { get; set; }
     
-    public static ApiFullUserResponse FromDb(DbUser value)
+    public static ApiFullUserResponse FromDb(DbUser user)
     {
         return new ApiFullUserResponse
         {
-            Id = value.Id,
-            Name = value.Name,
-            Role = value.Role,
-            VerifiedEmail = value.VerifiedEmail,
-            FinishedRegistration = value.FinishedRegistration
+            Id = user.Id,
+            Name = user.Name,
+            Role = user.Role,
+            VerifiedEmail = user.VerifiedEmail,
+            FinishedRegistration = user.FinishedRegistration,
+            CreationDate = user.CreationDate,
+            RegistrationExpiryDate = user.RegistrationExpiryDate
         };
     }
 }

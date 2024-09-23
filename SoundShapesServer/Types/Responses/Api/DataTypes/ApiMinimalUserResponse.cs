@@ -8,6 +8,7 @@ public record ApiMinimalUserResponse : IApiDbResponse<DbUser, ApiMinimalUserResp
     public required Guid Id { get; set; }
     public required string Name { get; set; }
     public required UserRole Role { get; set; }
+    public required DateTime CreationDate { get; set; }
 
     public static ApiMinimalUserResponse FromDb(DbUser user)
     {
@@ -15,7 +16,8 @@ public record ApiMinimalUserResponse : IApiDbResponse<DbUser, ApiMinimalUserResp
         {
             Id = user.Id,
             Name = user.Name,
-            Role = user.Role
+            Role = user.Role,
+            CreationDate = user.CreationDate
         };
     }
 }

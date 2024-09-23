@@ -17,6 +17,10 @@ public class DbUser: IUser, IDbItem<Guid>
     
     public required UserRole Role { get; set; }
     
+    /// <summary>
+    /// If registration hasn't been finished and this date passes, this account will be removed.
+    /// </summary>
+    public DateTime? RegistrationExpiryDate { get; set; }
     public bool FinishedRegistration { get; set; }
     public bool VerifiedEmail { get; set; }
     
