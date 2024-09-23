@@ -70,7 +70,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     [DocRequestBody(typeof(ApiCodeRequest))]
     [RateLimitSettings(300, 10, 300, "setEmail")]
     [Authentication(false)]
-    [ApiEndpoint("verifyEmail")]
+    [ApiEndpoint("verifyEmail", HttpMethods.Post)]
     public ApiResponse<ApiFullUserResponse> VerifyEmail(RequestContext context, GameDatabaseContext database, ServerConfig config, ApiCodeRequest body)
     {
         DbCode? code = database.GetCode(body.Code, CodeType.VerifyEmail);
