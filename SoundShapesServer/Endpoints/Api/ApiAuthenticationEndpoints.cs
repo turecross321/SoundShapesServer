@@ -71,7 +71,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     [RateLimitSettings(300, 10, 300, "setEmail")]
     [Authentication(false)]
     [ApiEndpoint("verifyEmail")]
-    public ApiOkResponse VerifyEmail(RequestContext context, GameDatabaseContext database, ServerConfig config, ApiCodeRequest body)
+    public ApiResponse<ApiFullUserResponse> VerifyEmail(RequestContext context, GameDatabaseContext database, ServerConfig config, ApiCodeRequest body)
     {
         DbCode? code = database.GetCode(body.Code, CodeType.VerifyEmail);
         if (code == null)
@@ -85,8 +85,8 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         }
         
         context.Logger.LogInfo(BunkumCategory.Authentication, $"{user} successfully verified their email.");
-
-        return new ApiOkResponse();
+        
+        return ApiFullUserResponse.FromDb(user);
     }
 
     [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
