@@ -4,6 +4,7 @@ using Bunkum.Core.Configuration;
 using Bunkum.Core.Endpoints;
 using Bunkum.Core.RateLimit;
 using Bunkum.Protocols.Http;
+using SoundShapesServer.Common;
 using SoundShapesServer.Common.Verification;
 using SoundShapesServer.Database;
 using SoundShapesServer.Services;
@@ -47,24 +48,10 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 
 
         DbCode verifyEmail = database.CreateCode(user, CodeType.VerifyEmail);
-        string verifyUrl = $"{config.WebsiteUrl}/verifyEmail?code={verifyEmail.Code}";
-        
-        string htmlBody = """
-                          <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
-                            <body style="color:#181515;>
-                          <h1>Hello, {USER}</h1>
-                          <p>Please click the button below to verify your email address and finish the registration of your account.</p>
-                          <a href="{CODE_URL}" style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: x-large; text-decoration: none; display: inline-block;">Verify</a>
-                          <p>If you didn't request this, please ignore this email.</p>
-                          <p>Greetings, the {INSTANCE} team.</p>
-                            </body>
-                          </html>
-                          """;
 
         // Replace placeholders in the HTML template
-        htmlBody = htmlBody.Replace("{USER}", user.Name)
-            .Replace("{INSTANCE}", config.InstanceSettings.InstanceName)
-            .Replace("{CODE_URL}", verifyUrl);
+        string htmlBody = EmailTemplates.VerifyEmail(user.Name, config.InstanceSettings.InstanceName, config.WebsiteUrl,
+            verifyEmail.Code, user.FinishedRegistration);
         
         bool success = email.SendEmail(body.NewEmail,
                 $"[{config.InstanceSettings.InstanceName}] Verify your Email Address", htmlBody);
@@ -121,24 +108,9 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         }
         
         DbCode code = database.CreateCode(user, CodeType.SetPassword);
-        string passwordUrl = $"{config.WebsiteUrl}/resetPassword?code={code.Code}";
         
-        string htmlBody = """
-                          <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
-                            <body style="color:#181515;>
-                          <h1>Hello, {USER}</h1>
-                          <p>You may click the button below to reset your password.</p>
-                          <a href="{CODE_URL}" style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: x-large; text-decoration: none; display: inline-block;">Reset Password</a>
-                          <p>If you didn't request this, please ignore this email.</p>
-                          <p>Greetings, the {INSTANCE} team.</p>
-                            </body>
-                          </html>
-                          """;
-
-        // Replace placeholders in the HTML template
-        htmlBody = htmlBody.Replace("{USER}", code.User.Name)
-            .Replace("{INSTANCE}", config.InstanceSettings.InstanceName)
-            .Replace("{CODE_URL}", passwordUrl);
+        string htmlBody = EmailTemplates.PasswordReset(user.Name, config.InstanceSettings.InstanceName,
+            config.WebsiteUrl, code.Code);
         
         bool success = email.SendEmail(user.EmailAddress!,
             $"[{config.InstanceSettings.InstanceName}] Reset your password", htmlBody);
@@ -214,24 +186,8 @@ public class ApiAuthenticationEndpoints : EndpointGroup
             return ApiInternalServerError.CouldNotBcryptPassword;
         
         DbCode verifyEmail = database.CreateCode(code.User, CodeType.VerifyEmail);
-        string verifyUrl = $"{config.WebsiteUrl}/verifyEmail?code={verifyEmail.Code}";
-        
-        string htmlBody = """
-                          <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
-                            <body style="color:#181515;">
-                          <h1>Hello, {USER}</h1>
-                          <p>Please click the button below to verify your email address and finish the registration of your account.</p>
-                          <a href="{CODE_URL}" style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: x-large; text-decoration: none; display: inline-block;">Verify</a>
-                          <p>If you didn't request this, please ignore this email.</p>
-                          <p>Greetings, the {INSTANCE} team.</p>
-                            </body>
-                          </html>
-                          """;
-
-        // Replace placeholders in the HTML template
-        htmlBody = htmlBody.Replace("{USER}", code.User.Name)
-            .Replace("{INSTANCE}", config.InstanceSettings.InstanceName)
-            .Replace("{CODE_URL}", verifyUrl);
+        string htmlBody = EmailTemplates.VerifyEmail(code.User.Name, config.InstanceSettings.InstanceName,
+            config.WebsiteUrl, verifyEmail.Code, false);
         
         bool success = email.SendEmail(body.Email,
             $"[{config.InstanceSettings.InstanceName}] Verify your Email Address", htmlBody);
@@ -242,6 +198,29 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         database.SetUserEmail(code.User, body.Email);
         database.SetUserPassword(code.User, passwordBcrypt);
         database.RemoveCode(code);
+
+        return new ApiOkResponse();
+    }
+
+    [DocSummary("Resends email verification mail.")]
+    [DocError(typeof(ApiPreconditionFailedError), ApiPreconditionFailedError.NoAssignedEmailWhen)]
+    [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
+    [RateLimitSettings(86400, 5, 86400, "resendEmail")]
+    [ApiEndpoint("verifyEmail/resend", HttpMethods.Post)]
+    public ApiOkResponse ResendEmailVerificationMail(RequestContext context, GameDatabaseContext database, 
+        ServerConfig config, EmailService email, DbUser user)
+    {
+        if (user.EmailAddress == null)
+            return ApiPreconditionFailedError.NoAssignedEmail;
+        
+        DbCode code = database.CreateCode(user, CodeType.VerifyEmail);
+        string htmlBody = EmailTemplates.VerifyEmail(user.Name, config.InstanceSettings.InstanceName, config.WebsiteUrl,
+            code.Code, user.FinishedRegistration);
+        
+        bool success = email.SendEmail(user.EmailAddress,
+            $"[{config.InstanceSettings.InstanceName}] Verify your Email Address", htmlBody);
+        if (!success)
+            return ApiInternalServerError.CouldNotSendEmail;
 
         return new ApiOkResponse();
     }
