@@ -54,11 +54,12 @@ public partial class GameDatabaseContext
 
         return token.Entity;
     }
-
+    
+    public IQueryable<DbToken> GetTokens() => Tokens;
+    
     public void RemoveToken(DbToken token)
     {
         Tokens.Remove(token);
         SaveChanges();
-
     }
 }

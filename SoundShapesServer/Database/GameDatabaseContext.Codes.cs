@@ -53,8 +53,10 @@ public partial class GameDatabaseContext
     {
         return Codes.Include(t => t.User).FirstOrDefault(t => t.User == user && t.CodeType == type);
     }
-
-
+    
+    
+    public IQueryable<DbCode> GetCodes() => Codes;
+    
     public void RemoveCode(DbCode code)
     {
         Codes.Remove(code);

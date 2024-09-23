@@ -197,6 +197,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
 
         database.SetUserEmail(code.User, body.Email);
         database.SetUserPassword(code.User, passwordBcrypt);
+        database.UpdateUserRegistrationExpiryDate(code.User);
         database.RemoveCode(code);
 
         return new ApiOkResponse();

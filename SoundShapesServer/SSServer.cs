@@ -14,6 +14,7 @@ using SoundShapesServer.Middlewares;
 using SoundShapesServer.Services;
 using SoundShapesServer.Types.Config;
 using SoundShapesServer.Types.Database;
+using SoundShapesServer.Workers;
 
 namespace SoundShapesServer;
 
@@ -23,6 +24,8 @@ namespace SoundShapesServer;
 /// </summary>
 public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : GameDatabaseProvider
 {
+    protected WorkerManager? WorkerManager;
+    
     private readonly EntityFrameworkDatabaseProvider<GameDatabaseContext> _databaseProvider;
     private readonly IDataStore _dataStore;
     protected ServerConfig? _config;
@@ -48,7 +51,11 @@ public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : 
         this.SetupInitializer(() =>
         {
             GameDatabaseProvider provider = databaseProvider.Invoke();
+            
+            this.WorkerManager?.Stop();
+            
             authProvider ??= new GameAuthenticationProvider();
+
 
             this.InjectBaseServices(provider, authProvider, this._dataStore);
         });
@@ -67,7 +74,7 @@ public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : 
     protected override void Initialize()
     {
         base.Initialize();
-        //this.SetupWorkers();
+        SetupWorkers();
     }
 
     protected override void SetupServices()
@@ -80,18 +87,36 @@ public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : 
 
         Server.RemoveSerializer<BunkumJsonSerializer>();
         Server.AddSerializer<SoundShapesSerializer>();
-
-        Server.AddMiddleware<CrossOriginMiddleware>();
     }
 
     protected override void SetupMiddlewares()
     {
-        
+        Server.AddMiddleware<CrossOriginMiddleware>();
+    }
+    
+    protected virtual void SetupWorkers()
+    {
+        WorkerManager = new WorkerManager(this.Logger, this._dataStore, this._databaseProvider);
+        this.WorkerManager.AddWorker<ExpiredObjectWorker>();
     }
     
     protected virtual IDateTimeProvider GetTimeProvider()
     {
         return new SystemDateTimeProvider();
+    }
+    
+    /// <inheritdoc/>
+    public override void Start()
+    {
+        this.Server.Start();
+        this.WorkerManager?.Start();
+    }
+    
+    /// <inheritdoc/>
+    public override void Stop()
+    {
+        this.Server.Stop();
+        this.WorkerManager?.Stop();
     }
 
     public override void Dispose()

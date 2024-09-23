@@ -32,11 +32,10 @@ public partial class GameDatabaseContext
 
         return token;
     }
-
+    
     public void RemoveRefreshToken(DbRefreshToken token)
     {
         RefreshTokens.Remove(token);
-
         SaveChanges();
     }
 
@@ -56,4 +55,6 @@ public partial class GameDatabaseContext
 
         return token.Entity;
     }
+    
+    public IQueryable<DbRefreshToken> GetRefreshTokens() => RefreshTokens;
 }

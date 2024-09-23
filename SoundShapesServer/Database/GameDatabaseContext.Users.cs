@@ -88,6 +88,13 @@ public partial class GameDatabaseContext
         return user;
     }
     
+    public DbUser UpdateUserRegistrationExpiryDate(DbUser user)
+    {
+        user.RegistrationExpiryDate = this._time.Now.AddHours(ExpiryTimes.UserRegistrationHours);
+        this.SaveChanges();
+        return user;
+    }
+    
     public DbUser SetUserAuthorizationSettings(DbUser user, ApiAuthorizationSettingsRequest body)
     {
         user.RpcnAuthorization = body.RpcnAuthorization;
@@ -100,5 +107,10 @@ public partial class GameDatabaseContext
     public IQueryable<DbUser> GetUsers()
     {
         return Users;
+    }
+    public void RemoveUser(DbUser user)
+    {
+        Users.Remove(user);
+        SaveChanges();
     }
 }
