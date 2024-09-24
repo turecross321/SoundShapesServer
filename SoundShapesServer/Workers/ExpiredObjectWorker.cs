@@ -12,19 +12,19 @@ public class ExpiredObjectWorker : IWorker
         
         IQueryable<DbUser> expiredUsers = 
             context.Database.GetUsers().Where(u => !u.FinishedRegistration && (u.RegistrationExpiryDate < now || u.RegistrationExpiryDate == null));
-        context.Logger.LogInfo(SSSContext.Worker, $"Removed {expiredUsers.Count()} expired users.");
+        context.Logger.LogDebug(SSSContext.Worker, $"Removed {expiredUsers.Count()} expired users.");
         context.Database.RemoveRange(expiredUsers);
         
         IQueryable<DbRefreshToken> expiredRefreshTokens = context.Database.GetRefreshTokens().Where(t => t.ExpiryDate < now);
-        context.Logger.LogInfo(SSSContext.Worker, $"Removed {expiredRefreshTokens.Count()} expired refresh tokens.");
+        context.Logger.LogDebug(SSSContext.Worker, $"Removed {expiredRefreshTokens.Count()} expired refresh tokens.");
         context.Database.RemoveRange(expiredRefreshTokens);
         
         IQueryable<DbToken> expiredTokens = context.Database.GetTokens().Where(t => t.ExpiryDate < now);
-        context.Logger.LogInfo(SSSContext.Worker, $"Removed {expiredTokens.Count()} expired tokens.");
+        context.Logger.LogDebug(SSSContext.Worker, $"Removed {expiredTokens.Count()} expired tokens.");
         context.Database.RemoveRange(expiredTokens);
         
         IQueryable<DbCode> expiredCodes = context.Database.GetCodes().Where(c => c.ExpiryDate < now);
-        context.Logger.LogInfo(SSSContext.Worker, $"Removed {expiredCodes.Count()} expired tokens.");
+        context.Logger.LogDebug(SSSContext.Worker, $"Removed {expiredCodes.Count()} expired tokens.");
         context.Database.RemoveRange(expiredCodes);
         
         context.Database.SaveChanges();

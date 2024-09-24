@@ -49,7 +49,7 @@ public class WorkerManager(Logger logger, IDataStore dataStore, EntityFrameworkD
                 this._lastWorkTimestamps.Add(worker, now);
             }
             
-            logger.LogTrace(SSSContext.Worker, "Running work cycle for " + worker.GetType().Name);
+            logger.LogInfo(SSSContext.Worker, "Running work cycle for " + worker.GetType().Name);
             worker.DoWork(dataContext.Value);
         }
     }
