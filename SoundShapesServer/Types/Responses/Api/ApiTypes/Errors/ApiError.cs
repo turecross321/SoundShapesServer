@@ -30,7 +30,7 @@ public class ApiError
         return new ApiError
         {
             Name = error.Name,
-            Message = error.OccursWhen
+            Message = error.OccursWhen,
         };
     }
     public List<ApiError> FromErrorList(IEnumerable<Error> errors)

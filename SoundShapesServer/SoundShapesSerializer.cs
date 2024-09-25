@@ -6,7 +6,7 @@ public class SoundShapesSerializer : IBunkumSerializer
 {
     private static readonly JsonSerializer JsonSerializer = new()
     {
-        ContractResolver = new CamelCasePropertyNamesContractResolver()
+        ContractResolver = new CamelCasePropertyNamesContractResolver(),
     };
 
     public string[] ContentTypes { get; } =

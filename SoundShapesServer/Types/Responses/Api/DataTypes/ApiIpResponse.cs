@@ -23,7 +23,7 @@ public record ApiIpResponse : IApiDbResponse<DbIp, ApiIpResponse>
             AuthorizedDate = value.AuthorizedDate,
             Authorized = value.Authorized,
             OneTimeUse = value.OneTimeUse,
-            Id = value.Id
+            Id = value.Id,
         };
     }
 }

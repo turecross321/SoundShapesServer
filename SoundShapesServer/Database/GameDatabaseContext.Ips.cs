@@ -18,7 +18,7 @@ public partial class GameDatabaseContext
         {
             IpAddress = ipAddress,
             CreationDate = this.Time.Now,
-            UserId = user.Id
+            UserId = user.Id,
         });
         
         this.SaveChanges();
