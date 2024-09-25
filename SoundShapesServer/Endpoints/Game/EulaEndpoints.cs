@@ -36,7 +36,7 @@ public partial class EulaEndpoints : EndpointGroup
         else if (!user.FinishedRegistration)
         {
             context.Logger.LogInfo(BunkumCategory.Authentication, "Creating initialize registration code for new user: " + user.Name);
-            DbCode code = database.CreateCode(user, CodeType.Registration);
+            DbCode code = database.CreateCode(user, CodeType.Registration, token.Platform, token.GenuineNpTicket);
             
             if (database.GetCode(user, CodeType.VerifyEmail) != null)
             {
@@ -54,8 +54,6 @@ public partial class EulaEndpoints : EndpointGroup
                     $"You currently do not have an account. To proceed, go to {config.WebsiteUrl}/register and follow the instructions.\n" +
                     $"Your registration code is \"{code.Code}\".";
             }
-            
-
         }
         else
         {

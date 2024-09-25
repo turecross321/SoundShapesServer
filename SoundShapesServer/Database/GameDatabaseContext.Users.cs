@@ -108,9 +108,4 @@ public partial class GameDatabaseContext
     {
         return this.Users;
     }
-    public void RemoveUser(DbUser user)
-    {
-        this.Users.Remove(user);
-        this.SaveChanges();
-    }
 }

@@ -9,7 +9,7 @@ namespace SoundShapesServer.Database;
 
 public partial class GameDatabaseContext
 {
-    public DbCode CreateCode(DbUser user, CodeType type)
+    public DbCode CreateCode(DbUser user, CodeType type, PlatformType? platformType = null, bool? genuineNpTicket = null)
     {
         // Remove all previous instances of the same CodeType
         IQueryable<DbCode> codes = this.GetCodesForUser(user, type);
@@ -32,6 +32,8 @@ public partial class GameDatabaseContext
             ExpiryDate = this._time.Now.AddHours(ExpiryTimes.CodeHours),
             UserId = user.Id,
             CodeType = type,
+            Platform = platformType,
+            GenuineNpTicket = genuineNpTicket,
         });
         
         this.SaveChanges();
