@@ -9,7 +9,7 @@ public static class EmailTemplates
         <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
          <body style="color:#181515;">
            <h1>Hello, {{USER}}</h1>
-           <p>Please click the button below to verify your email address.</p>
+           <p>Please use the following code to verify your email address.</p>
            <strong style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: x-large; text-decoration: none; display: inline-block;">{{CODE}}</strong>
            <p>If you didn't request this, please ignore this email.</p>
            <p>Greetings, the {{INSTANCE}} team.</p>
@@ -20,7 +20,7 @@ public static class EmailTemplates
         <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
           <body style="color:#181515;">
            <h1>Hello, {{USER}}</h1>
-           <p>Please click the button below to verify your email address and finish the registration of your account.</p>
+           <p>Please use the following code to verify your email address and finish the registration of your account.</p>
            <strong style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: x-large; text-decoration: none; display: inline-block;">{{CODE}}</strong>
            <p>If you didn't request this, please ignore this email.</p>
            <p>Greetings, the {{INSTANCE}} team.</p>
@@ -40,7 +40,7 @@ public static class EmailTemplates
         <html lang="en" style="font-size: 10pt; font-family: Tahoma, serif;">
           <body style="color:#181515;">
             <h1>Hello, {{USER}}</h1>
-            <p>You may click the button below to reset your password.</p>
+            <p>You may use the code below to reset your password.</p>
             <strong style="color: white; background-color: #F07167; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: x-large; text-decoration: none; display: inline-block;">{{CODE}}</strong>
             <p>If you didn't request this, please ignore this email.</p>
             <p>Greetings, the {{INSTANCE}} team.</p>
