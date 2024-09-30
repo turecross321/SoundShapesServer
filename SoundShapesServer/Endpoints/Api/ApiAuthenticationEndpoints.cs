@@ -98,7 +98,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     public ApiOkResponse SendPasswordResetMail(RequestContext context, GameDatabaseContext database,
         EmailService email, ServerConfig config, ApiSendPasswordResetMailRequest body)
     {
-        DbUser? user = database.GetUserWithEmail(body.Email);
+        DbUser? user = database.GetRegisteredUserWithEmail(body.Email);
         if (user == null)
         {
             // Don't respond with an error to avoid email lookup security vulnerability
@@ -238,7 +238,7 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         if (!CommonPatterns.Sha512Regex().IsMatch(body.PasswordSha512))
             return ApiBadRequestError.PasswordIsNotHashed;
         
-        DbUser? user = database.GetUserWithEmail(body.Email);
+        DbUser? user = database.GetRegisteredUserWithEmail(body.Email);
         if (user == null)
         {
             // Do the work of checking the password if there was no user found to avoid timing attacks.

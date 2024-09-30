@@ -13,9 +13,9 @@ public partial class GameDatabaseContext
         return this.Users.FirstOrDefault(u => u.Name == name);
     }
     
-    public DbUser? GetUserWithEmail(string name)
+    public DbUser? GetRegisteredUserWithEmail(string name)
     {
-        return this.Users.FirstOrDefault(u => u.EmailAddress == name);
+        return this.Users.FirstOrDefault(u => u.EmailAddress == name && u.FinishedRegistration);
     }
 
     public DbUser CreateUser(string name)

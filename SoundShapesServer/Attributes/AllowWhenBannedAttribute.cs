@@ -1,6 +1,6 @@
 ﻿namespace SoundShapesServer.Attributes;
 
-public class AllowedWhenBannedAttribute: Attribute
+public class AllowWhenBannedAttribute: Attribute
 {
     
 }

@@ -39,7 +39,7 @@ public class GameAuthenticationProvider: IAuthenticationProvider<DbToken>
         string uriPath = request.Uri.AbsolutePath;
         
         if (uriPath.StartsWith(GameEndpointAttribute.RoutePrefix)
-            && token.TokenType == TokenType.GameAccess)
+            && token is { TokenType: TokenType.GameAccess, User.FinishedRegistration: true })
         { 
             return token;
         }
@@ -49,11 +49,13 @@ public class GameAuthenticationProvider: IAuthenticationProvider<DbToken>
             return token;
         }
         
-        if (uriPath.StartsWith(ApiEndpointAttribute.RoutePrefix) && token.TokenType == TokenType.ApiAccess)
+        if (uriPath.StartsWith(ApiEndpointAttribute.RoutePrefix) && token is
+                { TokenType: TokenType.ApiAccess, User.FinishedRegistration: true })
         {
             return token;
-        }
-
+        } 
+        
+        
         return null;
     }
 }
