@@ -1,6 +1,6 @@
 namespace SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
 
-public class ApiNotFoundError : ApiError
+public class ApiNotFoundError(string message) : ApiError(message, NotFound)
 {
     public const string LevelNotFoundWhen = "Could not find level with specified ID.";
     public static readonly ApiNotFoundError LevelNotFound = new(LevelNotFoundWhen);
@@ -39,8 +39,4 @@ public class ApiNotFoundError : ApiError
     public static readonly ApiNotFoundError NotQueuedLevel = new(NotQueuedLevelWhen);
     public const string NotFollowingWhen = "You are not following this user.";
     public static readonly ApiNotFoundError NotFollowing = new(NotFollowingWhen);
-
-    private ApiNotFoundError(string message) : base(message, NotFound)
-    {
-    }
 }

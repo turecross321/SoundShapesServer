@@ -1,6 +1,6 @@
 namespace SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
 
-public class ApiConflictError : ApiError
+public class ApiConflictError(string message) : ApiError(message, Conflict)
 {
     public const string UsernameAlreadyTakenWhen = "Username already taken.";
     public static readonly ApiConflictError UsernameAlreadyTaken = new(UsernameAlreadyTakenWhen);
@@ -14,8 +14,4 @@ public class ApiConflictError : ApiError
     public static readonly ApiConflictError AlreadyQueuedLevel = new(AlreadyQueuedLevelWhen);
     public const string AlreadyFollowingWhen = "You are already following this user.";
     public static readonly ApiConflictError AlreadyFollowing = new(AlreadyFollowingWhen);
-
-    private ApiConflictError(string message) : base(message, Conflict)
-    {
-    }
 }

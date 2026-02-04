@@ -13,5 +13,5 @@ public enum TokenType
     /// <summary>
     /// Used for API endpoints
     /// </summary>
-    ApiAccess = 2
+    ApiAccess = 2,
 }

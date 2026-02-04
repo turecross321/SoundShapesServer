@@ -1,9 +1,10 @@
-﻿using AttribDoc.Attributes;
-using Bunkum.Core;
+﻿using Bunkum.Core;
 using Bunkum.Core.Endpoints;
 using Bunkum.Protocols.Http;
+using BunkumOpenApi.Attributes;
+using SoundShapesServer.Attributes;
 using SoundShapesServer.Database;
-using SoundShapesServer.Documentation.Attributes;
+using SoundShapesServer.Documentation;
 using SoundShapesServer.Extensions;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Database;
@@ -14,10 +15,11 @@ using SoundShapesServer.Types.Responses.Api.DataTypes;
 
 namespace SoundShapesServer.Endpoints.Api;
 
+[DocTag(ApiTags.AuthorizationSettings)]
 public class ApiAuthorizationSettingsEndpoints : EndpointGroup
 {
     [DocSummary("Retrieves your game authorization settings")]
-    [DocResponseBody(typeof(ApiAuthorizationSettingsResponse))]
+    [DocApiResponse(typeof(ApiAuthorizationSettingsResponse))]
     [ApiEndpoint("gameAuth")]
     public ApiResponse<ApiAuthorizationSettingsResponse> GetAuthorizationSettings(RequestContext context, DbUser user)
     {
@@ -30,8 +32,8 @@ public class ApiAuthorizationSettingsEndpoints : EndpointGroup
     }
     
     [DocSummary("Sets your game authorization settings.")]
-    [DocRequestBody(typeof(ApiAuthorizationSettingsRequest))]
-    [DocResponseBody(typeof(ApiAuthorizationSettingsResponse))]
+    [DocBodyParameter(typeof(ApiAuthorizationSettingsRequest))]
+    [DocApiResponse(typeof(ApiAuthorizationSettingsResponse))]
     [ApiEndpoint("gameAuth", HttpMethods.Put)]
     public ApiResponse<ApiAuthorizationSettingsResponse> SetAuthorizationSettings(RequestContext context, GameDatabaseContext database, 
         DbUser user, ApiAuthorizationSettingsRequest body)
@@ -46,8 +48,8 @@ public class ApiAuthorizationSettingsEndpoints : EndpointGroup
     }
 
     [DocSummary("Retrieves IP addresses that have been used to log in to your account with.")]
-    [DocUsesPageData]
-    [DocError(typeof(ApiPreconditionFailedError), ApiPreconditionFailedError.IpAuthorizationDisabledWhen)]
+    [DocApiUsesPageData]
+    [DocApiErrorResponse(typeof(ApiPreconditionFailedError), ApiPreconditionFailedError.IpAuthorizationDisabledWhen)]
     [ApiEndpoint("gameAuth/ip")]
     public ApiListResponse<ApiIpResponse> GetIps(RequestContext context, GameDatabaseContext database, DbUser user)
     {

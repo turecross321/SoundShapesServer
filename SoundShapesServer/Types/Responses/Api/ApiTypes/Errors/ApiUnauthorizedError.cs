@@ -1,6 +1,6 @@
 namespace SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
 
-public class ApiUnauthorizedError : ApiError
+public class ApiUnauthorizedError(string message) : ApiError(message, Unauthorized)
 {
     public const string NoEditPermissionWhen = "You do not have permission to edit the requested resource.";
     public static readonly ApiUnauthorizedError NoEditPermission = new(NoEditPermissionWhen);
@@ -14,8 +14,4 @@ public class ApiUnauthorizedError : ApiError
     public static readonly ApiUnauthorizedError InvalidCode = new(InvalidCodeWhen);
     public const string InvalidEmailOrPasswordWhen = "Invalid e-mail or password.";
     public static readonly ApiUnauthorizedError InvalidEmailOrPassword = new(InvalidEmailOrPasswordWhen);
-
-    private ApiUnauthorizedError(string message) : base(message, Unauthorized)
-    {
-    }
 }

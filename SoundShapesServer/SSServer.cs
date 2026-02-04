@@ -82,7 +82,6 @@ public class SSServer<TDatabaseProvider> : ServerBase where TDatabaseProvider : 
         this.Server.AddAutoDiscover(this._config!.InstanceSettings.InstanceName, GameEndpointAttribute.RoutePrefix, false, this._config.InstanceSettings.Description, this._config!.InstanceSettings.BannerUrl);
         this.Server.AddService<EmailService>();
         this.Server.AddRateLimitService(new RateLimitSettings(60, 400, 30, "global"));
-        this.Server.AddService<ApiDocumentationService>();
         
         this.Server.RemoveSerializer<BunkumJsonSerializer>();
         this.Server.AddSerializer<SoundShapesSerializer>();

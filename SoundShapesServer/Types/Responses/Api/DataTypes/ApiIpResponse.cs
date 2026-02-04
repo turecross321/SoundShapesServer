@@ -26,4 +26,19 @@ public record ApiIpResponse : IApiDbResponse<DbIp, ApiIpResponse>
             Id = value.Id,
         };
     }
+    
+    public static ApiIpResponse Example()
+    {
+        return new ApiIpResponse
+        {
+            Id = default,
+            User = ApiMinimalUserResponse.Example(),
+            IpAddress = "127.0.1",
+            CreationDate = default,
+            AuthorizedDate = null,
+            Authorized = false,
+            OneTimeUse = null,
+        };
+        
+    }
 }

@@ -17,7 +17,19 @@ public record ApiMinimalUserResponse : IApiDbResponse<DbUser, ApiMinimalUserResp
             Id = user.Id,
             Name = user.Name,
             Role = user.Role,
-            CreationDate = user.CreationDate
+            CreationDate = user.CreationDate,
         };
+    }
+    
+    public static ApiMinimalUserResponse Example()
+    {
+        return new ApiMinimalUserResponse
+        {
+            Id = default,
+            Name = "Gamer",
+            Role = UserRole.Default,
+            CreationDate = default,
+        };
+        
     }
 }

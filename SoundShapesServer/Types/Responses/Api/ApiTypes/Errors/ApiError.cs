@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using AttribDoc;
 using Bunkum.Core.Responses;
 using Bunkum.Listener.Protocol;
 
@@ -25,16 +24,4 @@ public class ApiError
     public ApiError(){}
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     
-    private ApiError FromError(Error error)
-    {
-        return new ApiError
-        {
-            Name = error.Name,
-            Message = error.OccursWhen,
-        };
-    }
-    public List<ApiError> FromErrorList(IEnumerable<Error> errors)
-    {
-        return errors.Select(this.FromError).ToList();
-    }
 }

@@ -17,7 +17,18 @@ public record ApiTokenResponse : IApiDbResponse<DbToken, ApiTokenResponse>
             Id = value.Id,
             CreationDate = value.CreationDate,
             ExpiryDate = value.ExpiryDate,
-            TokenType = value.TokenType
+            TokenType = value.TokenType,
+        };
+    }
+    
+    public static ApiTokenResponse Example()
+    {
+        return new ApiTokenResponse
+        {
+            Id = default,
+            CreationDate = default,
+            ExpiryDate = default,
+            TokenType = TokenType.GameAccess,
         };
     }
 }

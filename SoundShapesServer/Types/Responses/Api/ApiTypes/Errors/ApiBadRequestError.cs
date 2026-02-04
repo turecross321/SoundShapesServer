@@ -1,6 +1,6 @@
 namespace SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
 
-public class ApiBadRequestError : ApiError
+public class ApiBadRequestError(string message) : ApiError(message)
 {
     public const string FileIsNotPngWhen = "File is not a PNG.";
     public static readonly ApiBadRequestError FileIsNotPng = new(FileIsNotPngWhen);
@@ -14,8 +14,4 @@ public class ApiBadRequestError : ApiError
     public static readonly ApiBadRequestError PasswordIsNotHashed = new(PasswordIsNotHashedWhen);
     public const string InvalidContentTypeWhen = "Invalid content type.";
     public static readonly ApiBadRequestError InvalidContentType = new(InvalidContentTypeWhen);
-
-    private ApiBadRequestError(string message) : base(message)
-    {
-    }
 }

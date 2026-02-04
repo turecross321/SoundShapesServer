@@ -1,12 +1,14 @@
-﻿using AttribDoc.Attributes;
-using Bunkum.Core;
+﻿using Bunkum.Core;
 using Bunkum.Core.Configuration;
 using Bunkum.Core.Endpoints;
 using Bunkum.Core.RateLimit;
 using Bunkum.Protocols.Http;
+using BunkumOpenApi.Attributes;
+using SoundShapesServer.Attributes;
 using SoundShapesServer.Common;
 using SoundShapesServer.Common.Verification;
 using SoundShapesServer.Database;
+using SoundShapesServer.Documentation;
 using SoundShapesServer.Services;
 using SoundShapesServer.Types;
 using SoundShapesServer.Types.Config;
@@ -19,6 +21,7 @@ using static BCrypt.Net.BCrypt;
 
 namespace SoundShapesServer.Endpoints.Api;
 
+[DocTag(ApiTags.Authentication)]
 public class ApiAuthenticationEndpoints : EndpointGroup
 {
     /// <remarks>
@@ -33,10 +36,10 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     /// </summary>
     private static readonly string FakePassword = HashPassword(Random.Shared.Next().ToString(), WorkFactor);
     
-    [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidCodeWhen)]
-    [DocError(typeof(ApiBadRequestError), ApiBadRequestError.InvalidEmailWhen)]
-    [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
-    [DocRequestBody(typeof(ApiSetEmailRequest))]
+    [DocApiErrorResponse(typeof(ApiUnauthorizedError), ApiUnauthorizedError.EulaNotAcceptedWhen)]
+    [DocApiErrorResponse(typeof(ApiBadRequestError), ApiBadRequestError.InvalidEmailWhen)]
+    [DocApiErrorResponse(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
+    [DocBodyParameter(typeof(ApiSetEmailRequest))]
     [DocSummary("Set your account's e-mail address.")]
     [RateLimitSettings(300, 10, 300, "setEmail")]
     [ApiEndpoint("setEmail", HttpMethods.Post)]
@@ -66,8 +69,9 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     }
 
     [DocSummary("Verify your account's email address.")] 
-    [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidCodeWhen)]
-    [DocRequestBody(typeof(ApiCodeRequest))]
+    [DocApiErrorResponse(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidCodeWhen)]
+    [DocApiResponse(typeof(ApiFullUserResponse))]
+    [DocBodyParameter(typeof(ApiCodeRequest))]
     [RateLimitSettings(300, 10, 300, "setEmail")]
     [Authentication(false)]
     [ApiEndpoint("verifyEmail", HttpMethods.Post)]
@@ -89,8 +93,8 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         return ApiFullUserResponse.FromDb(user);
     }
 
-    [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
-    [DocRequestBody(typeof(ApiSendPasswordResetMailRequest))]
+    [DocApiErrorResponse(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
+    [DocBodyParameter(typeof(ApiSendPasswordResetMailRequest))]
     [DocSummary("Emails you a code used to reset your password.")]
     [RateLimitSettings(300, 10, 300, "setPassword")]
     [Authentication(false)]
@@ -118,9 +122,9 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         return success ? new ApiOkResponse() : ApiInternalServerError.CouldNotSendEmail;
     }
     
-    [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidCodeWhen)]
-    [DocError(typeof(ApiBadRequestError), ApiBadRequestError.PasswordIsNotHashedWhen)]
-    [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotBcryptPasswordWhen)]
+    [DocApiErrorResponse(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidCodeWhen)]
+    [DocApiErrorResponse(typeof(ApiBadRequestError), ApiBadRequestError.PasswordIsNotHashedWhen)]
+    [DocApiErrorResponse(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotBcryptPasswordWhen)]
     [DocSummary("Set a new password.")]
     [RateLimitSettings(300, 4, 300, "setPassword")]
     [Authentication(false)]
@@ -147,8 +151,8 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     }
     
     [DocSummary("Retrieves information about the the specified registration code.")]
-    [DocResponseBody(typeof(ApiCodeResponse))]    
-    [DocError(typeof(ApiNotFoundError), ApiUnauthorizedError.InvalidCodeWhen)]
+    [DocApiResponse(typeof(ApiCodeResponse))]    
+    [DocApiErrorResponse(typeof(ApiNotFoundError), ApiUnauthorizedError.InvalidCodeWhen)]
     [ApiEndpoint("register/code/{codeValue}")]
     [Authentication(false)]
     public ApiResponse<ApiCodeResponse> GetRegistrationCode(RequestContext context, 
@@ -161,12 +165,12 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     }
 
     [DocSummary("Register an account. Assigns your e-mail and password and sends an e-mail verification mail.")]
-    [DocRequestBody(typeof(ApiRegisterRequest))]
-    [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidCodeWhen)]
-    [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.EulaNotAcceptedWhen)]
-    [DocError(typeof(ApiBadRequestError), ApiBadRequestError.InvalidEmailWhen)]
-    [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotBcryptPasswordWhen)]
-    [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
+    [DocBodyParameter(typeof(ApiRegisterRequest))]
+    [DocApiErrorResponse(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidCodeWhen)]
+    [DocApiErrorResponse(typeof(ApiUnauthorizedError), ApiUnauthorizedError.EulaNotAcceptedWhen)]
+    [DocApiErrorResponse(typeof(ApiBadRequestError), ApiBadRequestError.InvalidEmailWhen)]
+    [DocApiErrorResponse(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotBcryptPasswordWhen)]
+    [DocApiErrorResponse(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
     [ApiEndpoint("register", HttpMethods.Post)]
     [Authentication(false)]
     public ApiOkResponse Register(RequestContext context, GameDatabaseContext database, ServerConfig config, 
@@ -204,8 +208,8 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     }
 
     [DocSummary("Resends email verification mail.")]
-    [DocError(typeof(ApiPreconditionFailedError), ApiPreconditionFailedError.NoAssignedEmailWhen)]
-    [DocError(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
+    [DocApiErrorResponse(typeof(ApiPreconditionFailedError), ApiPreconditionFailedError.NoAssignedEmailWhen)]
+    [DocApiErrorResponse(typeof(ApiInternalServerError), ApiInternalServerError.CouldNotSendEmailWhen)]
     [RateLimitSettings(86400, 5, 86400, "resendEmail")]
     [ApiEndpoint("verifyEmail/resend", HttpMethods.Post)]
     public ApiOkResponse ResendEmailVerificationMail(RequestContext context, GameDatabaseContext database, 
@@ -226,10 +230,10 @@ public class ApiAuthenticationEndpoints : EndpointGroup
         return new ApiOkResponse();
     }
     
-    [DocResponseBody(typeof(ApiLoginResponse))]
-    [DocRequestBody(typeof(ApiLogInRequest))]
-    [DocError(typeof(ApiBadRequestError), ApiBadRequestError.PasswordIsNotHashedWhen)]
-    [DocError(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidEmailOrPasswordWhen)]
+    [DocApiResponse(typeof(ApiLoginResponse))]
+    [DocBodyParameter(typeof(ApiLogInRequest))]
+    [DocApiErrorResponse(typeof(ApiBadRequestError), ApiBadRequestError.PasswordIsNotHashedWhen)]
+    [DocApiErrorResponse(typeof(ApiUnauthorizedError), ApiUnauthorizedError.InvalidEmailOrPasswordWhen)]
     [RateLimitSettings(300, 10, 300, "auth")]
     [Authentication(false)]
     [ApiEndpoint("logIn", HttpMethods.Post)]
@@ -267,9 +271,9 @@ public class ApiAuthenticationEndpoints : EndpointGroup
     }
 
     [DocSummary("Log in with a refresh token.")]
-    [DocResponseBody(typeof(ApiLoginResponse))]
-    [DocRequestBody(typeof(ApiRefreshTokenRequest))]
-    [DocError(typeof(ApiNotFoundError), ApiNotFoundError.RefreshTokenDoesNotExistWhen)]
+    [DocApiResponse(typeof(ApiLoginResponse))]
+    [DocBodyParameter(typeof(ApiRefreshTokenRequest))]
+    [DocApiErrorResponse(typeof(ApiNotFoundError), ApiNotFoundError.RefreshTokenDoesNotExistWhen)]
     [RateLimitSettings(300, 10, 300, "auth")]
     [Authentication(false)]
     [ApiEndpoint("refreshToken", HttpMethods.Post)]

@@ -23,7 +23,21 @@ public record ApiFullUserResponse : IApiDbResponse<DbUser, ApiFullUserResponse>
             VerifiedEmail = user.VerifiedEmail,
             FinishedRegistration = user.FinishedRegistration,
             CreationDate = user.CreationDate,
-            RegistrationExpiryDate = user.RegistrationExpiryDate
+            RegistrationExpiryDate = user.RegistrationExpiryDate,
+        };
+    }
+    
+    public static ApiFullUserResponse Example()
+    {
+        return new ApiFullUserResponse
+        {
+            Id = default,
+            Name = "Gamer",
+            Role = UserRole.Default,
+            VerifiedEmail = false,
+            FinishedRegistration = false,
+            CreationDate = default,
+            RegistrationExpiryDate = null,
         };
     }
 }

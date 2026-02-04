@@ -14,7 +14,17 @@ public record ApiRefreshTokenResponse : IApiDbResponse<DbRefreshToken, ApiRefres
         {
             Id = value.Id,
             CreationDate = value.CreationDate,
-            ExpiryDate = value.ExpiryDate
+            ExpiryDate = value.ExpiryDate,
+        };
+    }
+    
+    public static ApiRefreshTokenResponse Example()
+    {
+        return new ApiRefreshTokenResponse
+        {
+            Id = default,
+            CreationDate = default,
+            ExpiryDate = default,
         };
     }
 }

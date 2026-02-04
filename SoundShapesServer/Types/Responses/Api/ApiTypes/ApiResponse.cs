@@ -1,9 +1,11 @@
 ﻿using System.Net;
+using System.Text.Json.Serialization;
 using Bunkum.Core.Responses;
 using SoundShapesServer.Types.Responses.Api.ApiTypes.Errors;
 
 namespace SoundShapesServer.Types.Responses.Api.ApiTypes;
 
+[JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
 public class ApiResponse<T> : IHasResponseCode where T : class
 {
     [Obsolete("Only used for deserialization")]
@@ -12,7 +14,7 @@ public class ApiResponse<T> : IHasResponseCode where T : class
         
     }
     
-    protected ApiResponse(T data)
+    public ApiResponse(T data)
     {
         this.Success = true;
         this.Data = data;
@@ -20,8 +22,17 @@ public class ApiResponse<T> : IHasResponseCode where T : class
         
         this.StatusCode = OK;
     }
+    
+    public ApiResponse(T data, HttpStatusCode code)
+    {
+        this.Success = true;
+        this.Data = data;
+        this.Error = null;
+        
+        this.StatusCode = code;
+    }
 
-    protected ApiResponse(ApiError error)
+    public ApiResponse(ApiError error)
     {
         this.Success = false;
         this.Data = null;
